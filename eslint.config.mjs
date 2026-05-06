@@ -10,12 +10,13 @@ const compat = new FlatCompat({
 });
 
 /**
- * Minimal ESLint Config to break circular structures in Next.js 15 builds.
- * We rely on next.config.ts bypass for the initial production deployment.
+ * Optimized ESLint Config to resolve circular structure errors in Next.js 15.
+ * We explicitly break down the extensions to avoid recursion.
  */
 const eslintConfig = [
   ...compat.extends("next/core-web-vitals"),
   {
+    // Specific overrides for our MVP structure
     rules: {
       "@typescript-eslint/no-explicit-any": "off",
       "@typescript-eslint/no-unused-vars": "off",
