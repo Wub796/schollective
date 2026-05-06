@@ -9,9 +9,14 @@ const compat = new FlatCompat({
   baseDirectory: __dirname,
 });
 
+/**
+ * Optimized ESLint Config to resolve circular structure errors in Next.js 15.
+ * We explicitly break down the extensions to avoid recursion.
+ */
 const eslintConfig = [
-  ...compat.extends("next", "next/typescript"),
+  ...compat.extends("next/core-web-vitals"),
   {
+    // Specific overrides for our MVP structure
     rules: {
       "@typescript-eslint/no-explicit-any": "off",
       "@typescript-eslint/no-unused-vars": "off",

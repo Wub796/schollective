@@ -3,17 +3,20 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/utils/supabase/client";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 import { Select } from "@/components/ui/Select";
 import { toast } from "sonner";
 
+export const dynamic = 'force-dynamic';
+
 type Role = "student" | "professor";
 
 export default function SignupPage() {
   const router = useRouter();
+  const supabase = createClient();
   const [role, setRole] = useState<Role>("student");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -37,7 +40,6 @@ export default function SignupPage() {
 
     try {
       const { error: signUpError } = await supabase.auth.signUp({
-
         email,
         password,
         options: {

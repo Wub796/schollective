@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { redirect, notFound } from "next/navigation";
-import { createClient } from "@/lib/supabase-server";
+import { createClient } from "@/utils/supabase/server";
 import { ChatThread } from "@/components/features/ChatThread";
 import { ArrowLeft, MoreVertical, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";

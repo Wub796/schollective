@@ -7,6 +7,7 @@ export function CustomCursor() {
   const [mounted, setMounted] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
+  const [isTouch, setIsTouch] = useState(false);
   
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -16,6 +17,10 @@ export function CustomCursor() {
   const ringY = useSpring(mouseY, { stiffness: 150, damping: 20 });
 
   useEffect(() => {
+    // Check for touch device
+    const touchCheck = typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0);
+    setIsTouch(touchCheck);
+
     // Check for reduced motion preference
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     setReducedMotion(mediaQuery.matches);
@@ -53,7 +58,7 @@ export function CustomCursor() {
     };
   }, [mouseX, mouseY]);
 
-  if (!mounted || reducedMotion) return null;
+  if (!mounted || reducedMotion || isTouch) return null;
 
   return (
     <div className="fixed inset-0 pointer-events-none z-[9999] hidden md:block">
