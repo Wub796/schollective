@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Professor Profile — Schollective</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/animations.css">
+    <style>
+        .profile-hero {
+            padding: 10rem 4rem 6rem;
+            background: linear-gradient(180deg, rgba(17, 34, 64, 1) 0%, rgba(11, 22, 40, 1) 100%);
+            border-bottom: 1px solid rgba(212, 146, 42, 0.1);
+        }
+        .profile-container {
+            max-width: 1000px;
+            margin: -4rem auto 0;
+            padding: 0 2rem 6rem;
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 3rem;
+            position: relative;
+            z-index: 2;
+        }
+        .profile-main {
+            background: rgba(17, 34, 64, 0.6);
+            border: 1px solid rgba(155, 175, 192, 0.1);
+            border-radius: 24px;
+            padding: 3.5rem;
+            backdrop-filter: blur(20px);
+        }
+        .profile-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        .sidebar-card {
+            background: rgba(17, 34, 64, 0.8);
+            border: 1px solid rgba(212, 146, 42, 0.15);
+            border-radius: 20px;
+            padding: 2rem;
+        }
+        .profile-avatar-large {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            font-family: var(--serif);
+            font-size: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+        .field-label {
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--amber);
+            margin-bottom: 0.5rem;
+        }
+        .bio-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: var(--text-muted);
+            margin-top: 2rem;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-top: 2.5rem;
+            padding-top: 2.5rem;
+            border-top: 1px solid rgba(155, 175, 192, 0.1);
+        }
+        .stat-box h4 {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 0.4rem;
+        }
+        .stat-box p {
+            font-family: var(--serif);
+            font-size: 1.5rem;
+            color: var(--ivory);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- CUSTOM CURSOR -->
+    <div class="cursor-dot" id="cursorDot"></div>
+    <div class="cursor-ring" id="cursorRing"></div>
+
+    <!-- NAVIGATION -->
+    <nav id="navbar" class="scrolled">
+        <a href="../index.html" class="nav-logo">
+            <div class="logo-mark-css"></div>
+            <div class="nav-wordmark">Schol<span>lective</span></div>
+        </a>
+        <div class="nav-cta">
+            <a href="index.html" class="btn-ghost">Back to Browse</a>
+            <a href="../student/dashboard.html" class="btn-primary">My Dashboard</a>
+        </div>
+    </nav>
+
+    <header class="profile-hero" id="profile-header">
+        <!-- populated by JS -->
+    </header>
+
+    <main class="profile-container">
+        <div class="profile-main" id="profile-main">
+            <!-- populated by JS -->
+        </div>
+
+        <aside class="profile-sidebar">
+            <div class="sidebar-card">
+                <div class="field-label">Availability</div>
+                <div id="prof-avail" style="font-size: 1.1rem; color: var(--ivory); margin-bottom: 1.5rem;">Loading...</div>
+                <a href="../student/request.html" class="btn-primary" style="display: block; text-align: center; margin-bottom: 1rem;">Send Mentorship Request</a>
+                <p style="font-size: 0.75rem; color: var(--text-muted); text-align: center;">Typically responds in 24-48 hours.</p>
+            </div>
+
+            <div class="sidebar-card">
+                <div class="field-label">Areas of Guidance</div>
+                <div id="prof-tags" style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem;">
+                    <!-- populated by JS -->
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <!-- Scripts -->
+    <script src="../js/core.js"></script>
+    <script src="../js/mock-data.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const id = parseInt(params.get('id')) || 1;
+            const prof = MOCK_PROFESSORS.find(p => p.id === id) || MOCK_PROFESSORS[0];
+
+            document.getElementById('profile-header').innerHTML = `
+                <div style="max-width: 1000px; margin: 0 auto;">
+                    <div class="profile-avatar-large av-${prof.color}">${prof.avatar}</div>
+                    <div class="field-label">${prof.institution}</div>
+                    <h1 style="font-family: var(--serif); font-size: 4rem; font-weight: 300; color: var(--ivory);">${prof.name}</h1>
+                    <p style="font-size: 1.25rem; color: var(--text-muted);">${prof.field}</p>
+                </div>
+            `;
+
+            document.getElementById('profile-main').innerHTML = `
+                <div class="field-label">About the Professor</div>
+                <div class="bio-text">${prof.bio}</div>
+                <div class="bio-text">Dedicated to fostering the next generation of researchers and thinkers. I offer guidance on structural methodologies, literature reviews, and career paths within academia.</div>
+                
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <h4>Active Threads</h4>
+                        <p>3 Students</p>
+                    </div>
+                    <div class="stat-box">
+                        <h4>Completed Mentorships</h4>
+                        <p>12 Total</p>
+                    </div>
+                    <div class="stat-box">
+                        <h4>Response Rate</h4>
+                        <p>98%</p>
+                    </div>
+                    <div class="stat-box">
+                        <h4>Member Since</h4>
+                        <p>Jan 2025</p>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('prof-avail').textContent = prof.availability;
+            document.getElementById('prof-tags').innerHTML = prof.tags.map(tag => 
+                `<span class="card-tag ${prof.color === 'sage' ? 'sage' : ''}">${tag}</span>`
+            ).join('');
+        });
+    </script>
+</body>
+</html>
