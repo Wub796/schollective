@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Check, X } from "lucide-react";
 import { updateRequestStatus } from "@/app/prof/dashboard/actions";
+import { toast } from "sonner";
 
 interface RequestQueueCardProps {
   request: {
@@ -25,8 +26,7 @@ export function RequestQueueCard({ request }: RequestQueueCardProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const studentName = request.student.preferred_name || request.student.first_name;
-import { toast } from "sonner";
-...
+
   const handleAction = async (status: 'active' | 'closed') => {
     setLoading(true);
     try {
@@ -43,7 +43,7 @@ import { toast } from "sonner";
       setLoading(false);
     }
   };
-...
+
   return (
     <div className="bg-[rgba(17,34,64,0.6)] border border-[var(--amber)]/20 rounded-2xl p-6 backdrop-blur-md shadow-xl transition-all duration-300 hover:border-[var(--amber)]/40 animate-in fade-in slide-in-from-right-4 duration-500">
       <div className="flex justify-between items-start mb-6">
@@ -75,7 +75,7 @@ import { toast } from "sonner";
           <div className="bg-[rgba(26,58,92,0.3)] rounded-xl p-4 border border-[rgba(155,175,192,0.05)]">
             <div className="text-[0.65rem] text-[var(--text-muted)] uppercase tracking-widest font-bold mb-2">Message</div>
             <p className="text-[var(--text-muted)] text-sm italic leading-relaxed">
-              "{request.initial_message}"
+              &quot;{request.initial_message}&quot;
             </p>
           </div>
         )}

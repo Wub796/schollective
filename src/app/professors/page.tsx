@@ -3,6 +3,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase-server";
 import { ProfessorCard } from "@/components/features/ProfessorCard";
 import { DirectorySearch } from "@/components/features/DirectorySearch";
+import { Button } from "@/components/ui/Button";
 import { ArrowLeft, Inbox } from "lucide-react";
 
 interface ProfessorsPageProps {
@@ -38,10 +39,10 @@ export default async function ProfessorsPage({ searchParams }: ProfessorsPagePro
     dbQuery = dbQuery.contains("expertise_fields", [expertise]);
   }
 
-  const { data: professors, error } = await dbQuery.order("last_name", { ascending: true });
+  const { data: professors } = await dbQuery.order("last_name", { ascending: true });
 
-  // 3. Fetch Distinct Values for Filters (In a real app, these might be from a lookup table)
-  // For now, we'll derive them from the approved professors to ensure we only show valid filters
+
+  // 3. Fetch Distinct Values for Filters
   const { data: filterData } = await supabase
     .from("profiles")
     .select("institution, expertise_fields")
@@ -100,7 +101,7 @@ export default async function ProfessorsPage({ searchParams }: ProfessorsPagePro
             </div>
             <h3 className="font-serif text-3xl text-[var(--ivory)] mb-4 font-light text-center">No mentors found</h3>
             <p className="text-[var(--text-muted)] max-w-md mx-auto mb-10 text-lg leading-relaxed">
-              We couldn't find any approved professors matching your current filters. Try broadening your search or expertise selection.
+              We couldn&apos;t find any approved professors matching your current filters. Try broadening your search or expertise selection.
             </p>
             <Link href="/professors">
               <Button variant="outline" size="lg">Reset All Filters</Button>

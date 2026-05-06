@@ -4,8 +4,9 @@ import React, { useEffect, useState } from "react";
 import { motion, useSpring, useMotionValue } from "framer-motion";
 
 export function CustomCursor() {
-  const [mounted, setState] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(false);
   
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -15,7 +16,12 @@ export function CustomCursor() {
   const ringY = useSpring(mouseY, { stiffness: 150, damping: 20 });
 
   useEffect(() => {
-    setState(true);
+    // Check for reduced motion preference
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setReducedMotion(mediaQuery.matches);
+    
+    const handler = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
+    mediaQuery.addEventListener('change', handler);
     
     const handleMouseMove = (e: MouseEvent) => {
       mouseX.set(e.clientX);
@@ -37,13 +43,17 @@ export function CustomCursor() {
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mouseover", handleMouseOver);
 
+    // Finalize mounting only after checking env
+    setMounted(true);
+
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseover", handleMouseOver);
+      mediaQuery.removeEventListener('change', handler);
     };
   }, [mouseX, mouseY]);
 
-  if (!mounted) return null;
+  if (!mounted || reducedMotion) return null;
 
   return (
     <div className="fixed inset-0 pointer-events-none z-[9999] hidden md:block">

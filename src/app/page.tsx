@@ -195,11 +195,11 @@ export default function LandingPage() {
             The conversation<br /><em className="italic text-[var(--amber-light)]">starts here</em>
           </h2>
           <p className="text-[var(--text-muted)] max-w-[480px] mx-auto mb-10 text-lg leading-relaxed">
-            Whether you're a student looking for guidance or a professor ready to give it — there's a place for you. Free, structured, built for real academic growth.
+            Whether you&apos;re a student looking for guidance or a professor ready to give it &mdash; there&apos;s a place for you. Free, structured, built for real academic growth.
           </p>
           <div className="flex justify-center gap-5">
-            <Link href="/signup">
-              <Button size="lg">Get started — it's free</Button>
+            <Link href="/auth/signup">
+              <Button size="lg">Get started &mdash; it&apos;s free</Button>
             </Link>
             <Button variant="ghost" size="lg">Learn more</Button>
           </div>
@@ -226,8 +226,8 @@ export default function LandingPage() {
           <div>
             <h4 className="text-[0.73rem] font-bold tracking-widest text-[var(--text-muted)] uppercase mb-5">Account</h4>
             <ul className="flex flex-col gap-3 text-sm text-[var(--text-muted)]">
-              <li><Link href="/signup" className="hover:text-[var(--ivory)] transition-colors">Sign up free</Link></li>
-              <li><Link href="/login" className="hover:text-[var(--ivory)] transition-colors">Log in</Link></li>
+              <li><Link href="/auth/signup" className="hover:text-[var(--ivory)] transition-colors">Sign up free</Link></li>
+              <li><Link href="/auth/login" className="hover:text-[var(--ivory)] transition-colors">Log in</Link></li>
             </ul>
           </div>
           <div>
