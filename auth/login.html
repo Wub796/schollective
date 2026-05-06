@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Log In — Schollective</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/animations.css">
+    <style>
+        .auth-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            background: radial-gradient(circle at top right, rgba(212, 146, 42, 0.05), transparent),
+                        radial-gradient(circle at bottom left, rgba(61, 122, 107, 0.05), transparent);
+        }
+        .auth-card {
+            width: 100%;
+            max-width: 440px;
+            background: rgba(17, 34, 64, 0.7);
+            border: 1px solid rgba(212, 146, 42, 0.16);
+            border-radius: 24px;
+            padding: 3rem;
+            backdrop-filter: blur(24px);
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.4);
+            animation: fadeUp 0.8s ease both;
+        }
+        .auth-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+        .auth-header h1 {
+            font-family: var(--serif);
+            font-size: 2.5rem;
+            font-weight: 300;
+            color: var(--ivory);
+            margin-bottom: 0.5rem;
+        }
+        .auth-header p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 0.6rem;
+        }
+        .form-control {
+            width: 100%;
+            background: rgba(26, 58, 92, 0.4);
+            border: 1px solid rgba(155, 175, 192, 0.15);
+            border-radius: 12px;
+            padding: 0.85rem 1.1rem;
+            color: var(--ivory);
+            font-family: var(--sans);
+            font-size: 0.95rem;
+            transition: all 0.3s var(--ease);
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: var(--amber);
+            background: rgba(26, 58, 92, 0.6);
+            box-shadow: 0 0 0 4px rgba(212, 146, 42, 0.1);
+        }
+        .auth-footer {
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+        .auth-footer a {
+            color: var(--amber);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .auth-footer a:hover {
+            text-decoration: underline;
+        }
+        .btn-submit {
+            width: 100%;
+            margin-top: 1rem;
+            padding: 1rem;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- CUSTOM CURSOR -->
+    <div class="cursor-dot" id="cursorDot"></div>
+    <div class="cursor-ring" id="cursorRing"></div>
+
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <a href="../index.html" style="text-decoration: none; display: inline-block; margin-bottom: 1.5rem;">
+                    <div class="nav-wordmark" style="font-size: 1.8rem;">Schol<span>lective</span></div>
+                </a>
+                <h1>Welcome back</h1>
+                <p>Sign in to continue your academic journey.</p>
+            </div>
+
+            <form action="#">
+                <div class="form-group">
+                    <label for="email">Institutional Email</label>
+                    <input type="email" id="email" class="form-control" placeholder="name@university.edu" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" class="form-control" placeholder="••••••••" required>
+                </div>
+                <div style="text-align: right; margin-bottom: 1.5rem;">
+                    <a href="#" style="font-size: 0.8rem; color: var(--text-muted); text-decoration: none;">Forgot password?</a>
+                </div>
+                <button type="submit" class="btn-primary btn-submit">Sign In</button>
+            </form>
+
+            <div class="auth-footer">
+                Don't have an account? <a href="signup.html">Join Schollective</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../js/core.js"></script>
+</body>
+</html>

@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Schollective — Academic Mentorship, Democratized</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+
+    <!-- Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/pages/hero-parallax.css">
+</head>
+<body>
+
+    <!-- CUSTOM CURSOR -->
+    <div class="cursor-dot" id="cursorDot"></div>
+    <div class="cursor-ring" id="cursorRing"></div>
+
+    <!-- NAVIGATION -->
+    <nav id="navbar">
+        <a href="index.html" class="nav-logo">
+            <div class="logo-mark-css" id="css-logo-mark"></div>
+            <div class="nav-wordmark">Schol<span>lective</span></div>
+        </a>
+
+        <ul class="nav-links">
+            <li><a href="#how">How it works</a></li>
+            <li><a href="professors/index.html">For students</a></li>
+            <li><a href="#roles">For professors</a></li>
+            <li><a href="#features">Features</a></li>
+        </ul>
+
+        <div class="nav-cta">
+            <a href="auth/login.html" class="btn-ghost">Log in</a>
+            <a href="auth/signup.html" class="btn-primary">Get started free</a>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero" id="heroSection">
+        <div class="hero-bg"></div>
+        <div class="hero-orb" id="heroOrb"></div>
+
+        <div class="hero-content">
+            <div class="hero-badge">Now open for students &amp; professors</div>
+            <h1>Academic mentorship,<br /><em>finally democratized</em></h1>
+            <p class="hero-sub">Schollective connects students directly with verified professors for structured guidance, research help, and intellectual mentorship — free of charge, free of barriers.</p>
+            <div class="hero-actions">
+                <a href="auth/signup.html" class="btn-primary btn-large">Start as a student</a>
+                <a href="auth/signup.html" class="btn-ghost btn-large">Join as a professor</a>
+            </div>
+            <p class="hero-note">✦ Free for students &nbsp;·&nbsp; Volunteer-based &nbsp;·&nbsp; No cold emails</p>
+        </div>
+
+        <div class="hero-visual" id="cardCluster">
+            <div class="card-cluster">
+                <div class="float-card card-top-right" data-depth="18">
+                    <div class="card-label">Professor profile</div>
+                    <div class="card-avatar av-amber">DR</div>
+                    <div class="card-name">Dr. Rachel Kim</div>
+                    <div class="card-detail">Computational Biology · MIT</div>
+                    <div class="card-tag">Available now</div>
+                    <div class="card-tag sage">Research</div>
+                </div>
+
+                <div class="float-card card-main" data-depth="8">
+                    <div class="card-label">New mentorship request</div>
+                    <div class="card-divider"></div>
+                    <div class="card-msg">
+                        <strong>Maya S.</strong> is asking for guidance on structuring a literature review for a machine learning thesis in healthcare applications.
+                    </div>
+                    <div style="margin-top:1rem; display:flex; gap:0.5rem;">
+                        <button class="btn-primary" style="font-size:0.78rem; padding:0.45rem 1.1rem; cursor:none;">Accept</button>
+                        <button class="btn-ghost" style="font-size:0.78rem; padding:0.45rem 1.1rem; cursor:none;">View</button>
+                    </div>
+                </div>
+
+                <div class="float-card card-bottom-left" data-depth="13">
+                    <div class="card-avatar av-sage">MS</div>
+                    <div class="card-name">Maya S.</div>
+                    <div class="card-detail">Graduate · Computer Science</div>
+                    <div class="card-divider"></div>
+                    <div class="card-label">Interests</div>
+                    <div>
+                        <span class="card-tag sage">ML / AI</span>
+                        <span class="card-tag">Healthcare</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- STATS -->
+    <div class="stats-band">
+        <div class="stat-item">
+            <div class="stat-num">100<span>%</span></div>
+            <div class="stat-label">Free for students</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-num">0</div>
+            <div class="stat-label">Cold emails needed</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-num">∞</div>
+            <div class="stat-label">Fields of expertise</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-num">24<span>h</span></div>
+            <div class="stat-label">Avg. response time</div>
+        </div>
+    </div>
+
+    <!-- HOW IT WORKS -->
+    <section id="how">
+        <div class="how-grid">
+            <div>
+                <div class="section-label">How it works</div>
+                <h2>From sign-up to<br /><em>meaningful dialogue</em></h2>
+                <p class="section-body">We replaced academic cold-email culture with a system designed for clarity, safety, and genuine connection.</p>
+                <div class="steps">
+                    <div class="step reveal">
+                        <div class="step-num">1</div>
+                        <div class="step-text">
+                            <h3>Create your profile</h3>
+                            <p>Students sign up instantly. Professors apply and are manually verified using their institutional email address.</p>
+                        </div>
+                    </div>
+                    <div class="step reveal">
+                        <div class="step-num">2</div>
+                        <div class="step-text">
+                            <h3>Discover the right mentor</h3>
+                            <p>Browse professors by academic field, research area, and current availability. Find someone who works in your domain.</p>
+                        </div>
+                    </div>
+                    <div class="step reveal">
+                        <div class="step-num">3</div>
+                        <div class="step-text">
+                            <h3>Submit a structured request</h3>
+                            <p>Craft a focused mentorship request — not a cold email. The structure helps professors respond efficiently and meaningfully.</p>
+                        </div>
+                    </div>
+                    <div class="step reveal">
+                        <div class="step-num">4</div>
+                        <div class="step-text">
+                            <h3>Engage in guided dialogue</h3>
+                            <p>Communicate through organized one-on-one threads. Real academic guidance, on your terms.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="reveal">
+                <div class="mock-panel">
+                    <div class="mock-header">
+                        <div class="mock-title">Incoming Requests</div>
+                        <div class="mock-dot"></div>
+                    </div>
+                    <div class="request-card">
+                        <div class="req-meta">
+                            <div class="req-from">Alex T. · Undergrad</div>
+                            <div class="req-time">2h ago</div>
+                        </div>
+                        <div class="req-topic">Guidance on quantum error correction for senior thesis</div>
+                        <div><span class="pill pill-new">New</span></div>
+                    </div>
+                    <div class="request-card">
+                        <div class="req-meta">
+                            <div class="req-from">Priya M. · Graduate</div>
+                            <div class="req-time">Yesterday</div>
+                        </div>
+                        <div class="req-topic">Research methodology for cross-cultural NLP dataset curation</div>
+                        <div><span class="pill pill-pending">Awaiting reply</span></div>
+                    </div>
+                    <div class="request-card">
+                        <div class="req-meta">
+                            <div class="req-from">James L. · High school</div>
+                            <div class="req-time">3 days ago</div>
+                        </div>
+                        <div class="req-topic">Feedback on biology olympiad research paper draft</div>
+                        <div><span class="pill pill-done">Replied</span></div>
+                    </div>
+                    <div style="margin-top:1.25rem; padding-top:1rem; border-top:1px solid rgba(155,175,192,0.07);">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <span style="font-size:0.78rem; color:var(--text-muted);">3 active threads</span>
+                            <button class="btn-primary" style="font-size:0.75rem; padding:0.4rem 1rem; cursor:none;">View all</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-sep"></div>
+
+    <!-- ROLES -->
+    <section class="roles-section" id="roles">
+        <div style="text-align:center; margin-bottom:1rem;">
+            <div class="section-label" style="display:inline-block;">Who it's for</div>
+        </div>
+        <h2 style="text-align:center; margin-bottom:0.5rem;">Built for <em>both sides</em><br />of the conversation</h2>
+        <p class="section-body" style="margin:0 auto; text-align:center;">Whether you're seeking knowledge or sharing it, Schollective structures the experience around you.</p>
+        <div class="roles-grid">
+            <div class="role-card student reveal">
+                <div class="role-icon icon-sage">🎓</div>
+                <div class="role-title">For Students</div>
+                <p class="role-desc">High school, undergraduate, or graduate — get direct access to professors in your field without cold-emailing into the void.</p>
+                <ul class="feat-list">
+                    <li><div class="chk chk-s"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>Instant sign-up, no approval required</li>
+                    <li><div class="chk chk-s"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>Browse professors by field and availability</li>
+                    <li><div class="chk chk-s"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>Submit structured mentorship requests</li>
+                    <li><div class="chk chk-s"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>Track conversations in one dashboard</li>
+                    <li><div class="chk chk-s"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>Receive research feedback and guidance</li>
+                    <li><div class="chk chk-s"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>Completely free — always</li>
+                </ul>
+                <div style="margin-top:2rem;"><a href="auth/signup.html" class="btn-primary">Join as a student →</a></div>
+            </div>
+            <div class="role-card professor reveal">
+                <div class="role-icon icon-amber">🧑‍🏫</div>
+                <div class="role-title">For Professors</div>
+                <p class="role-desc">Volunteer-based. Share expertise on your own schedule, with full control over availability, request limits, and topics.</p>
+                <ul class="feat-list">
+                    <li><div class="chk chk-a"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>Verified via institutional email</li>
+                    <li><div class="chk chk-a"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>Set your own availability and limits</li>
+                    <li><div class="chk chk-a"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>No spam — only structured requests</li>
+                    <li><div class="chk chk-a"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>Choose which requests to accept or decline</li>
+                    <li><div class="chk chk-a"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>Full profile with expertise areas</li>
+                    <li><div class="chk chk-a"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>Expand academic impact beyond your institution</li>
+                </ul>
+                <div style="margin-top:2rem;"><a href="auth/signup.html" class="btn-ghost">Apply as a professor →</a></div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-sep"></div>
+
+    <!-- FEATURES -->
+    <section id="features">
+        <div style="text-align:center;">
+            <div class="section-label" style="display:inline-block;">Platform features</div>
+            <h2 style="margin-bottom:0.75rem;">Everything you need,<br /><em>nothing you don't</em></h2>
+            <p class="section-body" style="margin:0 auto; text-align:center;">Lightweight, focused, and free of the noise that plagues generic social platforms.</p>
+        </div>
+        <div class="features-grid">
+            <div class="feat-card reveal">
+                <div class="feat-icon">🔐</div>
+                <div class="feat-title">Role-locked accounts</div>
+                <p class="feat-desc">Roles are permanently assigned at onboarding — no confusion, no switching. The system always knows who you are.</p>
+            </div>
+            <div class="feat-card reveal">
+                <div class="feat-icon">📬</div>
+                <div class="feat-title">Structured messaging</div>
+                <p class="feat-desc">No unstructured spam. All communication happens through organized one-on-one threads tied to a specific request.</p>
+            </div>
+            <div class="feat-card reveal">
+                <div class="feat-icon">✅</div>
+                <div class="feat-title">Admin verification</div>
+                <p class="feat-desc">Every professor is manually approved using their institutional email — students always know who they're talking to.</p>
+            </div>
+            <div class="feat-card reveal">
+                <div class="feat-icon">📊</div>
+                <div class="feat-title">Unified dashboard</div>
+                <p class="feat-desc">Track all requests, active conversations, and responses in one clean hub — tailored to your role.</p>
+            </div>
+            <div class="feat-card reveal">
+                <div class="feat-icon">🔎</div>
+                <div class="feat-title">Professor discovery</div>
+                <p class="feat-desc">Browse and filter professors by field of expertise, institution, and current availability.</p>
+            </div>
+            <div class="feat-card reveal">
+                <div class="feat-icon">🛡️</div>
+                <div class="feat-title">Safe, controlled access</div>
+                <p class="feat-desc">Same-role messaging is blocked by design. Professors decide whether to engage with each request.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section class="testimonials-section">
+        <div class="section-label">Voices from the community</div>
+        <h2>What people are <em>saying</em></h2>
+        <div class="testi-grid">
+            <div class="testimonial reveal">
+                <span class="q-mark">"</span>
+                <p class="testi-text">I finally got genuine feedback on my research proposal from a professor at Stanford — something I could never have arranged by cold email alone.</p>
+                <div class="testi-author">
+                    <div class="author-av av-sage">LR</div>
+                    <div>
+                        <div class="author-name">Lena R.</div>
+                        <div class="author-role">Graduate student, Neuroscience</div>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial reveal">
+                <span class="q-mark">"</span>
+                <p class="testi-text">As a professor, I get 30 cold emails a week I can't respond to. This platform lets me actually help students on my own terms, without the inbox chaos.</p>
+                <div class="testi-author">
+                    <div class="author-av av-amber">DW</div>
+                    <div>
+                        <div class="author-name">Prof. David W.</div>
+                        <div class="author-role">Associate Professor, Economics</div>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial reveal">
+                <span class="q-mark">"</span>
+                <p class="testi-text">I'm a high school student interested in astrophysics. Three weeks after joining, I had a two-week mentorship exchange that changed everything.</p>
+                <div class="testi-author">
+                    <div class="author-av av-blue">AK</div>
+                    <div>
+                        <div class="author-name">Arjun K.</div>
+                        <div class="author-role">High school student, Grade 11</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section">
+        <div class="lottie-wrapper">
+            <div id="lottie-cta"></div>
+        </div>
+
+        <div class="section-label">Join Schollective</div>
+        <h2>The conversation<br /><em>starts here</em></h2>
+        <p class="section-body">Whether you're a student looking for guidance or a professor ready to give it — there's a place for you. Free, structured, built for real academic growth.</p>
+        <div class="cta-actions">
+            <a href="auth/signup.html" class="btn-primary btn-large">Get started — it's free</a>
+            <a href="#" class="btn-ghost btn-large">Learn more</a>
+        </div>
+        <div class="cta-cards">
+            <div class="cta-mini-card">
+                <div class="cta-mini-title">🎓 For Students</div>
+                <div class="cta-mini-sub">Instant sign-up · No approval needed</div>
+            </div>
+            <div class="cta-mini-card">
+                <div class="cta-mini-title">🧑‍🏫 For Professors</div>
+                <div class="cta-mini-sub">Apply today · Your schedule, your terms</div>
+            </div>
+            <div class="cta-mini-card">
+                <div class="cta-mini-title">🏛️ Nonprofit Mission</div>
+                <div class="cta-mini-sub">Free forever · Academic integrity first</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-top">
+            <div>
+                <div class="footer-brand">Schol<span>lective</span></div>
+                <p class="footer-tagline">A structured academic bridge connecting students and professors for meaningful, barrier-free mentorship.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Platform</h4>
+                <ul>
+                    <li><a href="#">How it works</a></li>
+                    <li><a href="#">For students</a></li>
+                    <li><a href="#">For professors</a></li>
+                    <li><a href="#">Features</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Account</h4>
+                <ul>
+                    <li><a href="auth/signup.html">Sign up free</a></li>
+                    <li><a href="auth/signup.html">Professor application</a></li>
+                    <li><a href="auth/login.html">Log in</a></li>
+                    <li><a href="admin/index.html">Admin portal</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Organization</h4>
+                <ul>
+                    <li><a href="#">About us</a></li>
+                    <li><a href="#">Nonprofit mission</a></li>
+                    <li><a href="#">Privacy policy</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="footer-copy">© 2025 Schollective. All rights reserved.</div>
+            <div class="footer-mission">Built with <span class="heart">♥</span> for academic equity</div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/core.js"></script>
+    <script src="js/parallax.js"></script>
+    <script src="js/animations.js"></script>
+
+</body>
+</html>

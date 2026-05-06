@@ -1,0 +1,88 @@
+/* ════════════════════════════════════════════════════
+   BASE RESET & VARIABLES
+   ════════════════════════════════════════════════════ */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --navy: #0B1628;
+    --navy-mid: #112240;
+    --navy-light: #1A3A5C;
+    --ivory: #F5F0E8;
+    --ivory-dim: #E8E1D4;
+    --amber: #D4922A;
+    --amber-light: #E8B860;
+    --amber-pale: #F5E4C0;
+    --sage: #3D7A6B;
+    --sage-light: #5BA090;
+    --text-dark: #EDE8E0;
+    --text-muted: #9BAFC0;
+    --serif: 'Cormorant Garamond', Georgia, serif;
+    --sans: 'DM Sans', system-ui, sans-serif;
+    --ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--sans);
+    background: var(--navy);
+    color: var(--text-dark);
+    line-height: 1.7;
+    overflow-x: hidden;
+    cursor: none; /* custom cursor active */
+}
+
+/* ────────────────────────────────────────────────────
+   CUSTOM CURSOR
+   ──────────────────────────────────────────────────── */
+.cursor-dot {
+    position: fixed;
+    width: 6px;
+    height: 6px;
+    background: var(--amber);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: background 0.2s;
+}
+
+.cursor-ring {
+    position: fixed;
+    width: 36px;
+    height: 36px;
+    border: 1.5px solid rgba(212, 146, 42, 0.5);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: width 0.3s var(--ease), height 0.3s var(--ease),
+        border-color 0.3s, background 0.3s;
+}
+
+.cursor-ring.hovering {
+    width: 56px;
+    height: 56px;
+    border-color: rgba(212, 146, 42, 0.8);
+    background: rgba(212, 146, 42, 0.06);
+}
+
+/* ────────────────────────────────────────────────────
+   NOISE OVERLAY — adds film-grain texture to bg
+   ────────────────────────────────────────────────────*/
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+}

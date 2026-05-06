@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Profile — Schollective</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/animations.css">
+    <style>
+        .dashboard-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: 100vh;
+        }
+        .sidebar {
+            background: rgba(11, 22, 40, 0.95);
+            border-right: 1px solid rgba(155, 175, 192, 0.1);
+            padding: 2.5rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+        }
+        .sidebar-nav {
+            margin-top: 3rem;
+            flex-grow: 1;
+        }
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.85rem 1.25rem;
+            border-radius: 12px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s var(--ease);
+        }
+        .nav-item:hover, .nav-item.active {
+            background: rgba(212, 146, 42, 0.08);
+            color: var(--ivory);
+        }
+        .nav-item.active {
+            border: 1px solid rgba(212, 146, 42, 0.2);
+        }
+        .main-content {
+            padding: 3rem 4rem;
+        }
+        .profile-form-container {
+            max-width: 800px;
+            background: rgba(17, 34, 64, 0.5);
+            border: 1px solid rgba(155, 175, 192, 0.1);
+            border-radius: 24px;
+            padding: 3.5rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- CUSTOM CURSOR -->
+    <div class="cursor-dot" id="cursorDot"></div>
+    <div class="cursor-ring" id="cursorRing"></div>
+
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <a href="../index.html" class="nav-logo" style="padding-left: 1.25rem;">
+                <div class="nav-wordmark">Schol<span>lective</span></div>
+            </a>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item"><span>📊</span> Dashboard</a>
+                <a href="../student/messages.html" class="nav-item"><span>📬</span> Messages</a>
+                <a href="profile.html" class="nav-item active"><span>🧑‍🏫</span> Edit Profile</a>
+                <a href="#" class="nav-item"><span>⚙️</span> Settings</a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="../auth/login.html" class="nav-item"><span>🚪</span> Log Out</a>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="dash-header" style="margin-bottom: 3rem;">
+                <h1 style="font-family: var(--serif); font-size: 2.5rem; font-weight: 300; color: var(--ivory);">Edit Profile</h1>
+                <p style="color: var(--text-muted);">Update your expertise and availability for students.</p>
+            </header>
+
+            <form action="dashboard.html" class="profile-form-container">
+                <div style="display: flex; gap: 2rem; align-items: center; margin-bottom: 2.5rem;">
+                    <div class="prof-avatar av-amber" style="width: 80px; height: 80px; font-size: 2rem;">RK</div>
+                    <button type="button" class="btn-ghost">Change Photo</button>
+                </div>
+
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" class="form-control" value="Dr. Rachel Kim">
+                </div>
+
+                <div class="form-group">
+                    <label>Bio</label>
+                    <textarea class="form-control" style="min-height: 120px;">Specializing in genomic sequencing algorithms and molecular modeling. Dedicated to fostering the next generation of researchers and thinkers.</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Research Areas (Comma separated)</label>
+                    <input type="text" class="form-control" value="Computational Biology, Genetics, AI in Healthcare">
+                </div>
+
+                <div class="form-group">
+                    <label>Max Active Mentorships</label>
+                    <input type="number" class="form-control" value="3" min="1" max="10">
+                </div>
+
+                <button type="submit" class="btn-primary" style="margin-top: 1rem; padding: 1rem 2rem;">Save Changes</button>
+            </form>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../js/core.js"></script>
+</body>
+</html>

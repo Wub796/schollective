@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Dashboard — Schollective</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/animations.css">
+    <style>
+        .dashboard-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: 100vh;
+        }
+        .sidebar {
+            background: rgba(11, 22, 40, 0.95);
+            border-right: 1px solid rgba(155, 175, 192, 0.1);
+            padding: 2.5rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+        }
+        .sidebar-nav {
+            margin-top: 3rem;
+            flex-grow: 1;
+        }
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.85rem 1.25rem;
+            border-radius: 12px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s var(--ease);
+        }
+        .nav-item:hover, .nav-item.active {
+            background: rgba(212, 146, 42, 0.08);
+            color: var(--ivory);
+        }
+        .nav-item.active {
+            border: 1px solid rgba(212, 146, 42, 0.2);
+        }
+        .main-content {
+            padding: 3rem 4rem;
+            background: radial-gradient(circle at 10% 10%, rgba(212, 146, 42, 0.03), transparent);
+        }
+        .dash-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+        }
+        .dash-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2.5rem;
+        }
+        .dash-card {
+            background: rgba(17, 34, 64, 0.5);
+            border: 1px solid rgba(155, 175, 192, 0.1);
+            border-radius: 20px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        .card-title {
+            font-family: var(--serif);
+            font-size: 1.25rem;
+            color: var(--ivory);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- CUSTOM CURSOR -->
+    <div class="cursor-dot" id="cursorDot"></div>
+    <div class="cursor-ring" id="cursorRing"></div>
+
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <a href="../index.html" class="nav-logo" style="padding-left: 1.25rem;">
+                <div class="nav-wordmark">Schol<span>lective</span></div>
+            </a>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item active"><span>📊</span> Dashboard</a>
+                <a href="../professors/index.html" class="nav-item"><span>🔎</span> Browse Professors</a>
+                <a href="messages.html" class="nav-item"><span>📬</span> Messages</a>
+                <a href="request.html" class="nav-item"><span>📝</span> New Request</a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="../auth/login.html" class="nav-item"><span>🚪</span> Log Out</a>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="dash-header">
+                <div>
+                    <h1 style="font-family: var(--serif); font-size: 2.5rem; font-weight: 300; color: var(--ivory);">Welcome, Student</h1>
+                    <p style="color: var(--text-muted);">Track your mentorship requests and active dialogues.</p>
+                </div>
+                <a href="request.html" class="btn-primary">New Request</a>
+            </header>
+
+            <div class="dash-grid">
+                <div class="dash-card">
+                    <div class="card-header">
+                        <h2 class="card-title">Active Threads</h2>
+                        <a href="messages.html" style="font-size: 0.8rem; color: var(--amber); text-decoration: none;">View all</a>
+                    </div>
+                    <div id="active-threads-list">
+                        <!-- Mock active threads -->
+                        <div class="request-card" onclick="location.href='messages.html?id=102'">
+                            <div class="req-meta">
+                                <div class="req-from">Dr. Rachel Kim</div>
+                                <div class="req-time">Yesterday</div>
+                            </div>
+                            <div class="req-topic">Research methodology for cross-cultural NLP dataset curation</div>
+                            <div><span class="pill pill-pending">Awaiting reply</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dash-card">
+                    <div class="card-header">
+                        <h2 class="card-title">Recommendations</h2>
+                    </div>
+                    <div id="recommendations-list">
+                        <!-- populated by JS -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../js/core.js"></script>
+    <script src="../js/mock-data.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const recsList = document.getElementById('recommendations-list');
+            MOCK_PROFESSORS.slice(0, 2).forEach(prof => {
+                const item = document.createElement('div');
+                item.style.marginBottom = '1.5rem';
+                item.innerHTML = `
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                        <div class="prof-avatar av-${prof.color}" style="width:40px; height:40px; font-size: 1rem;">${prof.avatar}</div>
+                        <div>
+                            <div style="font-size: 0.9rem; color: var(--ivory); font-weight: 500;">${prof.name}</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted);">${prof.field}</div>
+                        </div>
+                    </div>
+                `;
+                recsList.appendChild(item);
+            });
+        });
+    </script>
+</body>
+</html>
