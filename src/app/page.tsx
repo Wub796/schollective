@@ -12,8 +12,10 @@ import {
   Lock,
   ArrowRight,
   GraduationCap,
-  Users
+  Users,
+  Cpu
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export default function LandingPage() {
   const heroRef = useRef<HTMLElement>(null);
@@ -92,9 +94,9 @@ export default function LandingPage() {
             <div className="w-8 h-8 relative flex items-center justify-center bg-[var(--amber)] rounded-lg font-serif text-[var(--navy)] text-xl font-bold animate-pulse">S</div>
             <div className="font-serif text-2xl text-[var(--ivory)] font-medium">Schol<span className="text-[var(--amber)]">lective</span></div>
           </Link>
-          <ul className="hidden lg:flex items-center gap-10 list-none">
+          <ul className="hidden lg:flex items-center gap-12 list-none">
             <li><Link href="#how" className="text-sm text-[var(--text-muted)] hover:text-[var(--ivory)] transition-colors">How it works</Link></li>
-            <li><Link href="/professors" className="text-sm text-[var(--text-muted)] hover:text-[var(--ivory)] transition-colors">For students</Link></li>
+            <li><Link href="#students" className="text-sm text-[var(--text-muted)] hover:text-[var(--ivory)] transition-colors">For students</Link></li>
             <li><Link href="#roles" className="text-sm text-[var(--text-muted)] hover:text-[var(--ivory)] transition-colors">For professors</Link></li>
             <li><Link href="/features" className="text-sm text-[var(--text-muted)] hover:text-[var(--ivory)] transition-colors">Features</Link></li>
           </ul>
@@ -180,7 +182,7 @@ export default function LandingPage() {
       </section>
 
       {/* Stats Band */}
-      <div className="relative z-10 bg-[rgba(17,34,64,0.55)] border-y border-[rgba(212,146,42,0.09)] px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+      <div className="relative z-10 bg-[rgba(17,34,64,0.55)] border-y border-[rgba(212,146,42,0.09)] px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-center items-center gap-12 lg:gap-8">
           {[
             { num: "100%", label: "Free for students" },
@@ -189,43 +191,43 @@ export default function LandingPage() {
             { num: "24h", label: "Avg. response time" },
           ].map((stat, i) => (
             <div key={i} className={`flex-1 text-center px-8 w-full md:w-auto ${i !== 3 ? 'md:border-r md:border-[rgba(155,175,192,0.08)]' : ''}`}>
-              <div className="font-serif text-5xl lg:text-6xl font-light text-[var(--ivory)] mb-2">
+              <div className="font-serif text-6xl lg:text-7xl font-light text-[var(--ivory)] mb-3">
                 {stat.num.replace('%', '')}<span className="text-[var(--amber)]">{stat.num.includes('%') ? '%' : ''}</span>
               </div>
-              <div className="text-[0.7rem] lg:text-[0.78rem] tracking-[0.2em] text-[var(--text-muted)] uppercase font-bold">{stat.label}</div>
+              <div className="text-[0.75rem] lg:text-[0.85rem] tracking-[0.25em] text-[var(--text-muted)] uppercase font-bold">{stat.label}</div>
             </div>
           ))}
         </div>
       </div>
 
       {/* How It Works Section */}
-      <section id="how" className="py-24 lg:py-32 px-4 sm:px-6 lg:px-8 overflow-hidden relative">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-          <div className="space-y-12">
+      <section id="how" className="py-32 lg:py-48 px-4 sm:px-6 lg:px-8 overflow-hidden relative scroll-mt-24">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 lg:gap-32 items-center">
+          <div className="space-y-16">
             <div>
               <div className="text-[0.7rem] font-bold tracking-[0.2em] text-[var(--amber)] uppercase mb-4">The Methodology</div>
-              <h2 className="font-serif text-4xl lg:text-5xl font-light text-[var(--ivory)] leading-tight mb-6">
+              <h2 className="font-serif text-5xl lg:text-7xl font-light text-[var(--ivory)] leading-tight mb-8">
                 From sign-up to<br /><em className="italic text-[var(--amber-light)]">meaningful dialogue</em>
               </h2>
-              <p className="text-lg text-[var(--text-muted)] font-light leading-relaxed max-w-lg">
+              <p className="text-xl text-[var(--text-muted)] font-light leading-relaxed max-w-lg">
                 We replaced academic cold-email culture with a system designed for clarity, safety, and genuine intellectual connection.
               </p>
             </div>
 
-            <div className="space-y-10">
+            <div className="space-y-12">
               {[
                 { n: "1", t: "Create your profile", d: "Students sign up instantly. Professors apply and are manually verified using their institutional email address." },
                 { n: "2", t: "Discover the right mentor", d: "Browse professors by academic field, research area, and current availability. Find someone who works in your domain." },
                 { n: "3", t: "Submit a structured request", d: "Craft a focused mentorship request &mdash; not a cold email. The structure helps professors respond efficiently." },
                 { n: "4", t: "Engage in guided dialogue", d: "Communicate through organized one-on-one threads. Real academic guidance, on your terms." },
               ].map((step) => (
-                <div key={step.n} className="flex gap-6 animate-in fade-in slide-in-from-left-4 duration-700">
-                  <div className="w-10 h-10 rounded-full border border-[var(--amber)]/30 flex items-center justify-center text-[var(--amber)] font-serif text-lg shrink-0 mt-1">
+                <div key={step.n} className="flex gap-8 animate-in fade-in slide-in-from-left-4 duration-700">
+                  <div className="w-12 h-12 rounded-full border border-[var(--amber)]/30 flex items-center justify-center text-[var(--amber)] font-serif text-xl shrink-0 mt-1">
                     {step.n}
                   </div>
                   <div>
-                    <h3 className="text-lg font-serif font-medium text-[var(--ivory)] mb-1.5">{step.t}</h3>
-                    <p className="text-[var(--text-muted)] text-sm font-light leading-relaxed max-w-sm">{step.d}</p>
+                    <h3 className="text-xl font-serif font-medium text-[var(--ivory)] mb-2">{step.t}</h3>
+                    <p className="text-[var(--text-muted)] text-base font-light leading-relaxed max-w-md">{step.d}</p>
                   </div>
                 </div>
               ))}
@@ -233,27 +235,27 @@ export default function LandingPage() {
           </div>
 
           <div className="relative group lg:block hidden animate-in fade-in slide-in-from-right-8 duration-1000">
-            <div className="absolute -inset-4 bg-[var(--amber)]/5 blur-3xl rounded-full transition-all group-hover:bg-[var(--amber)]/10" />
-            <div className="relative bg-[rgba(17,34,64,0.6)] border border-[rgba(212,146,42,0.15)] rounded-[40px] p-8 backdrop-blur-3xl shadow-2xl">
-              <div className="flex items-center justify-between mb-8 pb-4 border-b border-[rgba(155,175,192,0.08)]">
-                <div className="font-serif text-lg text-[var(--ivory)]">Incoming Requests</div>
-                <div className="w-2 h-2 rounded-full bg-[var(--sage-light)] animate-pulse" />
+            <div className="absolute -inset-10 bg-[var(--amber)]/5 blur-[120px] rounded-full transition-all group-hover:bg-[var(--amber)]/10" />
+            <div className="relative bg-[rgba(17,34,64,0.6)] border border-[rgba(212,146,42,0.15)] rounded-[48px] p-10 lg:p-14 backdrop-blur-3xl shadow-2xl">
+              <div className="flex items-center justify-between mb-10 pb-6 border-b border-[rgba(155,175,192,0.08)]">
+                <div className="font-serif text-2xl text-[var(--ivory)]">Incoming Requests</div>
+                <div className="w-3 h-3 rounded-full bg-[var(--sage-light)] animate-pulse" />
               </div>
               
-              <div className="space-y-4">
+              <div className="space-y-6">
                 {[
                   { n: "Alex T. · Undergrad", t: "2h ago", s: "new", c: "Guidance on quantum error correction for senior thesis" },
                   { n: "Priya M. · Graduate", t: "Yesterday", s: "pending", c: "Research methodology for cross-cultural NLP dataset" },
                   { n: "James L. · High school", t: "3 days ago", s: "done", c: "Feedback on biology olympiad research paper draft" },
                 ].map((req, i) => (
-                  <div key={i} className="bg-[rgba(26,58,92,0.4)] border border-[rgba(155,175,192,0.1)] rounded-2xl p-5 hover:border-[var(--amber)]/30 transition-colors">
-                    <div className="flex justify-between items-center mb-1.5">
-                      <span className="text-[0.75rem] font-medium text-[var(--ivory)]">{req.n}</span>
-                      <span className="text-[0.65rem] text-[var(--text-muted)]">{req.t}</span>
+                  <div key={i} className="bg-[rgba(26,58,92,0.4)] border border-[rgba(155,175,192,0.1)] rounded-[24px] p-6 hover:border-[var(--amber)]/30 transition-colors shadow-sm">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-sm font-medium text-[var(--ivory)]">{req.n}</span>
+                      <span className="text-xs text-[var(--text-muted)]">{req.t}</span>
                     </div>
-                    <p className="text-sm text-[var(--text-muted)] font-light leading-relaxed mb-3">&quot;{req.c}&quot;</p>
+                    <p className="text-base text-[var(--text-muted)] font-light leading-relaxed mb-4 italic opacity-80">&quot;{req.c}&quot;</p>
                     <div className={cn(
-                      "inline-block px-2.5 py-0.5 rounded-full text-[0.6rem] font-bold uppercase tracking-wider border",
+                      "inline-block px-3 py-1 rounded-full text-[0.65rem] font-bold uppercase tracking-widest border",
                       req.s === 'new' ? "bg-[rgba(61,122,107,0.1)] text-[var(--sage-light)] border-[rgba(61,122,107,0.2)]" :
                       req.s === 'pending' ? "bg-[rgba(212,146,42,0.1)] text-[var(--amber)] border-[rgba(212,146,42,0.2)]" :
                       "bg-[rgba(155,175,192,0.05)] text-[var(--text-muted)] border-[rgba(155,175,192,0.1)]"
@@ -269,62 +271,62 @@ export default function LandingPage() {
       </section>
 
       {/* Roles Section */}
-      <section id="roles" className="py-24 lg:py-32 px-4 sm:px-6 lg:px-8 relative bg-[rgba(17,34,64,0.3)]">
-        <div className="max-w-7xl mx-auto text-center space-y-16">
+      <section id="roles" className="py-32 lg:py-48 px-4 sm:px-6 lg:px-8 relative bg-[rgba(17,34,64,0.3)] scroll-mt-24">
+        <div className="max-w-7xl mx-auto text-center space-y-20">
           <div className="max-w-2xl mx-auto">
-            <div className="text-[0.7rem] font-bold tracking-[0.2em] text-[var(--amber)] uppercase mb-4">Built forDialogue</div>
-            <h2 className="font-serif text-4xl lg:text-5xl font-light text-[var(--ivory)] leading-tight mb-6">
+            <div className="text-[0.7rem] font-bold tracking-[0.2em] text-[var(--amber)] uppercase mb-4">The Community</div>
+            <h2 className="font-serif text-5xl lg:text-7xl font-light text-[var(--ivory)] leading-tight mb-8">
               Built for <em>both sides</em><br />of the conversation
             </h2>
-            <p className="text-lg text-[var(--text-muted)] font-light">Whether you&apos;re seeking knowledge or sharing it, Schollective structures the experience around you.</p>
+            <p className="text-xl text-[var(--text-muted)] font-light leading-relaxed">Whether you&apos;re seeking knowledge or sharing it, Schollective structures the experience around you.</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 text-left">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-16 text-left">
             {/* Students */}
-            <div className="bg-[rgba(11,22,40,0.6)] border border-[rgba(155,175,192,0.1)] rounded-[40px] p-10 lg:p-12 transition-all hover:border-[var(--amber)]/20 hover:bg-[rgba(11,22,40,0.8)] relative group overflow-hidden">
-              <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[var(--sage)] to-transparent opacity-50" />
-              <div className="w-14 h-14 rounded-2xl bg-[rgba(61,122,107,0.1)] flex items-center justify-center text-2xl mb-8 border border-[rgba(61,122,107,0.2)]">🎓</div>
-              <h3 className="font-serif text-3xl text-[var(--ivory)] mb-4 font-light">For Students</h3>
-              <p className="text-[var(--text-muted)] font-light leading-relaxed mb-8">High school, undergraduate, or graduate &mdash; get direct access to professors without cold-emailing into the void.</p>
-              <ul className="space-y-4 mb-10">
+            <div id="students" className="bg-[rgba(11,22,40,0.6)] border border-[rgba(155,175,192,0.1)] rounded-[48px] p-12 lg:p-16 transition-all hover:border-[var(--amber)]/20 hover:bg-[rgba(11,22,40,0.8)] relative group overflow-hidden shadow-2xl scroll-mt-32">
+              <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-[var(--sage)] to-transparent opacity-50" />
+              <div className="w-16 h-16 rounded-2xl bg-[rgba(61,122,107,0.1)] flex items-center justify-center text-3xl mb-10 border border-[rgba(61,122,107,0.2)] shadow-inner">🎓</div>
+              <h3 className="font-serif text-4xl text-[var(--ivory)] mb-6 font-light">For Students</h3>
+              <p className="text-lg text-[var(--text-muted)] font-light leading-relaxed mb-10">High school, undergraduate, or graduate &mdash; get direct access to professors without cold-emailing into the void.</p>
+              <ul className="space-y-6 mb-12">
                 {[
                   "Instant sign-up, no approval required",
                   "Browse professors by field and availability",
                   "Submit structured mentorship requests",
                   "Receive research feedback and guidance",
                 ].map((f, i) => (
-                  <li key={i} className="flex gap-3 text-sm text-[var(--text-muted)] font-light items-start">
-                    <CheckCircle2 size={18} className="text-[var(--sage-light)] mt-0.5 shrink-0" />
+                  <li key={i} className="flex gap-4 text-base text-[var(--text-muted)] font-light items-start">
+                    <CheckCircle2 size={22} className="text-[var(--sage-light)] mt-0.5 shrink-0 opacity-80" />
                     {f}
                   </li>
                 ))}
               </ul>
               <Link href="/auth/signup">
-                <Button className="w-full py-4 text-sm font-bold uppercase tracking-widest shadow-none">Join as a student &rarr;</Button>
+                <Button className="w-full py-5 text-base font-bold uppercase tracking-[0.2em] shadow-xl">Join as a student &rarr;</Button>
               </Link>
             </div>
 
             {/* Professors */}
-            <div className="bg-[rgba(11,22,40,0.6)] border border-[rgba(155,175,192,0.1)] rounded-[40px] p-10 lg:p-12 transition-all hover:border-[var(--amber)]/20 hover:bg-[rgba(11,22,40,0.8)] relative group overflow-hidden">
-              <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[var(--amber)] to-transparent opacity-50" />
-              <div className="w-14 h-14 rounded-2xl bg-[rgba(212,146,42,0.1)] flex items-center justify-center text-2xl mb-8 border border-[rgba(212,146,42,0.2)]">🧑‍🏫</div>
-              <h3 className="font-serif text-3xl text-[var(--ivory)] mb-4 font-light">For Professors</h3>
-              <p className="text-[var(--text-muted)] font-light leading-relaxed mb-8">Volunteer-based. Share expertise on your own schedule, with full control over availability and topics.</p>
-              <ul className="space-y-4 mb-10">
+            <div className="bg-[rgba(11,22,40,0.6)] border border-[rgba(155,175,192,0.1)] rounded-[48px] p-12 lg:p-16 transition-all hover:border-[var(--amber)]/20 hover:bg-[rgba(11,22,40,0.8)] relative group overflow-hidden shadow-2xl">
+              <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-[var(--amber)] to-transparent opacity-50" />
+              <div className="w-16 h-16 rounded-2xl bg-[rgba(212,146,42,0.1)] flex items-center justify-center text-3xl mb-10 border border-[rgba(212,146,42,0.2)] shadow-inner">🧑‍🏫</div>
+              <h3 className="font-serif text-4xl text-[var(--ivory)] mb-6 font-light">For Professors</h3>
+              <p className="text-lg text-[var(--text-muted)] font-light leading-relaxed mb-10">Volunteer-based. Share expertise on your own schedule, with full control over availability and topics.</p>
+              <ul className="space-y-6 mb-12">
                 {[
                   "Verified via institutional credentials",
                   "Set your own availability and limits",
                   "No spam &mdash; only structured requests",
                   "Expand academic impact beyond your institution",
                 ].map((f, i) => (
-                  <li key={i} className="flex gap-3 text-sm text-[var(--text-muted)] font-light items-start">
-                    <CheckCircle2 size={18} className="text-[var(--amber)] mt-0.5 shrink-0" />
+                  <li key={i} className="flex gap-4 text-base text-[var(--text-muted)] font-light items-start">
+                    <CheckCircle2 size={22} className="text-[var(--amber)] mt-0.5 shrink-0 opacity-80" />
                     {f}
                   </li>
                 ))}
               </ul>
               <Link href="/auth/signup">
-                <Button variant="ghost" className="w-full py-4 text-sm font-bold uppercase tracking-widest border-2">Apply as a professor &rarr;</Button>
+                <Button variant="ghost" className="w-full py-5 text-base font-bold uppercase tracking-[0.2em] border-2">Apply as a professor &rarr;</Button>
               </Link>
             </div>
           </div>
@@ -332,14 +334,14 @@ export default function LandingPage() {
       </section>
 
       {/* Features Grid Section */}
-      <section id="features" className="py-24 lg:py-32 px-4 sm:px-6 lg:px-8">
+      <section id="features" className="py-32 lg:py-48 px-4 sm:px-6 lg:px-8 scroll-mt-24">
         <div className="max-w-7xl mx-auto text-center">
           <div className="text-[0.7rem] font-bold tracking-[0.2em] text-[var(--amber)] uppercase mb-4">Core Infrastructure</div>
-          <h2 className="font-serif text-4xl lg:text-5xl font-light text-[var(--ivory)] leading-tight mb-16">
+          <h2 className="font-serif text-5xl lg:text-7xl font-light text-[var(--ivory)] leading-tight mb-20">
             Everything you need,<br /><em className="italic text-[var(--amber-light)]">nothing you don&apos;t</em>
           </h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12">
             {[
               { i: Lock, t: "Role-locked accounts", d: "Roles are permanently assigned at onboarding &mdash; no confusion. The system always knows your domain." },
               { i: MessageSquare, t: "Structured messaging", d: "No unstructured spam. All communication happens through organized threads tied to specific requests." },
@@ -348,10 +350,10 @@ export default function LandingPage() {
               { i: Search, t: "Professor discovery", d: "Browse and filter professors by field of expertise, institution, and real-time availability settings." },
               { i: ShieldCheck, t: "Safe, controlled access", d: "Same-role messaging is blocked by design. Professors decide whether to engage with each request." },
             ].map((f, i) => (
-              <div key={i} className="bg-[rgba(17,34,64,0.4)] border border-[rgba(155,175,192,0.1)] rounded-[32px] p-8 text-left transition-all hover:border-[var(--amber)]/20 hover:bg-[rgba(17,34,64,0.6)] animate-in fade-in duration-700 delay-75 group">
-                <f.i className="text-[var(--amber)] mb-6 transition-transform group-hover:scale-110" size={32} strokeWidth={1.5} />
-                <h3 className="font-serif text-xl text-[var(--ivory)] mb-3 font-medium tracking-tight">{f.t}</h3>
-                <p className="text-sm text-[var(--text-muted)] font-light leading-relaxed" dangerouslySetInnerHTML={{ __html: f.d }} />
+              <div key={i} className="bg-[rgba(17,34,64,0.4)] border border-[rgba(155,175,192,0.1)] rounded-[40px] p-10 text-left transition-all hover:border-[var(--amber)]/20 hover:bg-[rgba(17,34,64,0.6)] group shadow-xl">
+                <f.i className="text-[var(--amber)] mb-8 transition-transform group-hover:scale-110" size={36} strokeWidth={1.5} />
+                <h3 className="font-serif text-2xl text-[var(--ivory)] mb-4 font-medium tracking-tight">{f.t}</h3>
+                <p className="text-base text-[var(--text-muted)] font-light leading-relaxed" dangerouslySetInnerHTML={{ __html: f.d }} />
               </div>
             ))}
           </div>
@@ -359,74 +361,74 @@ export default function LandingPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="relative text-center px-4 sm:px-6 lg:px-8 py-32 lg:py-48 overflow-hidden bg-[radial-gradient(ellipse_70%_70%_at_50%_50%,rgba(212,146,42,0.055),transparent_70%)]">
+      <section className="relative text-center px-4 sm:px-6 lg:px-8 py-48 lg:py-64 overflow-hidden bg-[radial-gradient(ellipse_70%_70%_at_50%_50%,rgba(212,146,42,0.055),transparent_70%)]">
         <div className="max-w-7xl mx-auto relative z-10">
-          <div ref={lottieRef} className="mx-auto mb-10 w-[200px] h-[200px] relative z-10 filter drop-shadow-[0_0_18px_rgba(212,146,42,0.22)]"></div>
+          <div ref={lottieRef} className="mx-auto mb-12 w-[220px] h-[220px] relative z-10 filter drop-shadow-[0_0_24px_rgba(212,146,42,0.22)]"></div>
           
-          <div className="text-[0.73rem] font-medium tracking-[0.25em] text-[var(--amber)] uppercase mb-6">Join Schollective</div>
-          <h2 className="font-serif text-5xl lg:text-6xl font-light text-[var(--ivory)] mb-8 max-w-[800px] mx-auto leading-tight">
+          <div className="text-[0.75rem] font-medium tracking-[0.25em] text-[var(--amber)] uppercase mb-8">Join Schollective</div>
+          <h2 className="font-serif text-6xl lg:text-8xl font-light text-[var(--ivory)] mb-10 max-w-[900px] mx-auto leading-tight">
             The conversation<br /><em className="italic text-[var(--amber-light)]">starts here</em>
           </h2>
-          <p className="text-[var(--text-muted)] max-w-[540px] mx-auto mb-12 text-lg lg:text-xl font-light leading-relaxed">
+          <p className="text-[var(--text-muted)] max-w-[600px] mx-auto mb-16 text-xl lg:text-2xl font-light leading-relaxed opacity-90">
             Whether you&apos;re a student looking for guidance or a professor ready to give it &mdash; there&apos;s a place for you. Free, structured, built for real academic growth.
           </p>
-          <div className="flex flex-col sm:flex-row justify-center items-center gap-5 mb-20">
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-6 mb-24">
             <Link href="/auth/signup" className="w-full sm:w-auto">
-              <Button size="lg" className="w-full sm:w-auto min-w-[240px] py-5 font-bold uppercase tracking-widest shadow-xl">Get started &mdash; it&apos;s free</Button>
+              <Button size="lg" className="w-full sm:w-auto min-w-[280px] py-6 text-base font-bold uppercase tracking-[0.2em] shadow-2xl">Get started &mdash; it&apos;s free</Button>
             </Link>
-            <Button variant="ghost" size="lg" className="w-full sm:w-auto min-w-[180px] py-5 font-bold uppercase tracking-widest border-2">Learn more</Button>
+            <Button variant="ghost" size="lg" className="w-full sm:w-auto min-w-[200px] py-6 text-base font-bold uppercase tracking-[0.2em] border-2">Learn more</Button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 text-left">
-             <div className="bg-[rgba(17,34,64,0.7)] border border-[rgba(155,175,192,0.1)] rounded-[24px] p-8 backdrop-blur-md transition-all hover:translate-y-[-4px]">
-                <GraduationCap className="text-[var(--sage-light)] mb-4" size={24} />
-                <h4 className="font-serif text-xl text-[var(--ivory)] mb-2 font-medium">For Students</h4>
-                <p className="text-sm text-[var(--text-muted)] font-light leading-relaxed opacity-80">Instant sign-up · No approval needed · Direct mentor discovery</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12 text-left">
+             <div className="bg-[rgba(17,34,64,0.75)] border border-[rgba(155,175,192,0.15)] rounded-[32px] p-10 backdrop-blur-xl transition-all hover:translate-y-[-6px] shadow-2xl">
+                <GraduationCap className="text-[var(--sage-light)] mb-6" size={28} />
+                <h4 className="font-serif text-2xl text-[var(--ivory)] mb-3 font-medium">For Students</h4>
+                <p className="text-base text-[var(--text-muted)] font-light leading-relaxed opacity-80">Instant sign-up · No approval needed · Direct mentor discovery</p>
              </div>
-             <div className="bg-[rgba(17,34,64,0.7)] border border-[rgba(155,175,192,0.1)] rounded-[24px] p-8 backdrop-blur-md transition-all hover:translate-y-[-4px]">
-                <Users className="text-[var(--amber)] mb-4" size={24} />
-                <h4 className="font-serif text-xl text-[var(--ivory)] mb-2 font-medium">For Professors</h4>
-                <p className="text-sm text-[var(--text-muted)] font-light leading-relaxed opacity-80">Apply today · Full control of schedule · Manual verification</p>
+             <div className="bg-[rgba(17,34,64,0.75)] border border-[rgba(155,175,192,0.15)] rounded-[32px] p-10 backdrop-blur-xl transition-all hover:translate-y-[-6px] shadow-2xl">
+                <Users className="text-[var(--amber)] mb-6" size={28} />
+                <h4 className="font-serif text-2xl text-[var(--ivory)] mb-3 font-medium">For Professors</h4>
+                <p className="text-base text-[var(--text-muted)] font-light leading-relaxed opacity-80">Apply today · Full control of schedule · Manual verification</p>
              </div>
-             <div className="bg-[rgba(17,34,64,0.7)] border border-[rgba(155,175,192,0.1)] rounded-[24px] p-8 backdrop-blur-md transition-all hover:translate-y-[-4px]">
-                <ShieldCheck className="text-[var(--ivory)] mb-4 opacity-50" size={24} />
-                <h4 className="font-serif text-xl text-[var(--ivory)] mb-2 font-medium">Nonprofit Mission</h4>
-                <p className="text-sm text-[var(--text-muted)] font-light leading-relaxed opacity-80">Free forever · Data privacy first · Purely academic impact</p>
+             <div className="bg-[rgba(17,34,64,0.75)] border border-[rgba(155,175,192,0.15)] rounded-[32px] p-10 backdrop-blur-xl transition-all hover:translate-y-[-6px] shadow-2xl">
+                <ShieldCheck className="text-[var(--ivory)] mb-6 opacity-50" size={28} />
+                <h4 className="font-serif text-2xl text-[var(--ivory)] mb-3 font-medium">Nonprofit Mission</h4>
+                <p className="text-base text-[var(--text-muted)] font-light leading-relaxed opacity-80">Free forever · Data privacy first · Purely academic impact</p>
              </div>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="relative z-10 px-4 sm:px-6 lg:px-8 pt-24 pb-12 bg-[rgba(11,22,40,0.95)] border-t border-[rgba(155,175,192,0.07)]">
+      <footer className="relative z-10 px-4 sm:px-6 lg:px-8 pt-32 pb-16 bg-[rgba(11,22,40,0.98)] border-t border-[rgba(155,175,192,0.1)]">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-16 mb-16 pb-16 border-b border-[rgba(155,175,192,0.07)]">
-            <div className="lg:col-span-2 space-y-6">
-              <div className="font-serif text-3xl text-[var(--ivory)]">Schol<span className="text-[var(--amber)]">lective</span></div>
-              <p className="text-[var(--text-muted)] leading-relaxed max-w-[320px] font-light text-lg">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-16 lg:gap-24 mb-20 pb-20 border-b border-[rgba(155,175,192,0.08)]">
+            <div className="lg:col-span-2 space-y-8">
+              <div className="font-serif text-4xl text-[var(--ivory)]">Schol<span className="text-[var(--amber)]">lective</span></div>
+              <p className="text-[var(--text-muted)] leading-relaxed max-w-[360px] font-light text-xl opacity-90">
                 A structured academic bridge connecting students and professors for meaningful, barrier-free mentorship.
               </p>
             </div>
             <div>
-              <h4 className="text-[0.7rem] font-bold tracking-[0.25em] text-[var(--text-muted)] uppercase mb-8">Platform</h4>
-              <ul className="flex flex-col gap-4 list-none p-0 text-sm text-[var(--text-muted)] font-medium">
+              <h4 className="text-[0.75rem] font-bold tracking-[0.3em] text-[var(--text-muted)] uppercase mb-10">Platform</h4>
+              <ul className="flex flex-col gap-5 list-none p-0 text-base text-[var(--text-muted)] font-medium">
                 <li><Link href="#how" className="hover:text-[var(--ivory)] transition-colors">How it works</Link></li>
-                <li><Link href="/professors" className="hover:text-[var(--ivory)] transition-colors">For students</Link></li>
+                <li><Link href="#students" className="hover:text-[var(--ivory)] transition-colors">For students</Link></li>
                 <li><Link href="#roles" className="hover:text-[var(--ivory)] transition-colors">For professors</Link></li>
                 <li><Link href="/features" className="hover:text-[var(--ivory)] transition-colors">Features</Link></li>
               </ul>
             </div>
             <div>
-              <h4 className="text-[0.7rem] font-bold tracking-[0.25em] text-[var(--text-muted)] uppercase mb-8">Account</h4>
-              <ul className="flex flex-col gap-4 list-none p-0 text-sm text-[var(--text-muted)] font-medium">
+              <h4 className="text-[0.75rem] font-bold tracking-[0.3em] text-[var(--text-muted)] uppercase mb-10">Account</h4>
+              <ul className="flex flex-col gap-5 list-none p-0 text-base text-[var(--text-muted)] font-medium">
                 <li><Link href="/auth/signup" className="hover:text-[var(--ivory)] transition-colors">Sign up free</Link></li>
                 <li><Link href="/auth/login" className="hover:text-[var(--ivory)] transition-colors">Log in</Link></li>
                 <li><Link href="/prof/pending" className="hover:text-[var(--ivory)] transition-colors">Verification Status</Link></li>
               </ul>
             </div>
             <div>
-              <h4 className="text-[0.7rem] font-bold tracking-[0.25em] text-[var(--text-muted)] uppercase mb-8">Organization</h4>
-              <ul className="flex flex-col gap-4 list-none p-0 text-sm text-[var(--text-muted)] font-medium">
+              <h4 className="text-[0.75rem] font-bold tracking-[0.3em] text-[var(--text-muted)] uppercase mb-10">Organization</h4>
+              <ul className="flex flex-col gap-5 list-none p-0 text-base text-[var(--text-muted)] font-medium">
                 <li><Link href="#" className="hover:text-[var(--ivory)] transition-colors">About us</Link></li>
                 <li><Link href="#" className="hover:text-[var(--ivory)] transition-colors">Nonprofit Mission</Link></li>
                 <li><Link href="#" className="hover:text-[var(--ivory)] transition-colors">Privacy Policy</Link></li>
@@ -434,7 +436,7 @@ export default function LandingPage() {
               </ul>
             </div>
           </div>
-          <div className="flex flex-col md:flex-row justify-between items-center gap-6 text-[0.75rem] text-[var(--text-muted)] uppercase tracking-[0.3em] font-bold opacity-40">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-8 text-[0.8rem] text-[var(--text-muted)] uppercase tracking-[0.4em] font-bold opacity-30">
             <div>© 2025 Schollective. All rights reserved.</div>
             <div>Built with <span className="text-[var(--amber)] opacity-100">♥</span> for academic equity</div>
           </div>
@@ -442,8 +444,4 @@ export default function LandingPage() {
       </footer>
     </div>
   );
-}
-
-function cn(...classes: any[]) {
-  return classes.filter(Boolean).join(" ");
 }
