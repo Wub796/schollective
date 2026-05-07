@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
-import { Check, X } from "lucide-react";
+import { Check, X, Loader2, Calendar, MessageSquare } from "lucide-react";
 import { updateRequestStatus } from "@/app/prof/dashboard/actions";
 import { toast } from "sonner";
 
@@ -45,57 +45,63 @@ export function RequestQueueCard({ request }: RequestQueueCardProps) {
   };
 
   return (
-    <div className="bg-[rgba(17,34,64,0.6)] border border-[var(--amber)]/20 rounded-2xl p-6 backdrop-blur-md shadow-xl transition-all duration-300 hover:border-[var(--amber)]/40 animate-in fade-in slide-in-from-right-4 duration-500">
-      <div className="flex justify-between items-start mb-6">
+    <div className="bg-[rgba(17,34,64,0.6)] border border-[var(--amber)]/20 rounded-3xl p-6 md:p-8 backdrop-blur-md shadow-xl transition-all duration-300 hover:border-[var(--amber)]/40 animate-in fade-in slide-in-from-right-4 duration-500">
+      <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-8">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-full bg-[rgba(212,146,42,0.1)] flex items-center justify-center font-serif text-[var(--amber)] border border-[rgba(212,146,42,0.2)] text-lg">
+          <div className="w-14 h-14 rounded-2xl bg-[rgba(212,146,42,0.1)] flex items-center justify-center font-serif text-[var(--amber)] border border-[rgba(212,146,42,0.25)] text-xl shadow-inner">
             {request.student.first_name[0]}{request.student.last_name?.[0] || ''}
           </div>
           <div>
-            <div className="text-base font-medium text-[var(--ivory)]">
+            <div className="text-lg font-medium text-[var(--ivory)] leading-tight">
               {studentName} {request.student.last_name}
             </div>
-            <div className="text-[0.75rem] text-[var(--amber)] uppercase tracking-widest font-bold">
+            <div className="text-[0.65rem] text-[var(--amber)] uppercase tracking-[0.2em] font-bold mt-1.5 opacity-80">
               {request.student.education_level?.replace('-', ' ')}
             </div>
           </div>
         </div>
-        <div className="text-[0.7rem] text-[var(--text-muted)]">
+        <div className="flex items-center gap-1.5 text-[0.65rem] text-[var(--text-muted)] uppercase tracking-widest font-bold">
+          <Calendar size={12} className="opacity-60" />
           {new Date(request.created_at).toLocaleDateString()}
         </div>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-6">
         <div>
-          <div className="text-[0.65rem] text-[var(--text-muted)] uppercase tracking-[0.2em] font-bold mb-1">Proposed Topic</div>
-          <p className="text-[var(--ivory)] text-sm leading-relaxed">{request.topic}</p>
+          <div className="text-[0.6rem] text-[var(--text-muted)] uppercase tracking-[0.25em] font-bold mb-2 opacity-60">Proposed Topic</div>
+          <p className="text-[var(--ivory)] text-sm md:text-base leading-relaxed font-light italic">
+            &quot;{request.topic}&quot;
+          </p>
         </div>
 
         {request.initial_message && (
-          <div className="bg-[rgba(26,58,92,0.3)] rounded-xl p-4 border border-[rgba(155,175,192,0.05)]">
-            <div className="text-[0.65rem] text-[var(--text-muted)] uppercase tracking-widest font-bold mb-2">Message</div>
-            <p className="text-[var(--text-muted)] text-sm italic leading-relaxed">
-              &quot;{request.initial_message}&quot;
+          <div className="bg-[rgba(26,58,92,0.4)] rounded-2xl p-5 border border-[rgba(155,175,192,0.1)] shadow-inner">
+            <div className="flex items-center gap-2 text-[0.6rem] text-[var(--text-muted)] uppercase tracking-[0.25em] font-bold mb-3 opacity-60">
+              <MessageSquare size={12} />
+              Initial Message
+            </div>
+            <p className="text-[var(--text-muted)] text-sm leading-relaxed line-clamp-4 font-light">
+              {request.initial_message}
             </p>
           </div>
         )}
 
-        <div className="flex gap-3 pt-2">
+        <div className="grid grid-cols-2 gap-4 pt-4">
           <Button 
             onClick={() => handleAction('active')} 
             disabled={loading}
-            className="flex-1 gap-2"
+            className="gap-2 h-12 rounded-xl text-xs uppercase font-bold tracking-widest"
           >
-            <Check size={16} />
-            Accept Request
+            {loading ? <Loader2 size={16} className="animate-spin" /> : <Check size={16} />}
+            Accept
           </Button>
           <Button 
             onClick={() => handleAction('closed')} 
             disabled={loading}
             variant="ghost" 
-            className="flex-1 gap-2 hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/20"
+            className="gap-2 h-12 rounded-xl text-xs uppercase font-bold tracking-widest hover:bg-red-500/10 hover:text-red-400"
           >
-            <X size={16} />
+            {loading ? <Loader2 size={16} className="animate-spin" /> : <X size={16} />}
             Decline
           </Button>
         </div>

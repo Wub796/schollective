@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { updateProfessorStatus } from "@/app/admin/dashboard/actions";
-import { CheckCircle, XCircle, Loader2, Mail, GraduationCap, Tag } from "lucide-react";
+import { CheckCircle, XCircle, Loader2, Mail, GraduationCap } from "lucide-react";
 
 interface PendingProfessor {
   id: string;
@@ -27,8 +27,12 @@ export function AdminReviewTable({ applicants }: AdminReviewTableProps) {
   const handleStatusChange = async (id: string, status: 'approved' | 'rejected') => {
     setProcessingId(id);
     try {
-      await updateProfessorStatus(id, status);
-      router.refresh();
+      const result = await updateProfessorStatus(id, status);
+      if (result?.error) {
+        console.error(result.error);
+      } else {
+        router.refresh();
+      }
     } catch (error) {
       console.error("Failed to update professor status:", error);
     } finally {
@@ -51,81 +55,142 @@ export function AdminReviewTable({ applicants }: AdminReviewTableProps) {
   }
 
   return (
-    <div className="bg-[rgba(17,34,64,0.6)] border border-[rgba(155,175,192,0.1)] rounded-[24px] overflow-hidden backdrop-blur-xl shadow-2xl animate-in fade-in slide-in-from-bottom-4 duration-1000">
-      <div className="overflow-x-auto">
-        <table className="w-full border-collapse text-left">
-          <thead>
-            <tr className="bg-[rgba(11,22,40,0.5)] border-b border-[rgba(155,175,192,0.1)]">
-              <th className="px-8 py-5 text-[0.65rem] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em]">Applicant</th>
-              <th className="px-8 py-5 text-[0.65rem] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em]">Institution</th>
-              <th className="px-8 py-5 text-[0.65rem] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em]">Expertise</th>
-              <th className="px-8 py-5 text-[0.65rem] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-[rgba(155,175,192,0.05)]">
-            {applicants.map((prof) => {
-              const displayName = prof.preferred_name || prof.first_name;
-              const isProcessing = processingId === prof.id;
+    <div className="space-y-6">
+      {/* Desktop Table View */}
+      <div className="hidden lg:block bg-[rgba(17,34,64,0.6)] border border-[rgba(155,175,192,0.1)] rounded-[24px] overflow-hidden backdrop-blur-xl shadow-2xl animate-in fade-in slide-in-from-bottom-4 duration-1000">
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse text-left">
+            <thead>
+              <tr className="bg-[rgba(11,22,40,0.5)] border-b border-[rgba(155,175,192,0.1)]">
+                <th className="px-8 py-5 text-[0.65rem] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em]">Applicant</th>
+                <th className="px-8 py-5 text-[0.65rem] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em]">Institution</th>
+                <th className="px-8 py-5 text-[0.65rem] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em]">Expertise</th>
+                <th className="px-8 py-5 text-[0.65rem] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-[rgba(155,175,192,0.05)]">
+              {applicants.map((prof) => {
+                const displayName = prof.preferred_name || prof.first_name;
+                const isProcessing = processingId === prof.id;
 
-              return (
-                <tr key={prof.id} className="group hover:bg-[rgba(255,255,255,0.02)] transition-colors duration-300">
-                  <td className="px-8 py-6">
-                    <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-full bg-[rgba(212,146,42,0.1)] text-[var(--amber)] flex items-center justify-center font-serif text-lg border border-[rgba(212,146,42,0.2)]">
-                        {prof.first_name[0]}{prof.last_name[0]}
-                      </div>
-                      <div>
-                        <div className="text-sm font-medium text-[var(--ivory)]">Dr. {displayName} {prof.last_name}</div>
-                        <div className="flex items-center gap-1.5 text-[0.7rem] text-[var(--text-muted)]">
-                          <Mail size={12} className="opacity-70" />
-                          {prof.email}
+                return (
+                  <tr key={prof.id} className="group hover:bg-[rgba(255,255,255,0.02)] transition-colors duration-300">
+                    <td className="px-8 py-6">
+                      <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 rounded-full bg-[rgba(212,146,42,0.1)] text-[var(--amber)] flex items-center justify-center font-serif text-lg border border-[rgba(212,146,42,0.2)]">
+                          {prof.first_name[0]}{prof.last_name[0]}
+                        </div>
+                        <div>
+                          <div className="text-sm font-medium text-[var(--ivory)]">Dr. {displayName} {prof.last_name}</div>
+                          <div className="flex items-center gap-1.5 text-[0.7rem] text-[var(--text-muted)]">
+                            <Mail size={12} className="opacity-70" />
+                            {prof.email}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </td>
-                  <td className="px-8 py-6">
-                    <div className="flex items-center gap-2 text-sm text-[var(--ivory)]">
-                      <GraduationCap size={16} className="text-[var(--amber)]" />
-                      {prof.institution || "Not specified"}
-                    </div>
-                  </td>
-                  <td className="px-8 py-6">
-                    <div className="flex flex-wrap gap-1.5">
-                      {prof.expertise_fields?.map((field, idx) => (
-                        <span key={idx} className="px-2 py-0.5 rounded-full bg-[rgba(255,255,255,0.04)] text-[var(--text-muted)] border border-[rgba(155,175,192,0.1)] text-[0.6rem]">
-                          {field}
-                        </span>
-                      )) || <span className="text-xs italic text-[var(--text-muted)]">None</span>}
-                    </div>
-                  </td>
-                  <td className="px-8 py-6 text-right">
-                    <div className="flex justify-end gap-3">
-                      <Button 
-                        size="sm" 
-                        onClick={() => handleStatusChange(prof.id, 'approved')}
-                        disabled={isProcessing}
-                        className="bg-[var(--sage)] hover:bg-[var(--sage-light)] text-white px-4 h-9 gap-2 shadow-none"
-                      >
-                        {isProcessing ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle size={14} />}
-                        Approve
-                      </Button>
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        onClick={() => handleStatusChange(prof.id, 'rejected')}
-                        disabled={isProcessing}
-                        className="hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/20 px-4 h-9 gap-2"
-                      >
-                        {isProcessing ? <Loader2 size={14} className="animate-spin" /> : <XCircle size={14} />}
-                        Reject
-                      </Button>
-                    </div>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+                    </td>
+                    <td className="px-8 py-6">
+                      <div className="flex items-center gap-2 text-sm text-[var(--ivory)] border border-[rgba(212,146,42,0.1)] bg-[rgba(212,146,42,0.03)] px-3 py-1.5 rounded-xl w-fit">
+                        <GraduationCap size={16} className="text-[var(--amber)]" />
+                        {prof.institution || "Not specified"}
+                      </div>
+                    </td>
+                    <td className="px-8 py-6">
+                      <div className="flex flex-wrap gap-1.5 max-w-[240px]">
+                        {prof.expertise_fields?.map((field, idx) => (
+                          <span key={idx} className="px-2 py-0.5 rounded-full bg-[rgba(255,255,255,0.04)] text-[var(--text-muted)] border border-[rgba(155,175,192,0.1)] text-[0.6rem]">
+                            {field}
+                          </span>
+                        )) || <span className="text-xs italic text-[var(--text-muted)]">None</span>}
+                      </div>
+                    </td>
+                    <td className="px-8 py-6 text-right">
+                      <div className="flex justify-end gap-3">
+                        <Button 
+                          size="sm" 
+                          onClick={() => handleStatusChange(prof.id, 'approved')}
+                          disabled={isProcessing}
+                          className="bg-[var(--sage)] hover:bg-[var(--sage-light)] text-white px-4 h-9 gap-2 shadow-none rounded-xl"
+                        >
+                          {isProcessing ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle size={14} />}
+                          Approve
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          onClick={() => handleStatusChange(prof.id, 'rejected')}
+                          disabled={isProcessing}
+                          className="hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/20 px-4 h-9 gap-2 rounded-xl"
+                        >
+                          {isProcessing ? <Loader2 size={14} className="animate-spin" /> : <XCircle size={14} />}
+                          Reject
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Mobile Card View */}
+      <div className="lg:hidden space-y-4">
+        {applicants.map((prof) => {
+          const displayName = prof.preferred_name || prof.first_name;
+          const isProcessing = processingId === prof.id;
+
+          return (
+            <div key={prof.id} className="bg-[rgba(17,34,64,0.6)] border border-[rgba(155,175,192,0.1)] rounded-3xl p-6 backdrop-blur-xl animate-in fade-in duration-500">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-12 h-12 rounded-2xl bg-[rgba(212,146,42,0.1)] text-[var(--amber)] flex items-center justify-center font-serif text-xl border border-[rgba(212,146,42,0.2)]">
+                  {prof.first_name[0]}{prof.last_name[0]}
+                </div>
+                <div>
+                  <div className="text-base font-medium text-[var(--ivory)]">Dr. {displayName} {prof.last_name}</div>
+                  <div className="text-xs text-[var(--text-muted)]">{prof.email}</div>
+                </div>
+              </div>
+
+              <div className="space-y-4 mb-8">
+                <div className="flex items-center gap-2 text-sm text-[var(--ivory)]">
+                  <GraduationCap size={16} className="text-[var(--amber)]" />
+                  {prof.institution}
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {prof.expertise_fields?.map((field, idx) => (
+                    <span key={idx} className="px-2 py-0.5 rounded-full bg-[rgba(255,255,255,0.04)] text-[var(--text-muted)] border border-[rgba(155,175,192,0.1)] text-[0.6rem]">
+                      {field}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <Button 
+                  size="sm" 
+                  onClick={() => handleStatusChange(prof.id, 'approved')}
+                  disabled={isProcessing}
+                  className="bg-[var(--sage)] hover:bg-[var(--sage-light)] text-white gap-2 h-11 rounded-xl"
+                >
+                  {isProcessing ? <Loader2 size={16} className="animate-spin" /> : <CheckCircle size={16} />}
+                  Approve
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => handleStatusChange(prof.id, 'rejected')}
+                  disabled={isProcessing}
+                  className="hover:bg-red-500/10 hover:text-red-400 h-11 rounded-xl"
+                >
+                  {isProcessing ? <Loader2 size={16} className="animate-spin" /> : <XCircle size={16} />}
+                  Reject
+                </Button>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

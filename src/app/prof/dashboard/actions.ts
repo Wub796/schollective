@@ -1,33 +1,41 @@
 "use server";
 
-import { createClient } from "@/lib/supabase-server";
+import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 
 export async function updateRequestStatus(requestId: string, status: 'active' | 'closed') {
-  const supabase = await createClient();
+  try {
+    const supabase = await createClient();
 
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session) return { error: "Unauthorized" };
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return { error: "Unauthorized" };
 
-  // Update the request status
-  const { error } = await supabase
-    .from("requests")
-    .update({ status, updated_at: new Date().toISOString() })
-    .eq("id", requestId)
-    .eq("professor_id", session.user.id);
+    // Update the request status
+    const { error } = await supabase
+      .from("requests")
+      .update({ status, updated_at: new Date().toISOString() })
+      .eq("id", requestId)
+      .eq("professor_id", user.id);
 
-  if (error) return { error: error.message };
+    if (error) throw error;
 
-  revalidatePath("/prof/dashboard");
-  return { success: true };
+    revalidatePath("/prof/dashboard");
+    return { success: true };
+  } catch (err: any) {
+    return { error: err.message || "Failed to update request status." };
+  }
 }
 
 export async function toggleAvailability() {
-  const supabase = await createClient();
+  try {
+    const supabase = await createClient();
 
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session) return { error: "Unauthorized" };
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return { error: "Unauthorized" };
 
-  revalidatePath("/prof/dashboard");
-  return { success: true };
+    revalidatePath("/prof/dashboard");
+    return { success: true };
+  } catch (err: any) {
+    return { error: err.message || "Failed to toggle availability." };
+  }
 }
