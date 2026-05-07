@@ -19,6 +19,7 @@ const dmSans = DM_Sans({
 export const metadata: Metadata = {
   title: "Schollective — Academic Mentorship, Democratized",
   description: "Connecting students with verified professors for structured guidance and research mentorship.",
+  viewport: "width=device-width, initial-scale=1, maximum-scale=1",
 };
 
 export default function RootLayout({
@@ -29,22 +30,36 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <body
-        className={`${cormorant.variable} ${dmSans.variable} font-sans antialiased`}
+        className={`${cormorant.variable} ${dmSans.variable} font-sans antialiased bg-[var(--navy)] text-[var(--ivory)] selection:bg-[var(--amber)] selection:text-[var(--navy)]`}
       >
+        {/* Global Background Elements */}
+        <div className="fixed inset-0 z-0 pointer-events-none bg-[var(--navy)]" />
+        
+        {/* Film-Grain Noise Overlay (z-1 so it sits above bg but below content) */}
+        <div className="fixed inset-0 z-[1] pointer-events-none opacity-[0.045] bg-[url('data:image/svg+xml,%3Csvg viewBox=\"0 0 256 256\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cfilter id=\"n\"%3E%3CfeTurbulence type=\"fractalNoise\" baseFrequency=\"0.9\" numOctaves=\"4\" stitchTiles=\"stitch\"/%3E%3C/filter%3E%3Crect width=\"100%25\" height=\"100%25\" filter=\"url(%23n)\"/%3E%3C/svg%3E')]" />
+
+        {/* Interaction Layer */}
         <CustomCursor />
+        
+        {/* Main Application Container */}
+        <div className="relative z-10">
+          {children}
+        </div>
+
+        {/* Global Notification Layer */}
         <Toaster 
           position="top-right" 
           toastOptions={{
             style: {
-              background: 'rgba(17, 34, 64, 0.8)',
-              backdropFilter: 'blur(16px)',
-              border: '1px solid rgba(155, 175, 192, 0.15)',
+              background: 'rgba(17, 34, 64, 0.9)',
+              backdropFilter: 'blur(20px)',
+              border: '1px solid rgba(212, 146, 42, 0.2)',
               color: '#EDE8E0',
               borderRadius: '16px',
+              fontFamily: 'var(--font-sans)',
             },
           }}
         />
-        {children}
       </body>
     </html>
   );
