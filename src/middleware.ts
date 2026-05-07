@@ -16,7 +16,7 @@ export async function middleware(request: NextRequest) {
 
   // 1. Authentication Guard: Redirect to login if no session
   if ((isStudentRoute || isProfessorRoute || isAdminRoute) && !user) {
-    return Response.redirect(new URL('/auth/login', request.url))
+    return Response.redirect(new URL('/login', request.url))
   }
 
   // 2. Role-Based Guard (RBAC)

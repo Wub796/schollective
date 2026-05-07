@@ -21,7 +21,7 @@ export function PendingActions() {
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
-    router.push("/auth/login");
+    router.push("/login");
   };
 
   return (
@@ -37,10 +37,10 @@ export function PendingActions() {
       
       <button 
         onClick={handleSignOut}
-        className="flex items-center justify-center gap-2 text-[var(--text-muted)] hover:text-[var(--ivory)] transition-colors text-sm font-medium py-2 group"
+        className="flex items-center justify-center gap-2 text-[#3a3a3a] hover:text-[#8a8a8a] transition-colors text-sm font-medium py-2 group"
       >
         <LogOut size={16} className="group-hover:translate-x-[-2px] transition-transform" />
-        Sign Out & Return Home
+        Sign Out &amp; Return Home
       </button>
     </div>
   );

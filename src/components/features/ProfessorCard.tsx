@@ -1,7 +1,10 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/Button";
-import { GraduationCap, Tag } from "lucide-react";
+import { GraduationCap } from "lucide-react";
 
 interface ProfessorCardProps {
   professor: {
@@ -16,52 +19,67 @@ interface ProfessorCardProps {
 
 export function ProfessorCard({ professor }: ProfessorCardProps) {
   const displayName = professor.preferred_name || professor.first_name;
-  
+
   return (
-    <div className="bg-[rgba(17,34,64,0.4)] border border-[rgba(155,175,192,0.1)] rounded-[32px] p-8 transition-all duration-500 hover:border-[var(--amber)] hover:bg-[rgba(26,58,92,0.6)] hover:translate-y-[-6px] backdrop-blur-md shadow-lg group flex flex-col h-full">
-      <div className="flex items-start justify-between mb-8">
-        <div className="w-16 h-16 rounded-2xl bg-[rgba(212,146,42,0.1)] flex items-center justify-center font-serif text-[var(--amber)] border border-[rgba(212,146,42,0.15)] text-2xl group-hover:scale-105 transition-transform duration-500 shadow-inner">
+    <motion.div
+      whileHover={{ y: -4, borderColor: "rgba(255,255,255,0.12)" }}
+      transition={{ duration: 0.22, ease: "easeOut" }}
+      className="bg-[#111111] border border-[rgba(255,255,255,0.06)] rounded-2xl p-7 flex flex-col h-full group relative overflow-hidden"
+    >
+      {/* Hover gradient reveal */}
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[rgba(255,255,255,0.1)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+      {/* Header */}
+      <div className="flex items-start justify-between mb-7">
+        {/* Avatar */}
+        <div className="w-14 h-14 rounded-xl bg-[rgba(255,255,255,0.04)] border border-[rgba(255,255,255,0.07)] flex items-center justify-center text-lg font-semibold text-[#6a6a6a] transition-colors duration-300 group-hover:text-[#c8c8c6] group-hover:border-[rgba(255,255,255,0.12)]">
           {professor.first_name[0]}{professor.last_name[0]}
         </div>
-        <div className="bg-[rgba(61,122,107,0.1)] text-[var(--sage-light)] text-[0.65rem] font-bold px-3 py-1 rounded-full border border-[rgba(61,122,107,0.2)] uppercase tracking-[0.15em]">
-          Verified
+        {/* Verified badge */}
+        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-[rgba(255,255,255,0.06)] bg-[rgba(255,255,255,0.02)]">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#4a4a4a]" />
+          <span className="text-[0.58rem] font-semibold uppercase tracking-widest text-[#4a4a4a]">
+            Verified
+          </span>
         </div>
       </div>
 
+      {/* Name & institution */}
       <div className="mb-6">
-        <h3 className="font-serif text-2xl lg:text-3xl text-[var(--ivory)] mb-2 group-hover:text-[var(--amber-light)] transition-colors duration-300">
+        <h3 className="font-display text-xl text-[#d4d4d2] mb-1.5 leading-tight group-hover:text-[#f2f2f0] transition-colors duration-300">
           Dr. {displayName} {professor.last_name}
         </h3>
-        <div className="flex items-center gap-2 text-[var(--text-muted)] text-sm font-medium">
-          <GraduationCap size={16} className="text-[var(--amber)] opacity-70" />
+        <div className="flex items-center gap-1.5 text-[#4a4a4a] text-xs">
+          <GraduationCap size={12} />
           <span className="truncate">{professor.institution || "Independent Researcher"}</span>
         </div>
       </div>
 
-      <div className="flex-grow space-y-4 mb-10">
-        <div>
-          <div className="flex items-center gap-2 text-[0.6rem] text-[var(--text-muted)] uppercase tracking-[0.2em] font-bold mb-3 opacity-60">
-            <Tag size={12} />
-            Focus Areas
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {professor.expertise_fields?.slice(0, 4).map((field, idx) => (
-              <span 
-                key={idx} 
-                className="px-3 py-1 rounded-full bg-[rgba(255,255,255,0.03)] text-[var(--ivory)] border border-[rgba(155,175,192,0.1)] text-[0.7rem] transition-all hover:border-[var(--amber)] hover:bg-[rgba(212,146,42,0.05)]"
-              >
-                {field}
-              </span>
-            )) || <span className="text-[0.7rem] italic text-[var(--text-muted)]">Open to requests</span>}
-          </div>
+      {/* Expertise tags */}
+      <div className="flex-grow mb-8">
+        <div className="text-[0.58rem] text-[#3a3a3a] uppercase tracking-[0.18em] font-semibold mb-3">
+          Focus Areas
+        </div>
+        <div className="flex flex-wrap gap-1.5">
+          {professor.expertise_fields?.slice(0, 4).map((field, idx) => (
+            <span
+              key={idx}
+              className="px-2.5 py-1 rounded-lg bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.06)] text-[0.68rem] text-[#6a6a6a] transition-colors hover:text-[#c8c8c6] hover:border-[rgba(255,255,255,0.1)]"
+            >
+              {field}
+            </span>
+          )) || (
+            <span className="text-[0.7rem] italic text-[#3a3a3a]">Open to requests</span>
+          )}
         </div>
       </div>
 
+      {/* CTA */}
       <Link href={`/request/new?prof_id=${professor.id}`} className="mt-auto">
-        <Button className="w-full text-xs uppercase tracking-widest font-bold py-4 shadow-xl shadow-[var(--amber)]/5">
+        <Button className="w-full text-[0.7rem] uppercase tracking-widest font-bold py-3">
           Request Mentorship
         </Button>
       </Link>
-    </div>
+    </motion.div>
   );
 }
