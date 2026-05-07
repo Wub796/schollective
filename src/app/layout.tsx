@@ -21,6 +21,12 @@ export const metadata: Metadata = {
   description: "Connecting students with verified professors for structured guidance and research mentorship.",
 };
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -29,22 +35,36 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <body
-        className={`${cormorant.variable} ${dmSans.variable} font-sans antialiased`}
+        className={`${cormorant.variable} ${dmSans.variable} font-sans antialiased bg-[var(--navy)] text-[var(--ivory)] selection:bg-[var(--amber)] selection:text-[var(--navy)]`}
       >
+        {/* Global Background Elements */}
+        <div className="fixed inset-0 z-0 pointer-events-none bg-[var(--navy)]" />
+        
+        {/* Film-Grain Noise Overlay (z-1 so it sits above bg but below content) */}
+        <div className="fixed inset-0 z-[1] pointer-events-none opacity-[0.045] noise-overlay" />
+
+        {/* Interaction Layer */}
         <CustomCursor />
+        
+        {/* Main Application Container */}
+        <div className="relative z-10">
+          {children}
+        </div>
+
+        {/* Global Notification Layer */}
         <Toaster 
           position="top-right" 
           toastOptions={{
             style: {
-              background: 'rgba(17, 34, 64, 0.8)',
-              backdropFilter: 'blur(16px)',
-              border: '1px solid rgba(155, 175, 192, 0.15)',
+              background: 'rgba(17, 34, 64, 0.9)',
+              backdropFilter: 'blur(20px)',
+              border: '1px solid rgba(212, 146, 42, 0.2)',
               color: '#EDE8E0',
               borderRadius: '16px',
+              fontFamily: 'var(--font-sans)',
             },
           }}
         />
-        {children}
       </body>
     </html>
   );
