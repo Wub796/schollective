@@ -475,3 +475,53 @@ body {
   background: rgba(232, 232, 230, 0.15);
   color: #f2f2f0;
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   FLUID AURORA BACKGROUND (iOS 26 Style)
+   ═══════════════════════════════════════════════════════════════ */
+@keyframes aurora-1 {
+  0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+  33% { transform: translate(15vw, -10vh) scale(1.1) rotate(120deg); }
+  66% { transform: translate(-10vw, 15vh) scale(0.9) rotate(240deg); }
+  100% { transform: translate(0, 0) scale(1) rotate(360deg); }
+}
+
+@keyframes aurora-2 {
+  0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+  33% { transform: translate(-15vw, 15vh) scale(1.2) rotate(-120deg); }
+  66% { transform: translate(10vw, -10vh) scale(0.8) rotate(-240deg); }
+  100% { transform: translate(0, 0) scale(1) rotate(-360deg); }
+}
+
+.aurora-bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 0;
+  pointer-events: none;
+  background-color: #050505; /* Deep base */
+}
+
+.aurora-blob-1, .aurora-blob-2 {
+  position: absolute;
+  width: 80vw;
+  height: 80vh;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.5;
+  will-change: transform;
+}
+
+.aurora-blob-1 {
+  top: -20%;
+  left: -10%;
+  background: radial-gradient(circle, rgba(45,45,60,0.8) 0%, rgba(20,20,30,0) 70%);
+  animation: aurora-1 30s infinite linear;
+}
+
+.aurora-blob-2 {
+  bottom: -20%;
+  right: -10%;
+  background: radial-gradient(circle, rgba(30,40,60,0.7) 0%, rgba(10,15,25,0) 70%);
+  animation: aurora-2 35s infinite linear;
+}
