@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -45,7 +45,7 @@ function Field({ id, name, type = "text", label, placeholder, required = false }
 /** Step 1: request reset link  |  Step 2: set new password */
 type Step = "request" | "update";
 
-export default function ResetPasswordPage() {
+function ResetPasswordContent() {
   const router       = useRouter();
   const searchParams = useSearchParams();
   const supabase     = createClient();
@@ -201,5 +201,13 @@ export default function ResetPasswordPage() {
         </motion.div>
       </motion.div>
     </div>
+  );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={<div style={{ minHeight: "100vh", background: "#080c14" }} />}>
+      <ResetPasswordContent />
+    </Suspense>
   );
 }
