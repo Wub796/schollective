@@ -3,6 +3,7 @@ import { DM_Sans, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
 import { CustomCursor } from "@/components/ui/CustomCursor";
+import { Analytics } from "@vercel/analytics/next";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -72,6 +73,9 @@ export default function RootLayout({
             },
           }}
         />
+
+        {/* ── Vercel Web Analytics ────────────────────────────── */}
+        <Analytics />
       </body>
     </html>
   );
