@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { createClient } from "@/utils/supabase/client";
 import { toast } from "sonner";
+import { Camera, Loader2 } from "lucide-react";
 
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
@@ -57,9 +58,12 @@ function Field({
 export default function ProfilePage() {
   const router   = useRouter();
   const supabase = createClient();
-  const [loading, setLoading] = useState(false);
-  const [profile, setProfile] = React.useState<any>(null);
-  const [fetching, setFetching] = React.useState(true);
+  const [loading, setLoading]         = useState(false);
+  const [avatarUploading, setAvatarUploading] = useState(false);
+  const [profile, setProfile]         = React.useState<any>(null);
+  const [fetching, setFetching]       = React.useState(true);
+  const [avatarHover, setAvatarHover] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   React.useEffect(() => {
     (async () => {
@@ -70,6 +74,57 @@ export default function ProfilePage() {
       setFetching(false);
     })();
   }, []);
+
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !profile) return;
+
+    // Validate file type and size (max 5 MB)
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select an image file.");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image must be smaller than 5 MB.");
+      return;
+    }
+
+    setAvatarUploading(true);
+    try {
+      const ext      = file.name.split(".").pop();
+      const filePath = `${profile.id}/avatar.${ext}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("avatars")
+        .upload(filePath, file, { upsert: true, contentType: file.type });
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from("avatars")
+        .getPublicUrl(filePath);
+
+      // Append cache-buster so the browser refreshes the image
+      const avatarUrl = `${publicUrl}?t=${Date.now()}`;
+
+      const { error: updateError } = await supabase
+        .from("profiles")
+        .update({ avatar_url: avatarUrl })
+        .eq("id", profile.id);
+
+      if (updateError) throw updateError;
+
+      setProfile((p: any) => ({ ...p, avatar_url: avatarUrl }));
+      toast.success("Profile picture updated.");
+    } catch (err: any) {
+      console.error(err);
+      toast.error("Upload failed. Please try again.");
+    } finally {
+      setAvatarUploading(false);
+      // Reset input so the same file can be re-selected
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
 
   const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -137,15 +192,78 @@ export default function ProfilePage() {
 
       {/* ── Avatar + role strip ── */}
       <motion.div variants={fadeUp} style={{ display: "flex", alignItems: "center", gap: "1.5rem" }}>
-        <div style={{
-          width: "4rem", height: "4rem", borderRadius: "50%",
-          background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.12)",
-          display: "flex", alignItems: "center", justifyContent: "center",
-          fontSize: "1.1rem", fontWeight: 700, color: "rgba(255,255,255,0.7)",
-          letterSpacing: "0.04em", fontFamily: "var(--font-sans)", flexShrink: 0,
-        }}>
-          {initials || "?"}
+
+        {/* Clickable avatar */}
+        <div style={{ position: "relative", flexShrink: 0 }}>
+          <input
+            ref={fileInputRef}
+            id="avatar-upload"
+            type="file"
+            accept="image/*"
+            onChange={handleAvatarChange}
+            style={{ display: "none" }}
+          />
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            onMouseEnter={() => setAvatarHover(true)}
+            onMouseLeave={() => setAvatarHover(false)}
+            disabled={avatarUploading}
+            title="Change profile picture"
+            style={{
+              width: "4.5rem", height: "4.5rem", borderRadius: "50%",
+              border: avatarHover ? "1px solid rgba(255,255,255,0.35)" : "1px solid rgba(255,255,255,0.12)",
+              background: "rgba(255,255,255,0.05)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              overflow: "hidden", cursor: avatarUploading ? "not-allowed" : "pointer",
+              position: "relative", padding: 0,
+              transition: "border-color 0.25s",
+            }}
+          >
+            {/* Avatar image or initials */}
+            {profile?.avatar_url ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={profile.avatar_url}
+                alt="Profile picture"
+                style={{
+                  width: "100%", height: "100%", objectFit: "cover",
+                  filter: avatarHover || avatarUploading ? "brightness(0.45)" : "brightness(1)",
+                  transition: "filter 0.25s",
+                }}
+              />
+            ) : (
+              <span style={{
+                fontSize: "1.1rem", fontWeight: 700,
+                color: avatarHover ? "rgba(255,255,255,0.4)" : "rgba(255,255,255,0.7)",
+                letterSpacing: "0.04em", fontFamily: "var(--font-sans)",
+                transition: "color 0.25s",
+              }}>
+                {initials || "?"}
+              </span>
+            )}
+
+            {/* Overlay: camera icon on hover, spinner while uploading */}
+            {(avatarHover || avatarUploading) && (
+              <div style={{
+                position: "absolute", inset: 0,
+                display: "flex", flexDirection: "column",
+                alignItems: "center", justifyContent: "center", gap: "0.2rem",
+              }}>
+                {avatarUploading
+                  ? <Loader2 size={18} color="rgba(255,255,255,0.8)" style={{ animation: "spin 1s linear infinite" }} />
+                  : <Camera size={18} color="rgba(255,255,255,0.8)" />
+                }
+                {!avatarUploading && (
+                  <span style={{ fontSize: "0.42rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(255,255,255,0.6)", fontFamily: "var(--font-sans)" }}>
+                    Change
+                  </span>
+                )}
+              </div>
+            )}
+          </button>
         </div>
+
         <div>
           <div className="font-display" style={{ fontSize: "1.15rem", fontWeight: 700, color: "rgba(255,255,255,0.85)", letterSpacing: "-0.02em", marginBottom: "0.3rem" }}>
             {profile?.first_name} {profile?.last_name}
@@ -169,6 +287,9 @@ export default function ProfilePage() {
               </span>
             )}
           </div>
+          <p style={{ marginTop: "0.5rem", fontSize: "0.55rem", color: "rgba(255,255,255,0.2)", fontFamily: "var(--font-sans)", letterSpacing: "0.05em" }}>
+            Click your avatar to upload a new photo · max 5 MB
+          </p>
         </div>
       </motion.div>
 
@@ -195,7 +316,7 @@ export default function ProfilePage() {
           {/* Email — readonly */}
           <Field id="email" name="email" type="email" label="Email (cannot change)" defaultValue={profile?.email ?? ""} disabled />
 
-          {/* Institution — shown for all but more relevant for professors */}
+          {/* Institution */}
           <Field id="institution" name="institution" label="Institution" defaultValue={profile?.institution ?? ""} placeholder="e.g. Stanford University" />
 
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingTop: "0.5rem" }}>
