@@ -3,7 +3,8 @@ import Link from "next/link";
 import { redirect, notFound } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { ChatThread } from "@/components/features/ChatThread";
-import { ArrowLeft, MoreVertical, ShieldCheck } from "lucide-react";
+import { CloseThreadButton } from "@/components/features/CloseThreadButton";
+import { ArrowLeft, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -92,15 +93,15 @@ export default async function MessagePage({ params }: MessagePageProps) {
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="hidden md:block text-right mr-2">
+          <div className="hidden md:block text-right mr-3">
             <div className="text-[0.58rem] text-[#3a3a3a] uppercase tracking-widest font-bold mb-0.5">Thread Topic</div>
             <div className="text-xs text-[#6a6a6a] font-light italic truncate max-w-[280px]">
               &quot;{request.topic}&quot;
             </div>
           </div>
-          <button className="p-2 rounded-lg hover:bg-[rgba(255,255,255,0.04)] text-[#4a4a4a] transition-colors">
-            <MoreVertical size={18} />
-          </button>
+          {request.status === "active" && (
+            <CloseThreadButton requestId={request.id} />
+          )}
         </div>
       </header>
 

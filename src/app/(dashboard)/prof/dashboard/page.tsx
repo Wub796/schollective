@@ -8,6 +8,28 @@ import { Inbox, Clock } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
+function StatCard({ value, label, sub }: { value: string | number; label: string; sub: string }) {
+  return (
+    <div style={{
+      padding: "1.5rem",
+      border: "1px solid rgba(255,255,255,0.07)",
+      borderRadius: "14px",
+      background: "rgba(255,255,255,0.025)",
+      display: "flex", flexDirection: "column", gap: "0.5rem",
+    }}>
+      <span className="font-display" style={{ fontSize: "2.4rem", fontWeight: 900, color: "#fff", letterSpacing: "-0.04em", lineHeight: 1 }}>
+        {value}
+      </span>
+      <div>
+        <div style={{ fontSize: "0.78rem", fontWeight: 600, color: "rgba(255,255,255,0.7)", fontFamily: "var(--font-sans)" }}>{label}</div>
+        <div style={{ fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(255,255,255,0.25)", fontFamily: "var(--font-mono, monospace)", marginTop: "0.2rem" }}>
+          {sub}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default async function ProfessorDashboard() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -55,6 +77,28 @@ export default async function ProfessorDashboard() {
 
   const activeThreads = (allRequests || [])
     .filter((r) => r.status === "active")
+    .map((req: any) => {
+      const student = Array.isArray(req.student) ? req.student[0] : req.student;
+      return {
+        ...req,
+        participant: {
+          first_name: student.first_name,
+          last_name: student.last_name,
+          preferred_name: student.preferred_name,
+          detail: student.education_level?.replace("-", " "),
+        },
+        latest_message:
+          req.messages?.length > 0
+            ? [...req.messages].sort(
+                (a: any, b: any) =>
+                  new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+              )[0]
+            : undefined,
+      };
+    });
+
+  const closedRequests = (allRequests || [])
+    .filter((r) => r.status === "closed")
     .map((req: any) => {
       const student = Array.isArray(req.student) ? req.student[0] : req.student;
       return {
@@ -127,11 +171,18 @@ export default async function ProfessorDashboard() {
         </p>
       </header>
 
+      {/* ── Stats row ──────────────────────────────────────────── */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "1rem" }}>
+        <StatCard value={allRequests?.length || 0} label="Total Requests" sub="Lifetime" />
+        <StatCard value={activeThreads.length}     label="Active Dialogues" sub="Ongoing" />
+        <StatCard value={pendingRequests.length}   label="Pending Approval" sub="In Queue" />
+      </div>
+
       {/* ── Hairline ─────────────────────────────────────────────── */}
       <div style={{ height: "1px", background: "rgba(255,255,255,0.06)" }} />
 
-      {/* ── Two-column layout ─────────────────────────────────────── */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: "4rem", alignItems: "start" }}>
+      {/* ── Stacked Layout ─────────────────────────────────────────── */}
+      <div style={{ display: "flex", flexDirection: "column", gap: "4rem" }}>
 
         {/* ── Request Queue ─────────────────────────────────────── */}
         <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
@@ -161,7 +212,7 @@ export default async function ProfessorDashboard() {
               </p>
             </div>
           ) : (
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: "1.25rem" }}>
               {pendingRequests.map((req) => (
                 <RequestQueueCard key={req.id} request={req as any} />
               ))}
@@ -203,13 +254,39 @@ export default async function ProfessorDashboard() {
               </div>
             </div>
           ) : (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "1.25rem" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: "1.25rem" }}>
               {activeThreads.map((req) => (
                 <ThreadCard key={req.id} request={req as any} viewerRole="professor" />
               ))}
             </div>
           )}
         </div>
+
+        {/* ── Past Mentorships ─────────────────────────────────── */}
+        {closedRequests.length > 0 && (
+          <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+              <span style={{ width: "1rem", height: "1px", background: "rgba(255,255,255,0.2)", display: "block" }} />
+              <h2 className="font-display" style={{ fontSize: "1.1rem", fontWeight: 700, color: "rgba(255,255,255,0.5)", letterSpacing: "-0.02em" }}>
+                Past Mentorships
+              </h2>
+              <span style={{
+                marginLeft: "auto",
+                fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.25em",
+                textTransform: "uppercase", color: "rgba(255,255,255,0.15)",
+                fontFamily: "var(--font-mono, monospace)",
+              }}>
+                {closedRequests.length} closed
+              </span>
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: "1.25rem", opacity: 0.8 }}>
+              {closedRequests.map((req) => (
+                <ThreadCard key={req.id} request={req as any} viewerRole="professor" />
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

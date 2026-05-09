@@ -750,3 +750,28 @@ body {
 .professor-card-hover:hover {
   border-color: rgba(255, 255, 255, 0.18) !important;
 }
+
+/* Admin Nav Links */
+.admin-nav-link div {
+  transition: color 0.2s ease;
+}
+.admin-nav-link:hover div {
+  color: #fff !important;
+}
+
+.admin-nav-button div {
+  transition: all 0.2s ease;
+}
+.admin-nav-button:hover div {
+  color: #fff !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* Quick Action Cards */
+.quick-action-card {
+  transition: background 0.2s, border-color 0.2s;
+}
+.quick-action-card:hover {
+  background: rgba(255, 255, 255, 0.055) !important;
+  border-color: rgba(255, 255, 255, 0.13) !important;
+}
