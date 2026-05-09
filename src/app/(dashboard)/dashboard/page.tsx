@@ -39,18 +39,14 @@ function StatCard({ value, label, sub }: { value: string | number; label: string
 function QuickAction({ href, title, sub, icon }: { href: string; title: string; sub: string; icon: React.ReactNode }) {
   return (
     <Link href={href} style={{ textDecoration: "none" }}>
-      <div style={{
+      <div className="quick-action-card" style={{
         padding: "1.5rem",
         border: "1px solid rgba(255,255,255,0.07)",
         borderRadius: "14px",
         background: "rgba(255,255,255,0.02)",
         display: "flex", alignItems: "center", justifyContent: "space-between",
-        transition: "background 0.2s, border-color 0.2s",
         cursor: "pointer",
-      }}
-        onMouseEnter={(e: any) => { e.currentTarget.style.background = "rgba(255,255,255,0.055)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.13)"; }}
-        onMouseLeave={(e: any) => { e.currentTarget.style.background = "rgba(255,255,255,0.02)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)"; }}
-      >
+      }}>
         <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
           <div style={{
             width: "2.4rem", height: "2.4rem", borderRadius: "10px",
@@ -169,12 +165,6 @@ export default async function StudentDashboard() {
             Welcome back,{" "}
             <em style={{ fontStyle: "italic", color: "rgba(255,255,255,0.35)" }}>{displayName}</em>
           </h1>
-          <Link href="/professors" style={{ textDecoration: "none", flexShrink: 0 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.75rem 1.5rem", background: "#fff", color: "#080c14", borderRadius: "100px", fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", fontFamily: "var(--font-sans)", cursor: "pointer" }}>
-              <PlusCircle size={14} />
-              New Request
-            </div>
-          </Link>
         </div>
         <p style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.4)", fontWeight: 300, maxWidth: "42rem", lineHeight: 1.7, fontFamily: "var(--font-sans)", marginTop: "0.25rem" }}>
           Track your mentorship requests and active research dialogues below.
@@ -211,12 +201,6 @@ export default async function StudentDashboard() {
                 title="Browse Mentors"
                 sub="Find a verified professor"
                 icon={<Search size={14} color="rgba(255,255,255,0.5)" />}
-              />
-              <QuickAction
-                href="/professors"
-                title="New Request"
-                sub="Start a mentorship thread"
-                icon={<PlusCircle size={14} color="rgba(255,255,255,0.5)" />}
               />
               <QuickAction
                 href="/profile"
@@ -282,10 +266,32 @@ export default async function StudentDashboard() {
               </Link>
             </div>
           ) : (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "1.25rem" }}>
-              {processedRequests.map((req) => (
-                <ThreadCard key={req.id} request={req as any} viewerRole="student" />
-              ))}
+            <div style={{ display: "flex", flexDirection: "column", gap: "3rem" }}>
+              {/* Ongoing Threads */}
+              {processedRequests.filter((r: any) => r.status !== "closed").length > 0 && (
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "1.25rem" }}>
+                  {processedRequests.filter((r: any) => r.status !== "closed").map((req: any) => (
+                    <ThreadCard key={req.id} request={req} viewerRole="student" />
+                  ))}
+                </div>
+              )}
+
+              {/* Closed Threads */}
+              {processedRequests.filter((r: any) => r.status === "closed").length > 0 && (
+                <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                    <span style={{ width: "1rem", height: "1px", background: "rgba(255,255,255,0.2)", display: "block" }} />
+                    <h2 className="font-display" style={{ fontSize: "1rem", fontWeight: 700, color: "rgba(255,255,255,0.5)", letterSpacing: "-0.02em" }}>
+                      Past Mentorships
+                    </h2>
+                  </div>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "1.25rem", opacity: 0.8 }}>
+                    {processedRequests.filter((r: any) => r.status === "closed").map((req: any) => (
+                      <ThreadCard key={req.id} request={req} viewerRole="student" />
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>

@@ -2,14 +2,16 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { usePathname } from "next/navigation";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sidebar } from "./Sidebar";
 
 interface AppShellProps {
   children: React.ReactNode;
+  role?: string;
 }
 
-export function AppShell({ children }: AppShellProps) {
+export function AppShell({ children, role = "student" }: AppShellProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();
 
@@ -69,7 +71,7 @@ export function AppShell({ children }: AppShellProps) {
         <nav className="app-nav-links hidden lg:flex items-center gap-8" aria-label="Main navigation">
           {[
             { href: "/dashboard",  label: "Dashboard" },
-            { href: "/professors", label: "Browse Mentors" },
+            ...(role === "student" ? [{ href: "/professors", label: "Browse Mentors" }] : []),
           ].map(({ href, label }) => (
             <a
               key={href}
@@ -100,17 +102,19 @@ export function AppShell({ children }: AppShellProps) {
             <span className="absolute right-1 top-1 h-1.5 w-1.5 rounded-full bg-white/60" aria-hidden="true" />
           </button>
           {/* Avatar capsule — same border style as landing page SIGN UP button */}
-          <div
-            className="flex h-7 px-3 cursor-pointer items-center justify-center rounded-full border text-[0.58rem] font-semibold tracking-widest uppercase transition-all"
-            style={{ borderColor: "rgba(255,255,255,0.2)", color: "rgba(255,255,255,0.7)", background: "transparent" }}
-            role="button"
-            tabIndex={0}
-            aria-label="User menu"
-            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.5)"; (e.currentTarget as HTMLElement).style.color = "#fff"; }}
-            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.2)"; (e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.7)"; }}
-          >
-            Account
-          </div>
+          <Link href="/profile" style={{ textDecoration: "none" }}>
+            <div
+              className="flex h-7 px-3 cursor-pointer items-center justify-center rounded-full border text-[0.58rem] font-semibold tracking-widest uppercase transition-all"
+              style={{ borderColor: "rgba(255,255,255,0.2)", color: "rgba(255,255,255,0.7)", background: "transparent" }}
+              role="button"
+              tabIndex={0}
+              aria-label="User menu"
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.5)"; (e.currentTarget as HTMLElement).style.color = "#fff"; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.2)"; (e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.7)"; }}
+            >
+              Account
+            </div>
+          </Link>
         </div>
       </header>
 
@@ -131,7 +135,7 @@ export function AppShell({ children }: AppShellProps) {
           aria-label="Sidebar navigation"
           style={{ background: "#080c14" }}
         >
-          <Sidebar onClose={closeSidebar} />
+          <Sidebar onClose={closeSidebar} role={role} />
         </aside>
 
         <main className="app-main" style={{ background: "#080c14" }}>

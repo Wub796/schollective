@@ -13,13 +13,8 @@ interface NavItem {
 
 interface SidebarProps {
   onClose?: () => void;
+  role?: string;
 }
-
-const studentNav: NavItem[] = [
-  { href: "/dashboard",   label: "Dashboard",  sub: "Overview"    },
-  { href: "/professors",  label: "Mentors",     sub: "Browse All"  },
-  { href: "/request/new", label: "New Request", sub: "Pick Mentor" },
-];
 
 const accountNav: NavItem[] = [
   { href: "/profile", label: "Profile", sub: "Settings" },
@@ -36,7 +31,7 @@ const item = {
   show:   { opacity: 1, x: 0, transition: { duration: 0.4, ease: EASE } },
 };
 
-export function Sidebar({ onClose }: SidebarProps) {
+export function Sidebar({ onClose, role = "student" }: SidebarProps) {
   const pathname = usePathname();
   const router   = useRouter();
   const supabase = createClient();
@@ -48,6 +43,11 @@ export function Sidebar({ onClose }: SidebarProps) {
     await supabase.auth.signOut();
     router.push("/login");
   };
+
+  const navItems = [
+    { href: "/dashboard", label: "Dashboard", sub: "Overview" },
+    ...(role === "student" ? [{ href: "/professors", label: "Mentors", sub: "Browse All" }] : []),
+  ];
 
   return (
     <nav
@@ -70,7 +70,7 @@ export function Sidebar({ onClose }: SidebarProps) {
         variants={stagger} initial="hidden" animate="show"
         style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "0.15rem", marginBottom: "2.5rem" }}
       >
-        {studentNav.map((navItem) => {
+        {navItems.map((navItem) => {
           const active = isActive(navItem.href);
           return (
             <motion.li key={navItem.href} variants={item}>
