@@ -157,14 +157,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        display: "grid",
-        gridTemplateColumns: "1fr 1fr",
-        background: "#080c14",
-      }}
-    >
+    <div className="auth-two-col" style={{ background: "#080c14" }}>
       {/* ════════════════════════════════════════
           LEFT — Form panel
       ════════════════════════════════════════ */}
@@ -231,7 +224,7 @@ export default function LoginPage() {
                   id="password" name="password" type="password"
                   label="Password" placeholder="••••••••" required
                   suffix={
-                    <Link href="#" className="no-underline" style={{ fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(255,255,255,0.28)" }}>
+                    <Link href="/reset-password" className="no-underline" style={{ fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(255,255,255,0.28)" }}>
                       Forgot?
                     </Link>
                   }

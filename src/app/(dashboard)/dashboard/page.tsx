@@ -172,7 +172,7 @@ export default async function StudentDashboard() {
       </header>
 
       {/* ── Stats row ──────────────────────────────────────────── */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "1rem" }}>
+      <div className="dash-stat-grid">
         <StatCard value={totalRequests} label="Total Requests" sub="Lifetime"  />
         <StatCard value={activeCount}   label="Active Threads" sub="Ongoing"   />
         <StatCard value={pendingCount}  label="Awaiting Reply" sub="Pending"   />
@@ -182,7 +182,7 @@ export default async function StudentDashboard() {
       <div style={{ height: "1px", background: "rgba(255,255,255,0.06)" }} />
 
       {/* ── Two-column body ────────────────────────────────────── */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: "3rem", alignItems: "start" }}>
+      <div className="dash-two-col">
 
         {/* Left: quick actions + how it works */}
         <div style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }}>

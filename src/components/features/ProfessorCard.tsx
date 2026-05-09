@@ -132,7 +132,7 @@ export function ProfessorCard({ professor }: ProfessorCardProps) {
 
       {/* CTA */}
       <Link
-        href={`/request/new?prof_id=${professor.id}`}
+        href={`/professors/${professor.id}`}
         style={{ marginTop: "auto", textDecoration: "none" }}
       >
         <motion.div
@@ -154,16 +154,8 @@ export function ProfessorCard({ professor }: ProfessorCardProps) {
             cursor: "pointer",
             transition: "background 0.2s, border-color 0.2s, color 0.2s",
           }}
-          onHoverStart={e => {
-            const el = (e.target as HTMLElement).closest('[style]') as HTMLElement | null;
-            if (el) { el.style.background = "rgba(255,255,255,0.14)"; el.style.color = "#fff"; }
-          }}
-          onHoverEnd={e => {
-            const el = (e.target as HTMLElement).closest('[style]') as HTMLElement | null;
-            if (el) { el.style.background = "rgba(255,255,255,0.08)"; el.style.color = "rgba(255,255,255,0.8)"; }
-          }}
         >
-          Request Mentorship
+          View Profile
         </motion.div>
       </Link>
     </motion.div>

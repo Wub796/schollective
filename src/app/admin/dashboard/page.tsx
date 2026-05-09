@@ -119,7 +119,7 @@ export default async function AdminDashboard() {
       </header>
 
       {/* ── Stats row ── */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "1rem" }}>
+      <div className="dash-stat-grid">
         <StatCard value={studentCount || 0} label="Students" sub="Registered" />
         <StatCard value={facultyCount || 0} label="Faculty" sub="Verified" />
         <StatCard value={activeThreadsCount || 0} label="Active Threads" sub="System-wide" />

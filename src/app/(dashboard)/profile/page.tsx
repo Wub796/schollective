@@ -138,6 +138,10 @@ export default function ProfilePage() {
       institution:    fd.get("institution")     as string,
       updated_at:     new Date().toISOString(),
     };
+    if (profile?.role === "student") {
+      const educationLevel = fd.get("education_level") as string;
+      if (educationLevel) updates.education_level = educationLevel;
+    }
     if (profile?.role === "professor") {
       updates.expertise_fields = expertiseRaw
         ? expertiseRaw.split(",").map((s: string) => s.trim()).filter(Boolean)
@@ -324,6 +328,29 @@ export default function ProfilePage() {
 
           {/* Institution */}
           <Field id="institution" name="institution" label="Institution" defaultValue={profile?.institution ?? ""} placeholder="e.g. Stanford University" />
+
+          {/* Education Level — students only */}
+          {profile?.role === "student" && (
+            <div style={{ position: "relative" }}>
+              <label htmlFor="education_level" style={{ display: "block", fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(255,255,255,0.3)", marginBottom: "0.55rem", fontFamily: "var(--font-sans)" }}>
+                Education Level
+              </label>
+              <select
+                id="education_level"
+                name="education_level"
+                defaultValue={profile?.education_level ?? ""}
+                style={{ width: "100%", background: "transparent", border: "none", borderBottom: "1px solid rgba(255,255,255,0.12)", padding: "0.7rem 0", fontSize: "0.95rem", color: profile?.education_level ? "#fff" : "rgba(255,255,255,0.3)", outline: "none", fontFamily: "var(--font-sans)", cursor: "pointer", appearance: "none" }}
+              >
+                <option value="" style={{ background: "#080c14" }}>Select level…</option>
+                <option value="high-school"  style={{ background: "#080c14" }}>High School</option>
+                <option value="undergraduate" style={{ background: "#080c14" }}>Undergraduate</option>
+                <option value="graduate"     style={{ background: "#080c14" }}>Graduate (Master's)</option>
+                <option value="doctoral"     style={{ background: "#080c14" }}>Doctoral (PhD)</option>
+                <option value="postdoctoral" style={{ background: "#080c14" }}>Postdoctoral</option>
+                <option value="other"        style={{ background: "#080c14" }}>Other</option>
+              </select>
+            </div>
+          )}
 
           {/* Expertise — professors only */}
           {profile?.role === "professor" && (
