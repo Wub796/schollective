@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Browse Professors — Schollective</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/animations.css">
+    <link rel="stylesheet" href="../css/pages/hero-parallax.css"> <!-- Reuse card styles -->
+    <style>
+        .page-header {
+            padding: 8rem 4rem 4rem;
+            text-align: center;
+            background: linear-gradient(180deg, rgba(11, 22, 40, 1) 0%, rgba(13, 30, 53, 1) 100%);
+        }
+        .browse-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem;
+        }
+        .filter-bar {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        .filter-chip {
+            padding: 0.6rem 1.25rem;
+            border-radius: 50px;
+            background: rgba(26, 58, 92, 0.4);
+            border: 1px solid rgba(155, 175, 192, 0.15);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            cursor: none;
+            transition: all 0.3s var(--ease);
+        }
+        .filter-chip.active {
+            border-color: var(--amber);
+            color: var(--amber);
+            background: rgba(212, 146, 42, 0.08);
+        }
+        .prof-card {
+            position: relative;
+            background: rgba(17, 34, 64, 0.6);
+            border: 1px solid rgba(155, 175, 192, 0.1);
+            border-radius: 20px;
+            padding: 2rem;
+            transition: all 0.4s var(--ease);
+            cursor: none;
+            display: flex;
+            flex-direction: column;
+        }
+        .prof-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(212, 146, 42, 0.25);
+            background: rgba(17, 34, 64, 0.8);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        }
+        .prof-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--serif);
+            font-size: 1.4rem;
+            margin-bottom: 1.5rem;
+        }
+        .prof-bio {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin: 1rem 0 1.5rem;
+            flex-grow: 1;
+        }
+        .search-container {
+            max-width: 600px;
+            margin: 2rem auto 0;
+            position: relative;
+        }
+        .search-input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            border-radius: 50px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(155, 175, 192, 0.2);
+            color: var(--ivory);
+            font-family: var(--sans);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- CUSTOM CURSOR -->
+    <div class="cursor-dot" id="cursorDot"></div>
+    <div class="cursor-ring" id="cursorRing"></div>
+
+    <!-- NAVIGATION -->
+    <nav id="navbar" class="scrolled">
+        <a href="../index.html" class="nav-logo">
+            <div class="logo-mark-css"></div>
+            <div class="nav-wordmark">Schol<span>lective</span></div>
+        </a>
+
+        <ul class="nav-links">
+            <li><a href="../index.html#how">How it works</a></li>
+            <li><a href="index.html" style="color: var(--ivory);">Browse Professors</a></li>
+            <li><a href="../student/dashboard.html">Dashboard</a></li>
+        </ul>
+
+        <div class="nav-cta">
+            <a href="../auth/login.html" class="btn-ghost">Log in</a>
+            <a href="../auth/signup.html" class="btn-primary">Join free</a>
+        </div>
+    </nav>
+
+    <header class="page-header">
+        <div class="section-label">Professor Directory</div>
+        <h2>Discover your <em>intellectual mentor</em></h2>
+        <p class="section-body" style="margin: 0 auto;">Connect with verified experts across all academic disciplines.</p>
+        
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="Search by field, name, or research area...">
+        </div>
+    </header>
+
+    <div class="filter-bar">
+        <div class="filter-chip active">All Fields</div>
+        <div class="filter-chip">STEM</div>
+        <div class="filter-chip">Humanities</div>
+        <div class="filter-chip">Social Sciences</div>
+        <div class="filter-chip">Arts & Design</div>
+        <div class="filter-chip">Business</div>
+    </div>
+
+    <main class="browse-grid" id="prof-grid">
+        <!-- populated by JS -->
+    </main>
+
+    <!-- FOOTER (Simple version) -->
+    <footer style="text-align: center; padding: 4rem; border-top: 1px solid rgba(155,175,192,0.1);">
+        <div class="footer-brand">Schol<span>lective</span></div>
+        <div class="footer-copy" style="margin-top: 1rem;">© 2025 Schollective. Academic Mentorship, Democratized.</div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../js/core.js"></script>
+    <script src="../js/mock-data.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const grid = document.getElementById('prof-grid');
+            MOCK_PROFESSORS.forEach(prof => {
+                const card = document.createElement('div');
+                card.className = 'prof-card reveal';
+                card.innerHTML = `
+                    <div class="prof-avatar av-${prof.color}">${prof.avatar}</div>
+                    <div class="card-label">${prof.institution}</div>
+                    <div class="card-name" style="font-size: 1.4rem;">${prof.name}</div>
+                    <div class="card-detail">${prof.field}</div>
+                    <p class="prof-bio">${prof.bio}</p>
+                    <div style="margin-bottom: 1.5rem;">
+                        ${prof.tags.map(tag => `<span class="card-tag ${prof.color === 'sage' ? 'sage' : ''}">${tag}</span>`).join('')}
+                    </div>
+                    <a href="profile.html?id=${prof.id}" class="btn-ghost" style="text-align:center; display:block;">View Profile</a>
+                `;
+                grid.appendChild(card);
+            });
+            // Re-run reveals for dynamic content
+            initScrollReveals();
+        });
+    </script>
+</body>
+</html>
