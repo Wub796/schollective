@@ -16,9 +16,9 @@ interface SidebarProps {
 }
 
 const studentNav: NavItem[] = [
-  { href: "/dashboard",   label: "Dashboard",     sub: "Overview"       },
-  { href: "/professors",  label: "Mentors",        sub: "Browse All"     },
-  { href: "/request/new", label: "New Request",    sub: "Open Thread"    },
+  { href: "/dashboard",   label: "Dashboard",  sub: "Overview"    },
+  { href: "/professors",  label: "Mentors",     sub: "Browse All"  },
+  { href: "/request/new", label: "New Request", sub: "Pick Mentor" },
 ];
 
 const accountNav: NavItem[] = [
