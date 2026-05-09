@@ -2,7 +2,6 @@ import React from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
-import { Button } from "@/components/ui/Button";
 import { ThreadCard } from "@/components/features/ThreadCard";
 import { PlusCircle, BookOpen } from "lucide-react";
 
@@ -57,59 +56,125 @@ export default async function StudentDashboard() {
   });
 
   return (
-    <div className="py-10 lg:py-16 space-y-16">
-      {/* Header */}
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
-        <div>
-          <p className="text-[0.62rem] font-bold tracking-[0.25em] text-[#3a3a3a] uppercase mb-3">
+    <div style={{ padding: "3rem 0", display: "flex", flexDirection: "column", gap: "4rem" }}>
+
+      {/* ── Header ─────────────────────────────────────────────── */}
+      <header style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+        {/* Eyebrow */}
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <span style={{ width: "1.5rem", height: "1px", background: "rgba(255,255,255,0.2)", display: "block" }} />
+          <span style={{
+            fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.38em",
+            textTransform: "uppercase", color: "rgba(255,255,255,0.3)",
+            fontFamily: "var(--font-mono, monospace)",
+          }}>
             Student Portal
-          </p>
-          <h1 className="font-display text-4xl lg:text-5xl font-bold text-[#f2f2f0] leading-tight">
-            Welcome back, <em className="italic text-[#5a5a5a]">{displayName}</em>
-          </h1>
-          <p className="text-[#4a4a4a] mt-4 text-base font-light max-w-xl leading-relaxed">
-            Track your mentorship requests and active research dialogues.
-          </p>
+          </span>
         </div>
-        <Link href="/professors">
-          <Button size="lg" className="flex gap-2 shrink-0">
-            <PlusCircle size={16} />
-            New Request
-          </Button>
-        </Link>
+
+        {/* Headline + CTA row */}
+        <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: "2rem", flexWrap: "wrap" }}>
+          <h1 className="font-display" style={{
+            fontSize: "clamp(2.4rem, 5vw, 3.8rem)", fontWeight: 900,
+            color: "#fff", letterSpacing: "-0.035em", lineHeight: 1.05,
+          }}>
+            Welcome back,{" "}
+            <em style={{ fontStyle: "italic", color: "rgba(255,255,255,0.35)" }}>{displayName}</em>
+          </h1>
+
+          <Link href="/professors" style={{ textDecoration: "none", flexShrink: 0 }}>
+            <div style={{
+              display: "flex", alignItems: "center", gap: "0.5rem",
+              padding: "0.75rem 1.5rem",
+              background: "#fff", color: "#080c14",
+              borderRadius: "100px",
+              fontSize: "0.58rem", fontWeight: 700,
+              letterSpacing: "0.22em", textTransform: "uppercase",
+              fontFamily: "var(--font-sans)",
+              cursor: "pointer",
+            }}>
+              <PlusCircle size={14} />
+              New Request
+            </div>
+          </Link>
+        </div>
+
+        <p style={{
+          fontSize: "0.9rem", color: "rgba(255,255,255,0.4)", fontWeight: 300,
+          maxWidth: "42rem", lineHeight: 1.7, fontFamily: "var(--font-sans)",
+          marginTop: "0.25rem",
+        }}>
+          Track your mentorship requests and active research dialogues.
+        </p>
       </header>
 
-      {/* Threads */}
-      <div className="space-y-6">
-        <div className="flex items-center justify-between border-b border-[rgba(255,255,255,0.05)] pb-4">
-          <h2 className="font-display text-xl font-semibold text-[#d4d4d2]">
-            Active Threads
-          </h2>
+      {/* ── Hairline ───────────────────────────────────────────── */}
+      <div style={{ height: "1px", background: "rgba(255,255,255,0.06)" }} />
+
+      {/* ── Threads section ────────────────────────────────────── */}
+      <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
+        {/* Section header */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+            <span style={{ width: "1rem", height: "1px", background: "rgba(255,255,255,0.2)", display: "block" }} />
+            <h2 className="font-display" style={{
+              fontSize: "1.3rem", fontWeight: 700, color: "rgba(255,255,255,0.85)",
+              letterSpacing: "-0.02em",
+            }}>
+              Active Threads
+            </h2>
+          </div>
           {processedRequests.length > 0 && (
-            <span className="text-[0.62rem] text-[#3a3a3a] uppercase tracking-widest font-bold">
+            <span style={{
+              fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.28em",
+              textTransform: "uppercase", color: "rgba(255,255,255,0.25)",
+              fontFamily: "var(--font-mono, monospace)",
+            }}>
               {processedRequests.length} total
             </span>
           )}
         </div>
 
+        {/* Empty state */}
         {processedRequests.length === 0 ? (
-          <div className="border border-[rgba(255,255,255,0.05)] border-dashed rounded-2xl p-20 text-center">
-            <div className="w-14 h-14 rounded-xl bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.06)] flex items-center justify-center mx-auto mb-6">
-              <BookOpen size={24} className="text-[#3a3a3a]" />
+          <div style={{
+            border: "1px dashed rgba(255,255,255,0.08)",
+            borderRadius: "16px",
+            padding: "5rem 2rem",
+            textAlign: "center",
+            display: "flex", flexDirection: "column", alignItems: "center", gap: "1.25rem",
+          }}>
+            <div style={{
+              width: "3rem", height: "3rem", borderRadius: "50%",
+              background: "rgba(255,255,255,0.04)",
+              border: "1px solid rgba(255,255,255,0.08)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+            }}>
+              <BookOpen size={20} color="rgba(255,255,255,0.3)" />
             </div>
-            <h3 className="font-display text-2xl text-[#d4d4d2] mb-4 font-semibold">
-              Your dashboard is waiting
-            </h3>
-            <p className="text-[#4a4a4a] max-w-sm mx-auto mb-10 text-sm leading-relaxed font-light">
-              You haven&apos;t submitted any mentorship requests yet. Start by
-              connecting with a verified professor.
-            </p>
-            <Link href="/professors">
-              <Button variant="outline">Browse Professors</Button>
+            <div>
+              <h3 className="font-display" style={{ fontSize: "1.4rem", fontWeight: 700, color: "rgba(255,255,255,0.75)", marginBottom: "0.5rem", letterSpacing: "-0.02em" }}>
+                Your dashboard is waiting
+              </h3>
+              <p style={{ fontSize: "0.82rem", color: "rgba(255,255,255,0.35)", maxWidth: "28rem", lineHeight: 1.7, fontFamily: "var(--font-sans)" }}>
+                You haven&apos;t submitted any mentorship requests yet. Start by connecting with a verified professor.
+              </p>
+            </div>
+            <Link href="/professors" style={{ textDecoration: "none", marginTop: "0.5rem" }}>
+              <div style={{
+                padding: "0.75rem 1.75rem",
+                border: "1px solid rgba(255,255,255,0.15)",
+                borderRadius: "100px",
+                fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.22em",
+                textTransform: "uppercase", color: "rgba(255,255,255,0.7)",
+                fontFamily: "var(--font-sans)", cursor: "pointer",
+              }}>
+                Browse Professors
+              </div>
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "1.25rem" }}>
             {processedRequests.map((req) => (
               <ThreadCard key={req.id} request={req as any} viewerRole="student" />
             ))}

@@ -3,8 +3,6 @@
 import React from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/Button";
-import { GraduationCap } from "lucide-react";
 
 interface ProfessorCardProps {
   professor: {
@@ -19,66 +17,154 @@ interface ProfessorCardProps {
 
 export function ProfessorCard({ professor }: ProfessorCardProps) {
   const displayName = professor.preferred_name || professor.first_name;
+  const initials = `${professor.first_name[0]}${professor.last_name[0]}`;
 
   return (
     <motion.div
-      whileHover={{ y: -4, borderColor: "rgba(255,255,255,0.12)" }}
-      transition={{ duration: 0.22, ease: "easeOut" }}
-      className="bg-[#111111] border border-[rgba(255,255,255,0.06)] rounded-2xl p-7 flex flex-col h-full group relative overflow-hidden"
+      whileHover={{ y: -5 }}
+      transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+      className="professor-card-hover"
+      style={{
+        position: "relative",
+        background: "rgba(255,255,255,0.025)",
+        border: "1px solid rgba(255,255,255,0.08)",
+        borderRadius: "16px",
+        padding: "2rem",
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
+        overflow: "hidden",
+        transition: "border-color 0.3s",
+      }}
     >
-      {/* Hover gradient reveal */}
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[rgba(255,255,255,0.1)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      {/* Ambient glow on hover — top edge */}
+      <div style={{
+        position: "absolute", insetInline: 0, top: 0, height: "1px",
+        background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent)",
+      }} />
 
-      {/* Header */}
-      <div className="flex items-start justify-between mb-7">
+      {/* Header row: avatar + verified badge */}
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "1.5rem" }}>
         {/* Avatar */}
-        <div className="w-14 h-14 rounded-xl bg-[rgba(255,255,255,0.04)] border border-[rgba(255,255,255,0.07)] flex items-center justify-center text-lg font-semibold text-[#6a6a6a] transition-colors duration-300 group-hover:text-[#c8c8c6] group-hover:border-[rgba(255,255,255,0.12)]">
-          {professor.first_name[0]}{professor.last_name[0]}
+        <div style={{
+          width: "3rem", height: "3rem", borderRadius: "50%",
+          background: "rgba(255,255,255,0.05)",
+          border: "1px solid rgba(255,255,255,0.12)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          fontSize: "0.85rem", fontWeight: 600,
+          color: "rgba(255,255,255,0.6)",
+          letterSpacing: "0.04em",
+          fontFamily: "var(--font-sans)",
+        }}>
+          {initials}
         </div>
-        {/* Verified badge */}
-        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-[rgba(255,255,255,0.06)] bg-[rgba(255,255,255,0.02)]">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#4a4a4a]" />
-          <span className="text-[0.58rem] font-semibold uppercase tracking-widest text-[#4a4a4a]">
+
+        {/* Verified pill */}
+        <div style={{
+          display: "flex", alignItems: "center", gap: "0.35rem",
+          padding: "0.3rem 0.7rem", borderRadius: "100px",
+          border: "1px solid rgba(255,255,255,0.08)",
+          background: "rgba(255,255,255,0.03)",
+        }}>
+          <span style={{ width: "5px", height: "5px", borderRadius: "50%", background: "rgba(120,200,120,0.7)" }} />
+          <span style={{
+            fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.22em",
+            textTransform: "uppercase", color: "rgba(255,255,255,0.35)",
+            fontFamily: "var(--font-mono, monospace)",
+          }}>
             Verified
           </span>
         </div>
       </div>
 
-      {/* Name & institution */}
-      <div className="mb-6">
-        <h3 className="font-display text-xl text-[#d4d4d2] mb-1.5 leading-tight group-hover:text-[#f2f2f0] transition-colors duration-300">
+      {/* Name + institution */}
+      <div style={{ marginBottom: "1.5rem" }}>
+        <h3 className="font-display" style={{
+          fontSize: "1.2rem", fontWeight: 700,
+          color: "rgba(255,255,255,0.88)", lineHeight: 1.2,
+          marginBottom: "0.4rem", letterSpacing: "-0.02em",
+        }}>
           Dr. {displayName} {professor.last_name}
         </h3>
-        <div className="flex items-center gap-1.5 text-[#4a4a4a] text-xs">
-          <GraduationCap size={12} />
-          <span className="truncate">{professor.institution || "Independent Researcher"}</span>
+        <div style={{
+          fontSize: "0.68rem", color: "rgba(255,255,255,0.38)",
+          fontFamily: "var(--font-sans)", lineHeight: 1.4,
+        }}>
+          {professor.institution || "Independent Researcher"}
         </div>
       </div>
 
+      {/* Hairline */}
+      <div style={{ height: "1px", background: "rgba(255,255,255,0.06)", marginBottom: "1.25rem" }} />
+
       {/* Expertise tags */}
-      <div className="flex-grow mb-8">
-        <div className="text-[0.58rem] text-[#3a3a3a] uppercase tracking-[0.18em] font-semibold mb-3">
+      <div style={{ flex: 1, marginBottom: "1.75rem" }}>
+        <div style={{
+          fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.28em",
+          textTransform: "uppercase", color: "rgba(255,255,255,0.2)",
+          marginBottom: "0.75rem", fontFamily: "var(--font-mono, monospace)",
+        }}>
           Focus Areas
         </div>
-        <div className="flex flex-wrap gap-1.5">
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem" }}>
           {professor.expertise_fields?.slice(0, 4).map((field, idx) => (
             <span
               key={idx}
-              className="px-2.5 py-1 rounded-lg bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.06)] text-[0.68rem] text-[#6a6a6a] transition-colors hover:text-[#c8c8c6] hover:border-[rgba(255,255,255,0.1)]"
+              style={{
+                padding: "0.3rem 0.7rem",
+                borderRadius: "100px",
+                border: "1px solid rgba(255,255,255,0.08)",
+                background: "rgba(255,255,255,0.03)",
+                fontSize: "0.65rem",
+                color: "rgba(255,255,255,0.5)",
+                fontFamily: "var(--font-sans)",
+              }}
             >
               {field}
             </span>
           )) || (
-            <span className="text-[0.7rem] italic text-[#3a3a3a]">Open to requests</span>
+            <span style={{ fontSize: "0.72rem", fontStyle: "italic", color: "rgba(255,255,255,0.22)", fontFamily: "var(--font-sans)" }}>
+              Open to all topics
+            </span>
           )}
         </div>
       </div>
 
       {/* CTA */}
-      <Link href={`/request/new?prof_id=${professor.id}`} className="mt-auto">
-        <Button className="w-full text-[0.7rem] uppercase tracking-widest font-bold py-3">
+      <Link
+        href={`/request/new?prof_id=${professor.id}`}
+        style={{ marginTop: "auto", textDecoration: "none" }}
+      >
+        <motion.div
+          whileHover={{ scale: 1.01 }}
+          whileTap={{ scale: 0.98 }}
+          style={{
+            width: "100%",
+            padding: "0.85rem 1.5rem",
+            background: "rgba(255,255,255,0.08)",
+            border: "1px solid rgba(255,255,255,0.12)",
+            borderRadius: "100px",
+            textAlign: "center",
+            fontSize: "0.58rem",
+            fontWeight: 700,
+            letterSpacing: "0.24em",
+            textTransform: "uppercase",
+            color: "rgba(255,255,255,0.8)",
+            fontFamily: "var(--font-sans)",
+            cursor: "pointer",
+            transition: "background 0.2s, border-color 0.2s, color 0.2s",
+          }}
+          onHoverStart={e => {
+            const el = (e.target as HTMLElement).closest('[style]') as HTMLElement | null;
+            if (el) { el.style.background = "rgba(255,255,255,0.14)"; el.style.color = "#fff"; }
+          }}
+          onHoverEnd={e => {
+            const el = (e.target as HTMLElement).closest('[style]') as HTMLElement | null;
+            if (el) { el.style.background = "rgba(255,255,255,0.08)"; el.style.color = "rgba(255,255,255,0.8)"; }
+          }}
+        >
           Request Mentorship
-        </Button>
+        </motion.div>
       </Link>
     </motion.div>
   );

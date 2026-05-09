@@ -461,6 +461,7 @@ body {
   background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, transparent 40%, rgba(255,255,255,0.1) 100%);
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   mask-composite: exclude;
   pointer-events: none;
 }
@@ -743,4 +744,9 @@ body {
 .hover-lift:hover {
   transform: translateY(-2px);
   box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.5);
+}
+
+/* Professor card hover border */
+.professor-card-hover:hover {
+  border-color: rgba(255, 255, 255, 0.18) !important;
 }

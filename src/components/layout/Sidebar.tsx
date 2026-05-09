@@ -3,73 +3,37 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { cn } from "@/lib/utils";
 import { createClient } from "@/utils/supabase/client";
 
 interface NavItem {
   href: string;
   label: string;
-  icon: React.ReactNode;
-  badge?: number;
+  sub?: string;
 }
 
 interface SidebarProps {
   onClose?: () => void;
 }
 
-const icons = {
-  dashboard: (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <rect x="3" y="3" width="7" height="7" rx="1.5" /><rect x="14" y="3" width="7" height="7" rx="1.5" />
-      <rect x="14" y="14" width="7" height="7" rx="1.5" /><rect x="3" y="14" width="7" height="7" rx="1.5" />
-    </svg>
-  ),
-  professors: (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
-    </svg>
-  ),
-  messages: (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-    </svg>
-  ),
-  request: (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M12 5v14M5 12h14" />
-    </svg>
-  ),
-  profile: (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <circle cx="12" cy="8" r="4" /><path d="M20 21a8 8 0 1 0-16 0" />
-    </svg>
-  ),
-  signout: (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" y1="12" x2="9" y2="12" />
-    </svg>
-  ),
-};
-
 const studentNav: NavItem[] = [
-  { href: "/dashboard",   label: "Dashboard",        icon: icons.dashboard },
-  { href: "/professors",  label: "Browse Professors", icon: icons.professors },
-  { href: "/request/new", label: "New Request",       icon: icons.request },
+  { href: "/dashboard",   label: "Dashboard",     sub: "Overview"       },
+  { href: "/professors",  label: "Mentors",        sub: "Browse All"     },
+  { href: "/request/new", label: "New Request",    sub: "Open Thread"    },
 ];
 
 const accountNav: NavItem[] = [
-  { href: "/profile", label: "My Profile", icon: icons.profile },
+  { href: "/profile", label: "Profile", sub: "Settings" },
 ];
 
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
 const stagger = {
   hidden: {},
-  show: { transition: { staggerChildren: 0.045, delayChildren: 0.05 } },
+  show: { transition: { staggerChildren: 0.055, delayChildren: 0.05 } },
 };
-const linkItem = {
-  hidden: { opacity: 0, x: -8 },
-  show:   { opacity: 1, x: 0, transition: { duration: 0.3, ease: EASE } },
+const item = {
+  hidden: { opacity: 0, x: -10 },
+  show:   { opacity: 1, x: 0, transition: { duration: 0.4, ease: EASE } },
 };
 
 export function Sidebar({ onClose }: SidebarProps) {
@@ -87,88 +51,143 @@ export function Sidebar({ onClose }: SidebarProps) {
 
   return (
     <nav
-      className="flex h-full flex-col px-3 py-5"
+      className="flex h-full flex-col"
+      style={{ padding: "2rem 1.25rem", fontFamily: "var(--font-sans)" }}
       aria-label="Sidebar navigation"
     >
-      {/* Section: Main */}
-      <p className="mb-2 px-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-[#2e2e2e] select-none">
-        Navigation
+      {/* Section label */}
+      <p style={{
+        fontSize: "0.48rem", fontWeight: 700, letterSpacing: "0.38em",
+        textTransform: "uppercase", color: "rgba(255,255,255,0.2)",
+        marginBottom: "0.75rem", paddingLeft: "0.5rem",
+        fontFamily: "var(--font-mono, monospace)",
+      }}>
+        Navigate
       </p>
+
+      {/* Main nav */}
       <motion.ul
-        variants={stagger}
-        initial="hidden"
-        animate="show"
-        className="flex flex-col gap-0.5 list-none"
+        variants={stagger} initial="hidden" animate="show"
+        style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "0.15rem", marginBottom: "2.5rem" }}
       >
-        {studentNav.map((item) => (
-          <motion.li key={item.href} variants={linkItem}>
-            <SidebarLink item={item} active={isActive(item.href)} onClick={onClose} />
-          </motion.li>
-        ))}
+        {studentNav.map((navItem) => {
+          const active = isActive(navItem.href);
+          return (
+            <motion.li key={navItem.href} variants={item}>
+              <Link
+                href={navItem.href}
+                onClick={onClose}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  padding: "0.6rem 0.75rem",
+                  borderRadius: "8px",
+                  textDecoration: "none",
+                  background: active ? "rgba(255,255,255,0.07)" : "transparent",
+                  border: active ? "1px solid rgba(255,255,255,0.1)" : "1px solid transparent",
+                  transition: "all 0.2s",
+                }}
+                onMouseEnter={e => {
+                  if (!active) (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.03)";
+                }}
+                onMouseLeave={e => {
+                  if (!active) (e.currentTarget as HTMLElement).style.background = "transparent";
+                }}
+                aria-current={active ? "page" : undefined}
+              >
+                <span style={{
+                  fontSize: "0.78rem",
+                  fontWeight: active ? 600 : 400,
+                  color: active ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.45)",
+                  letterSpacing: "0.01em",
+                  transition: "color 0.2s",
+                }}>
+                  {navItem.label}
+                </span>
+                <span style={{
+                  fontSize: "0.48rem",
+                  fontWeight: 600,
+                  letterSpacing: "0.2em",
+                  textTransform: "uppercase",
+                  color: active ? "rgba(255,255,255,0.35)" : "rgba(255,255,255,0.15)",
+                  fontFamily: "var(--font-mono, monospace)",
+                }}>
+                  {navItem.sub}
+                </span>
+              </Link>
+            </motion.li>
+          );
+        })}
       </motion.ul>
 
-      {/* Section: Account */}
-      <p className="mb-2 mt-6 px-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-[#2e2e2e] select-none">
+      {/* Hairline divider */}
+      <div style={{ height: "1px", background: "rgba(255,255,255,0.06)", marginBottom: "2rem", marginLeft: "0.5rem", marginRight: "0.5rem" }} />
+
+      {/* Account section */}
+      <p style={{
+        fontSize: "0.48rem", fontWeight: 700, letterSpacing: "0.38em",
+        textTransform: "uppercase", color: "rgba(255,255,255,0.2)",
+        marginBottom: "0.75rem", paddingLeft: "0.5rem",
+        fontFamily: "var(--font-mono, monospace)",
+      }}>
         Account
       </p>
       <motion.ul
-        variants={stagger}
-        initial="hidden"
-        animate="show"
-        className="flex flex-col gap-0.5 list-none"
+        variants={stagger} initial="hidden" animate="show"
+        style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "0.15rem" }}
       >
-        {accountNav.map((item) => (
-          <motion.li key={item.href} variants={linkItem}>
-            <SidebarLink item={item} active={isActive(item.href)} onClick={onClose} />
-          </motion.li>
-        ))}
+        {accountNav.map((navItem) => {
+          const active = isActive(navItem.href);
+          return (
+            <motion.li key={navItem.href} variants={item}>
+              <Link
+                href={navItem.href}
+                onClick={onClose}
+                style={{
+                  display: "flex", alignItems: "center", justifyContent: "space-between",
+                  padding: "0.6rem 0.75rem", borderRadius: "8px", textDecoration: "none",
+                  background: active ? "rgba(255,255,255,0.07)" : "transparent",
+                  border: active ? "1px solid rgba(255,255,255,0.1)" : "1px solid transparent",
+                  transition: "all 0.2s",
+                }}
+                onMouseEnter={e => { if (!active) (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.03)"; }}
+                onMouseLeave={e => { if (!active) (e.currentTarget as HTMLElement).style.background = "transparent"; }}
+              >
+                <span style={{ fontSize: "0.78rem", fontWeight: active ? 600 : 400, color: active ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.45)", transition: "color 0.2s" }}>
+                  {navItem.label}
+                </span>
+                <span style={{ fontSize: "0.48rem", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: active ? "rgba(255,255,255,0.35)" : "rgba(255,255,255,0.15)", fontFamily: "var(--font-mono, monospace)" }}>
+                  {navItem.sub}
+                </span>
+              </Link>
+            </motion.li>
+          );
+        })}
       </motion.ul>
 
-      {/* Sign out */}
-      <div className="mt-auto border-t border-[rgba(255,255,255,0.05)] pt-3">
+      {/* Sign out — pinned to bottom */}
+      <div style={{ marginTop: "auto", paddingTop: "1.5rem" }}>
+        <div style={{ height: "1px", background: "rgba(255,255,255,0.06)", marginBottom: "1.25rem", marginLeft: "0.5rem", marginRight: "0.5rem" }} />
         <button
           onClick={handleSignOut}
-          className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-xs text-[#3a3a3a] hover:text-[#8a8a8a] transition-colors cursor-pointer"
+          style={{
+            display: "flex", alignItems: "center", justifyContent: "space-between",
+            width: "100%", padding: "0.6rem 0.75rem", borderRadius: "8px",
+            background: "transparent", border: "none", cursor: "pointer",
+            transition: "background 0.2s",
+          }}
+          onMouseEnter={e => (e.currentTarget.style.background = "rgba(255,255,255,0.03)")}
+          onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
         >
-          <span className="flex-shrink-0">{icons.signout}</span>
-          <span>Sign out</span>
+          <span style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.35)", fontFamily: "var(--font-sans)", transition: "color 0.2s" }}>
+            Sign Out
+          </span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" y1="12" x2="9" y2="12" />
+          </svg>
         </button>
       </div>
     </nav>
-  );
-}
-
-interface SidebarLinkProps {
-  item: NavItem;
-  active: boolean;
-  muted?: boolean;
-  onClick?: () => void;
-}
-
-function SidebarLink({ item, active, muted, onClick }: SidebarLinkProps) {
-  return (
-    <Link
-      href={item.href}
-      onClick={onClick}
-      className={cn(
-        "flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-xs font-medium transition-all duration-150 no-underline",
-        active
-          ? "bg-[rgba(255,255,255,0.07)] text-[#f2f2f0]"
-          : muted
-            ? "text-[#3a3a3a] hover:text-[#8a8a8a]"
-            : "text-[#5a5a5a] hover:bg-[rgba(255,255,255,0.04)] hover:text-[#c8c8c6]"
-      )}
-      aria-current={active ? "page" : undefined}
-    >
-      <span className={cn("flex-shrink-0", active ? "text-[#f2f2f0]" : "text-[#3a3a3a]")}>
-        {item.icon}
-      </span>
-      <span className="truncate tracking-wide">{item.label}</span>
-      {item.badge != null && item.badge > 0 && (
-        <span className="ml-auto flex h-4 min-w-4 items-center justify-center rounded-full bg-[rgba(255,255,255,0.1)] px-1 text-[9px] font-bold text-[#c8c8c6]">
-          {item.badge}
-        </span>
-      )}
-    </Link>
   );
 }
