@@ -2,6 +2,7 @@
 
 import React, { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { createClient } from "@/utils/supabase/client";
 import { toast } from "sonner";
@@ -316,7 +317,7 @@ export default function ProfilePage() {
         </div>
 
         <form onSubmit={handleSave} style={{ display: "flex", flexDirection: "column", gap: "2.25rem" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem" }}>
+          <div className="grid-2">
             <Field id="first_name" name="first_name" label="First Name" defaultValue={profile?.first_name ?? ""} placeholder="Jane" />
             <Field id="last_name"  name="last_name"  label="Last Name"  defaultValue={profile?.last_name  ?? ""} placeholder="Doe"  />
           </div>
@@ -393,7 +394,41 @@ export default function ProfilePage() {
       {/* ── Hairline ── */}
       <div style={{ height: "1px", background: "rgba(255,255,255,0.07)" }} />
 
-      {/* ── Danger zone ── */}
+      {/* ── Security ── */}
+      <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <span style={{ width: "1rem", height: "1px", background: "rgba(255,255,255,0.15)", display: "block" }} />
+          <span style={{ fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.35em", textTransform: "uppercase", color: "rgba(255,255,255,0.25)", fontFamily: "var(--font-mono, monospace)" }}>
+            Security
+          </span>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: "1.5rem" }}>
+          <Link
+            href="/reset-password"
+            style={{
+              textDecoration: "none",
+              padding: "0.75rem 1.75rem",
+              background: "transparent",
+              border: "1px solid rgba(255,255,255,0.1)",
+              borderRadius: "100px",
+              fontSize: "0.58rem", fontWeight: 700,
+              letterSpacing: "0.22em", textTransform: "uppercase",
+              color: "rgba(255,255,255,0.8)",
+              fontFamily: "var(--font-sans)",
+              transition: "border-color 0.2s, background 0.2s",
+            }}
+            onMouseEnter={e => { (e.currentTarget).style.borderColor = "rgba(255,255,255,0.3)"; (e.currentTarget).style.background = "rgba(255,255,255,0.05)"; }}
+            onMouseLeave={e => { (e.currentTarget).style.borderColor = "rgba(255,255,255,0.1)"; (e.currentTarget).style.background = "transparent"; }}
+          >
+            Change Password
+          </Link>
+        </div>
+      </div>
+
+      {/* ── Hairline ── */}
+      <div style={{ height: "1px", background: "rgba(255,255,255,0.07)" }} />
+
+      {/* ── Session ── */}
       <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
           <span style={{ width: "1rem", height: "1px", background: "rgba(255,255,255,0.15)", display: "block" }} />

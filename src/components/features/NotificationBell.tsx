@@ -4,6 +4,8 @@ import React, { useState, useEffect, useTransition, useRef } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { markAllNotificationsRead } from "@/app/(dashboard)/prof/dashboard/actions";
 import { Bell } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 interface Notification {
   id: string;
@@ -22,8 +24,20 @@ export function NotificationBell() {
   const [open, setOpen] = useState(false);
   const [, startTransition] = useTransition();
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
 
   const unreadCount = notifications.filter((n) => !n.is_read).length;
+
+  const getHref = () => {
+    // Determine the base route from pathname
+    if (pathname.startsWith("/prof")) {
+      return "/prof/dashboard";
+    }
+    if (pathname.startsWith("/admin")) {
+      return "/admin/dashboard";
+    }
+    return "/threads";
+  };
 
   useEffect(() => {
     let mounted = true;
@@ -170,13 +184,15 @@ export function NotificationBell() {
               </div>
             ) : (
               notifications.map((n, i) => (
-                <div key={n.id} style={{
+                <Link key={n.id} href={getHref()} onClick={() => setOpen(false)} style={{
+                  textDecoration: "none",
                   padding: "0.9rem 1.25rem",
                   borderBottom: i < notifications.length - 1 ? "1px solid rgba(255,255,255,0.04)" : "none",
                   background: n.is_read ? "transparent" : "rgba(255,255,255,0.02)",
                   display: "flex",
                   flexDirection: "column",
                   gap: "0.3rem",
+                  transition: "background 0.2s"
                 }}>
                   <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "0.75rem" }}>
                     <span style={{ fontSize: "0.78rem", fontWeight: 600, color: n.is_read ? "rgba(255,255,255,0.5)" : "rgba(255,255,255,0.85)", fontFamily: "var(--font-sans)", lineHeight: 1.4 }}>
@@ -194,7 +210,7 @@ export function NotificationBell() {
                   <span style={{ fontSize: "0.5rem", fontWeight: 600, letterSpacing: "0.15em", textTransform: "uppercase", color: "rgba(255,255,255,0.18)", fontFamily: "var(--font-mono, monospace)", marginTop: "0.1rem" }}>
                     {formatTime(n.created_at)}
                   </span>
-                </div>
+                </Link>
               ))
             )}
           </div>

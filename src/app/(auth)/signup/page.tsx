@@ -158,7 +158,7 @@ export default function SignupPage() {
   };
 
   return (
-    <div style={{ minHeight: "100vh", display: "grid", gridTemplateColumns: "1fr 1fr", background: "#080c14" }}>
+    <div className="auth-two-col signup-layout" style={{ background: "#080c14" }}>
 
       {/* ════════════════════════════════════════
           LEFT — Brand panel (mirrors login's right)
@@ -319,7 +319,7 @@ export default function SignupPage() {
             <div style={{ display: "flex", flexDirection: "column", gap: "1.75rem" }}>
 
               {/* Name row */}
-              <motion.div variants={fadeUp} style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem" }}>
+              <motion.div variants={fadeUp} className="grid-2" style={{ gap: "1.5rem" }}>
                 <Field id="first_name" name="first_name" label="First Name" placeholder="Jane" required />
                 <Field id="last_name"  name="last_name"  label="Last Name"  placeholder="Doe"  required={role === "professor"} />
               </motion.div>

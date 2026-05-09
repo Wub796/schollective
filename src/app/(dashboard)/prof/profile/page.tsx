@@ -163,7 +163,7 @@ export default async function ProfPublicProfilePage() {
         </div>
 
         {/* Fields */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.75rem" }}>
+        <div className="grid-2" style={{ gap: "1.75rem" }}>
           {[
             { icon: <BookOpen size={14} color="rgba(255,255,255,0.3)" />, label: "Full Name",    value: `Dr. ${profile.first_name ?? ""} ${profile.last_name ?? ""}` },
             { icon: <GraduationCap size={14} color="rgba(255,255,255,0.3)" />, label: "Institution", value: profile.institution || "Not specified" },
