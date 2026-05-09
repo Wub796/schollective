@@ -24,17 +24,7 @@ export default async function ProfessorPendingPage() {
   const displayName = profile.preferred_name || profile.first_name || "Professor";
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-[#0d0d0d] relative overflow-hidden">
-      {/* Static grid */}
-      <div
-        className="absolute inset-0 pointer-events-none opacity-40"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg,rgba(255,255,255,0.03) 1px, transparent 1px)",
-          backgroundSize: "48px 48px",
-        }}
-        aria-hidden="true"
-      />
+    <div className="page-bg flex items-center justify-center p-6" style={{ minHeight: "100vh" }}>
 
       <main className="relative z-10 w-full max-w-[520px] text-center">
         <div className="bg-[#111111] border border-[rgba(255,255,255,0.07)] rounded-2xl p-10 md:p-16 shadow-[0_80px_160px_rgba(0,0,0,0.7)]">

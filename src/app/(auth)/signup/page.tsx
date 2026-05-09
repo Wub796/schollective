@@ -1,101 +1,124 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
-import { motion, useSpring, useMotionValue } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
-import { Label } from "@/components/ui/Label";
-import { Select } from "@/components/ui/Select";
 import { toast } from "sonner";
 
 export const dynamic = "force-dynamic";
 
 type Role = "student" | "professor";
 
-/* ── Global Cinematic Easing ── */
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
-/* ── 3D Tilt Container for the Form ── */
-function TiltContainer({ children, className = "" }: { children: React.ReactNode, className?: string }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const rotateX = useMotionValue(0);
-  const rotateY = useMotionValue(0);
+const fadeUp = {
+  hidden: { opacity: 0, y: 22 },
+  show:   { opacity: 1, y: 0, transition: { duration: 1.1, ease: EASE } },
+};
+const stagger = {
+  hidden: {},
+  show:   { transition: { staggerChildren: 0.1, delayChildren: 0.1 } },
+};
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!ref.current) return;
-    const rect = ref.current.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    const moveX = (e.clientX - centerX) / (rect.width / 2);
-    const moveY = (e.clientY - centerY) / (rect.height / 2);
-    rotateX.set(-moveY * 3); // Subtle 3deg max tilt for larger form
-    rotateY.set(moveX * 3);
-  };
-
-  const handleMouseLeave = () => {
-    rotateX.set(0);
-    rotateY.set(0);
-  };
-
-  const springRotateX = useSpring(rotateX, { stiffness: 100, damping: 40 });
-  const springRotateY = useSpring(rotateY, { stiffness: 100, damping: 40 });
-
+/* ── Underline field with animated focus state ── */
+function Field({
+  id, name, type = "text", label, placeholder, required = false,
+}: {
+  id: string; name: string; type?: string; label: string;
+  placeholder: string; required?: boolean;
+}) {
+  const [focused, setFocused] = useState(false);
   return (
-    <motion.div
-      ref={ref}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      style={{ rotateX: springRotateX, rotateY: springRotateY, transformPerspective: 2500 }}
-      className={`will-change-transform ${className}`}
-    >
-      {children}
-    </motion.div>
+    <div className="relative">
+      <label
+        htmlFor={id}
+        style={{
+          display: "block",
+          fontSize: "0.6rem",
+          fontWeight: 600,
+          letterSpacing: "0.18em",
+          textTransform: "uppercase",
+          color: focused ? "rgba(255,255,255,0.65)" : "rgba(255,255,255,0.3)",
+          marginBottom: "0.55rem",
+          transition: "color 0.25s",
+          fontFamily: "var(--font-sans)",
+        }}
+      >
+        {label}
+      </label>
+      <input
+        id={id} name={name} type={type}
+        placeholder={placeholder} required={required}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
+        style={{
+          width: "100%",
+          background: "transparent",
+          border: "none",
+          borderBottom: `1px solid ${focused ? "rgba(255,255,255,0.5)" : "rgba(255,255,255,0.1)"}`,
+          padding: "0.7rem 0",
+          fontSize: "0.95rem",
+          color: "#fff",
+          outline: "none",
+          transition: "border-color 0.3s",
+          fontFamily: "var(--font-sans)",
+        }}
+      />
+    </div>
   );
 }
 
-const staggerContainer = {
-  hidden: { opacity: 0 },
-  show: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.2 } }
-};
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { duration: 1.2, ease: EASE } }
-};
+/* ── Custom select ── */
+function FieldSelect({ id, name, label, children, required }: {
+  id: string; name: string; label: string; children: React.ReactNode; required?: boolean;
+}) {
+  const [focused, setFocused] = useState(false);
+  return (
+    <div>
+      <label htmlFor={id} style={{ display: "block", fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.18em", textTransform: "uppercase", color: focused ? "rgba(255,255,255,0.65)" : "rgba(255,255,255,0.3)", marginBottom: "0.55rem", transition: "color 0.25s", fontFamily: "var(--font-sans)" }}>
+        {label}
+      </label>
+      <select
+        id={id} name={name} required={required}
+        onFocus={() => setFocused(true)} onBlur={() => setFocused(false)}
+        style={{ width: "100%", background: "#0d1221", border: "none", borderBottom: `1px solid ${focused ? "rgba(255,255,255,0.5)" : "rgba(255,255,255,0.1)"}`, padding: "0.7rem 0", fontSize: "0.95rem", color: "#fff", outline: "none", fontFamily: "var(--font-sans)", transition: "border-color 0.3s", cursor: "pointer" }}
+      >
+        {children}
+      </select>
+    </div>
+  );
+}
 
 export default function SignupPage() {
-  const router = useRouter();
+  const router   = useRouter();
   const supabase = createClient();
-  const [role, setRole] = useState<Role>("student");
+  const [role,    setRole]    = useState<Role>("student");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error,   setError]   = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    const formData = new FormData(e.currentTarget);
-
+    const fd = new FormData(e.currentTarget);
     try {
       const { error: signUpError } = await supabase.auth.signUp({
-        email: formData.get("email") as string,
-        password: formData.get("password") as string,
+        email:    fd.get("email")    as string,
+        password: fd.get("password") as string,
         options: {
           data: {
             role,
-            first_name: formData.get("first_name") as string,
-            preferred_name: formData.get("preferred_name") as string,
-            last_name: formData.get("last_name") as string,
-            education_level: formData.get("education_level") as string,
-            institution: formData.get("institution") as string,
-            expertise: formData.get("expertise") as string,
+            first_name:      fd.get("first_name")      as string,
+            preferred_name:  fd.get("preferred_name")  as string,
+            last_name:       fd.get("last_name")        as string,
+            education_level: fd.get("education_level") as string,
+            institution:     fd.get("institution")     as string,
+            expertise:       fd.get("expertise")       as string,
           },
         },
       });
-
       if (signUpError) throw signUpError;
       toast.success("Account created!");
       router.push(role === "professor" ? "/prof/pending" : "/dashboard");
@@ -109,135 +132,249 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-6 relative overflow-hidden py-24">
-      
-      {/* ── Background Noise ── */}
-      <div className="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-screen" style={{ backgroundImage: "url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E')" }} />
+    <div style={{ minHeight: "100vh", display: "grid", gridTemplateColumns: "1fr 1fr", background: "#080c14" }}>
 
-      {/* Floating ambient orb */}
+      {/* ════════════════════════════════════════
+          LEFT — Brand panel (mirrors login's right)
+      ════════════════════════════════════════ */}
       <motion.div
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 3, ease: EASE }}
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] h-[60vw] max-w-[800px] max-h-[800px] bg-white opacity-[0.02] rounded-full blur-[100px] pointer-events-none"
-      />
-
-      <motion.div
-        initial="hidden"
-        animate="show"
-        variants={staggerContainer}
-        className="relative z-10 w-full max-w-[500px]"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1.6, ease: EASE }}
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          padding: "2.5rem 5vw",
+          position: "relative",
+          overflow: "hidden",
+          borderRight: "1px solid rgba(255,255,255,0.06)",
+          background: "linear-gradient(135deg, #0a0f1e 0%, #060810 100%)",
+        }}
       >
-        <TiltContainer>
-          <div className="bg-[rgba(15,15,15,0.6)] backdrop-blur-3xl border border-[rgba(255,255,255,0.05)] rounded-[2rem] p-10 md:p-14 shadow-[0_50px_100px_rgba(0,0,0,0.8)] relative overflow-hidden">
-            
-            {/* Minimal Header */}
-            <motion.div variants={fadeUp} className="text-center mb-14 relative z-10">
-              <Link href="/" className="inline-block no-underline group mb-8">
-                <span className="font-display text-sm md:text-lg font-bold text-[#888] tracking-[0.3em] uppercase group-hover:text-white transition-colors duration-500">
-                  Schollective
-                </span>
-              </Link>
-              <h1 className="font-display text-3xl md:text-5xl font-bold text-white tracking-tighter leading-none">
-                Create Account
-              </h1>
-            </motion.div>
+        {/* Glow orbs */}
+        <div style={{ position: "absolute", top: "20%", left: "0%", width: "45vw", height: "45vw", maxWidth: 440, maxHeight: 440, borderRadius: "50%", background: "radial-gradient(circle, rgba(35,70,180,0.15) 0%, transparent 70%)", filter: "blur(40px)", pointerEvents: "none" }} />
+        <div style={{ position: "absolute", bottom: "10%", right: "-10%", width: "35vw", height: "35vw", maxWidth: 340, maxHeight: 340, borderRadius: "50%", background: "radial-gradient(circle, rgba(20,50,140,0.1) 0%, transparent 70%)", filter: "blur(60px)", pointerEvents: "none" }} />
 
-            {/* Role selector */}
-            <motion.div variants={fadeUp} className="flex gap-4 mb-10 relative z-10">
-              {(["student", "professor"] as Role[]).map((r) => (
-                <button
-                  key={r}
-                  type="button"
-                  onClick={() => setRole(r)}
-                  className={[
-                    "flex-1 h-14 rounded-xl text-xs uppercase tracking-[0.2em] font-bold transition-all duration-500 relative overflow-hidden group/btn",
-                    role === r
-                      ? "bg-white text-black shadow-[0_0_30px_rgba(255,255,255,0.15)]"
-                      : "bg-[rgba(0,0,0,0.4)] text-[#666] border border-[rgba(255,255,255,0.05)] hover:bg-[rgba(255,255,255,0.05)] hover:text-white",
-                  ].join(" ")}
-                >
-                  <span className="relative z-10">{r === "student" ? "Student" : "Professor"}</span>
-                </button>
+        {/* Academic network SVG */}
+        <svg viewBox="0 0 400 400" style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%) rotate(12deg)", width: "min(50vw, 420px)", opacity: 0.07, pointerEvents: "none" }}>
+          <circle cx="200" cy="200" r="3" fill="white" />
+          {[[90,150],[310,150],[90,280],[310,280],[200,60],[200,340]].map(([cx,cy],i) => (
+            <React.Fragment key={i}>
+              <circle cx={cx} cy={cy} r="2" fill="white" />
+              <line x1="200" y1="200" x2={cx} y2={cy} stroke="white" strokeWidth="0.7" />
+            </React.Fragment>
+          ))}
+          {[[140,130],[260,130],[140,290],[260,290]].map(([cx,cy],i) => (
+            <circle key={`s${i}`} cx={cx} cy={cy} r="1.2" fill="white" opacity="0.7" />
+          ))}
+        </svg>
+
+        {/* Wordmark */}
+        <Link href="/" className="no-underline" style={{ position: "relative", zIndex: 1 }}>
+          <span className="font-display" style={{ fontSize: "1.25rem", fontWeight: 800, color: "#fff", letterSpacing: "-0.02em" }}>
+            Schollective
+          </span>
+        </Link>
+
+        {/* Editorial content */}
+        <div style={{ position: "relative", zIndex: 1, maxWidth: 400 }}>
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 1.4, ease: EASE }}
+          >
+            <p className="font-display" style={{ fontSize: "clamp(1.5rem, 2.8vw, 2.4rem)", fontWeight: 700, lineHeight: 1.2, color: "rgba(255,255,255,0.85)", letterSpacing: "-0.02em", marginBottom: "2rem", maxWidth: 380 }}>
+              Your research journey
+              begins with the{" "}
+              <em style={{ color: "rgba(255,255,255,0.35)", fontStyle: "italic" }}>right mentor.</em>
+            </p>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem", marginBottom: "2.5rem" }}>
+              {[
+                { step: "01", text: "Create your scholar profile" },
+                { step: "02", text: "Browse verified professors"  },
+                { step: "03", text: "Open a mentorship thread"    },
+              ].map(({ step, text }) => (
+                <div key={step} style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+                  <span className="font-display" style={{ fontSize: "0.9rem", fontWeight: 800, color: "rgba(255,255,255,0.18)", letterSpacing: "-0.02em", minWidth: "2rem" }}>{step}</span>
+                  <span style={{ fontSize: "0.82rem", color: "rgba(255,255,255,0.5)", fontFamily: "var(--font-sans)", fontWeight: 400 }}>{text}</span>
+                </div>
               ))}
-            </motion.div>
+            </div>
 
-            <form onSubmit={handleSubmit} className="space-y-8 relative z-10">
-              <div className="grid grid-cols-2 gap-6">
-                <motion.div variants={fadeUp} className="space-y-4">
-                  <Label htmlFor="first_name" className="text-[#666] text-[0.6rem] uppercase tracking-[0.2em] font-bold">First Name</Label>
-                  <Input id="first_name" name="first_name" placeholder="Jane" required className="bg-[rgba(0,0,0,0.4)] border-[rgba(255,255,255,0.05)] focus:border-[rgba(255,255,255,0.2)] transition-all duration-500 h-14 text-white rounded-xl" />
-                </motion.div>
-                <motion.div variants={fadeUp} className="space-y-4">
-                  <Label htmlFor="last_name" className="text-[#666] text-[0.6rem] uppercase tracking-[0.2em] font-bold">Last Name</Label>
-                  <Input id="last_name" name="last_name" placeholder="Doe" required={role === "professor"} className="bg-[rgba(0,0,0,0.4)] border-[rgba(255,255,255,0.05)] focus:border-[rgba(255,255,255,0.2)] transition-all duration-500 h-14 text-white rounded-xl" />
-                </motion.div>
-              </div>
+            <div style={{ width: "3rem", height: "1px", background: "rgba(255,255,255,0.15)", marginBottom: "1.5rem" }} />
+            <p style={{ fontSize: "0.55rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(255,255,255,0.2)", fontFamily: "var(--font-sans)", fontWeight: 600 }}>
+              Manually verified · Institutionally credentialed
+            </p>
+          </motion.div>
+        </div>
 
-              <motion.div variants={fadeUp} className="space-y-4">
-                <Label htmlFor="preferred_name" className="text-[#666] text-[0.6rem] uppercase tracking-[0.2em] font-bold">Preferred Name (optional)</Label>
-                <Input id="preferred_name" name="preferred_name" placeholder="Janey" className="bg-[rgba(0,0,0,0.4)] border-[rgba(255,255,255,0.05)] focus:border-[rgba(255,255,255,0.2)] transition-all duration-500 h-14 text-white rounded-xl" />
+        <div style={{ position: "relative", zIndex: 1 }}>
+          <span style={{ fontSize: "0.52rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(255,255,255,0.18)", fontFamily: "var(--font-sans)" }}>
+            © 2025 Schollective
+          </span>
+        </div>
+      </motion.div>
+
+      {/* ════════════════════════════════════════
+          RIGHT — Form panel
+      ════════════════════════════════════════ */}
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          padding: "2.5rem 5vw",
+          overflowY: "auto",
+          position: "relative",
+        }}
+      >
+        {/* Subtle right-side glow */}
+        <div style={{ position: "absolute", inset: 0, pointerEvents: "none", background: "radial-gradient(ellipse 80% 60% at 100% 50%, rgba(30,55,120,0.12) 0%, transparent 70%)" }} />
+
+        {/* Top right nav */}
+        <div style={{ display: "flex", justifyContent: "flex-end", position: "relative", zIndex: 1 }}>
+          <Link href="/login" className="no-underline" style={{ fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(255,255,255,0.35)", fontFamily: "var(--font-sans)" }}>
+            Already a member? <span style={{ color: "rgba(255,255,255,0.75)" }}>Log In →</span>
+          </Link>
+        </div>
+
+        {/* Form container */}
+        <motion.div
+          variants={stagger}
+          initial="hidden"
+          animate="show"
+          style={{ position: "relative", zIndex: 1, maxWidth: 460, width: "100%", margin: "0 auto", paddingTop: "2rem", paddingBottom: "2rem" }}
+        >
+          {/* Eyebrow */}
+          <motion.div variants={fadeUp} style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.5rem" }}>
+            <span style={{ width: "1.5rem", height: "1px", background: "rgba(255,255,255,0.2)", display: "block" }} />
+            <span style={{ fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.38em", textTransform: "uppercase", color: "rgba(255,255,255,0.32)", fontFamily: "var(--font-sans)" }}>
+              Join the Collective
+            </span>
+          </motion.div>
+
+          {/* Headline */}
+          <motion.h1 variants={fadeUp} className="font-display" style={{ fontSize: "clamp(2.2rem, 4vw, 3.2rem)", fontWeight: 900, color: "#fff", letterSpacing: "-0.035em", lineHeight: 1.05, marginBottom: "2rem" }}>
+            Create your<br />
+            <em style={{ fontStyle: "italic", color: "rgba(255,255,255,0.4)" }}>account.</em>
+          </motion.h1>
+
+          {/* Role selector — pill tabs */}
+          <motion.div variants={fadeUp} style={{ display: "flex", gap: "0.5rem", marginBottom: "2.5rem", padding: "0.3rem", background: "rgba(255,255,255,0.04)", borderRadius: "100px", border: "1px solid rgba(255,255,255,0.07)" }}>
+            {(["student", "professor"] as Role[]).map(r => (
+              <button
+                key={r}
+                type="button"
+                onClick={() => setRole(r)}
+                style={{
+                  flex: 1,
+                  padding: "0.65rem 1rem",
+                  borderRadius: "100px",
+                  border: "none",
+                  background: role === r ? "#fff" : "transparent",
+                  color: role === r ? "#080c14" : "rgba(255,255,255,0.38)",
+                  fontSize: "0.58rem",
+                  fontWeight: 700,
+                  letterSpacing: "0.2em",
+                  textTransform: "uppercase",
+                  cursor: "pointer",
+                  transition: "all 0.25s",
+                  fontFamily: "var(--font-sans)",
+                }}
+              >
+                {r === "student" ? "Student" : "Professor"}
+              </button>
+            ))}
+          </motion.div>
+
+          <form onSubmit={handleSubmit}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "1.75rem" }}>
+
+              {/* Name row */}
+              <motion.div variants={fadeUp} style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem" }}>
+                <Field id="first_name" name="first_name" label="First Name" placeholder="Jane" required />
+                <Field id="last_name"  name="last_name"  label="Last Name"  placeholder="Doe"  required={role === "professor"} />
               </motion.div>
 
-              <motion.div variants={fadeUp} className="space-y-4">
-                <Label htmlFor="email" className="text-[#666] text-[0.6rem] uppercase tracking-[0.2em] font-bold">{role === "professor" ? "Work Email" : "Institutional Email"}</Label>
-                <Input id="email" name="email" type="email" placeholder="jane@university.edu" required className="bg-[rgba(0,0,0,0.4)] border-[rgba(255,255,255,0.05)] focus:border-[rgba(255,255,255,0.2)] transition-all duration-500 h-14 text-white rounded-xl" />
+              <motion.div variants={fadeUp}>
+                <Field id="preferred_name" name="preferred_name" label="Preferred Name (optional)" placeholder="Janey" />
               </motion.div>
 
-              {role === "student" ? (
-                <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="space-y-4 overflow-hidden">
-                  <Label htmlFor="education_level" className="text-[#666] text-[0.6rem] uppercase tracking-[0.2em] font-bold">Education Level</Label>
-                  <Select id="education_level" name="education_level" required className="bg-[rgba(0,0,0,0.4)] border-[rgba(255,255,255,0.05)] focus:border-[rgba(255,255,255,0.2)] transition-all duration-500 h-14 text-white rounded-xl text-sm">
-                    <option value="high-school">High School</option>
-                    <option value="college">College / Undergraduate</option>
-                    <option value="graduate">Graduate (Masters/PhD)</option>
-                  </Select>
-                </motion.div>
-              ) : (
-                <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="space-y-8 overflow-hidden">
-                  <div className="space-y-4">
-                    <Label htmlFor="institution" className="text-[#666] text-[0.6rem] uppercase tracking-[0.2em] font-bold">Institution</Label>
-                    <Input id="institution" name="institution" placeholder="e.g. Stanford University" required className="bg-[rgba(0,0,0,0.4)] border-[rgba(255,255,255,0.05)] focus:border-[rgba(255,255,255,0.2)] transition-all duration-500 h-14 text-white rounded-xl" />
-                  </div>
-                  <div className="space-y-4">
-                    <Label htmlFor="expertise" className="text-[#666] text-[0.6rem] uppercase tracking-[0.2em] font-bold">Expertise Fields</Label>
-                    <Input id="expertise" name="expertise" placeholder="e.g. Machine Learning, Bio-Ethics" required className="bg-[rgba(0,0,0,0.4)] border-[rgba(255,255,255,0.05)] focus:border-[rgba(255,255,255,0.2)] transition-all duration-500 h-14 text-white rounded-xl" />
-                  </div>
-                </motion.div>
-              )}
+              <motion.div variants={fadeUp}>
+                <Field id="email" name="email" type="email" label={role === "professor" ? "Work Email" : "Institutional Email"} placeholder="jane@university.edu" required />
+              </motion.div>
 
-              <motion.div variants={fadeUp} className="space-y-4">
-                <Label htmlFor="password" className="text-[#666] text-[0.6rem] uppercase tracking-[0.2em] font-bold">Password</Label>
-                <Input id="password" name="password" type="password" placeholder="••••••••" required className="bg-[rgba(0,0,0,0.4)] border-[rgba(255,255,255,0.05)] focus:border-[rgba(255,255,255,0.2)] transition-all duration-500 h-14 text-white rounded-xl" />
+              <AnimatePresence mode="wait">
+                {role === "student" ? (
+                  <motion.div key="student" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.3 }}>
+                    <FieldSelect id="education_level" name="education_level" label="Education Level" required>
+                      <option value="high-school">High School</option>
+                      <option value="college">College / Undergraduate</option>
+                      <option value="graduate">Graduate (Masters / PhD)</option>
+                    </FieldSelect>
+                  </motion.div>
+                ) : (
+                  <motion.div key="prof" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.3 }} style={{ display: "flex", flexDirection: "column", gap: "1.75rem" }}>
+                    <Field id="institution" name="institution" label="Institution" placeholder="e.g. Stanford University" required />
+                    <Field id="expertise"   name="expertise"   label="Expertise Fields" placeholder="e.g. Machine Learning, Bio-Ethics" required />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              <motion.div variants={fadeUp}>
+                <Field id="password" name="password" type="password" label="Password" placeholder="Min. 8 characters" required />
               </motion.div>
 
               {error && (
-                <motion.p 
-                  initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }}
-                  className="text-[#ff6b6b] text-xs leading-relaxed bg-[rgba(255,107,107,0.1)] p-4 rounded-xl border border-[rgba(255,107,107,0.2)]"
-                >
+                <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} style={{ fontSize: "0.78rem", color: "#ff7070", fontFamily: "var(--font-sans)" }}>
                   {error}
                 </motion.p>
               )}
 
-              <motion.div variants={fadeUp}>
-                <Button type="submit" className="w-full h-14 rounded-xl text-xs tracking-[0.2em] uppercase font-bold bg-white text-black hover:bg-gray-200 transition-all duration-500 shadow-[0_0_30px_rgba(255,255,255,0.1)] hover:shadow-[0_0_40px_rgba(255,255,255,0.2)] mt-6" disabled={loading}>
-                  {loading
-                    ? "Creating account…"
-                    : "Enter Pipeline"}
-                </Button>
+              <motion.div variants={fadeUp} style={{ paddingTop: "0.25rem" }}>
+                <motion.button
+                  type="submit"
+                  disabled={loading}
+                  whileHover={{ scale: 1.01 }}
+                  whileTap={{ scale: 0.98 }}
+                  style={{
+                    width: "100%",
+                    padding: "1.1rem 2rem",
+                    background: "#fff",
+                    color: "#080c14",
+                    border: "none",
+                    borderRadius: "100px",
+                    fontSize: "0.6rem",
+                    fontWeight: 700,
+                    letterSpacing: "0.28em",
+                    textTransform: "uppercase",
+                    cursor: loading ? "not-allowed" : "pointer",
+                    opacity: loading ? 0.6 : 1,
+                    transition: "opacity 0.2s",
+                    fontFamily: "var(--font-sans)",
+                  }}
+                >
+                  {loading ? "Creating account…" : "Enter the Collective"}
+                </motion.button>
               </motion.div>
-            </form>
 
-            <motion.p variants={fadeUp} className="text-center text-[#555] text-[0.65rem] uppercase tracking-[0.2em] font-bold mt-12 relative z-10">
-              Already joined?{" "}
-              <Link href="/login" className="text-white hover:text-gray-300 transition-colors">
-                Log In
-              </Link>
-            </motion.p>
-          </div>
-        </TiltContainer>
-      </motion.div>
+              <motion.p variants={fadeUp} style={{ textAlign: "center", fontSize: "0.55rem", fontWeight: 600, letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(255,255,255,0.22)", fontFamily: "var(--font-sans)" }}>
+                By joining, you agree to our{" "}
+                <span style={{ color: "rgba(255,255,255,0.5)" }}>Terms of Service</span>
+              </motion.p>
+            </div>
+          </form>
+        </motion.div>
+
+        {/* Bottom spacer */}
+        <div style={{ position: "relative", zIndex: 1 }}>
+          <span style={{ fontSize: "0.52rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(255,255,255,0.14)", fontFamily: "var(--font-sans)" }}>
+            Academic integrity · Verified credentials
+          </span>
+        </div>
+      </div>
     </div>
   );
 }

@@ -1,81 +1,114 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
-import { motion, useSpring, useMotionValue } from "framer-motion";
+import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
-import { Label } from "@/components/ui/Label";
 import { toast } from "sonner";
 
 export const dynamic = "force-dynamic";
 
-/* ── Global Cinematic Easing ── */
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
-/* ── 3D Tilt Container for the Form ── */
-function TiltContainer({ children, className = "" }: { children: React.ReactNode, className?: string }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const rotateX = useMotionValue(0);
-  const rotateY = useMotionValue(0);
+const fadeUp = {
+  hidden: { opacity: 0, y: 28 },
+  show:   { opacity: 1, y: 0,  transition: { duration: 1.1, ease: EASE } },
+};
+const stagger = {
+  hidden: {},
+  show:   { transition: { staggerChildren: 0.12, delayChildren: 0.15 } },
+};
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!ref.current) return;
-    const rect = ref.current.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    const moveX = (e.clientX - centerX) / (rect.width / 2);
-    const moveY = (e.clientY - centerY) / (rect.height / 2);
-    rotateX.set(-moveY * 5); // Subtle 5deg max tilt
-    rotateY.set(moveX * 5);
-  };
-
-  const handleMouseLeave = () => {
-    rotateX.set(0);
-    rotateY.set(0);
-  };
-
-  const springRotateX = useSpring(rotateX, { stiffness: 100, damping: 30 });
-  const springRotateY = useSpring(rotateY, { stiffness: 100, damping: 30 });
+/* ────────────────────────────────────────────
+   Focused input — animated underline on focus
+──────────────────────────────────────────── */
+function Field({
+  id, name, type = "text", label, placeholder, required = false, suffix
+}: {
+  id: string; name: string; type?: string; label: string;
+  placeholder: string; required?: boolean; suffix?: React.ReactNode;
+}) {
+  const [focused, setFocused] = useState(false);
 
   return (
-    <motion.div
-      ref={ref}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      style={{ rotateX: springRotateX, rotateY: springRotateY, transformPerspective: 2000 }}
-      className={`will-change-transform ${className}`}
-    >
-      {children}
-    </motion.div>
+    <div className="relative">
+      <label
+        htmlFor={id}
+        style={{
+          display: "block",
+          fontSize: "0.62rem",
+          fontWeight: 600,
+          letterSpacing: "0.18em",
+          textTransform: "uppercase",
+          color: focused ? "rgba(255,255,255,0.7)" : "rgba(255,255,255,0.3)",
+          marginBottom: "0.6rem",
+          transition: "color 0.25s",
+          fontFamily: "var(--font-sans)",
+        }}
+      >
+        {label}
+      </label>
+      <div className="relative flex items-center">
+        <input
+          id={id}
+          name={name}
+          type={type}
+          placeholder={placeholder}
+          required={required}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
+          style={{
+            width: "100%",
+            background: "transparent",
+            border: "none",
+            borderBottom: `1px solid ${focused ? "rgba(255,255,255,0.55)" : "rgba(255,255,255,0.12)"}`,
+            padding: "0.75rem 0",
+            fontSize: "1rem",
+            color: "#fff",
+            outline: "none",
+            transition: "border-color 0.3s",
+            fontFamily: "var(--font-sans)",
+            letterSpacing: "0.01em",
+          }}
+        />
+        {suffix && (
+          <span style={{ position: "absolute", right: 0, bottom: "0.75rem" }}>
+            {suffix}
+          </span>
+        )}
+      </div>
+      {/* Animated underline glow */}
+      <motion.div
+        animate={{ scaleX: focused ? 1 : 0, opacity: focused ? 1 : 0 }}
+        transition={{ duration: 0.35, ease: EASE }}
+        style={{
+          position: "absolute",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: "1px",
+          background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent)",
+          transformOrigin: "center",
+        }}
+      />
+    </div>
   );
 }
 
-const staggerContainer = {
-  hidden: { opacity: 0 },
-  show: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.2 } }
-};
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { duration: 1.2, ease: EASE } }
-};
-
 export default function LoginPage() {
-  const router = useRouter();
+  const router   = useRouter();
   const supabase = createClient();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error,   setError]   = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    const formData = new FormData(e.currentTarget);
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
+    const fd       = new FormData(e.currentTarget);
+    const email    = fd.get("email")    as string;
+    const password = fd.get("password") as string;
 
     try {
       const { data, error: signInError } = await supabase.auth.signInWithPassword({ email, password });
@@ -107,95 +140,269 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-6 relative overflow-hidden">
-      
-      {/* ── Background Noise ── */}
-      <div className="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-screen" style={{ backgroundImage: "url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E')" }} />
-
-      {/* Floating ambient orb */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 3, ease: EASE }}
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] h-[60vw] max-w-[800px] max-h-[800px] bg-white opacity-[0.02] rounded-full blur-[100px] pointer-events-none"
-      />
-
-      <motion.div
-        initial="hidden"
-        animate="show"
-        variants={staggerContainer}
-        className="relative z-10 w-full max-w-[440px]"
+    <div
+      style={{
+        minHeight: "100vh",
+        display: "grid",
+        gridTemplateColumns: "1fr 1fr",
+        background: "#080c14",
+      }}
+    >
+      {/* ════════════════════════════════════════
+          LEFT — Form panel
+      ════════════════════════════════════════ */}
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          padding: "2.5rem 5vw",
+          borderRight: "1px solid rgba(255,255,255,0.06)",
+          position: "relative",
+          overflow: "hidden",
+        }}
       >
-        <TiltContainer>
-          <div className="bg-[rgba(15,15,15,0.6)] backdrop-blur-3xl border border-[rgba(255,255,255,0.05)] rounded-[2rem] p-12 md:p-16 shadow-[0_50px_100px_rgba(0,0,0,0.8)] relative overflow-hidden">
-            
-            {/* Minimal Header */}
-            <motion.div variants={fadeUp} className="text-center mb-16 relative z-10">
-              <Link href="/" className="inline-block no-underline group mb-10">
-                <span className="font-display text-lg font-bold text-[#888] tracking-[0.3em] uppercase group-hover:text-white transition-colors duration-500">
-                  Schollective
-                </span>
-              </Link>
-              <h1 className="font-display text-4xl md:text-5xl font-bold text-white tracking-tighter leading-none">
-                Log In
-              </h1>
-            </motion.div>
+        {/* Subtle left-edge blue glow */}
+        <div style={{
+          position: "absolute", inset: 0, pointerEvents: "none",
+          background: "radial-gradient(ellipse 80% 60% at 0% 50%, rgba(30,55,120,0.18) 0%, transparent 70%)",
+        }} />
 
-            <form onSubmit={handleSubmit} className="space-y-10 relative z-10">
-              
-              <motion.div variants={fadeUp} className="space-y-4">
-                <Label htmlFor="email" className="text-[#666] text-[0.65rem] uppercase tracking-[0.2em] font-bold">Institutional Email</Label>
-                <Input 
-                  id="email" 
-                  name="email" 
-                  type="email" 
-                  placeholder="name@university.edu" 
-                  required 
-                  className="bg-[rgba(0,0,0,0.4)] border-[rgba(255,255,255,0.05)] focus:border-[rgba(255,255,255,0.2)] focus:ring-[rgba(255,255,255,0.05)] transition-all duration-500 h-14 text-white text-base rounded-xl"
-                />
+        {/* Wordmark */}
+        <Link href="/" className="no-underline" style={{ position: "relative", zIndex: 1 }}>
+          <span
+            className="font-display"
+            style={{ fontSize: "1.25rem", fontWeight: 800, color: "#fff", letterSpacing: "-0.02em" }}
+          >
+            Schollective
+          </span>
+        </Link>
+
+        {/* Form */}
+        <motion.div
+          variants={stagger}
+          initial="hidden"
+          animate="show"
+          style={{ position: "relative", zIndex: 1, maxWidth: 420, width: "100%", margin: "0 auto", paddingTop: "4rem", paddingBottom: "4rem" }}
+        >
+          {/* Eyebrow */}
+          <motion.div variants={fadeUp} style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "2rem" }}>
+            <span style={{ width: "1.5rem", height: "1px", background: "rgba(255,255,255,0.25)", display: "block" }} />
+            <span style={{ fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.38em", textTransform: "uppercase", color: "rgba(255,255,255,0.38)", fontFamily: "var(--font-sans)" }}>
+              Scholar Portal
+            </span>
+          </motion.div>
+
+          {/* Headline */}
+          <motion.h1
+            variants={fadeUp}
+            className="font-display"
+            style={{ fontSize: "clamp(2.8rem, 5vw, 4rem)", fontWeight: 900, color: "#fff", letterSpacing: "-0.035em", lineHeight: 1.05, marginBottom: "3.5rem" }}
+          >
+            Welcome<br />
+            <em style={{ fontStyle: "italic", color: "rgba(255,255,255,0.45)" }}>back.</em>
+          </motion.h1>
+
+          <form onSubmit={handleSubmit}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "2.25rem" }}>
+              <motion.div variants={fadeUp}>
+                <Field id="email" name="email" type="email" label="Institutional Email" placeholder="name@university.edu" required />
               </motion.div>
 
-              <motion.div variants={fadeUp} className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="password" className="text-[#666] text-[0.65rem] uppercase tracking-[0.2em] font-bold">Password</Label>
-                  <Link href="#" className="text-[0.6rem] uppercase tracking-[0.1em] text-[#555] hover:text-[#aaa] transition-colors font-bold">
-                    Forgot?
-                  </Link>
-                </div>
-                <Input 
-                  id="password" 
-                  name="password" 
-                  type="password" 
-                  placeholder="••••••••" 
-                  required 
-                  className="bg-[rgba(0,0,0,0.4)] border-[rgba(255,255,255,0.05)] focus:border-[rgba(255,255,255,0.2)] focus:ring-[rgba(255,255,255,0.05)] transition-all duration-500 h-14 text-white text-base rounded-xl"
+              <motion.div variants={fadeUp}>
+                <Field
+                  id="password" name="password" type="password"
+                  label="Password" placeholder="••••••••" required
+                  suffix={
+                    <Link href="#" className="no-underline" style={{ fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(255,255,255,0.28)" }}>
+                      Forgot?
+                    </Link>
+                  }
                 />
               </motion.div>
 
               {error && (
-                <motion.p 
-                  initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }}
-                  className="text-[#ff6b6b] text-xs leading-relaxed bg-[rgba(255,107,107,0.1)] p-4 rounded-xl border border-[rgba(255,107,107,0.2)]"
+                <motion.p
+                  initial={{ opacity: 0, y: -4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  style={{ fontSize: "0.78rem", color: "#ff7070", fontFamily: "var(--font-sans)" }}
                 >
                   {error}
                 </motion.p>
               )}
 
-              <motion.div variants={fadeUp}>
-                <Button type="submit" className="w-full h-14 rounded-xl text-xs tracking-[0.2em] uppercase font-bold bg-white text-black hover:bg-gray-200 transition-all duration-500 shadow-[0_0_30px_rgba(255,255,255,0.1)] hover:shadow-[0_0_40px_rgba(255,255,255,0.2)] mt-4" disabled={loading}>
-                  {loading ? "Authenticating…" : "Enter"}
-                </Button>
+              <motion.div variants={fadeUp} style={{ paddingTop: "0.5rem" }}>
+                <motion.button
+                  type="submit"
+                  disabled={loading}
+                  whileHover={{ scale: 1.01 }}
+                  whileTap={{ scale: 0.98 }}
+                  style={{
+                    width: "100%",
+                    padding: "1.1rem 2rem",
+                    background: "#fff",
+                    color: "#080c14",
+                    border: "none",
+                    borderRadius: "100px",
+                    fontSize: "0.6rem",
+                    fontWeight: 700,
+                    letterSpacing: "0.28em",
+                    textTransform: "uppercase",
+                    cursor: loading ? "not-allowed" : "pointer",
+                    opacity: loading ? 0.6 : 1,
+                    transition: "opacity 0.2s",
+                    fontFamily: "var(--font-sans)",
+                  }}
+                >
+                  {loading ? "Authenticating…" : "Enter the Collective"}
+                </motion.button>
               </motion.div>
-            </form>
+            </div>
+          </form>
 
-            <motion.p variants={fadeUp} className="text-center text-[#555] text-[0.65rem] uppercase tracking-[0.2em] font-bold mt-12 relative z-10">
-              New here?{" "}
-              <Link href="/signup" className="text-white hover:text-gray-300 transition-colors">
-                Create Account
-              </Link>
-            </motion.p>
-          </div>
-        </TiltContainer>
+          {/* Footer link */}
+          <motion.p
+            variants={fadeUp}
+            style={{ textAlign: "center", marginTop: "2.5rem", fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(255,255,255,0.25)", fontFamily: "var(--font-sans)" }}
+          >
+            New here?{" "}
+            <Link href="/signup" className="no-underline" style={{ color: "rgba(255,255,255,0.7)" }}>
+              Create Account
+            </Link>
+          </motion.p>
+        </motion.div>
+
+        {/* Bottom nav footer */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", position: "relative", zIndex: 1 }}>
+          <span style={{ fontSize: "0.52rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(255,255,255,0.18)", fontFamily: "var(--font-sans)" }}>
+            © 2025 Schollective
+          </span>
+          <Link href="/features" className="no-underline" style={{ fontSize: "0.52rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(255,255,255,0.18)", fontFamily: "var(--font-sans)" }}>
+            Platform Features
+          </Link>
+        </div>
+      </div>
+
+      {/* ════════════════════════════════════════
+          RIGHT — Brand panel
+      ════════════════════════════════════════ */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1.6, ease: EASE }}
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "flex-end",
+          padding: "4rem 5vw",
+          position: "relative",
+          overflow: "hidden",
+          background: "linear-gradient(135deg, #0a0f1e 0%, #060810 100%)",
+        }}
+      >
+        {/* Atmospheric glow orbs */}
+        <div style={{
+          position: "absolute", top: "15%", right: "10%",
+          width: "55vw", height: "55vw", maxWidth: 520, maxHeight: 520,
+          borderRadius: "50%",
+          background: "radial-gradient(circle, rgba(40,80,200,0.14) 0%, transparent 70%)",
+          filter: "blur(40px)",
+          pointerEvents: "none",
+        }} />
+        <div style={{
+          position: "absolute", bottom: "5%", left: "-10%",
+          width: "40vw", height: "40vw", maxWidth: 380, maxHeight: 380,
+          borderRadius: "50%",
+          background: "radial-gradient(circle, rgba(20,50,140,0.1) 0%, transparent 70%)",
+          filter: "blur(60px)",
+          pointerEvents: "none",
+        }} />
+
+        {/* Abstract node-connection visual */}
+        <svg
+          viewBox="0 0 400 400"
+          style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%) rotate(-10deg)", width: "min(55vw, 500px)", opacity: 0.08, pointerEvents: "none" }}
+        >
+          <circle cx="200" cy="200" r="3" fill="white" />
+          <circle cx="120" cy="130" r="2" fill="white" />
+          <circle cx="280" cy="120" r="2" fill="white" />
+          <circle cx="100" cy="270" r="2" fill="white" />
+          <circle cx="310" cy="280" r="2" fill="white" />
+          <circle cx="200" cy="80"  r="1.5" fill="white" />
+          <circle cx="60"  cy="200" r="1.5" fill="white" />
+          <circle cx="340" cy="200" r="1.5" fill="white" />
+          <circle cx="200" cy="330" r="1.5" fill="white" />
+          <line x1="200" y1="200" x2="120" y2="130" stroke="white" strokeWidth="0.8" />
+          <line x1="200" y1="200" x2="280" y2="120" stroke="white" strokeWidth="0.8" />
+          <line x1="200" y1="200" x2="100" y2="270" stroke="white" strokeWidth="0.8" />
+          <line x1="200" y1="200" x2="310" y2="280" stroke="white" strokeWidth="0.8" />
+          <line x1="120" y1="130" x2="200" y2="80"  stroke="white" strokeWidth="0.5" />
+          <line x1="280" y1="120" x2="200" y2="80"  stroke="white" strokeWidth="0.5" />
+          <line x1="100" y1="270" x2="60"  y2="200" stroke="white" strokeWidth="0.5" />
+          <line x1="310" y1="280" x2="340" y2="200" stroke="white" strokeWidth="0.5" />
+          <line x1="100" y1="270" x2="200" y2="330" stroke="white" strokeWidth="0.5" />
+          <line x1="310" y1="280" x2="200" y2="330" stroke="white" strokeWidth="0.5" />
+          {[
+            [160,170],[240,170],[180,240],[220,240],[200,150],
+          ].map(([cx,cy], i) => (
+            <circle key={i} cx={cx} cy={cy} r="1" fill="white" opacity="0.6" />
+          ))}
+        </svg>
+
+        {/* Content — pinned to bottom */}
+        <div style={{ position: "relative", zIndex: 1 }}>
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5, duration: 1.4, ease: EASE }}
+          >
+            {/* Pull quote */}
+            <p
+              className="font-display"
+              style={{
+                fontSize: "clamp(1.6rem, 3.2vw, 2.6rem)",
+                fontWeight: 700,
+                lineHeight: 1.2,
+                color: "rgba(255,255,255,0.85)",
+                letterSpacing: "-0.02em",
+                marginBottom: "2rem",
+                maxWidth: 440,
+              }}
+            >
+              &ldquo;The academy's best
+              minds, finally{" "}
+              <em style={{ color: "rgba(255,255,255,0.35)", fontStyle: "italic" }}>within reach.</em>&rdquo;
+            </p>
+
+            {/* Stat row */}
+            <div style={{ display: "flex", gap: "3rem", marginBottom: "2.5rem" }}>
+              {[
+                { n: "500+", l: "Verified Professors" },
+                { n: "12K+", l: "Active Students"     },
+                { n: "98%",  l: "Response Rate"        },
+              ].map(({ n, l }) => (
+                <div key={l}>
+                  <div
+                    className="font-display"
+                    style={{ fontSize: "1.6rem", fontWeight: 800, color: "#fff", letterSpacing: "-0.03em", lineHeight: 1 }}
+                  >
+                    {n}
+                  </div>
+                  <div style={{ fontSize: "0.55rem", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(255,255,255,0.28)", marginTop: "0.4rem", fontFamily: "var(--font-sans)" }}>
+                    {l}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Hairline */}
+            <div style={{ width: "3rem", height: "1px", background: "rgba(255,255,255,0.15)", marginBottom: "1.5rem" }} />
+
+            <p style={{ fontSize: "0.62rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(255,255,255,0.22)", fontFamily: "var(--font-sans)", fontWeight: 600 }}>
+              Academic Mentorship, Democratized
+            </p>
+          </motion.div>
+        </div>
       </motion.div>
     </div>
   );

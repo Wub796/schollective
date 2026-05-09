@@ -11,11 +11,10 @@ const dmSans = DM_Sans({
   weight: ["300", "400", "500", "600", "700"],
 });
 
-const playfairDisplay = Playfair_Display({
+const playfair = Playfair_Display({
   subsets: ["latin"],
   variable: "--font-display",
   display: "swap",
-  style: ["normal", "italic"],
   weight: ["400", "500", "600", "700", "800", "900"],
 });
 
@@ -40,8 +39,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${dmSans.variable} ${playfairDisplay.variable}`}>
-      <body className="bg-[#0d0d0d] text-[#f2f2f0] antialiased">
+    <html lang="en" className={`${dmSans.variable} ${playfair.variable}`} suppressHydrationWarning>
+      <body className="bg-black text-white min-h-screen selection:bg-white selection:text-black scroll-smooth" suppressHydrationWarning>
 
         {/* ── Layer 0: Film-grain noise ──────────────────────────
             Fixed, pointer-events-none. z-index: 0 via .noise-overlay
