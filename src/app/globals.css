@@ -750,3 +750,19 @@ body {
 .professor-card-hover:hover {
   border-color: rgba(255, 255, 255, 0.18) !important;
 }
+
+/* Admin Nav Links */
+.admin-nav-link div {
+  transition: color 0.2s ease;
+}
+.admin-nav-link:hover div {
+  color: #fff !important;
+}
+
+.admin-nav-button div {
+  transition: all 0.2s ease;
+}
+.admin-nav-button:hover div {
+  color: #fff !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
+}
