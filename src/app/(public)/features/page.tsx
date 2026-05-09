@@ -6,43 +6,24 @@ import {
   MessageSquare,
   ShieldCheck,
   BarChart3,
-  Search,
   Globe,
   Zap,
   Cpu,
-  ArrowLeft,
 } from "lucide-react";
 
 export default function FeaturesPage() {
   return (
-    <div className="min-h-screen bg-[#0d0d0d] relative overflow-x-hidden">
-      {/* Grid bg */}
-      <div
-        className="fixed inset-0 z-0 pointer-events-none opacity-40"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg,rgba(255,255,255,0.03) 1px, transparent 1px)",
-          backgroundSize: "48px 48px",
-        }}
-        aria-hidden="true"
-      />
+    <div className="page-bg">
 
       {/* Nav */}
-      <nav className="relative z-50 flex items-center justify-between px-6 py-6 border-b border-[rgba(255,255,255,0.05)]">
-        <div className="max-w-7xl mx-auto w-full flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2.5 no-underline group">
-            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#e8e8e6] text-[#0d0d0d] text-xs font-bold transition-opacity group-hover:opacity-80">
-              S
-            </span>
-            <span className="font-display text-lg font-bold text-[#f2f2f0]">Schollective</span>
-          </Link>
-          <Link href="/">
-            <Button variant="ghost" size="sm" className="gap-2">
-              <ArrowLeft size={14} />
-              Back to Home
-            </Button>
-          </Link>
-        </div>
+      <nav className="relative z-50 flex items-center justify-between px-10 md:px-16" style={{ height: "4.5rem", borderBottom: "1px solid rgba(255,255,255,0.06)", background: "rgba(8,12,20,0.92)", backdropFilter: "blur(20px)" }}>
+        <Link href="/" className="flex items-center gap-3 no-underline">
+          <span className="font-display font-bold text-white" style={{ fontSize: "1.1rem", letterSpacing: "-0.02em" }}>Schollective</span>
+          <span className="font-mono uppercase hidden sm:block" style={{ fontSize: "0.42rem", letterSpacing: "0.38em", color: "rgba(255,255,255,0.35)", paddingTop: "2px" }}>Academic Mentorship</span>
+        </Link>
+        <Link href="/" className="no-underline">
+          <span className="font-mono uppercase text-white rounded-full px-5 py-2 transition-all" style={{ fontSize: "0.52rem", letterSpacing: "0.22em", border: "1px solid rgba(255,255,255,0.25)" }}>← Home</span>
+        </Link>
       </nav>
 
       <main className="relative z-10 px-4 sm:px-6 lg:px-8 py-20 lg:py-32">
@@ -55,9 +36,9 @@ export default function FeaturesPage() {
             </div>
             <h1 className="font-display text-5xl lg:text-7xl font-bold text-[#f2f2f0] leading-tight mb-8">
               Engineered for{" "}
-              <em className="italic text-[#5a5a5a]">academic excellence</em>
+              <em className="italic text-[#7a8aa5]">academic excellence</em>
             </h1>
-            <p className="text-[#4a4a4a] text-xl font-light leading-relaxed">
+            <p className="text-[#6a7a9a] text-xl font-light leading-relaxed">
               We&apos;ve built a focused set of tools designed to remove the friction from intellectual
               mentorship while maintaining the highest standards of safety and integrity.
             </p>
@@ -101,13 +82,13 @@ export default function FeaturesPage() {
                 key={i}
                 className="bg-[#0d0d0d] p-12 lg:p-16 flex flex-col group hover:bg-[#111111] transition-colors duration-300"
               >
-                <div className="w-11 h-11 rounded-xl bg-[rgba(255,255,255,0.04)] border border-[rgba(255,255,255,0.06)] flex items-center justify-center mb-8 text-[#4a4a4a] group-hover:text-[#8a8a8a] transition-colors duration-300">
+                <div className="w-11 h-11 rounded-xl bg-[rgba(255,255,255,0.04)] border border-[rgba(255,255,255,0.06)] flex items-center justify-center mb-8 text-[#6a7a9a] group-hover:text-[#8a8a8a] transition-colors duration-300">
                   <f.i size={22} strokeWidth={1.5} />
                 </div>
                 <h3 className="font-display text-2xl text-[#d4d4d2] mb-4 font-semibold leading-tight">
                   {f.t}
                 </h3>
-                <p className="text-base text-[#4a4a4a] font-light leading-relaxed">{f.d}</p>
+                <p className="text-base text-[#6a7a9a] font-light leading-relaxed">{f.d}</p>
               </div>
             ))}
           </div>
@@ -117,13 +98,13 @@ export default function FeaturesPage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
               <div className="space-y-8">
                 <div>
-                  <div className="text-[0.6rem] font-bold tracking-[0.28em] text-[#3a3a3a] uppercase mb-4">
+                  <div className="text-[0.6rem] font-bold tracking-[0.28em] text-[#888] uppercase mb-4">
                     Security Infrastructure
                   </div>
                   <h2 className="font-display text-4xl lg:text-5xl font-bold text-[#f2f2f0] leading-tight mb-6">
-                    Safety by <em className="italic text-[#5a5a5a]">Design</em>
+                    Safety by <em className="italic text-[#7a8aa5]">Design</em>
                   </h2>
-                  <p className="text-base text-[#4a4a4a] font-light leading-relaxed">
+                  <p className="text-base text-[#6a7a9a] font-light leading-relaxed">
                     Schollective isn&apos;t just a directory; it&apos;s a controlled environment. We implement
                     Row Level Security (RLS) at the database layer to ensure your data and conversations
                     are strictly private and authorized.
@@ -132,16 +113,16 @@ export default function FeaturesPage() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="p-5 bg-[rgba(255,255,255,0.02)] border border-[rgba(255,255,255,0.05)] rounded-xl">
-                    <ShieldCheck className="text-[#4a4a4a] mb-4" size={20} />
+                    <ShieldCheck className="text-[#6a7a9a] mb-4" size={20} />
                     <h4 className="font-display text-base text-[#d4d4d2] mb-2 font-semibold">Edge Guards</h4>
-                    <p className="text-xs text-[#3a3a3a] font-light leading-relaxed">
+                    <p className="text-xs text-[#888] font-light leading-relaxed">
                       Global routing guards enforce authentication at the edge before data loads.
                     </p>
                   </div>
                   <div className="p-5 bg-[rgba(255,255,255,0.02)] border border-[rgba(255,255,255,0.05)] rounded-xl">
-                    <Lock className="text-[#4a4a4a] mb-4" size={20} />
+                    <Lock className="text-[#6a7a9a] mb-4" size={20} />
                     <h4 className="font-display text-base text-[#d4d4d2] mb-2 font-semibold">JWT Integrity</h4>
-                    <p className="text-xs text-[#3a3a3a] font-light leading-relaxed">
+                    <p className="text-xs text-[#888] font-light leading-relaxed">
                       Role-based metadata is encrypted within sessions to prevent privilege escalation.
                     </p>
                   </div>
@@ -162,7 +143,7 @@ export default function FeaturesPage() {
           {/* CTA */}
           <section className="text-center py-20 border border-[rgba(255,255,255,0.05)] rounded-2xl">
             <h2 className="font-display text-4xl lg:text-5xl font-bold text-[#f2f2f0] mb-8 leading-tight">
-              Ready to experience <em className="italic text-[#5a5a5a]">Schollective?</em>
+              Ready to experience <em className="italic text-[#7a8aa5]">Schollective?</em>
             </h2>
             <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
               <Link href="/signup">
