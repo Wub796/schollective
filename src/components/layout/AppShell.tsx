@@ -67,12 +67,19 @@ export function AppShell({ children, role = "student" }: AppShellProps) {
           </span>
         </a>
 
-        {/* Desktop nav links */}
         <nav className="app-nav-links hidden lg:flex items-center gap-8" aria-label="Main navigation">
-          {[
-            { href: "/dashboard",  label: "Dashboard" },
-            ...(role === "student" ? [{ href: "/professors", label: "Browse Mentors" }] : []),
-          ].map(({ href, label }) => (
+          {(role === "professor"
+            ? [
+                { href: "/prof/dashboard", label: "Dashboard"      },
+                { href: "/prof/students",  label: "My Students"    },
+                { href: "/prof/profile",   label: "Profile Preview"},
+              ]
+            : [
+                { href: "/dashboard",  label: "Dashboard"     },
+                { href: "/professors", label: "Browse Mentors"},
+                { href: "/threads",    label: "My Threads"    },
+              ]
+          ).map(({ href, label }) => (
             <a
               key={href}
               href={href}

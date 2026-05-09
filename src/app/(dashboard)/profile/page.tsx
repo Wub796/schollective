@@ -130,13 +130,19 @@ export default function ProfilePage() {
     e.preventDefault();
     setLoading(true);
     const fd = new FormData(e.currentTarget);
-    const updates = {
+    const expertiseRaw = fd.get("expertise_fields") as string;
+    const updates: Record<string, any> = {
       first_name:     fd.get("first_name")     as string,
       last_name:      fd.get("last_name")       as string,
       preferred_name: fd.get("preferred_name")  as string,
       institution:    fd.get("institution")     as string,
       updated_at:     new Date().toISOString(),
     };
+    if (profile?.role === "professor") {
+      updates.expertise_fields = expertiseRaw
+        ? expertiseRaw.split(",").map((s: string) => s.trim()).filter(Boolean)
+        : [];
+    }
     const { error } = await supabase
       .from("profiles")
       .update(updates)
@@ -318,6 +324,17 @@ export default function ProfilePage() {
 
           {/* Institution */}
           <Field id="institution" name="institution" label="Institution" defaultValue={profile?.institution ?? ""} placeholder="e.g. Stanford University" />
+
+          {/* Expertise — professors only */}
+          {profile?.role === "professor" && (
+            <Field
+              id="expertise_fields"
+              name="expertise_fields"
+              label="Expertise Fields (comma-separated)"
+              defaultValue={profile?.expertise_fields?.join(", ") ?? ""}
+              placeholder="e.g. Quantum Computing, AI Ethics, Biology"
+            />
+          )}
 
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingTop: "0.5rem" }}>
             <span style={{ fontSize: "0.6rem", color: "rgba(255,255,255,0.22)", fontFamily: "var(--font-sans)", letterSpacing: "0.05em" }}>
