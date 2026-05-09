@@ -2,6 +2,50 @@
 
 import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
+import { scoreProfessorApplication } from "@/lib/validators";
+
+/**
+ * Runs the professor validation algorithm and stores the score
+ * on the profile row so the admin can see it immediately.
+ * Can be called server-side on signup or on-demand from the admin table.
+ */
+export async function scoreApplication(profileId: string) {
+  try {
+    const supabase = await createClient();
+
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("email, institution, expertise_fields, first_name, last_name")
+      .eq("id", profileId)
+      .single();
+
+    if (!profile) return { error: "Profile not found" };
+
+    const result = scoreProfessorApplication({
+      email:            profile.email,
+      institution:      profile.institution,
+      expertise_fields: profile.expertise_fields,
+      first_name:       profile.first_name,
+      last_name:        profile.last_name,
+    });
+
+    await supabase
+      .from("profiles")
+      .update({
+        ai_score: result.score,
+        ai_flags: result.flags,
+        ai_level: result.level,
+      })
+      .eq("id", profileId);
+
+    revalidatePath("/admin/dashboard");
+    return { success: true, result };
+  } catch (err: any) {
+    return { error: err.message || "Scoring failed" };
+  }
+}
+
+
 
 /**
  * Admin Action: Update Professor Application Status

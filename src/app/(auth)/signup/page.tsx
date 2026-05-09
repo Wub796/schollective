@@ -6,6 +6,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { toast } from "sonner";
+import { InstitutionInput } from "@/components/ui/InstitutionInput";
+
 
 export const dynamic = "force-dynamic";
 
@@ -97,6 +99,8 @@ export default function SignupPage() {
   const [role,    setRole]    = useState<Role>("student");
   const [loading, setLoading] = useState(false);
   const [error,   setError]   = useState<string | null>(null);
+  const [institution, setInstitution] = useState("");
+
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -114,7 +118,8 @@ export default function SignupPage() {
             preferred_name:  fd.get("preferred_name")  as string,
             last_name:       fd.get("last_name")        as string,
             education_level: fd.get("education_level") as string,
-            institution:     fd.get("institution")     as string,
+            institution:     institution || fd.get("institution") as string,
+
             expertise:       fd.get("expertise")       as string,
           },
         },
@@ -127,7 +132,7 @@ export default function SignupPage() {
         router.push(role === "professor" ? "/prof/pending" : "/dashboard");
       } else {
         toast.success("Account created! Please check your email for a confirmation link.");
-        router.push("/login");
+        router.push("/verify-email");
       }
     } catch (err: any) {
       const msg = err instanceof Error ? err.message : "An error occurred during signup.";
@@ -153,7 +158,7 @@ export default function SignupPage() {
   };
 
   return (
-    <div style={{ minHeight: "100vh", display: "grid", gridTemplateColumns: "1fr 1fr", background: "#080c14" }}>
+    <div className="auth-two-col signup-layout" style={{ background: "#080c14" }}>
 
       {/* ════════════════════════════════════════
           LEFT — Brand panel (mirrors login's right)
@@ -314,7 +319,7 @@ export default function SignupPage() {
             <div style={{ display: "flex", flexDirection: "column", gap: "1.75rem" }}>
 
               {/* Name row */}
-              <motion.div variants={fadeUp} style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem" }}>
+              <motion.div variants={fadeUp} className="grid-2" style={{ gap: "1.5rem" }}>
                 <Field id="first_name" name="first_name" label="First Name" placeholder="Jane" required />
                 <Field id="last_name"  name="last_name"  label="Last Name"  placeholder="Doe"  required={role === "professor"} />
               </motion.div>
@@ -338,7 +343,36 @@ export default function SignupPage() {
                   </motion.div>
                 ) : (
                   <motion.div key="prof" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.3 }} style={{ display: "flex", flexDirection: "column", gap: "1.75rem" }}>
-                    <Field id="institution" name="institution" label="Institution" placeholder="e.g. Stanford University" required />
+                    {/* Institution with smart autocomplete */}
+                    <div>
+                      <label
+                        htmlFor="institution"
+                        style={{
+                          display: "block",
+                          fontSize: "0.6rem",
+                          fontWeight: 600,
+                          letterSpacing: "0.18em",
+                          textTransform: "uppercase",
+                          color: "rgba(255,255,255,0.3)",
+                          marginBottom: "0.55rem",
+                          fontFamily: "var(--font-sans)",
+                        }}
+                      >
+                        Institution
+                      </label>
+      <InstitutionInput
+                        id="institution"
+                        name="institution"
+                        value={institution}
+                        onChange={setInstitution}
+                        placeholder="e.g. Stanford University"
+                        className=""
+                      />
+
+                      {/* Hidden input so FormData still picks it up */}
+                      <input type="hidden" name="institution" value={institution} />
+                    </div>
+
                     <Field id="expertise"   name="expertise"   label="Expertise Fields" placeholder="e.g. Machine Learning, Bio-Ethics" required />
                   </motion.div>
                 )}

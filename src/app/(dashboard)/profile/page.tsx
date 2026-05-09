@@ -2,6 +2,7 @@
 
 import React, { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { createClient } from "@/utils/supabase/client";
 import { toast } from "sonner";
@@ -130,13 +131,23 @@ export default function ProfilePage() {
     e.preventDefault();
     setLoading(true);
     const fd = new FormData(e.currentTarget);
-    const updates = {
+    const expertiseRaw = fd.get("expertise_fields") as string;
+    const updates: Record<string, any> = {
       first_name:     fd.get("first_name")     as string,
       last_name:      fd.get("last_name")       as string,
       preferred_name: fd.get("preferred_name")  as string,
       institution:    fd.get("institution")     as string,
       updated_at:     new Date().toISOString(),
     };
+    if (profile?.role === "student") {
+      const educationLevel = fd.get("education_level") as string;
+      if (educationLevel) updates.education_level = educationLevel;
+    }
+    if (profile?.role === "professor") {
+      updates.expertise_fields = expertiseRaw
+        ? expertiseRaw.split(",").map((s: string) => s.trim()).filter(Boolean)
+        : [];
+    }
     const { error } = await supabase
       .from("profiles")
       .update(updates)
@@ -306,7 +317,7 @@ export default function ProfilePage() {
         </div>
 
         <form onSubmit={handleSave} style={{ display: "flex", flexDirection: "column", gap: "2.25rem" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem" }}>
+          <div className="grid-2">
             <Field id="first_name" name="first_name" label="First Name" defaultValue={profile?.first_name ?? ""} placeholder="Jane" />
             <Field id="last_name"  name="last_name"  label="Last Name"  defaultValue={profile?.last_name  ?? ""} placeholder="Doe"  />
           </div>
@@ -318,6 +329,40 @@ export default function ProfilePage() {
 
           {/* Institution */}
           <Field id="institution" name="institution" label="Institution" defaultValue={profile?.institution ?? ""} placeholder="e.g. Stanford University" />
+
+          {/* Education Level — students only */}
+          {profile?.role === "student" && (
+            <div style={{ position: "relative" }}>
+              <label htmlFor="education_level" style={{ display: "block", fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(255,255,255,0.3)", marginBottom: "0.55rem", fontFamily: "var(--font-sans)" }}>
+                Education Level
+              </label>
+              <select
+                id="education_level"
+                name="education_level"
+                defaultValue={profile?.education_level ?? ""}
+                style={{ width: "100%", background: "transparent", border: "none", borderBottom: "1px solid rgba(255,255,255,0.12)", padding: "0.7rem 0", fontSize: "0.95rem", color: profile?.education_level ? "#fff" : "rgba(255,255,255,0.3)", outline: "none", fontFamily: "var(--font-sans)", cursor: "pointer", appearance: "none" }}
+              >
+                <option value="" style={{ background: "#080c14" }}>Select level…</option>
+                <option value="high-school"  style={{ background: "#080c14" }}>High School</option>
+                <option value="undergraduate" style={{ background: "#080c14" }}>Undergraduate</option>
+                <option value="graduate"     style={{ background: "#080c14" }}>Graduate (Master's)</option>
+                <option value="doctoral"     style={{ background: "#080c14" }}>Doctoral (PhD)</option>
+                <option value="postdoctoral" style={{ background: "#080c14" }}>Postdoctoral</option>
+                <option value="other"        style={{ background: "#080c14" }}>Other</option>
+              </select>
+            </div>
+          )}
+
+          {/* Expertise — professors only */}
+          {profile?.role === "professor" && (
+            <Field
+              id="expertise_fields"
+              name="expertise_fields"
+              label="Expertise Fields (comma-separated)"
+              defaultValue={profile?.expertise_fields?.join(", ") ?? ""}
+              placeholder="e.g. Quantum Computing, AI Ethics, Biology"
+            />
+          )}
 
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingTop: "0.5rem" }}>
             <span style={{ fontSize: "0.6rem", color: "rgba(255,255,255,0.22)", fontFamily: "var(--font-sans)", letterSpacing: "0.05em" }}>
@@ -349,7 +394,41 @@ export default function ProfilePage() {
       {/* ── Hairline ── */}
       <div style={{ height: "1px", background: "rgba(255,255,255,0.07)" }} />
 
-      {/* ── Danger zone ── */}
+      {/* ── Security ── */}
+      <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <span style={{ width: "1rem", height: "1px", background: "rgba(255,255,255,0.15)", display: "block" }} />
+          <span style={{ fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.35em", textTransform: "uppercase", color: "rgba(255,255,255,0.25)", fontFamily: "var(--font-mono, monospace)" }}>
+            Security
+          </span>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: "1.5rem" }}>
+          <Link
+            href="/reset-password"
+            style={{
+              textDecoration: "none",
+              padding: "0.75rem 1.75rem",
+              background: "transparent",
+              border: "1px solid rgba(255,255,255,0.1)",
+              borderRadius: "100px",
+              fontSize: "0.58rem", fontWeight: 700,
+              letterSpacing: "0.22em", textTransform: "uppercase",
+              color: "rgba(255,255,255,0.8)",
+              fontFamily: "var(--font-sans)",
+              transition: "border-color 0.2s, background 0.2s",
+            }}
+            onMouseEnter={e => { (e.currentTarget).style.borderColor = "rgba(255,255,255,0.3)"; (e.currentTarget).style.background = "rgba(255,255,255,0.05)"; }}
+            onMouseLeave={e => { (e.currentTarget).style.borderColor = "rgba(255,255,255,0.1)"; (e.currentTarget).style.background = "transparent"; }}
+          >
+            Change Password
+          </Link>
+        </div>
+      </div>
+
+      {/* ── Hairline ── */}
+      <div style={{ height: "1px", background: "rgba(255,255,255,0.07)" }} />
+
+      {/* ── Session ── */}
       <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
           <span style={{ width: "1rem", height: "1px", background: "rgba(255,255,255,0.15)", display: "block" }} />
