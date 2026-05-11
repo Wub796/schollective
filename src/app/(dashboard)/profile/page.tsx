@@ -31,7 +31,7 @@ function Field({
       <label htmlFor={id} style={{
         display: "block", fontSize: "0.58rem", fontWeight: 700,
         letterSpacing: "0.22em", textTransform: "uppercase",
-        color: disabled ? "rgba(255,255,255,0.18)" : focused ? "rgba(255,255,255,0.65)" : "rgba(255,255,255,0.3)",
+        color: disabled ? "rgba(250, 250, 249, 0.18)" : focused ? "rgba(250, 250, 249, 0.65)" : "rgba(250, 250, 249, 0.3)",
         marginBottom: "0.55rem", transition: "color 0.25s",
         fontFamily: "var(--font-sans)",
       }}>
@@ -45,9 +45,9 @@ function Field({
         onBlur={() => setFocused(false)}
         style={{
           width: "100%", background: "transparent", border: "none",
-          borderBottom: `1px solid ${disabled ? "rgba(255,255,255,0.06)" : focused ? "rgba(255,255,255,0.5)" : "rgba(255,255,255,0.12)"}`,
+          borderBottom: `1px solid ${disabled ? "rgba(250, 250, 249, 0.06)" : focused ? "rgba(250, 250, 249, 0.5)" : "rgba(250, 250, 249, 0.12)"}`,
           padding: "0.7rem 0", fontSize: "0.95rem",
-          color: disabled ? "rgba(255,255,255,0.3)" : "#fff",
+          color: disabled ? "rgba(250, 250, 249, 0.3)" : "#fafaf9",
           outline: "none", transition: "border-color 0.3s",
           fontFamily: "var(--font-sans)", cursor: disabled ? "not-allowed" : "text",
         }}
@@ -170,8 +170,8 @@ export default function ProfilePage() {
   if (fetching) {
     return (
       <div style={{ padding: "3rem 0", display: "flex", alignItems: "center", gap: "0.75rem" }}>
-        <div style={{ width: "1.5rem", height: "1px", background: "rgba(255,255,255,0.2)" }} />
-        <span style={{ fontSize: "0.58rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(255,255,255,0.3)", fontFamily: "var(--font-sans)" }}>
+        <div style={{ width: "1.5rem", height: "1px", background: "rgba(250, 250, 249, 0.2)" }} />
+        <span style={{ fontSize: "0.58rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.3)", fontFamily: "var(--font-sans)" }}>
           Loading…
         </span>
       </div>
@@ -190,14 +190,14 @@ export default function ProfilePage() {
       {/* ── Header ── */}
       <motion.header variants={fadeUp} style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <span style={{ width: "1.5rem", height: "1px", background: "rgba(255,255,255,0.2)", display: "block" }} />
-          <span style={{ fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.38em", textTransform: "uppercase", color: "rgba(255,255,255,0.3)", fontFamily: "var(--font-mono, monospace)" }}>
+          <span style={{ width: "1.5rem", height: "1px", background: "rgba(250, 250, 249, 0.2)", display: "block" }} />
+          <span style={{ fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.38em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.3)", fontFamily: "var(--font-mono, monospace)" }}>
             Account Settings
           </span>
         </div>
-        <h1 className="font-display" style={{ fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 900, color: "#fff", letterSpacing: "-0.035em", lineHeight: 1.05 }}>
+        <h1 className="font-display" style={{ fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 900, color: "#fafaf9", letterSpacing: "-0.035em", lineHeight: 1.05 }}>
           {displayName}&apos;s{" "}
-          <em style={{ fontStyle: "italic", color: "rgba(255,255,255,0.35)" }}>profile</em>
+          <em style={{ fontStyle: "italic", color: "rgba(250, 250, 249, 0.35)" }}>profile</em>
         </h1>
       </motion.header>
 
@@ -223,8 +223,8 @@ export default function ProfilePage() {
             title="Change profile picture"
             style={{
               width: "4.5rem", height: "4.5rem", borderRadius: "50%",
-              border: avatarHover ? "1px solid rgba(255,255,255,0.35)" : "1px solid rgba(255,255,255,0.12)",
-              background: "rgba(255,255,255,0.05)",
+              border: avatarHover ? "1px solid rgba(250, 250, 249, 0.35)" : "1px solid rgba(250, 250, 249, 0.12)",
+              background: "rgba(250, 250, 249, 0.05)",
               display: "flex", alignItems: "center", justifyContent: "center",
               overflow: "hidden", cursor: avatarUploading ? "not-allowed" : "pointer",
               position: "relative", padding: 0,
@@ -246,7 +246,7 @@ export default function ProfilePage() {
             ) : (
               <span style={{
                 fontSize: "1.1rem", fontWeight: 700,
-                color: avatarHover ? "rgba(255,255,255,0.4)" : "rgba(255,255,255,0.7)",
+                color: avatarHover ? "rgba(250, 250, 249, 0.4)" : "rgba(250, 250, 249, 0.7)",
                 letterSpacing: "0.04em", fontFamily: "var(--font-sans)",
                 transition: "color 0.25s",
               }}>
@@ -262,11 +262,11 @@ export default function ProfilePage() {
                 alignItems: "center", justifyContent: "center", gap: "0.2rem",
               }}>
                 {avatarUploading
-                  ? <Loader2 size={18} color="rgba(255,255,255,0.8)" style={{ animation: "spin 1s linear infinite" }} />
-                  : <Camera size={18} color="rgba(255,255,255,0.8)" />
+                  ? <Loader2 size={18} color="rgba(250, 250, 249, 0.8)" style={{ animation: "spin 1s linear infinite" }} />
+                  : <Camera size={18} color="rgba(250, 250, 249, 0.8)" />
                 }
                 {!avatarUploading && (
-                  <span style={{ fontSize: "0.42rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(255,255,255,0.6)", fontFamily: "var(--font-sans)" }}>
+                  <span style={{ fontSize: "0.42rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.6)", fontFamily: "var(--font-sans)" }}>
                     Change
                   </span>
                 )}
@@ -276,15 +276,15 @@ export default function ProfilePage() {
         </div>
 
         <div>
-          <div className="font-display" style={{ fontSize: "1.15rem", fontWeight: 700, color: "rgba(255,255,255,0.85)", letterSpacing: "-0.02em", marginBottom: "0.3rem" }}>
+          <div className="font-display" style={{ fontSize: "1.15rem", fontWeight: 700, color: "rgba(250, 250, 249, 0.85)", letterSpacing: "-0.02em", marginBottom: "0.3rem" }}>
             {profile?.first_name} {profile?.last_name}
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
             <span style={{
               fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.25em",
-              textTransform: "uppercase", color: "rgba(255,255,255,0.3)",
+              textTransform: "uppercase", color: "rgba(250, 250, 249, 0.3)",
               fontFamily: "var(--font-mono, monospace)",
-              padding: "0.25rem 0.65rem", border: "1px solid rgba(255,255,255,0.1)",
+              padding: "0.25rem 0.65rem", border: "1px solid rgba(250, 250, 249, 0.1)",
               borderRadius: "100px",
             }}>
               {roleLabel}
@@ -292,26 +292,26 @@ export default function ProfilePage() {
             {profile?.status === "approved" && (
               <span style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
                 <span style={{ width: "5px", height: "5px", borderRadius: "50%", background: "rgba(120,220,120,0.8)" }} />
-                <span style={{ fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(255,255,255,0.3)", fontFamily: "var(--font-mono, monospace)" }}>
+                <span style={{ fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.3)", fontFamily: "var(--font-mono, monospace)" }}>
                   Verified
                 </span>
               </span>
             )}
           </div>
-          <p style={{ marginTop: "0.5rem", fontSize: "0.55rem", color: "rgba(255,255,255,0.2)", fontFamily: "var(--font-sans)", letterSpacing: "0.05em" }}>
+          <p style={{ marginTop: "0.5rem", fontSize: "0.55rem", color: "rgba(250, 250, 249, 0.2)", fontFamily: "var(--font-sans)", letterSpacing: "0.05em" }}>
             Click your avatar to upload a new photo · max 5 MB
           </p>
         </div>
       </motion.div>
 
       {/* ── Hairline ── */}
-      <motion.div variants={fadeUp} style={{ height: "1px", background: "rgba(255,255,255,0.07)" }} />
+      <motion.div variants={fadeUp} style={{ height: "1px", background: "rgba(250, 250, 249, 0.07)" }} />
 
       {/* ── Edit form ── */}
       <motion.div variants={fadeUp}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "2.5rem" }}>
-          <span style={{ width: "1rem", height: "1px", background: "rgba(255,255,255,0.2)", display: "block" }} />
-          <span style={{ fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.35em", textTransform: "uppercase", color: "rgba(255,255,255,0.3)", fontFamily: "var(--font-mono, monospace)" }}>
+          <span style={{ width: "1rem", height: "1px", background: "rgba(250, 250, 249, 0.2)", display: "block" }} />
+          <span style={{ fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.35em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.3)", fontFamily: "var(--font-mono, monospace)" }}>
             Personal Information
           </span>
         </div>
@@ -333,14 +333,14 @@ export default function ProfilePage() {
           {/* Education Level — students only */}
           {profile?.role === "student" && (
             <div style={{ position: "relative" }}>
-              <label htmlFor="education_level" style={{ display: "block", fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(255,255,255,0.3)", marginBottom: "0.55rem", fontFamily: "var(--font-sans)" }}>
+              <label htmlFor="education_level" style={{ display: "block", fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.3)", marginBottom: "0.55rem", fontFamily: "var(--font-sans)" }}>
                 Education Level
               </label>
               <select
                 id="education_level"
                 name="education_level"
                 defaultValue={profile?.education_level ?? ""}
-                style={{ width: "100%", background: "transparent", border: "none", borderBottom: "1px solid rgba(255,255,255,0.12)", padding: "0.7rem 0", fontSize: "0.95rem", color: profile?.education_level ? "#fff" : "rgba(255,255,255,0.3)", outline: "none", fontFamily: "var(--font-sans)", cursor: "pointer", appearance: "none" }}
+                style={{ width: "100%", background: "transparent", border: "none", borderBottom: "1px solid rgba(250, 250, 249, 0.12)", padding: "0.7rem 0", fontSize: "0.95rem", color: profile?.education_level ? "#fafaf9" : "rgba(250, 250, 249, 0.3)", outline: "none", fontFamily: "var(--font-sans)", cursor: "pointer", appearance: "none" }}
               >
                 <option value="" style={{ background: "#080c14" }}>Select level…</option>
                 <option value="high-school"  style={{ background: "#080c14" }}>High School</option>
@@ -365,8 +365,8 @@ export default function ProfilePage() {
           )}
 
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingTop: "0.5rem" }}>
-            <span style={{ fontSize: "0.6rem", color: "rgba(255,255,255,0.22)", fontFamily: "var(--font-sans)", letterSpacing: "0.05em" }}>
-              Role: <strong style={{ color: "rgba(255,255,255,0.4)" }}>{roleLabel}</strong> · cannot be changed here
+            <span style={{ fontSize: "0.6rem", color: "rgba(250, 250, 249, 0.22)", fontFamily: "var(--font-sans)", letterSpacing: "0.05em" }}>
+              Role: <strong style={{ color: "rgba(250, 250, 249, 0.4)" }}>{roleLabel}</strong> · cannot be changed here
             </span>
             <motion.button
               type="submit"
@@ -375,7 +375,7 @@ export default function ProfilePage() {
               whileTap={{ scale: 0.97 }}
               style={{
                 padding: "0.85rem 2.25rem",
-                background: "#fff", color: "#080c14",
+                background: "#fafaf9", color: "#080c14",
                 border: "none", borderRadius: "100px",
                 fontSize: "0.58rem", fontWeight: 700,
                 letterSpacing: "0.24em", textTransform: "uppercase",
@@ -392,13 +392,13 @@ export default function ProfilePage() {
       </motion.div>
 
       {/* ── Hairline ── */}
-      <div style={{ height: "1px", background: "rgba(255,255,255,0.07)" }} />
+      <div style={{ height: "1px", background: "rgba(250, 250, 249, 0.07)" }} />
 
       {/* ── Security ── */}
       <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <span style={{ width: "1rem", height: "1px", background: "rgba(255,255,255,0.15)", display: "block" }} />
-          <span style={{ fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.35em", textTransform: "uppercase", color: "rgba(255,255,255,0.25)", fontFamily: "var(--font-mono, monospace)" }}>
+          <span style={{ width: "1rem", height: "1px", background: "rgba(250, 250, 249, 0.15)", display: "block" }} />
+          <span style={{ fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.35em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.25)", fontFamily: "var(--font-mono, monospace)" }}>
             Security
           </span>
         </div>
@@ -409,16 +409,16 @@ export default function ProfilePage() {
               textDecoration: "none",
               padding: "0.75rem 1.75rem",
               background: "transparent",
-              border: "1px solid rgba(255,255,255,0.1)",
+              border: "1px solid rgba(250, 250, 249, 0.1)",
               borderRadius: "100px",
               fontSize: "0.58rem", fontWeight: 700,
               letterSpacing: "0.22em", textTransform: "uppercase",
-              color: "rgba(255,255,255,0.8)",
+              color: "rgba(250, 250, 249, 0.8)",
               fontFamily: "var(--font-sans)",
               transition: "border-color 0.2s, background 0.2s",
             }}
-            onMouseEnter={e => { (e.currentTarget).style.borderColor = "rgba(255,255,255,0.3)"; (e.currentTarget).style.background = "rgba(255,255,255,0.05)"; }}
-            onMouseLeave={e => { (e.currentTarget).style.borderColor = "rgba(255,255,255,0.1)"; (e.currentTarget).style.background = "transparent"; }}
+            onMouseEnter={e => { (e.currentTarget).style.borderColor = "rgba(250, 250, 249, 0.3)"; (e.currentTarget).style.background = "rgba(250, 250, 249, 0.05)"; }}
+            onMouseLeave={e => { (e.currentTarget).style.borderColor = "rgba(250, 250, 249, 0.1)"; (e.currentTarget).style.background = "transparent"; }}
           >
             Change Password
           </Link>
@@ -426,13 +426,13 @@ export default function ProfilePage() {
       </div>
 
       {/* ── Hairline ── */}
-      <div style={{ height: "1px", background: "rgba(255,255,255,0.07)" }} />
+      <div style={{ height: "1px", background: "rgba(250, 250, 249, 0.07)" }} />
 
       {/* ── Session ── */}
       <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <span style={{ width: "1rem", height: "1px", background: "rgba(255,255,255,0.15)", display: "block" }} />
-          <span style={{ fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.35em", textTransform: "uppercase", color: "rgba(255,255,255,0.25)", fontFamily: "var(--font-mono, monospace)" }}>
+          <span style={{ width: "1rem", height: "1px", background: "rgba(250, 250, 249, 0.15)", display: "block" }} />
+          <span style={{ fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.35em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.25)", fontFamily: "var(--font-mono, monospace)" }}>
             Session
           </span>
         </div>
@@ -442,17 +442,17 @@ export default function ProfilePage() {
             alignSelf: "flex-start",
             padding: "0.75rem 1.75rem",
             background: "transparent",
-            border: "1px solid rgba(255,255,255,0.1)",
+            border: "1px solid rgba(250, 250, 249, 0.1)",
             borderRadius: "100px",
             fontSize: "0.58rem", fontWeight: 700,
             letterSpacing: "0.22em", textTransform: "uppercase",
-            color: "rgba(255,255,255,0.45)",
+            color: "rgba(250, 250, 249, 0.45)",
             fontFamily: "var(--font-sans)",
             cursor: "pointer",
             transition: "border-color 0.2s, color 0.2s",
           }}
           onMouseEnter={e => { (e.currentTarget).style.borderColor = "rgba(255,100,100,0.4)"; (e.currentTarget).style.color = "rgba(255,120,120,0.8)"; }}
-          onMouseLeave={e => { (e.currentTarget).style.borderColor = "rgba(255,255,255,0.1)"; (e.currentTarget).style.color = "rgba(255,255,255,0.45)"; }}
+          onMouseLeave={e => { (e.currentTarget).style.borderColor = "rgba(250, 250, 249, 0.1)"; (e.currentTarget).style.color = "rgba(250, 250, 249, 0.45)"; }}
         >
           Sign Out
         </button>

@@ -50,7 +50,7 @@ function SpotlightBlob({
         height: size,
         borderRadius: "50%",
         background:
-          "radial-gradient(circle, rgba(255,255,255,0.045) 0%, rgba(255,255,255,0.018) 35%, transparent 70%)",
+          "radial-gradient(circle, rgba(129, 140, 248, 0.06) 0%, rgba(99, 102, 241, 0.025) 35%, transparent 70%)",
         filter: "blur(32px)",
         willChange: "transform",
       }}
@@ -75,7 +75,7 @@ function PrecisionDot({
 
   return (
     <motion.div
-      className="absolute bg-white pointer-events-none"
+      className="absolute bg-[#fafaf9] pointer-events-none"
       style={{
         x: sourceX,
         y: sourceY,
@@ -124,7 +124,7 @@ function CursorRing({
           y,
           translateX: "-50%",
           translateY: "-50%",
-          border: filled ? "none" : `1px solid rgba(255,255,255,${isCanvas ? 0.4 : 0.5})`,
+          border: filled ? "none" : `1px solid rgba(250, 250, 249, ${isCanvas ? 0.4 : 0.5})`,
           mixBlendMode: "difference",
           zIndex: 1,
         }}
@@ -132,7 +132,7 @@ function CursorRing({
           width: size,
           height: isText ? 22 : size,
           borderRadius: isText ? 2 : size / 2,
-          backgroundColor: filled ? "rgba(255,255,255,1)" : "transparent",
+          backgroundColor: filled ? "rgba(250, 250, 249, 1)" : "transparent",
           opacity: isText ? 0.7 : 1,
         }}
         transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
@@ -149,7 +149,7 @@ function CursorRing({
               y,
               translateX: "-50%",
               translateY: "-50%",
-              border: "1px solid rgba(255,255,255,0.2)",
+              border: "1px solid rgba(250, 250, 249, 0.2)",
               zIndex: 1,
             }}
             initial={{ width: size, height: size, opacity: 0.6 }}

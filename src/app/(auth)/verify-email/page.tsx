@@ -31,7 +31,7 @@ export default function VerifyEmailPage() {
         {/* Wordmark */}
         <motion.div variants={fadeUp}>
           <Link href="/" style={{ textDecoration: "none" }}>
-            <span className="font-display" style={{ fontSize: "1.25rem", fontWeight: 800, color: "#fff", letterSpacing: "-0.02em" }}>
+            <span className="font-display" style={{ fontSize: "1.25rem", fontWeight: 800, color: "#fafaf9", letterSpacing: "-0.02em" }}>
               Schollective
             </span>
           </Link>
@@ -39,8 +39,8 @@ export default function VerifyEmailPage() {
 
         {/* Icon */}
         <motion.div variants={fadeUp}>
-          <div style={{ width: "5rem", height: "5rem", borderRadius: "50%", border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.03)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto" }}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <div style={{ width: "5rem", height: "5rem", borderRadius: "50%", border: "1px solid rgba(250, 250, 249, 0.1)", background: "rgba(250, 250, 249, 0.03)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto" }}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(250, 250, 249, 0.5)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
               <rect x="2" y="4" width="20" height="16" rx="2" />
               <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
             </svg>
@@ -49,21 +49,21 @@ export default function VerifyEmailPage() {
 
         {/* Eyebrow */}
         <motion.div variants={fadeUp} style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <span style={{ width: "1.5rem", height: "1px", background: "rgba(255,255,255,0.2)", display: "block" }} />
-          <span style={{ fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.38em", textTransform: "uppercase", color: "rgba(255,255,255,0.32)", fontFamily: "var(--font-sans)" }}>
+          <span style={{ width: "1.5rem", height: "1px", background: "rgba(250, 250, 249, 0.2)", display: "block" }} />
+          <span style={{ fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.38em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.32)", fontFamily: "var(--font-sans)" }}>
             Verify Your Email
           </span>
-          <span style={{ width: "1.5rem", height: "1px", background: "rgba(255,255,255,0.2)", display: "block" }} />
+          <span style={{ width: "1.5rem", height: "1px", background: "rgba(250, 250, 249, 0.2)", display: "block" }} />
         </motion.div>
 
         {/* Headline */}
-        <motion.h1 variants={fadeUp} className="font-display" style={{ fontSize: "clamp(2rem, 5vw, 3rem)", fontWeight: 900, color: "#fff", letterSpacing: "-0.035em", lineHeight: 1.1 }}>
+        <motion.h1 variants={fadeUp} className="font-display" style={{ fontSize: "clamp(2rem, 5vw, 3rem)", fontWeight: 900, color: "#fafaf9", letterSpacing: "-0.035em", lineHeight: 1.1 }}>
           Check your<br />
-          <em style={{ fontStyle: "italic", color: "rgba(255,255,255,0.35)" }}>inbox.</em>
+          <em style={{ fontStyle: "italic", color: "rgba(250, 250, 249, 0.35)" }}>inbox.</em>
         </motion.h1>
 
         {/* Body */}
-        <motion.p variants={fadeUp} style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.42)", lineHeight: 1.8, fontFamily: "var(--font-sans)", maxWidth: 380 }}>
+        <motion.p variants={fadeUp} style={{ fontSize: "0.9rem", color: "rgba(250, 250, 249, 0.42)", lineHeight: 1.8, fontFamily: "var(--font-sans)", maxWidth: 380 }}>
           We sent a confirmation link to your email address. Click it to activate your account and access the Collective.
         </motion.p>
 
@@ -74,20 +74,20 @@ export default function VerifyEmailPage() {
             ["02", "Click the confirmation link"],
             ["03", "Return here to sign in"],
           ].map(([n, t]) => (
-            <div key={n} style={{ display: "flex", alignItems: "center", gap: "1rem", padding: "0.85rem 1.25rem", border: "1px solid rgba(255,255,255,0.06)", borderRadius: "12px", background: "rgba(255,255,255,0.02)" }}>
-              <span className="font-display" style={{ fontSize: "0.8rem", fontWeight: 800, color: "rgba(255,255,255,0.18)", letterSpacing: "-0.02em", minWidth: "1.5rem" }}>{n}</span>
-              <span style={{ fontSize: "0.82rem", color: "rgba(255,255,255,0.5)", fontFamily: "var(--font-sans)" }}>{t}</span>
+            <div key={n} style={{ display: "flex", alignItems: "center", gap: "1rem", padding: "0.85rem 1.25rem", border: "1px solid rgba(250, 250, 249, 0.06)", borderRadius: "12px", background: "rgba(250, 250, 249, 0.02)" }}>
+              <span className="font-display" style={{ fontSize: "0.8rem", fontWeight: 800, color: "rgba(250, 250, 249, 0.18)", letterSpacing: "-0.02em", minWidth: "1.5rem" }}>{n}</span>
+              <span style={{ fontSize: "0.82rem", color: "rgba(250, 250, 249, 0.5)", fontFamily: "var(--font-sans)" }}>{t}</span>
             </div>
           ))}
         </motion.div>
 
         {/* Divider */}
-        <motion.div variants={fadeUp} style={{ width: "100%", height: "1px", background: "rgba(255,255,255,0.06)" }} />
+        <motion.div variants={fadeUp} style={{ width: "100%", height: "1px", background: "rgba(250, 250, 249, 0.06)" }} />
 
         {/* Note about spam */}
-        <motion.p variants={fadeUp} style={{ fontSize: "0.62rem", color: "rgba(255,255,255,0.2)", fontFamily: "var(--font-sans)", lineHeight: 1.7 }}>
+        <motion.p variants={fadeUp} style={{ fontSize: "0.62rem", color: "rgba(250, 250, 249, 0.2)", fontFamily: "var(--font-sans)", lineHeight: 1.7 }}>
           Didn&apos;t receive it? Check your spam folder, or{" "}
-          <Link href="/signup" style={{ color: "rgba(255,255,255,0.5)", textDecoration: "none" }}>
+          <Link href="/signup" style={{ color: "rgba(250, 250, 249, 0.5)", textDecoration: "none" }}>
             sign up again
           </Link>{" "}
           with the correct email.
@@ -96,7 +96,7 @@ export default function VerifyEmailPage() {
         {/* Back to login */}
         <motion.div variants={fadeUp}>
           <Link href="/login" style={{ textDecoration: "none" }}>
-            <span style={{ fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(255,255,255,0.35)", fontFamily: "var(--font-sans)" }}>
+            <span style={{ fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.35)", fontFamily: "var(--font-sans)" }}>
               ← Back to Login
             </span>
           </Link>

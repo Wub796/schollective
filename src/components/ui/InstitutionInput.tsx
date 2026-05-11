@@ -104,10 +104,10 @@ export function InstitutionInput({
           width: "100%",
           background: "transparent",
           border: "none",
-          borderBottom: "1px solid rgba(255,255,255,0.1)",
+          borderBottom: "1px solid rgba(250, 250, 249, 0.1)",
           padding: "0.7rem 0",
           fontSize: "0.95rem",
-          color: "#fff",
+          color: "#fafaf9",
           outline: "none",
           fontFamily: "var(--font-sans)",
           transition: "border-color 0.3s",
@@ -115,7 +115,7 @@ export function InstitutionInput({
         onBlur={(e) => {
           // Delay so dropdown click fires first
           setTimeout(() => setOpen(false), 150);
-          (e.target as HTMLInputElement).style.borderBottomColor = "rgba(255,255,255,0.1)";
+          (e.target as HTMLInputElement).style.borderBottomColor = "rgba(250, 250, 249, 0.1)";
         }}
       />
 
@@ -128,7 +128,7 @@ export function InstitutionInput({
             right: 0,
             zIndex: 50,
             background: "#13161f",
-            border: "1px solid rgba(255,255,255,0.08)",
+            border: "1px solid rgba(250, 250, 249, 0.08)",
             borderRadius: "10px",
             overflow: "hidden",
             boxShadow: "0 8px 32px rgba(0,0,0,0.5)",
@@ -150,9 +150,9 @@ export function InstitutionInput({
                   fontSize: "0.78rem",
                   fontFamily: "var(--font-sans)",
                   color: isActive ? "#e8e8e6" : "#8a8a8a",
-                  background: isActive ? "rgba(255,255,255,0.05)" : "transparent",
+                  background: isActive ? "rgba(250, 250, 249, 0.05)" : "transparent",
                   border: "none",
-                  borderBottom: i < suggestions.length - 1 ? "1px solid rgba(255,255,255,0.04)" : "none",
+                  borderBottom: i < suggestions.length - 1 ? "1px solid rgba(250, 250, 249, 0.04)" : "none",
                   cursor: "pointer",
                   transition: "background 0.1s, color 0.1s",
                 }}
@@ -165,8 +165,8 @@ export function InstitutionInput({
           <div style={{
             padding: "0.35rem 1rem",
             fontSize: "0.56rem",
-            color: "rgba(255,255,255,0.15)",
-            borderTop: "1px solid rgba(255,255,255,0.04)",
+            color: "rgba(250, 250, 249, 0.15)",
+            borderTop: "1px solid rgba(250, 250, 249, 0.04)",
             fontFamily: "var(--font-sans)",
             letterSpacing: "0.08em",
             textTransform: "uppercase",

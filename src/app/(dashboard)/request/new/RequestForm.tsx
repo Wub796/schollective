@@ -20,9 +20,9 @@ interface RequestFormProps {
 }
 
 const textareaClass =
-  "flex min-h-[140px] w-full rounded-xl border border-[rgba(255,255,255,0.07)] " +
-  "bg-[rgba(255,255,255,0.03)] px-4 py-3 text-sm text-[#f2f2f0] outline-none " +
-  "focus:border-[rgba(232,232,230,0.4)] focus:bg-[rgba(255,255,255,0.05)] " +
+  "flex min-h-[140px] w-full rounded-xl border border-[rgba(250, 250, 249, 0.07)] " +
+  "bg-[rgba(250, 250, 249, 0.03)] px-4 py-3 text-sm text-[#f2f2f0] outline-none " +
+  "focus:border-[rgba(232,232,230,0.4)] focus:bg-[rgba(250, 250, 249, 0.05)] " +
   "focus:ring-2 focus:ring-[rgba(232,232,230,0.06)] placeholder:text-[#3a3a3a] " +
   "transition-all resize-none";
 
@@ -55,8 +55,8 @@ export function RequestForm({ professor }: RequestFormProps) {
       <input type="hidden" name="prof_id" value={professor.id} />
 
       {/* Professor preview */}
-      <div className="bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.07)] rounded-xl p-5 flex items-center gap-4">
-        <div className="w-11 h-11 rounded-xl bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.09)] flex items-center justify-center text-base font-semibold text-[#8a8a8a]">
+      <div className="bg-[rgba(250, 250, 249, 0.03)] border border-[rgba(250, 250, 249, 0.07)] rounded-xl p-5 flex items-center gap-4">
+        <div className="w-11 h-11 rounded-xl bg-[rgba(250, 250, 249, 0.06)] border border-[rgba(250, 250, 249, 0.09)] flex items-center justify-center text-base font-semibold text-[#8a8a8a]">
           {professor.first_name[0]}{professor.last_name[0]}
         </div>
         <div>

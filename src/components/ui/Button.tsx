@@ -9,23 +9,23 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = 'primary', size = 'md', ...props }, ref) => {
     const variants = {
-      // Off-white fill — highest contrast on charcoal
+      // Teal fill — highest contrast on navy
       primary:
-        "bg-[#e8e8e6] text-[#0d0d0d] font-semibold " +
-        "shadow-[0_0_0_1px_rgba(255,255,255,0.12),0_4px_16px_rgba(0,0,0,0.4)] " +
-        "hover:bg-[#f2f2f0] hover:shadow-[0_0_0_1px_rgba(255,255,255,0.2),0_8px_24px_rgba(0,0,0,0.5)] " +
+        "bg-[#818cf8] text-[#09090b] font-semibold " +
+        "shadow-[0_0_0_1px_rgba(129, 140, 248, 0.3),0_4px_20px_rgba(129, 140, 248, 0.25)] " +
+        "hover:bg-[#6dd8e1] hover:shadow-[0_0_0_1px_rgba(129, 140, 248, 0.5),0_8px_28px_rgba(129, 140, 248, 0.35)] " +
         "hover:-translate-y-px",
-      // Glass ghost — secondary actions
+      // Navy glass ghost — secondary actions
       ghost:
-        "bg-white/[0.04] backdrop-blur-md text-[#c8c8c6] " +
-        "border border-white/[0.08] " +
-        "hover:bg-white/[0.08] hover:border-white/[0.14] hover:text-[#f2f2f0] " +
+        "bg-[rgba(17, 17, 19, 0.6)] backdrop-blur-md text-[#a8b3cf] " +
+        "border border-[rgba(129, 140, 248, 0.14)] " +
+        "hover:bg-[rgba(17, 17, 19, 0.85)] hover:border-[rgba(129, 140, 248, 0.3)] hover:text-[#fafaf9] " +
         "hover:-translate-y-px",
-      // Hairline outline — tertiary / destructive
+      // Teal hairline outline — tertiary / destructive
       outline:
-        "bg-transparent text-[#8a8a8a] " +
-        "border border-[rgba(255,255,255,0.1)] " +
-        "hover:bg-white/[0.04] hover:border-[rgba(255,255,255,0.18)] hover:text-[#f2f2f0] " +
+        "bg-transparent text-[#52525b] " +
+        "border border-[rgba(129, 140, 248, 0.18)] " +
+        "hover:bg-[rgba(129, 140, 248, 0.06)] hover:border-[rgba(129, 140, 248, 0.4)] hover:text-[#818cf8] " +
         "hover:-translate-y-px",
     };
 

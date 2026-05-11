@@ -69,7 +69,7 @@ export function Sidebar({ onClose, role = "student" }: SidebarProps) {
       {/* Section label */}
       <p style={{
         fontSize: "0.48rem", fontWeight: 700, letterSpacing: "0.38em",
-        textTransform: "uppercase", color: "rgba(255,255,255,0.2)",
+        textTransform: "uppercase", color: "rgba(129, 140, 248, 0.4)",
         marginBottom: "0.75rem", paddingLeft: "0.5rem",
         fontFamily: "var(--font-mono, monospace)",
       }}>
@@ -95,12 +95,12 @@ export function Sidebar({ onClose, role = "student" }: SidebarProps) {
                   padding: "0.6rem 0.75rem",
                   borderRadius: "8px",
                   textDecoration: "none",
-                  background: active ? "rgba(255,255,255,0.07)" : "transparent",
-                  border: active ? "1px solid rgba(255,255,255,0.1)" : "1px solid transparent",
+                  background: active ? "rgba(129, 140, 248, 0.08)" : "transparent",
+                  border: active ? "1px solid rgba(129, 140, 248, 0.22)" : "1px solid transparent",
                   transition: "all 0.2s",
                 }}
                 onMouseEnter={e => {
-                  if (!active) (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.03)";
+                  if (!active) (e.currentTarget as HTMLElement).style.background = "rgba(129, 140, 248, 0.04)";
                 }}
                 onMouseLeave={e => {
                   if (!active) (e.currentTarget as HTMLElement).style.background = "transparent";
@@ -110,7 +110,7 @@ export function Sidebar({ onClose, role = "student" }: SidebarProps) {
                 <span style={{
                   fontSize: "0.78rem",
                   fontWeight: active ? 600 : 400,
-                  color: active ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.45)",
+                  color: active ? "rgba(250, 250, 249, 0.95)" : "rgba(168, 179, 207, 0.7)",
                   letterSpacing: "0.01em",
                   transition: "color 0.2s",
                 }}>
@@ -121,7 +121,7 @@ export function Sidebar({ onClose, role = "student" }: SidebarProps) {
                   fontWeight: 600,
                   letterSpacing: "0.2em",
                   textTransform: "uppercase",
-                  color: active ? "rgba(255,255,255,0.35)" : "rgba(255,255,255,0.15)",
+                  color: active ? "rgba(129, 140, 248, 0.6)" : "rgba(129, 140, 248, 0.2)",
                   fontFamily: "var(--font-mono, monospace)",
                 }}>
                   {navItem.sub}
@@ -133,12 +133,12 @@ export function Sidebar({ onClose, role = "student" }: SidebarProps) {
       </motion.ul>
 
       {/* Hairline divider */}
-      <div style={{ height: "1px", background: "rgba(255,255,255,0.06)", marginBottom: "2rem", marginLeft: "0.5rem", marginRight: "0.5rem" }} />
+      <div style={{ height: "1px", background: "rgba(129, 140, 248, 0.08)", marginBottom: "2rem", marginLeft: "0.5rem", marginRight: "0.5rem" }} />
 
       {/* Account section */}
       <p style={{
         fontSize: "0.48rem", fontWeight: 700, letterSpacing: "0.38em",
-        textTransform: "uppercase", color: "rgba(255,255,255,0.2)",
+        textTransform: "uppercase", color: "rgba(129, 140, 248, 0.4)",
         marginBottom: "0.75rem", paddingLeft: "0.5rem",
         fontFamily: "var(--font-mono, monospace)",
       }}>
@@ -158,17 +158,17 @@ export function Sidebar({ onClose, role = "student" }: SidebarProps) {
                 style={{
                   display: "flex", alignItems: "center", justifyContent: "space-between",
                   padding: "0.6rem 0.75rem", borderRadius: "8px", textDecoration: "none",
-                  background: active ? "rgba(255,255,255,0.07)" : "transparent",
-                  border: active ? "1px solid rgba(255,255,255,0.1)" : "1px solid transparent",
+                  background: active ? "rgba(129, 140, 248, 0.08)" : "transparent",
+                  border: active ? "1px solid rgba(129, 140, 248, 0.22)" : "1px solid transparent",
                   transition: "all 0.2s",
                 }}
-                onMouseEnter={e => { if (!active) (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.03)"; }}
+                onMouseEnter={e => { if (!active) (e.currentTarget as HTMLElement).style.background = "rgba(129, 140, 248, 0.04)"; }}
                 onMouseLeave={e => { if (!active) (e.currentTarget as HTMLElement).style.background = "transparent"; }}
               >
-                <span style={{ fontSize: "0.78rem", fontWeight: active ? 600 : 400, color: active ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.45)", transition: "color 0.2s" }}>
+                <span style={{ fontSize: "0.78rem", fontWeight: active ? 600 : 400, color: active ? "rgba(250, 250, 249, 0.9)" : "rgba(250, 250, 249, 0.45)", transition: "color 0.2s" }}>
                   {navItem.label}
                 </span>
-                <span style={{ fontSize: "0.48rem", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: active ? "rgba(255,255,255,0.35)" : "rgba(255,255,255,0.15)", fontFamily: "var(--font-mono, monospace)" }}>
+                <span style={{ fontSize: "0.48rem", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: active ? "rgba(250, 250, 249, 0.35)" : "rgba(250, 250, 249, 0.15)", fontFamily: "var(--font-mono, monospace)" }}>
                   {navItem.sub}
                 </span>
               </Link>
@@ -179,7 +179,7 @@ export function Sidebar({ onClose, role = "student" }: SidebarProps) {
 
       {/* Sign out — pinned to bottom */}
       <div style={{ marginTop: "auto", paddingTop: "1.5rem" }}>
-        <div style={{ height: "1px", background: "rgba(255,255,255,0.06)", marginBottom: "1.25rem", marginLeft: "0.5rem", marginRight: "0.5rem" }} />
+        <div style={{ height: "1px", background: "rgba(129, 140, 248, 0.08)", marginBottom: "1.25rem", marginLeft: "0.5rem", marginRight: "0.5rem" }} />
         <button
           onClick={handleSignOut}
           style={{
@@ -188,13 +188,13 @@ export function Sidebar({ onClose, role = "student" }: SidebarProps) {
             background: "transparent", border: "none", cursor: "pointer",
             transition: "background 0.2s",
           }}
-          onMouseEnter={e => (e.currentTarget.style.background = "rgba(255,255,255,0.03)")}
+          onMouseEnter={e => (e.currentTarget.style.background = "rgba(129, 140, 248, 0.04)")}
           onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
         >
-          <span style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.35)", fontFamily: "var(--font-sans)", transition: "color 0.2s" }}>
+          <span style={{ fontSize: "0.78rem", color: "rgba(168, 179, 207, 0.45)", fontFamily: "var(--font-sans)", transition: "color 0.2s" }}>
             Sign Out
           </span>
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(129, 140, 248, 0.3)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" y1="12" x2="9" y2="12" />
           </svg>
         </button>

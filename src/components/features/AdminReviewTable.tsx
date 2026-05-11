@@ -56,7 +56,7 @@ function ScoreBadge({ prof }: { prof: PendingProfessor }) {
       <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
         <div style={{ position: "relative", width: "2.2rem", height: "2.2rem" }}>
           <svg viewBox="0 0 36 36" style={{ width: "100%", height: "100%", transform: "rotate(-90deg)" }}>
-            <circle cx="18" cy="18" r="15" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="3" />
+            <circle cx="18" cy="18" r="15" fill="none" stroke="rgba(250, 250, 249, 0.06)" strokeWidth="3" />
             <circle
               cx="18" cy="18" r="15"
               fill="none"
@@ -83,7 +83,7 @@ function ScoreBadge({ prof }: { prof: PendingProfessor }) {
             disabled={scoring}
             style={{
               display: "flex", alignItems: "center", gap: "0.25rem",
-              fontSize: "0.48rem", color: "rgba(255,255,255,0.25)",
+              fontSize: "0.48rem", color: "rgba(250, 250, 249, 0.25)",
               background: "none", border: "none", cursor: "pointer",
               padding: 0, fontFamily: "var(--font-sans)", marginTop: "0.1rem",
             }}
@@ -140,8 +140,8 @@ export function AdminReviewTable({ applicants }: AdminReviewTableProps) {
 
   if (applicants.length === 0) {
     return (
-      <div className="border border-dashed border-[rgba(255,255,255,0.06)] rounded-2xl p-24 flex flex-col items-center gap-4">
-        <div className="w-14 h-14 bg-[rgba(255,255,255,0.03)] rounded-xl flex items-center justify-center border border-[rgba(255,255,255,0.06)]">
+      <div className="border border-dashed border-[rgba(250, 250, 249, 0.06)] rounded-2xl p-24 flex flex-col items-center gap-4">
+        <div className="w-14 h-14 bg-[rgba(250, 250, 249, 0.03)] rounded-xl flex items-center justify-center border border-[rgba(250, 250, 249, 0.06)]">
           <CheckCircle size={24} className="text-[#4a4a4a]" />
         </div>
         <h3 className="font-display text-2xl text-[#d4d4d2] font-semibold">Queue Cleared</h3>
@@ -155,11 +155,11 @@ export function AdminReviewTable({ applicants }: AdminReviewTableProps) {
   return (
     <div className="space-y-4">
       {/* Desktop Table */}
-      <div className="hidden lg:block bg-[#111111] border border-[rgba(255,255,255,0.06)] rounded-2xl overflow-hidden">
+      <div className="hidden lg:block bg-[#111111] border border-[rgba(250, 250, 249, 0.06)] rounded-2xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full border-collapse text-left">
             <thead>
-              <tr className="border-b border-[rgba(255,255,255,0.05)]">
+              <tr className="border-b border-[rgba(250, 250, 249, 0.05)]">
                 {["Applicant", "Institution", "Expertise", "Confidence Score", "Actions"].map((h, i) => (
                   <th
                     key={h}
@@ -170,15 +170,15 @@ export function AdminReviewTable({ applicants }: AdminReviewTableProps) {
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-[rgba(255,255,255,0.04)]">
+            <tbody className="divide-y divide-[rgba(250, 250, 249, 0.04)]">
               {applicants.map((prof) => {
                 const displayName = prof.preferred_name || prof.first_name;
                 const isProcessing = processingId === prof.id;
                 return (
-                  <tr key={prof.id} className="hover:bg-[rgba(255,255,255,0.02)] transition-colors">
+                  <tr key={prof.id} className="hover:bg-[rgba(250, 250, 249, 0.02)] transition-colors">
                     <td className="px-7 py-5">
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-xl bg-[rgba(255,255,255,0.04)] border border-[rgba(255,255,255,0.07)] flex items-center justify-center text-sm font-semibold text-[#6a6a6a]">
+                        <div className="w-9 h-9 rounded-xl bg-[rgba(250, 250, 249, 0.04)] border border-[rgba(250, 250, 249, 0.07)] flex items-center justify-center text-sm font-semibold text-[#6a6a6a]">
                           {prof.first_name[0]}{prof.last_name[0]}
                         </div>
                         <div>
@@ -191,7 +191,7 @@ export function AdminReviewTable({ applicants }: AdminReviewTableProps) {
                       </div>
                     </td>
                     <td className="px-7 py-5">
-                      <div className="flex items-center gap-1.5 text-xs text-[#8a8a8a] bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.06)] px-3 py-1.5 rounded-lg w-fit">
+                      <div className="flex items-center gap-1.5 text-xs text-[#8a8a8a] bg-[rgba(250, 250, 249, 0.03)] border border-[rgba(250, 250, 249, 0.06)] px-3 py-1.5 rounded-lg w-fit">
                         <GraduationCap size={13} />
                         {prof.institution || "Not specified"}
                       </div>
@@ -199,7 +199,7 @@ export function AdminReviewTable({ applicants }: AdminReviewTableProps) {
                     <td className="px-7 py-5">
                       <div className="flex flex-wrap gap-1.5 max-w-[200px]">
                         {prof.expertise_fields?.map((field, idx) => (
-                          <span key={idx} className="px-2 py-0.5 rounded-md bg-[rgba(255,255,255,0.03)] text-[#5a5a5a] border border-[rgba(255,255,255,0.05)] text-[0.6rem]">
+                          <span key={idx} className="px-2 py-0.5 rounded-md bg-[rgba(250, 250, 249, 0.03)] text-[#5a5a5a] border border-[rgba(250, 250, 249, 0.05)] text-[0.6rem]">
                             {field}
                           </span>
                         )) || <span className="text-xs italic text-[#3a3a3a]">None</span>}
@@ -234,9 +234,9 @@ export function AdminReviewTable({ applicants }: AdminReviewTableProps) {
           const displayName = prof.preferred_name || prof.first_name;
           const isProcessing = processingId === prof.id;
           return (
-            <div key={prof.id} className="bg-[#111111] border border-[rgba(255,255,255,0.06)] rounded-2xl p-6">
+            <div key={prof.id} className="bg-[#111111] border border-[rgba(250, 250, 249, 0.06)] rounded-2xl p-6">
               <div className="flex items-center gap-3 mb-5">
-                <div className="w-10 h-10 rounded-xl bg-[rgba(255,255,255,0.04)] border border-[rgba(255,255,255,0.07)] flex items-center justify-center text-sm font-semibold text-[#6a6a6a]">
+                <div className="w-10 h-10 rounded-xl bg-[rgba(250, 250, 249, 0.04)] border border-[rgba(250, 250, 249, 0.07)] flex items-center justify-center text-sm font-semibold text-[#6a6a6a]">
                   {prof.first_name[0]}{prof.last_name[0]}
                 </div>
                 <div>
@@ -250,7 +250,7 @@ export function AdminReviewTable({ applicants }: AdminReviewTableProps) {
                 </div>
                 <div className="flex flex-wrap gap-1.5">
                   {prof.expertise_fields?.map((field, idx) => (
-                    <span key={idx} className="px-2 py-0.5 rounded-md bg-[rgba(255,255,255,0.03)] text-[#5a5a5a] border border-[rgba(255,255,255,0.05)] text-[0.6rem]">{field}</span>
+                    <span key={idx} className="px-2 py-0.5 rounded-md bg-[rgba(250, 250, 249, 0.03)] text-[#5a5a5a] border border-[rgba(250, 250, 249, 0.05)] text-[0.6rem]">{field}</span>
                   ))}
                 </div>
                 {/* Score on mobile */}

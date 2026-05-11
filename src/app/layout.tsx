@@ -40,7 +40,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${dmSans.variable} ${playfair.variable}`} suppressHydrationWarning>
-      <body className="bg-black text-white min-h-screen selection:bg-white selection:text-black scroll-smooth" suppressHydrationWarning>
+      <body className="min-h-screen scroll-smooth" style={{background: 'var(--bg-base)', color: 'var(--text-primary)'}} suppressHydrationWarning>
 
         {/* ── Layer 0: Film-grain noise ──────────────────────────
             Fixed, pointer-events-none. z-index: 0 via .noise-overlay
@@ -60,12 +60,12 @@ export default function RootLayout({
           position="top-right"
           toastOptions={{
             style: {
-              background: "rgba(17, 17, 17, 0.95)",
+              background: "rgba(11, 18, 36, 0.96)",
               backdropFilter: "blur(20px)",
-              border: "1px solid rgba(255, 255, 255, 0.08)",
-              color: "#f2f2f0",
+              border: "1px solid rgba(129, 140, 248, 0.18)",
+              color: "#e8f0ff",
               borderRadius: "10px",
-              boxShadow: "0 24px 48px rgba(0,0,0,0.6)",
+              boxShadow: "0 24px 48px rgba(0,0,0,0.55)",
               fontFamily: "var(--font-sans)",
               fontSize: "0.875rem",
               zIndex: "var(--z-toast, 40)" as string,

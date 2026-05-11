@@ -30,16 +30,16 @@ export function FloatingOrb({ index }: { index: number }) {
     const geo = shapes[index % shapes.length];
 
     const mat = new THREE.MeshStandardMaterial({
-      color: 0xffffff,
+      color: 0x4ec9d4,  // teal wireframe
       wireframe: true,
       transparent: true,
-      opacity: 0.25,
+      opacity: 0.3,
     });
 
     const innerMat = new THREE.MeshStandardMaterial({
-      color: 0xffffff,
+      color: 0x3d4dc7,  // royal blue fill
       transparent: true,
-      opacity: 0.04,
+      opacity: 0.06,
       side: THREE.FrontSide,
     });
 
@@ -48,8 +48,8 @@ export function FloatingOrb({ index }: { index: number }) {
     scene.add(mesh);
     scene.add(innerMesh);
 
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
-    const pointLight = new THREE.PointLight(0xffffff, 1.5, 20);
+    const ambientLight = new THREE.AmbientLight(0x3d6aff, 0.9);  // cool blue
+    const pointLight = new THREE.PointLight(0x4ec9d4, 2.0, 20);  // teal point light
     pointLight.position.set(3, 3, 3);
     scene.add(ambientLight, pointLight);
 
