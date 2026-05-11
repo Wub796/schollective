@@ -54,16 +54,16 @@ export default async function ProfStudentsPage() {
       {/* ── Header ── */}
       <header style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <span style={{ width: "1.5rem", height: "1px", background: "rgba(255,255,255,0.2)", display: "block" }} />
-          <span style={{ fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.38em", textTransform: "uppercase", color: "rgba(255,255,255,0.3)", fontFamily: "var(--font-mono, monospace)" }}>
+          <span style={{ width: "1.5rem", height: "1px", background: "rgba(250, 250, 249, 0.2)", display: "block" }} />
+          <span style={{ fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.38em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.3)", fontFamily: "var(--font-mono, monospace)" }}>
             Faculty Portal
           </span>
         </div>
-        <h1 className="font-display" style={{ fontSize: "clamp(2.4rem, 5vw, 3.8rem)", fontWeight: 900, color: "#fff", letterSpacing: "-0.035em", lineHeight: 1.05 }}>
+        <h1 className="font-display" style={{ fontSize: "clamp(2.4rem, 5vw, 3.8rem)", fontWeight: 900, color: "#fafaf9", letterSpacing: "-0.035em", lineHeight: 1.05 }}>
           Dr. {displayName}&apos;s{" "}
-          <em style={{ fontStyle: "italic", color: "rgba(255,255,255,0.35)" }}>students</em>
+          <em style={{ fontStyle: "italic", color: "rgba(250, 250, 249, 0.35)" }}>students</em>
         </h1>
-        <p style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.4)", fontWeight: 300, maxWidth: "42rem", lineHeight: 1.7, fontFamily: "var(--font-sans)", marginTop: "0.25rem" }}>
+        <p style={{ fontSize: "0.9rem", color: "rgba(250, 250, 249, 0.4)", fontWeight: 300, maxWidth: "42rem", lineHeight: 1.7, fontFamily: "var(--font-sans)", marginTop: "0.25rem" }}>
           An overview of every student you&apos;re currently mentoring and those you&apos;ve guided in the past.
         </p>
       </header>
@@ -77,52 +77,52 @@ export default async function ProfStudentsPage() {
         ].map(({ value, label, sub }) => (
           <div key={label} style={{
             padding: "1.25rem 1.75rem",
-            border: "1px solid rgba(255,255,255,0.07)",
+            border: "1px solid rgba(250, 250, 249, 0.07)",
             borderRadius: "14px",
-            background: "rgba(255,255,255,0.025)",
+            background: "rgba(250, 250, 249, 0.025)",
             display: "flex", flexDirection: "column", gap: "0.35rem", minWidth: "9rem",
           }}>
-            <span className="font-display" style={{ fontSize: "2rem", fontWeight: 900, color: "#fff", letterSpacing: "-0.04em", lineHeight: 1 }}>
+            <span className="font-display" style={{ fontSize: "2rem", fontWeight: 900, color: "#fafaf9", letterSpacing: "-0.04em", lineHeight: 1 }}>
               {value}
             </span>
-            <div style={{ fontSize: "0.75rem", fontWeight: 600, color: "rgba(255,255,255,0.65)", fontFamily: "var(--font-sans)" }}>{label}</div>
-            <div style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(255,255,255,0.22)", fontFamily: "var(--font-mono, monospace)" }}>{sub}</div>
+            <div style={{ fontSize: "0.75rem", fontWeight: 600, color: "rgba(250, 250, 249, 0.65)", fontFamily: "var(--font-sans)" }}>{label}</div>
+            <div style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.22)", fontFamily: "var(--font-mono, monospace)" }}>{sub}</div>
           </div>
         ))}
       </div>
 
       {/* ── Hairline ── */}
-      <div style={{ height: "1px", background: "rgba(255,255,255,0.06)" }} />
+      <div style={{ height: "1px", background: "rgba(250, 250, 249, 0.06)" }} />
 
       {/* ── Empty state ── */}
       {activeStudents.length === 0 && pastStudents.length === 0 && (
         <div style={{
-          border: "1px dashed rgba(255,255,255,0.08)", borderRadius: "16px",
+          border: "1px dashed rgba(250, 250, 249, 0.08)", borderRadius: "16px",
           padding: "5rem 2rem", textAlign: "center",
           display: "flex", flexDirection: "column", alignItems: "center", gap: "1.5rem",
         }}>
           <div style={{
             width: "3.5rem", height: "3.5rem", borderRadius: "50%",
-            background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)",
+            background: "rgba(250, 250, 249, 0.04)", border: "1px solid rgba(250, 250, 249, 0.08)",
             display: "flex", alignItems: "center", justifyContent: "center",
           }}>
-            <Users size={20} color="rgba(255,255,255,0.3)" />
+            <Users size={20} color="rgba(250, 250, 249, 0.3)" />
           </div>
           <div>
-            <h3 className="font-display" style={{ fontSize: "1.3rem", fontWeight: 700, color: "rgba(255,255,255,0.7)", marginBottom: "0.5rem", letterSpacing: "-0.02em" }}>
+            <h3 className="font-display" style={{ fontSize: "1.3rem", fontWeight: 700, color: "rgba(250, 250, 249, 0.7)", marginBottom: "0.5rem", letterSpacing: "-0.02em" }}>
               No students yet
             </h3>
-            <p style={{ fontSize: "0.82rem", color: "rgba(255,255,255,0.32)", maxWidth: "26rem", lineHeight: 1.7, fontFamily: "var(--font-sans)" }}>
+            <p style={{ fontSize: "0.82rem", color: "rgba(250, 250, 249, 0.32)", maxWidth: "26rem", lineHeight: 1.7, fontFamily: "var(--font-sans)" }}>
               Students will appear here once you accept their mentorship requests.
               Head to the dashboard to review your pending queue.
             </p>
           </div>
           <Link href="/prof/dashboard" style={{ textDecoration: "none" }}>
             <div style={{
-              padding: "0.8rem 1.85rem", border: "1px solid rgba(255,255,255,0.15)",
+              padding: "0.8rem 1.85rem", border: "1px solid rgba(250, 250, 249, 0.15)",
               borderRadius: "100px", fontSize: "0.58rem", fontWeight: 700,
               letterSpacing: "0.22em", textTransform: "uppercase",
-              color: "rgba(255,255,255,0.7)", fontFamily: "var(--font-sans)", cursor: "pointer",
+              color: "rgba(250, 250, 249, 0.7)", fontFamily: "var(--font-sans)", cursor: "pointer",
             }}>
               View Request Queue
             </div>
@@ -134,11 +134,11 @@ export default async function ProfStudentsPage() {
       {activeStudents.length > 0 && (
         <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-            <span style={{ width: "1rem", height: "1px", background: "rgba(255,255,255,0.2)", display: "block" }} />
-            <h2 className="font-display" style={{ fontSize: "1.1rem", fontWeight: 700, color: "rgba(255,255,255,0.85)", letterSpacing: "-0.02em" }}>
+            <span style={{ width: "1rem", height: "1px", background: "rgba(250, 250, 249, 0.2)", display: "block" }} />
+            <h2 className="font-display" style={{ fontSize: "1.1rem", fontWeight: 700, color: "rgba(250, 250, 249, 0.85)", letterSpacing: "-0.02em" }}>
               Currently Mentoring
             </h2>
-            <span style={{ marginLeft: "auto", fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(255,255,255,0.25)", fontFamily: "var(--font-mono, monospace)" }}>
+            <span style={{ marginLeft: "auto", fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.25)", fontFamily: "var(--font-mono, monospace)" }}>
               {activeStudents.length} active
             </span>
           </div>
@@ -154,11 +154,11 @@ export default async function ProfStudentsPage() {
       {pastStudents.length > 0 && (
         <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-            <span style={{ width: "1rem", height: "1px", background: "rgba(255,255,255,0.2)", display: "block" }} />
-            <h2 className="font-display" style={{ fontSize: "1.1rem", fontWeight: 700, color: "rgba(255,255,255,0.45)", letterSpacing: "-0.02em" }}>
+            <span style={{ width: "1rem", height: "1px", background: "rgba(250, 250, 249, 0.2)", display: "block" }} />
+            <h2 className="font-display" style={{ fontSize: "1.1rem", fontWeight: 700, color: "rgba(250, 250, 249, 0.45)", letterSpacing: "-0.02em" }}>
               Alumni
             </h2>
-            <span style={{ marginLeft: "auto", fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(255,255,255,0.15)", fontFamily: "var(--font-mono, monospace)" }}>
+            <span style={{ marginLeft: "auto", fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.15)", fontFamily: "var(--font-mono, monospace)" }}>
               {pastStudents.length} completed
             </span>
           </div>
@@ -184,26 +184,26 @@ function StudentRow({ req, status }: { req: any; status: "active" | "closed" }) 
       <div style={{
         display: "flex", alignItems: "center", gap: "1.25rem",
         padding: "1.25rem 1.5rem",
-        border: "1px solid rgba(255,255,255,0.07)",
+        border: "1px solid rgba(250, 250, 249, 0.07)",
         borderRadius: "14px",
-        background: "rgba(255,255,255,0.025)",
+        background: "rgba(250, 250, 249, 0.025)",
         cursor: "pointer", transition: "border-color 0.2s, background 0.2s",
       }}
         onMouseEnter={e => {
-          (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.14)";
-          (e.currentTarget as HTMLElement).style.background  = "rgba(255,255,255,0.04)";
+          (e.currentTarget as HTMLElement).style.borderColor = "rgba(250, 250, 249, 0.14)";
+          (e.currentTarget as HTMLElement).style.background  = "rgba(250, 250, 249, 0.04)";
         }}
         onMouseLeave={e => {
-          (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.07)";
-          (e.currentTarget as HTMLElement).style.background  = "rgba(255,255,255,0.025)";
+          (e.currentTarget as HTMLElement).style.borderColor = "rgba(250, 250, 249, 0.07)";
+          (e.currentTarget as HTMLElement).style.background  = "rgba(250, 250, 249, 0.025)";
         }}
       >
         {/* Avatar */}
         <div style={{
           width: "2.75rem", height: "2.75rem", borderRadius: "50%", flexShrink: 0,
-          background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)",
+          background: "rgba(250, 250, 249, 0.05)", border: "1px solid rgba(250, 250, 249, 0.1)",
           display: "flex", alignItems: "center", justifyContent: "center",
-          fontSize: "0.78rem", fontWeight: 600, color: "rgba(255,255,255,0.6)",
+          fontSize: "0.78rem", fontWeight: 600, color: "rgba(250, 250, 249, 0.6)",
           fontFamily: "var(--font-sans)",
         }}>
           {initials || "?"}
@@ -211,10 +211,10 @@ function StudentRow({ req, status }: { req: any; status: "active" | "closed" }) 
 
         {/* Info */}
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: "0.9rem", fontWeight: 600, color: "rgba(255,255,255,0.85)", fontFamily: "var(--font-sans)", marginBottom: "0.2rem" }}>
+          <div style={{ fontSize: "0.9rem", fontWeight: 600, color: "rgba(250, 250, 249, 0.85)", fontFamily: "var(--font-sans)", marginBottom: "0.2rem" }}>
             {displayName} {student?.last_name}
           </div>
-          <div style={{ fontSize: "0.65rem", color: "rgba(255,255,255,0.35)", fontFamily: "var(--font-sans)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+          <div style={{ fontSize: "0.65rem", color: "rgba(250, 250, 249, 0.35)", fontFamily: "var(--font-sans)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
             {req.topic || "No topic specified"}
           </div>
         </div>
@@ -223,7 +223,7 @@ function StudentRow({ req, status }: { req: any; status: "active" | "closed" }) 
         {student?.institution && (
           <div style={{
             display: "none", // visible on larger screens via inline override is complex; keep simple
-            fontSize: "0.62rem", color: "rgba(255,255,255,0.28)",
+            fontSize: "0.62rem", color: "rgba(250, 250, 249, 0.28)",
             fontFamily: "var(--font-sans)",
           }} className="hidden sm:block">
             {student.institution}
@@ -233,7 +233,7 @@ function StudentRow({ req, status }: { req: any; status: "active" | "closed" }) 
         {/* Latest activity */}
         {req.latest && (
           <div style={{ flexShrink: 0, textAlign: "right" }}>
-            <div style={{ fontSize: "0.58rem", color: "rgba(255,255,255,0.2)", fontFamily: "var(--font-sans)" }}>
+            <div style={{ fontSize: "0.58rem", color: "rgba(250, 250, 249, 0.2)", fontFamily: "var(--font-sans)" }}>
               {new Date(req.latest.created_at).toLocaleDateString()}
             </div>
           </div>
@@ -242,17 +242,17 @@ function StudentRow({ req, status }: { req: any; status: "active" | "closed" }) 
         {/* Status dot + Open thread button */}
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexShrink: 0 }}>
           <div style={{ display: "flex", alignItems: "center", gap: "0.35rem" }}>
-            <span style={{ width: "5px", height: "5px", borderRadius: "50%", background: isActive ? "rgba(120,220,120,0.8)" : "rgba(255,255,255,0.2)" }} />
-            <span style={{ fontSize: "0.48rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: isActive ? "rgba(255,255,255,0.4)" : "rgba(255,255,255,0.18)", fontFamily: "var(--font-mono, monospace)" }}>
+            <span style={{ width: "5px", height: "5px", borderRadius: "50%", background: isActive ? "rgba(120,220,120,0.8)" : "rgba(250, 250, 249, 0.2)" }} />
+            <span style={{ fontSize: "0.48rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: isActive ? "rgba(250, 250, 249, 0.4)" : "rgba(250, 250, 249, 0.18)", fontFamily: "var(--font-mono, monospace)" }}>
               {isActive ? "Active" : "Closed"}
             </span>
           </div>
           <div style={{
             display: "flex", alignItems: "center", justifyContent: "center",
             width: "2rem", height: "2rem", borderRadius: "8px",
-            border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.04)",
+            border: "1px solid rgba(250, 250, 249, 0.1)", background: "rgba(250, 250, 249, 0.04)",
           }}>
-            <MessageSquare size={12} color="rgba(255,255,255,0.4)" />
+            <MessageSquare size={12} color="rgba(250, 250, 249, 0.4)" />
           </div>
         </div>
       </div>

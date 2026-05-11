@@ -38,7 +38,7 @@ export function DirectorySearch({ institutions, expertiseAreas }: DirectorySearc
   const currentExpertise = searchParams.get("expertise") || "all";
 
   return (
-    <div className="bg-[rgba(255,255,255,0.02)] border border-[rgba(255,255,255,0.06)] rounded-2xl p-6 mb-10">
+    <div className="bg-[rgba(250, 250, 249, 0.02)] border border-[rgba(250, 250, 249, 0.06)] rounded-2xl p-6 mb-10">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-5 items-end">
         {/* Query */}
         <div className="md:col-span-2 space-y-2">

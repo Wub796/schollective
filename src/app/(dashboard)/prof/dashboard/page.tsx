@@ -14,17 +14,17 @@ function StatCard({ value, label, sub }: { value: string | number; label: string
   return (
     <div style={{
       padding: "1.5rem",
-      border: "1px solid rgba(255,255,255,0.07)",
+      border: "1px solid rgba(129, 140, 248, 0.1)",
       borderRadius: "14px",
-      background: "rgba(255,255,255,0.025)",
+      background: "rgba(17, 17, 19, 0.5)",
       display: "flex", flexDirection: "column", gap: "0.5rem",
     }}>
-      <span className="font-display" style={{ fontSize: "2.4rem", fontWeight: 900, color: "#fff", letterSpacing: "-0.04em", lineHeight: 1 }}>
+      <span className="font-display" style={{ fontSize: "2.4rem", fontWeight: 900, color: "#fafaf9", letterSpacing: "-0.04em", lineHeight: 1 }}>
         {value}
       </span>
       <div>
-        <div style={{ fontSize: "0.78rem", fontWeight: 600, color: "rgba(255,255,255,0.7)", fontFamily: "var(--font-sans)" }}>{label}</div>
-        <div style={{ fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(255,255,255,0.25)", fontFamily: "var(--font-mono, monospace)", marginTop: "0.2rem" }}>
+        <div style={{ fontSize: "0.78rem", fontWeight: 600, color: "rgba(250, 250, 249, 0.7)", fontFamily: "var(--font-sans)" }}>{label}</div>
+        <div style={{ fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.25)", fontFamily: "var(--font-mono, monospace)", marginTop: "0.2rem" }}>
           {sub}
         </div>
       </div>
@@ -129,10 +129,10 @@ export default async function ProfessorDashboard() {
       {/* ── Header ──────────────────────────────────────────────── */}
       <header style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <span style={{ width: "1.5rem", height: "1px", background: "rgba(255,255,255,0.2)", display: "block" }} />
+          <span style={{ width: "1.5rem", height: "1px", background: "rgba(250, 250, 249, 0.2)", display: "block" }} />
           <span style={{
             fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.38em",
-            textTransform: "uppercase", color: "rgba(255,255,255,0.3)",
+            textTransform: "uppercase", color: "rgba(250, 250, 249, 0.3)",
             fontFamily: "var(--font-mono, monospace)",
           }}>
             Faculty Portal
@@ -142,9 +142,9 @@ export default async function ProfessorDashboard() {
         <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: "2rem", flexWrap: "wrap" }}>
           <h1 className="font-display" style={{
             fontSize: "clamp(2.4rem, 5vw, 3.8rem)", fontWeight: 900,
-            color: "#fff", letterSpacing: "-0.035em", lineHeight: 1.05,
+            color: "#fafaf9", letterSpacing: "-0.035em", lineHeight: 1.05,
           }}>
-            Dr. <em style={{ fontStyle: "italic", color: "rgba(255,255,255,0.35)" }}>{displayName}</em>
+            Dr. <em style={{ fontStyle: "italic", color: "rgba(250, 250, 249, 0.35)" }}>{displayName}</em>
           </h1>
 
           {/* DB-backed availability toggle */}
@@ -152,7 +152,7 @@ export default async function ProfessorDashboard() {
         </div>
 
         <p style={{
-          fontSize: "0.9rem", color: "rgba(255,255,255,0.4)", fontWeight: 300,
+          fontSize: "0.9rem", color: "rgba(250, 250, 249, 0.4)", fontWeight: 300,
           maxWidth: "42rem", lineHeight: 1.7, fontFamily: "var(--font-sans)", marginTop: "0.25rem",
         }}>
           Manage your student mentorship pipeline and active research dialogues.
@@ -167,7 +167,7 @@ export default async function ProfessorDashboard() {
       </div>
 
       {/* ── Hairline ─────────────────────────────────────────────── */}
-      <div style={{ height: "1px", background: "rgba(255,255,255,0.06)" }} />
+      <div style={{ height: "1px", background: "rgba(129, 140, 248, 0.07)" }} />
 
       {/* ── Stacked Layout ─────────────────────────────────────────── */}
       <div style={{ display: "flex", flexDirection: "column", gap: "4rem" }}>
@@ -175,14 +175,14 @@ export default async function ProfessorDashboard() {
         {/* ── Request Queue ─────────────────────────────────────── */}
         <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-            <span style={{ width: "1rem", height: "1px", background: "rgba(255,255,255,0.2)", display: "block" }} />
-            <h2 className="font-display" style={{ fontSize: "1.1rem", fontWeight: 700, color: "rgba(255,255,255,0.85)", letterSpacing: "-0.02em" }}>
+            <span style={{ width: "1rem", height: "1px", background: "rgba(250, 250, 249, 0.2)", display: "block" }} />
+            <h2 className="font-display" style={{ fontSize: "1.1rem", fontWeight: 700, color: "rgba(250, 250, 249, 0.85)", letterSpacing: "-0.02em" }}>
               Request Queue
             </h2>
             <span style={{
               marginLeft: "auto",
               fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.25em",
-              textTransform: "uppercase", color: "rgba(255,255,255,0.25)",
+              textTransform: "uppercase", color: "rgba(250, 250, 249, 0.25)",
               fontFamily: "var(--font-mono, monospace)",
             }}>
               {pendingRequests.length} pending
@@ -191,11 +191,11 @@ export default async function ProfessorDashboard() {
 
           {pendingRequests.length === 0 ? (
             <div style={{
-              border: "1px dashed rgba(255,255,255,0.07)",
+              border: "1px dashed rgba(129, 140, 248, 0.1)",
               borderRadius: "16px", padding: "2.5rem 1.5rem", textAlign: "center",
             }}>
-              <Inbox size={20} color="rgba(255,255,255,0.2)" style={{ margin: "0 auto 0.75rem" }} />
-              <p style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.3)", fontStyle: "italic", fontFamily: "var(--font-sans)" }}>
+              <Inbox size={20} color="rgba(250, 250, 249, 0.2)" style={{ margin: "0 auto 0.75rem" }} />
+              <p style={{ fontSize: "0.78rem", color: "rgba(250, 250, 249, 0.3)", fontStyle: "italic", fontFamily: "var(--font-sans)" }}>
                 No pending requests
               </p>
             </div>
@@ -211,14 +211,14 @@ export default async function ProfessorDashboard() {
         {/* ── Active Threads ───────────────────────────────────── */}
         <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-            <span style={{ width: "1rem", height: "1px", background: "rgba(255,255,255,0.2)", display: "block" }} />
-            <h2 className="font-display" style={{ fontSize: "1.1rem", fontWeight: 700, color: "rgba(255,255,255,0.85)", letterSpacing: "-0.02em" }}>
+            <span style={{ width: "1rem", height: "1px", background: "rgba(250, 250, 249, 0.2)", display: "block" }} />
+            <h2 className="font-display" style={{ fontSize: "1.1rem", fontWeight: 700, color: "rgba(250, 250, 249, 0.85)", letterSpacing: "-0.02em" }}>
               Active Mentorships
             </h2>
             <span style={{
               marginLeft: "auto",
               fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.25em",
-              textTransform: "uppercase", color: "rgba(255,255,255,0.25)",
+              textTransform: "uppercase", color: "rgba(250, 250, 249, 0.25)",
               fontFamily: "var(--font-mono, monospace)",
             }}>
               {activeThreads.length} active
@@ -227,16 +227,16 @@ export default async function ProfessorDashboard() {
 
           {activeThreads.length === 0 ? (
             <div style={{
-              border: "1px dashed rgba(255,255,255,0.07)",
+              border: "1px dashed rgba(129, 140, 248, 0.1)",
               borderRadius: "16px", padding: "4rem 2rem", textAlign: "center",
               display: "flex", flexDirection: "column", alignItems: "center", gap: "1rem",
             }}>
-              <Clock size={20} color="rgba(255,255,255,0.2)" />
+              <Clock size={20} color="rgba(250, 250, 249, 0.2)" />
               <div>
-                <h3 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "rgba(255,255,255,0.6)", marginBottom: "0.4rem", letterSpacing: "-0.02em" }}>
+                <h3 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "rgba(250, 250, 249, 0.6)", marginBottom: "0.4rem", letterSpacing: "-0.02em" }}>
                   No active dialogues
                 </h3>
-                <p style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.3)", maxWidth: "22rem", lineHeight: 1.7, fontFamily: "var(--font-sans)" }}>
+                <p style={{ fontSize: "0.78rem", color: "rgba(250, 250, 249, 0.3)", maxWidth: "22rem", lineHeight: 1.7, fontFamily: "var(--font-sans)" }}>
                   Once you accept a request, it will appear here as an active mentorship thread.
                 </p>
               </div>
@@ -254,14 +254,14 @@ export default async function ProfessorDashboard() {
         {closedRequests.length > 0 && (
           <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-              <span style={{ width: "1rem", height: "1px", background: "rgba(255,255,255,0.2)", display: "block" }} />
-              <h2 className="font-display" style={{ fontSize: "1.1rem", fontWeight: 700, color: "rgba(255,255,255,0.5)", letterSpacing: "-0.02em" }}>
+              <span style={{ width: "1rem", height: "1px", background: "rgba(250, 250, 249, 0.2)", display: "block" }} />
+              <h2 className="font-display" style={{ fontSize: "1.1rem", fontWeight: 700, color: "rgba(250, 250, 249, 0.5)", letterSpacing: "-0.02em" }}>
                 Past Mentorships
               </h2>
               <span style={{
                 marginLeft: "auto",
                 fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.25em",
-                textTransform: "uppercase", color: "rgba(255,255,255,0.15)",
+                textTransform: "uppercase", color: "rgba(250, 250, 249, 0.15)",
                 fontFamily: "var(--font-mono, monospace)",
               }}>
                 {closedRequests.length} closed

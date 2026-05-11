@@ -49,25 +49,25 @@ export default async function MessagePage({ params }: MessagePageProps) {
     .order("created_at", { ascending: true });
 
   const statusStyles = {
-    pending: "bg-[rgba(255,255,255,0.04)] text-[#5a5a5a] border-[rgba(255,255,255,0.07)]",
-    active:  "bg-[rgba(255,255,255,0.06)] text-[#d4d4d2] border-[rgba(255,255,255,0.1)]",
-    closed:  "bg-[rgba(255,255,255,0.02)] text-[#3a3a3a] border-[rgba(255,255,255,0.04)]",
+    pending: "bg-[rgba(250, 250, 249, 0.04)] text-[#5a5a5a] border-[rgba(250, 250, 249, 0.07)]",
+    active:  "bg-[rgba(250, 250, 249, 0.06)] text-[#d4d4d2] border-[rgba(250, 250, 249, 0.1)]",
+    closed:  "bg-[rgba(250, 250, 249, 0.02)] text-[#3a3a3a] border-[rgba(250, 250, 249, 0.04)]",
   };
 
   return (
     <div className="flex flex-col h-screen bg-[#0d0d0d] overflow-hidden">
       {/* Header */}
-      <header className="relative z-10 flex items-center justify-between px-6 py-4 bg-[rgba(13,13,13,0.92)] border-b border-[rgba(255,255,255,0.05)] backdrop-blur-xl flex-shrink-0">
+      <header className="relative z-10 flex items-center justify-between px-6 py-4 bg-[rgba(13,13,13,0.92)] border-b border-[rgba(250, 250, 249, 0.05)] backdrop-blur-xl flex-shrink-0">
         <div className="flex items-center gap-5">
           <Link
             href={isProfessor ? "/prof/dashboard" : "/dashboard"}
-            className="p-2 rounded-lg bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.07)] text-[#4a4a4a] hover:text-[#f2f2f0] transition-all group"
+            className="p-2 rounded-lg bg-[rgba(250, 250, 249, 0.03)] border border-[rgba(250, 250, 249, 0.07)] text-[#4a4a4a] hover:text-[#f2f2f0] transition-all group"
           >
             <ArrowLeft size={16} className="group-hover:-translate-x-0.5 transition-transform" />
           </Link>
 
           <div className="flex items-center gap-3.5">
-            <div className="w-9 h-9 rounded-xl bg-[rgba(255,255,255,0.04)] border border-[rgba(255,255,255,0.07)] flex items-center justify-center text-sm font-semibold text-[#6a6a6a]">
+            <div className="w-9 h-9 rounded-xl bg-[rgba(250, 250, 249, 0.04)] border border-[rgba(250, 250, 249, 0.07)] flex items-center justify-center text-sm font-semibold text-[#6a6a6a]">
               {participant.first_name[0]}{participant.last_name[0]}
             </div>
             <div>

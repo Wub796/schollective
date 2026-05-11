@@ -27,11 +27,11 @@ export default async function ProfessorPendingPage() {
     <div className="page-bg flex items-center justify-center p-6" style={{ minHeight: "100vh" }}>
 
       <main className="relative z-10 w-full max-w-[520px] text-center">
-        <div className="bg-[#111111] border border-[rgba(255,255,255,0.07)] rounded-2xl p-10 md:p-16 shadow-[0_80px_160px_rgba(0,0,0,0.7)]">
+        <div className="bg-[#111111] border border-[rgba(250, 250, 249, 0.07)] rounded-2xl p-10 md:p-16 shadow-[0_80px_160px_rgba(0,0,0,0.7)]">
           <LottieReview />
 
           <header className="mb-10">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.07)] text-[#4a4a4a] text-[0.62rem] font-bold tracking-widest uppercase mb-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[rgba(250, 250, 249, 0.03)] border border-[rgba(250, 250, 249, 0.07)] text-[#4a4a4a] text-[0.62rem] font-bold tracking-widest uppercase mb-6">
               <ShieldCheck size={12} />
               Verification in Progress
             </div>
@@ -44,7 +44,7 @@ export default async function ProfessorPendingPage() {
             </p>
           </header>
 
-          <div className="bg-[rgba(255,255,255,0.02)] border border-[rgba(255,255,255,0.05)] rounded-xl p-5 text-left mb-10">
+          <div className="bg-[rgba(250, 250, 249, 0.02)] border border-[rgba(250, 250, 249, 0.05)] rounded-xl p-5 text-left mb-10">
             <div className="flex items-start gap-3">
               <Info size={16} className="text-[#4a4a4a] mt-0.5 shrink-0" />
               <div>
