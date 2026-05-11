@@ -6,6 +6,8 @@ import { motion, useInView } from "framer-motion";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/dist/ScrollTrigger";
 import dynamic from "next/dynamic";
+import { PublicNav } from "@/components/ui/PublicNav";
+
 
 const ThreeBackground = dynamic(
   () => import("@/components/ui/ThreeBackground").then(m => m.ThreeBackground),
@@ -187,35 +189,9 @@ export default function LandingPage() {
   return (
     <div ref={pageRef} className="relative text-[#fafaf9] font-sans overflow-x-hidden" style={{ background: "var(--bg-base)" }}>
 
-      {/* ══ NAV ══════════════════════════════════════════════════════════ */}
-      <nav
-        className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between"
-        style={{
-          padding: "1.4rem 2.5rem",
-          background: "linear-gradient(to bottom, rgba(9, 9, 11, 0.95) 0%, transparent 100%)",
-          backdropFilter: "blur(0px)",
-        }}
-      >
-        <span className="font-display text-base font-bold tracking-tight text-[#fafaf9]">
-          Schollective
-        </span>
-        <div className="flex gap-2">
-          <Link
-            href="/login"
-            className="px-4 py-2 rounded-full border font-bold uppercase transition-all duration-500"
-            style={{ fontSize: "0.58rem", letterSpacing: "0.15em", borderColor: "rgba(129, 140, 248, 0.45)", color: "#818cf8" }}
-          >
-            Log In
-          </Link>
-          <Link
-            href="/signup"
-            className="px-4 py-2 rounded-full font-bold uppercase border transition-all duration-500"
-            style={{ fontSize: "0.58rem", letterSpacing: "0.15em", background: "#818cf8", color: "#09090b", borderColor: "#818cf8" }}
-          >
-            Sign Up
-          </Link>
-        </div>
-      </nav>
+      {/* ══ DYNAMIC ISLAND NAV ══════════════════════════════════════════ */}
+      <PublicNav />
+
 
       {/* ══ HERO — Full viewport, text bottom-left, CTA bottom-right ═════ */}
       <section className="relative h-screen overflow-hidden" style={{ background: "var(--bg-base)" }}>
