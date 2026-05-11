@@ -157,29 +157,17 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="auth-two-col" style={{ background: "var(--bg-base)" }}>
-      {/* ════════════════════════════════════════
-          LEFT — Form panel
-      ════════════════════════════════════════ */}
+    <div style={{ background: "var(--bg-base)", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem" }}>
+      {/* Single centred card */}
       <div
         style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-          padding: "2.5rem 5vw",
-          borderRight: "1px solid rgba(129, 140, 248, 0.08)",
+          width: "100%",
+          maxWidth: "460px",
           position: "relative",
-          overflow: "hidden",
         }}
       >
-        {/* Subtle left-edge blue glow */}
-        <div style={{
-          position: "absolute", inset: 0, pointerEvents: "none",
-          background: "radial-gradient(ellipse 80% 60% at 0% 50%, rgba(99, 102, 241, 0.22) 0%, transparent 70%)",
-        }} />
-
         {/* Wordmark */}
-        <Link href="/" className="no-underline" style={{ position: "relative", zIndex: 1 }}>
+        <Link href="/" className="no-underline" style={{ display: "block", marginBottom: "2.5rem" }}>
           <span
             className="font-display"
             style={{ fontSize: "1.25rem", fontWeight: 800, color: "#fafaf9", letterSpacing: "-0.02em" }}
@@ -193,7 +181,7 @@ export default function LoginPage() {
           variants={stagger}
           initial="hidden"
           animate="show"
-          style={{ position: "relative", zIndex: 1, maxWidth: 420, width: "100%", margin: "0 auto", paddingTop: "4rem", paddingBottom: "4rem" }}
+          style={{ position: "relative", zIndex: 1, width: "100%" }}
         >
           {/* Eyebrow */}
           <motion.div variants={fadeUp} style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "2rem" }}>
@@ -298,140 +286,41 @@ export default function LoginPage() {
               Create Account
             </Link>
           </motion.p>
-        </motion.div>
 
-        {/* Bottom nav footer */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", position: "relative", zIndex: 1 }}>
-          <span style={{ fontSize: "0.52rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.18)", fontFamily: "var(--font-sans)" }}>
-            © 2025 Schollective
-          </span>
-          <Link href="/features" className="no-underline" style={{ fontSize: "0.52rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.18)", fontFamily: "var(--font-sans)" }}>
-            Platform Features
-          </Link>
-        </div>
-      </div>
-
-      {/* ════════════════════════════════════════
-          RIGHT — Brand panel
-      ════════════════════════════════════════ */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1.6, ease: EASE }}
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "flex-end",
-          padding: "4rem 5vw",
-          position: "relative",
-          overflow: "hidden",
-          background: "linear-gradient(135deg, #09090b 0%, #111113 100%)",
-        }}
-      >
-        {/* Atmospheric glow orbs */}
-        <div style={{
-          position: "absolute", top: "15%", right: "10%",
-          width: "55vw", height: "55vw", maxWidth: 520, maxHeight: 520,
-          borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(99, 102, 241, 0.18) 0%, transparent 70%)",
-          filter: "blur(40px)",
-          pointerEvents: "none",
-        }} />
-        <div style={{
-          position: "absolute", bottom: "5%", left: "-10%",
-          width: "40vw", height: "40vw", maxWidth: 380, maxHeight: 380,
-          borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(129, 140, 248, 0.08) 0%, transparent 70%)",
-          filter: "blur(60px)",
-          pointerEvents: "none",
-        }} />
-
-        {/* Abstract node-connection visual */}
-        <svg
-          viewBox="0 0 400 400"
-          style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%) rotate(-10deg)", width: "min(55vw, 500px)", opacity: 0.08, pointerEvents: "none" }}
-        >
-          <circle cx="200" cy="200" r="3" fill="white" />
-          <circle cx="120" cy="130" r="2" fill="white" />
-          <circle cx="280" cy="120" r="2" fill="white" />
-          <circle cx="100" cy="270" r="2" fill="white" />
-          <circle cx="310" cy="280" r="2" fill="white" />
-          <circle cx="200" cy="80"  r="1.5" fill="white" />
-          <circle cx="60"  cy="200" r="1.5" fill="white" />
-          <circle cx="340" cy="200" r="1.5" fill="white" />
-          <circle cx="200" cy="330" r="1.5" fill="white" />
-          <line x1="200" y1="200" x2="120" y2="130" stroke="white" strokeWidth="0.8" />
-          <line x1="200" y1="200" x2="280" y2="120" stroke="white" strokeWidth="0.8" />
-          <line x1="200" y1="200" x2="100" y2="270" stroke="white" strokeWidth="0.8" />
-          <line x1="200" y1="200" x2="310" y2="280" stroke="white" strokeWidth="0.8" />
-          <line x1="120" y1="130" x2="200" y2="80"  stroke="white" strokeWidth="0.5" />
-          <line x1="280" y1="120" x2="200" y2="80"  stroke="white" strokeWidth="0.5" />
-          <line x1="100" y1="270" x2="60"  y2="200" stroke="white" strokeWidth="0.5" />
-          <line x1="310" y1="280" x2="340" y2="200" stroke="white" strokeWidth="0.5" />
-          <line x1="100" y1="270" x2="200" y2="330" stroke="white" strokeWidth="0.5" />
-          <line x1="310" y1="280" x2="200" y2="330" stroke="white" strokeWidth="0.5" />
-          {[
-            [160,170],[240,170],[180,240],[220,240],[200,150],
-          ].map(([cx,cy], i) => (
-            <circle key={i} cx={cx} cy={cy} r="1" fill="white" opacity="0.6" />
-          ))}
-        </svg>
-
-        {/* Content — pinned to bottom */}
-        <div style={{ position: "relative", zIndex: 1 }}>
+          {/* Bottom stats — inline below the form */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 1.4, ease: EASE }}
+            variants={fadeUp}
+            style={{
+              marginTop: "2.5rem",
+              paddingTop: "2rem",
+              borderTop: "1px solid rgba(129, 140, 248, 0.1)",
+              display: "flex",
+              gap: "2rem",
+              flexWrap: "wrap",
+            }}
           >
-            {/* Pull quote */}
-            <p
-              className="font-display"
-              style={{
-                fontSize: "clamp(1.6rem, 3.2vw, 2.6rem)",
-                fontWeight: 700,
-                lineHeight: 1.2,
-                color: "rgba(250, 250, 249, 0.85)",
-                letterSpacing: "-0.02em",
-                marginBottom: "2rem",
-                maxWidth: 440,
-              }}
-            >
-              &ldquo;The academy's best
-              minds, finally{" "}
-              <em style={{ color: "rgba(250, 250, 249, 0.35)", fontStyle: "italic" }}>within reach.</em>&rdquo;
-            </p>
-
-            {/* Stat row */}
-            <div style={{ display: "flex", gap: "3rem", marginBottom: "2.5rem" }}>
-              {[
-                { n: "500+", l: "Verified Professors" },
-                { n: "12K+", l: "Active Students"     },
-                { n: "98%",  l: "Response Rate"        },
-              ].map(({ n, l }) => (
-                <div key={l}>
-                  <div
-                    className="font-display"
-                    style={{ fontSize: "1.6rem", fontWeight: 800, color: "#fafaf9", letterSpacing: "-0.03em", lineHeight: 1 }}
-                  >
-                    {n}
-                  </div>
-                  <div style={{ fontSize: "0.55rem", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.28)", marginTop: "0.4rem", fontFamily: "var(--font-sans)" }}>
-                    {l}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Hairline */}
-            <div style={{ width: "3rem", height: "1px", background: "rgba(129, 140, 248, 0.2)", marginBottom: "1.5rem" }} />
-
-            <p style={{ fontSize: "0.62rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(129, 140, 248, 0.4)", fontFamily: "var(--font-sans)", fontWeight: 600 }}>
-              Academic Mentorship, Democratized
-            </p>
+            {[
+              { n: "500+", l: "Verified Professors" },
+              { n: "12K+", l: "Active Students" },
+              { n: "98%",  l: "Response Rate" },
+            ].map(({ n, l }) => (
+              <div key={l}>
+                <div className="font-display" style={{ fontSize: "1.4rem", fontWeight: 800, color: "#fafaf9", letterSpacing: "-0.03em", lineHeight: 1 }}>{n}</div>
+                <div style={{ fontSize: "0.5rem", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(129, 140, 248, 0.45)", marginTop: "0.3rem", fontFamily: "var(--font-sans)" }}>{l}</div>
+              </div>
+            ))}
           </motion.div>
-        </div>
-      </motion.div>
+
+          <div style={{ marginTop: "2rem", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <span style={{ fontSize: "0.5rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.15)", fontFamily: "var(--font-sans)" }}>
+              © 2026 Schollective
+            </span>
+            <Link href="/" className="no-underline" style={{ fontSize: "0.5rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.15)", fontFamily: "var(--font-sans)" }}>
+              Back to home
+            </Link>
+          </div>
+        </motion.div>
+      </div>
     </div>
   );
 }

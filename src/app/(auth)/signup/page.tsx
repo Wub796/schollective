@@ -126,14 +126,9 @@ export default function SignupPage() {
       });
       if (signUpError) throw signUpError;
 
-      if (data?.session) {
-        toast.success("Account created successfully!");
-        router.refresh();
-        router.push(role === "professor" ? "/prof/pending" : "/dashboard");
-      } else {
-        toast.success("Account created! Please check your email for a confirmation link.");
-        router.push("/verify-email");
-      }
+      toast.success("Account created! Welcome to Schollective.");
+      router.refresh();
+      router.push(role === "professor" ? "/prof/pending" : "/dashboard");
     } catch (err: any) {
       const msg = err instanceof Error ? err.message : "An error occurred during signup.";
       setError(msg);
