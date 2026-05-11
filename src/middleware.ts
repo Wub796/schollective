@@ -10,14 +10,20 @@ export async function middleware(request: NextRequest) {
   const path = url.pathname
 
   // Protected route patterns — use exact prefixes to avoid false matches
-  const isStudentRoute  = path === '/dashboard' || path.startsWith('/dashboard/') || path.startsWith('/request') || path.startsWith('/messages') || path.startsWith('/profile')
-  const isProfessorRoute = path === '/prof/dashboard' || path === '/prof/profile' || path.startsWith('/prof/dashboard') || path.startsWith('/prof/profile') || path.startsWith('/prof/pending')
-  const isAdminRoute    = path.startsWith('/admin')
+  const isStudentRoute    = path === '/dashboard' || path.startsWith('/dashboard/') || path.startsWith('/request') || path.startsWith('/messages') || path.startsWith('/profile')
+  const isProfessorRoute  = path === '/prof/dashboard' || path === '/prof/profile' || path.startsWith('/prof/dashboard') || path.startsWith('/prof/profile') || path.startsWith('/prof/pending')
+  const isAdminRoute      = path.startsWith('/admin')
   // /professors is a student-accessible browse route, NOT a professor-only route
   const isProfessorBrowse = path.startsWith('/professors')
+  // /onboarding is accessible to any authenticated user (Google sign-up completion)
+  const isOnboarding      = path === '/onboarding'
 
   // 1. Authentication Guard: Redirect to login if no session
   if ((isStudentRoute || isProfessorRoute || isAdminRoute) && !user) {
+    return Response.redirect(new URL('/login', request.url))
+  }
+  // Onboarding requires authentication but is not role-gated
+  if (isOnboarding && !user) {
     return Response.redirect(new URL('/login', request.url))
   }
 
@@ -26,6 +32,7 @@ export async function middleware(request: NextRequest) {
   // This prevents infinite redirect loops caused by out-of-sync `user.user_metadata.role`.
 
   return response
+
 }
 
 export const config = {
