@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { toast } from "sonner";
 import { InstitutionInput } from "@/components/ui/InstitutionInput";
+import { validateEmail, type EmailValidationResult } from "@/lib/validators";
 
 
 export const dynamic = "force-dynamic";
@@ -100,6 +101,24 @@ export default function SignupPage() {
   const [loading, setLoading] = useState(false);
   const [error,   setError]   = useState<string | null>(null);
   const [institution, setInstitution] = useState("");
+  const [emailVal, setEmailVal] = useState<EmailValidationResult | null>(null);
+  const [emailDirty, setEmailDirty] = useState(false);
+
+  const handleEmailBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    if (!val) { setEmailVal(null); return; }
+    setEmailDirty(true);
+    setEmailVal(validateEmail(val, role));
+  };
+
+  // Re-validate when role changes (professor → stricter)
+  const handleRoleChange = (r: Role) => {
+    setRole(r);
+    if (emailDirty) {
+      const emailEl = document.getElementById("email") as HTMLInputElement | null;
+      if (emailEl?.value) setEmailVal(validateEmail(emailEl.value, r));
+    }
+  };
 
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -107,6 +126,18 @@ export default function SignupPage() {
     setLoading(true);
     setError(null);
     const fd = new FormData(e.currentTarget);
+
+    // Run validation on submit in case the user never blurred the field
+    const emailInput = fd.get("email") as string;
+    const finalValidation = validateEmail(emailInput, role);
+    setEmailVal(finalValidation);
+    setEmailDirty(true);
+    if (!finalValidation.ok) {
+      setError(finalValidation.message);
+      setLoading(false);
+      return;
+    }
+
     try {
       const { data, error: signUpError } = await supabase.auth.signUp({
         email:    fd.get("email")    as string,
@@ -288,7 +319,7 @@ export default function SignupPage() {
               <button
                 key={r}
                 type="button"
-                onClick={() => setRole(r)}
+                onClick={() => handleRoleChange(r)}
                 style={{
                   flex: 1,
                   padding: "0.65rem 1rem",
@@ -324,7 +355,79 @@ export default function SignupPage() {
               </motion.div>
 
               <motion.div variants={fadeUp}>
-                <Field id="email" name="email" type="email" label={role === "professor" ? "Work Email" : "Institutional Email"} placeholder="jane@university.edu" required />
+                {/* Email field with inline validation feedback */}
+                <div style={{ position: "relative" }}>
+                  <label
+                    htmlFor="email"
+                    style={{
+                      display: "block", fontSize: "0.6rem", fontWeight: 600,
+                      letterSpacing: "0.18em", textTransform: "uppercase",
+                      color: emailVal?.state === "error" ? "rgba(255,100,100,0.8)"
+                           : emailVal?.state === "warn"  ? "rgba(255,190,80,0.8)"
+                           : emailVal?.state === "valid" ? "rgba(120,220,120,0.8)"
+                           : "rgba(250, 250, 249, 0.3)",
+                      marginBottom: "0.55rem", transition: "color 0.25s",
+                      fontFamily: "var(--font-sans)",
+                    }}
+                  >
+                    {role === "professor" ? "Work / Institutional Email" : "Email Address"}
+                  </label>
+                  <input
+                    id="email" name="email" type="email"
+                    placeholder="jane@university.edu" required
+                    onBlur={handleEmailBlur}
+                    onChange={() => { if (emailDirty) setEmailVal(null); }}
+                    style={{
+                      width: "100%", background: "transparent", border: "none",
+                      borderBottom: `1px solid ${
+                        emailVal?.state === "error" ? "rgba(255,100,100,0.6)"
+                      : emailVal?.state === "warn"  ? "rgba(255,190,80,0.6)"
+                      : emailVal?.state === "valid" ? "rgba(120,220,120,0.5)"
+                      : "rgba(129, 140, 248, 0.15)"
+                      }`,
+                      padding: "0.7rem 0", fontSize: "0.95rem", color: "#fafaf9",
+                      outline: "none", transition: "border-color 0.3s",
+                      fontFamily: "var(--font-sans)",
+                    }}
+                  />
+                  {/* Inline validation badge */}
+                  <AnimatePresence>
+                    {emailVal && emailVal.state !== "idle" && (
+                      <motion.div
+                        key={emailVal.state}
+                        initial={{ opacity: 0, y: -4 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                        style={{
+                          marginTop: "0.5rem",
+                          display: "inline-flex", alignItems: "center", gap: "0.4rem",
+                          padding: "0.2rem 0.65rem", borderRadius: "100px",
+                          fontSize: "0.55rem", fontWeight: 600, letterSpacing: "0.12em",
+                          fontFamily: "var(--font-sans)",
+                          background: emailVal.state === "error" ? "rgba(255,80,80,0.1)"
+                                    : emailVal.state === "warn"  ? "rgba(255,190,80,0.1)"
+                                    : "rgba(80,220,120,0.1)",
+                          color: emailVal.state === "error" ? "rgba(255,110,110,0.9)"
+                               : emailVal.state === "warn"  ? "rgba(255,200,90,0.9)"
+                               : "rgba(100,220,130,0.9)",
+                          border: `1px solid ${
+                            emailVal.state === "error" ? "rgba(255,80,80,0.25)"
+                          : emailVal.state === "warn"  ? "rgba(255,190,80,0.25)"
+                          : "rgba(80,220,120,0.25)"
+                          }`,
+                        }}
+                      >
+                        <span style={{ fontSize: "0.7rem" }}>
+                          {emailVal.state === "error" ? "✕"
+                           : emailVal.state === "warn" ? "⚠"
+                           : "✓"}
+                        </span>
+                        {emailVal.message}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               </motion.div>
 
               <AnimatePresence mode="wait">
