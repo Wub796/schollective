@@ -131,14 +131,18 @@ export default function ProfilePage() {
     e.preventDefault();
     setLoading(true);
     const fd = new FormData(e.currentTarget);
-    const expertiseRaw = fd.get("expertise_fields") as string;
+    const expertiseRaw    = fd.get("expertise_fields") as string;
+    const institutionVal  = (fd.get("institution") as string ?? "").trim();
+
     const updates: Record<string, any> = {
-      first_name:     fd.get("first_name")     as string,
-      last_name:      fd.get("last_name")       as string,
-      preferred_name: fd.get("preferred_name")  as string,
-      institution:    fd.get("institution")     as string,
+      first_name:     (fd.get("first_name")     as string ?? "").trim(),
+      last_name:      (fd.get("last_name")       as string ?? "").trim(),
+      preferred_name: (fd.get("preferred_name")  as string ?? "").trim(),
       updated_at:     new Date().toISOString(),
     };
+    // Only set institution if the user actually typed something
+    if (institutionVal) updates.institution = institutionVal;
+
     if (profile?.role === "student") {
       const educationLevel = fd.get("education_level") as string;
       if (educationLevel) updates.education_level = educationLevel;
@@ -148,13 +152,15 @@ export default function ProfilePage() {
         ? expertiseRaw.split(",").map((s: string) => s.trim()).filter(Boolean)
         : [];
     }
+
     const { error } = await supabase
       .from("profiles")
       .update(updates)
       .eq("id", profile.id);
 
     if (error) {
-      toast.error("Failed to save changes.");
+      console.error("[profile/save] Supabase error:", error.code, error.message, error.details, error.hint);
+      toast.error(`Save failed: ${error.message}`);
     } else {
       toast.success("Profile updated.");
       setProfile((p: any) => ({ ...p, ...updates }));
