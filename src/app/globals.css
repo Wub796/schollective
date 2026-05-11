@@ -886,3 +886,22 @@ body {
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   FOOTER — responsive grid
+   ═══════════════════════════════════════════════════════════════ */
+.footer-grid {
+  grid-template-columns: 2fr 1fr 1.5fr;
+}
+
+@media (max-width: 900px) {
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .footer-grid {
+    grid-template-columns: 1fr;
+  }
+}
