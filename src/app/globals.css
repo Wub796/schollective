@@ -258,6 +258,22 @@ body {
   to   { transform: translateX(-50%); }
 }
 
+@keyframes ping {
+  75%, 100% { transform: scale(2); opacity: 0; }
+}
+
+/* ─── Global grain overlay — Unseen Studio style ─────────────────── */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+  background-size: 256px 256px;
+  mix-blend-mode: overlay;
+}
+
 
 /* ═══════════════════════════════════════════════════════════════
    APP SHELL — CSS Grid layout
@@ -846,28 +862,29 @@ body {
     gap: 1.25rem;
   }
 
-  /* On mobile, hide brand panel on auth pages */
-  /* Login: brand is :last-child; Signup: brand is :first-child */
-  .auth-two-col {
-    grid-template-columns: 1fr;
-  }
-  .auth-two-col > .auth-brand-panel {
-    display: none;
-  }
-  /* Fallback for login where brand has no class */
-  .auth-two-col:not(.signup-layout) > :last-child {
-    display: none;
-  }
-  .auth-two-col.signup-layout > :first-child {
-    display: none;
-  }
-
   /* Shrink paddings on mobile */
   .content-container {
     padding-left: 1rem;
     padding-right: 1rem;
   }
 }
+
+/* Auth split collapses at 640px — keeps brand visible on tablet */
+@media (max-width: 640px) {
+  .auth-two-col {
+    grid-template-columns: 1fr;
+  }
+  .auth-two-col > .auth-brand-panel {
+    display: none;
+  }
+  .auth-two-col:not(.signup-layout) > :last-child {
+    display: none;
+  }
+  .auth-two-col.signup-layout > :first-child {
+    display: none;
+  }
+}
+
 
 @media (max-width: 479px) {
   /* 3-col stats → single col on very small phones */
@@ -904,4 +921,62 @@ body {
   .footer-grid {
     grid-template-columns: 1fr;
   }
+}
+/* ═══════════════════════════════════════════════════════════════
+   UNSEEN STUDIO ANIMATION PATTERNS
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Body fade-in on load */
+body {
+  transition: opacity 0.2s ease-in;
+}
+
+/* Unseen btn dual-content wipe */
+.group:hover .btn-layer-1 {
+  transform: translateY(-105%) !important;
+}
+.group:hover .btn-layer-2 {
+  transform: translateY(0%) !important;
+}
+
+/* About two-col grid */
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: start;
+}
+@media (max-width: 768px) {
+  .about-grid { grid-template-columns: 1fr; gap: 2rem; }
+}
+
+/* Process card hover hairline */
+.process-card { position: relative; }
+.process-card::after {
+  content: "";
+  position: absolute;
+  bottom: 0; left: 0;
+  height: 1px; width: 0;
+  background: #818cf8;
+  opacity: 0.4;
+  transition: width 0.7s cubic-bezier(0.19, 1, 0.22, 1);
+}
+.process-card:hover::after { width: 100%; }
+
+/* Scroll hint */
+@keyframes scrollHint {
+  0%, 100% { opacity: 0.28; }
+  50%       { opacity: 0.6; }
+}
+.scroll-hint { animation: scrollHint 2.5s ease-in-out infinite; }
+
+/* Marquee */
+@keyframes marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* Ping for live status dot */
+@keyframes ping {
+  75%, 100% { transform: scale(2); opacity: 0; }
 }

@@ -20,9 +20,6 @@ const stagger = {
   show:   { transition: { staggerChildren: 0.12, delayChildren: 0.15 } },
 };
 
-/* ────────────────────────────────────────────
-   Focused input — animated underline on focus
-──────────────────────────────────────────── */
 function Field({
   id, name, type = "text", label, placeholder, required = false, suffix
 }: {
@@ -78,15 +75,12 @@ function Field({
           </span>
         )}
       </div>
-      {/* Animated underline glow */}
       <motion.div
         animate={{ scaleX: focused ? 1 : 0, opacity: focused ? 1 : 0 }}
         transition={{ duration: 0.35, ease: EASE }}
         style={{
           position: "absolute",
-          bottom: 0,
-          left: 0,
-          right: 0,
+          bottom: 0, left: 0, right: 0,
           height: "1px",
           background: "linear-gradient(90deg, transparent, rgba(129, 140, 248, 0.7), transparent)",
           transformOrigin: "center",
@@ -145,10 +139,8 @@ export default function LoginPage() {
   const handleGoogleSignIn = async () => {
     try {
       const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
-        },
+        provider: "google",
+        options: { redirectTo: `${window.location.origin}/auth/callback` },
       });
       if (error) throw error;
     } catch (err: any) {
@@ -157,48 +149,128 @@ export default function LoginPage() {
   };
 
   return (
-    <div style={{ background: "var(--bg-base)", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem" }}>
-      {/* Single centred card */}
-      <div
+    <div className="auth-two-col signup-layout" style={{ background: "var(--bg-base)" }}>
+
+      {/* ══ LEFT — Brand panel ══════════════════════════════════════════ */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1.6, ease: EASE }}
         style={{
-          width: "100%",
-          maxWidth: "460px",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          padding: "2.5rem 5vw",
           position: "relative",
+          overflow: "hidden",
+          borderRight: "1px solid rgba(129, 140, 248, 0.08)",
+          background: "linear-gradient(135deg, #09090b 0%, #111113 100%)",
         }}
       >
+        {/* Glow orbs */}
+        <div style={{ position: "absolute", top: "20%", left: "0%", width: "45vw", height: "45vw", maxWidth: 440, maxHeight: 440, borderRadius: "50%", background: "radial-gradient(circle, rgba(99, 102, 241, 0.18) 0%, transparent 70%)", filter: "blur(40px)", pointerEvents: "none" }} />
+        <div style={{ position: "absolute", bottom: "10%", right: "-10%", width: "35vw", height: "35vw", maxWidth: 340, maxHeight: 340, borderRadius: "50%", background: "radial-gradient(circle, rgba(129, 140, 248, 0.07) 0%, transparent 70%)", filter: "blur(60px)", pointerEvents: "none" }} />
+
+        {/* Academic network SVG */}
+        <svg viewBox="0 0 400 400" style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%) rotate(12deg)", width: "min(50vw, 420px)", opacity: 0.07, pointerEvents: "none" }}>
+          <circle cx="200" cy="200" r="3" fill="white" />
+          {[[90,150],[310,150],[90,280],[310,280],[200,60],[200,340]].map(([cx,cy],i) => (
+            <React.Fragment key={i}>
+              <circle cx={cx} cy={cy} r="2" fill="white" />
+              <line x1="200" y1="200" x2={cx} y2={cy} stroke="white" strokeWidth="0.7" />
+            </React.Fragment>
+          ))}
+          {[[140,130],[260,130],[140,290],[260,290]].map(([cx,cy],i) => (
+            <circle key={`s${i}`} cx={cx} cy={cy} r="1.2" fill="white" opacity="0.7" />
+          ))}
+        </svg>
+
         {/* Wordmark */}
-        <Link href="/" className="no-underline" style={{ display: "block", marginBottom: "2.5rem" }}>
-          <span
-            className="font-display"
-            style={{ fontSize: "1.25rem", fontWeight: 800, color: "#fafaf9", letterSpacing: "-0.02em" }}
-          >
+        <Link href="/" className="no-underline" style={{ position: "relative", zIndex: 1 }}>
+          <span className="font-display" style={{ fontSize: "1.25rem", fontWeight: 800, color: "#fafaf9", letterSpacing: "-0.02em" }}>
             Schollective
           </span>
         </Link>
 
-        {/* Form */}
+        {/* Editorial content */}
+        <div style={{ position: "relative", zIndex: 1, maxWidth: 400 }}>
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 1.4, ease: EASE }}
+          >
+            <p className="font-display" style={{ fontSize: "clamp(1.5rem, 2.8vw, 2.4rem)", fontWeight: 700, lineHeight: 1.2, color: "rgba(250, 250, 249, 0.85)", letterSpacing: "-0.02em", marginBottom: "2rem", maxWidth: 380 }}>
+              Your scholars are{" "}
+              <em style={{ color: "rgba(250, 250, 249, 0.35)", fontStyle: "italic" }}>waiting.</em>
+            </p>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem", marginBottom: "2.5rem" }}>
+              {[
+                { step: "01", text: "Sign in to your verified account" },
+                { step: "02", text: "Review your mentorship threads"   },
+                { step: "03", text: "Continue the dialogue"            },
+              ].map(({ step, text }) => (
+                <div key={step} style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+                  <span className="font-display" style={{ fontSize: "0.9rem", fontWeight: 800, color: "rgba(250, 250, 249, 0.18)", letterSpacing: "-0.02em", minWidth: "2rem" }}>{step}</span>
+                  <span style={{ fontSize: "0.82rem", color: "rgba(250, 250, 249, 0.5)", fontFamily: "var(--font-sans)", fontWeight: 400 }}>{text}</span>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ width: "3rem", height: "1px", background: "rgba(250, 250, 249, 0.15)", marginBottom: "1.5rem" }} />
+            <p style={{ fontSize: "0.55rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.2)", fontFamily: "var(--font-sans)", fontWeight: 600 }}>
+              Manually verified · Institutionally credentialed
+            </p>
+          </motion.div>
+        </div>
+
+        <div style={{ position: "relative", zIndex: 1 }}>
+          <span style={{ fontSize: "0.52rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.18)", fontFamily: "var(--font-sans)" }}>
+            © 2025 Schollective
+          </span>
+        </div>
+      </motion.div>
+
+      {/* ══ RIGHT — Form panel ══════════════════════════════════════════ */}
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          padding: "2.5rem 5vw",
+          overflowY: "auto",
+          position: "relative",
+        }}
+      >
+        {/* Subtle glow */}
+        <div style={{ position: "absolute", inset: 0, pointerEvents: "none", background: "radial-gradient(ellipse 80% 60% at 100% 50%, rgba(30,55,120,0.12) 0%, transparent 70%)" }} />
+
+        {/* Top nav */}
+        <div style={{ display: "flex", justifyContent: "flex-end", position: "relative", zIndex: 1 }}>
+          <Link href="/signup" className="no-underline" style={{ fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.35)", fontFamily: "var(--font-sans)" }}>
+            New here? <span style={{ color: "rgba(250, 250, 249, 0.75)" }}>Create Account →</span>
+          </Link>
+        </div>
+
+        {/* Form container */}
         <motion.div
           variants={stagger}
           initial="hidden"
           animate="show"
-          style={{ position: "relative", zIndex: 1, width: "100%" }}
+          style={{ position: "relative", zIndex: 1, maxWidth: 460, width: "100%", margin: "0 auto", paddingTop: "2rem", paddingBottom: "2rem" }}
         >
           {/* Eyebrow */}
-          <motion.div variants={fadeUp} style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "2rem" }}>
-            <span style={{ width: "1.5rem", height: "1px", background: "rgba(250, 250, 249, 0.25)", display: "block" }} />
-            <span style={{ fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.38em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.38)", fontFamily: "var(--font-sans)" }}>
+          <motion.div variants={fadeUp} style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.5rem" }}>
+            <span style={{ width: "1.5rem", height: "1px", background: "rgba(250, 250, 249, 0.2)", display: "block" }} />
+            <span style={{ fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.38em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.32)", fontFamily: "var(--font-sans)" }}>
               Scholar Portal
             </span>
           </motion.div>
 
           {/* Headline */}
-          <motion.h1
-            variants={fadeUp}
-            className="font-display"
-            style={{ fontSize: "clamp(2.8rem, 5vw, 4rem)", fontWeight: 900, color: "#fafaf9", letterSpacing: "-0.035em", lineHeight: 1.05, marginBottom: "3.5rem" }}
-          >
+          <motion.h1 variants={fadeUp} className="font-display" style={{ fontSize: "clamp(2.2rem, 4vw, 3.2rem)", fontWeight: 900, color: "#fafaf9", letterSpacing: "-0.035em", lineHeight: 1.05, marginBottom: "2.5rem" }}>
             Welcome<br />
-            <em style={{ fontStyle: "italic", color: "rgba(250, 250, 249, 0.45)" }}>back.</em>
+            <em style={{ fontStyle: "italic", color: "rgba(250, 250, 249, 0.4)" }}>back.</em>
           </motion.h1>
 
           <form onSubmit={handleSubmit}>
@@ -220,11 +292,7 @@ export default function LoginPage() {
               </motion.div>
 
               {error && (
-                <motion.p
-                  initial={{ opacity: 0, y: -4 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  style={{ fontSize: "0.78rem", color: "#ff7070", fontFamily: "var(--font-sans)" }}
-                >
+                <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} style={{ fontSize: "0.78rem", color: "#ff7070", fontFamily: "var(--font-sans)" }}>
                   {error}
                 </motion.p>
               )}
@@ -261,7 +329,7 @@ export default function LoginPage() {
                     color: "#fafaf9", border: "1px solid rgba(250, 250, 249, 0.12)", borderRadius: "100px",
                     fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.28em", textTransform: "uppercase",
                     cursor: "pointer", transition: "all 0.2s", fontFamily: "var(--font-sans)",
-                    display: "flex", alignItems: "center", justifyContent: "center", gap: "0.75rem"
+                    display: "flex", alignItems: "center", justifyContent: "center", gap: "0.75rem",
                   }}
                 >
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -273,53 +341,22 @@ export default function LoginPage() {
                   Sign in with Google
                 </motion.button>
               </motion.div>
+
+              <motion.p variants={fadeUp} style={{ textAlign: "center", fontSize: "0.55rem", fontWeight: 600, letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.22)", fontFamily: "var(--font-sans)" }}>
+                New here?{" "}
+                <Link href="/signup" className="no-underline" style={{ color: "rgba(250, 250, 249, 0.6)" }}>
+                  Create Account →
+                </Link>
+              </motion.p>
             </div>
           </form>
-
-          {/* Footer link */}
-          <motion.p
-            variants={fadeUp}
-            style={{ textAlign: "center", marginTop: "2.5rem", fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.25)", fontFamily: "var(--font-sans)" }}
-          >
-            New here?{" "}
-            <Link href="/signup" className="no-underline" style={{ color: "rgba(250, 250, 249, 0.7)" }}>
-              Create Account
-            </Link>
-          </motion.p>
-
-          {/* Bottom stats — inline below the form */}
-          <motion.div
-            variants={fadeUp}
-            style={{
-              marginTop: "2.5rem",
-              paddingTop: "2rem",
-              borderTop: "1px solid rgba(129, 140, 248, 0.1)",
-              display: "flex",
-              gap: "2rem",
-              flexWrap: "wrap",
-            }}
-          >
-            {[
-              { n: "500+", l: "Verified Professors" },
-              { n: "12K+", l: "Active Students" },
-              { n: "98%",  l: "Response Rate" },
-            ].map(({ n, l }) => (
-              <div key={l}>
-                <div className="font-display" style={{ fontSize: "1.4rem", fontWeight: 800, color: "#fafaf9", letterSpacing: "-0.03em", lineHeight: 1 }}>{n}</div>
-                <div style={{ fontSize: "0.5rem", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(129, 140, 248, 0.45)", marginTop: "0.3rem", fontFamily: "var(--font-sans)" }}>{l}</div>
-              </div>
-            ))}
-          </motion.div>
-
-          <div style={{ marginTop: "2rem", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <span style={{ fontSize: "0.5rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.15)", fontFamily: "var(--font-sans)" }}>
-              © 2026 Schollective
-            </span>
-            <Link href="/" className="no-underline" style={{ fontSize: "0.5rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.15)", fontFamily: "var(--font-sans)" }}>
-              Back to home
-            </Link>
-          </div>
         </motion.div>
+
+        <div style={{ position: "relative", zIndex: 1 }}>
+          <span style={{ fontSize: "0.52rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.14)", fontFamily: "var(--font-sans)" }}>
+            Academic integrity · Verified credentials
+          </span>
+        </div>
       </div>
     </div>
   );
