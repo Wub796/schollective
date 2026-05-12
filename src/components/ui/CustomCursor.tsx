@@ -14,9 +14,10 @@ type CursorMode = "default" | "hover-link" | "hover-button" | "hover-canvas" | "
 
 function getMode(target: HTMLElement): CursorMode {
   if (target.tagName === "CANVAS") return "hover-canvas";
+  // Check for button first (more specific)
+  if (target.tagName === "BUTTON" || target.closest("button")) return "hover-button";
   if (target.tagName === "A" || target.closest("a") || target.classList.contains("cursor-pointer"))
     return "hover-link";
-  if (target.tagName === "BUTTON" || target.closest("button")) return "hover-button";
   if (["P", "SPAN", "H1", "H2", "H3", "H4"].includes(target.tagName)) return "text";
   return "default";
 }
@@ -109,11 +110,23 @@ function CursorRing({
   const y = useSpring(sourceY, { stiffness: 160, damping: 22 });
 
   const isText   = mode === "text";
-  const isActive = mode === "hover-link" || mode === "hover-button";
+  const isLink   = mode === "hover-link";
+  const isButton = mode === "hover-button";
   const isCanvas = mode === "hover-canvas";
+  const isActive = isLink || isButton;
 
-  const size    = isText ? 3 : isActive ? 56 : isCanvas ? 48 : 24;
-  const filled  = isActive;
+  // Size: button gets a slightly smaller ring than link to feel distinct
+  const size = isText ? 3 : isButton ? 44 : isLink ? 56 : isCanvas ? 48 : 24;
+
+  // Border colour:
+  //  • default / canvas  → warm white, semi-transparent
+  //  • hover-link        → white (difference blend makes it pop)
+  //  • hover-button      → electric indigo (accent) — stays transparent
+  const borderColor = isButton
+    ? "rgba(129, 140, 248, 0.85)"
+    : isCanvas
+    ? "rgba(250, 250, 249, 0.4)"
+    : "rgba(250, 250, 249, 0.5)";
 
   return (
     <>
@@ -124,16 +137,27 @@ function CursorRing({
           y,
           translateX: "-50%",
           translateY: "-50%",
-          border: filled ? "none" : `1px solid rgba(250, 250, 249, ${isCanvas ? 0.4 : 0.5})`,
-          mixBlendMode: "difference",
+          // Link uses difference blend; button uses normal so accent colour shows
+          mixBlendMode: isButton ? "normal" : "difference",
           zIndex: 1,
         }}
         animate={{
           width: size,
           height: isText ? 22 : size,
           borderRadius: isText ? 2 : size / 2,
-          backgroundColor: filled ? "rgba(250, 250, 249, 1)" : "transparent",
+          // Always keep background transparent — never fill
+          backgroundColor: "transparent",
+          // Border: thicker + dashed style for button to make it distinctive
+          border: isButton
+            ? `1.5px solid ${borderColor}`
+            : isText
+            ? "none"
+            : `1px solid ${borderColor}`,
           opacity: isText ? 0.7 : 1,
+          // Inner dot / cross for button mode
+          boxShadow: isButton
+            ? `0 0 12px rgba(129, 140, 248, 0.35), inset 0 0 8px rgba(129, 140, 248, 0.08)`
+            : "none",
         }}
         transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
       />
@@ -149,11 +173,13 @@ function CursorRing({
               y,
               translateX: "-50%",
               translateY: "-50%",
-              border: "1px solid rgba(250, 250, 249, 0.2)",
+              border: isButton
+                ? "1px solid rgba(129, 140, 248, 0.25)"
+                : "1px solid rgba(250, 250, 249, 0.2)",
               zIndex: 1,
             }}
             initial={{ width: size, height: size, opacity: 0.6 }}
-            animate={{ width: size * 2.4, height: size * 2.4, opacity: 0 }}
+            animate={{ width: size * 2.2, height: size * 2.2, opacity: 0 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 1.2, ease: "easeOut", repeat: Infinity, repeatDelay: 0.1 }}
           />
@@ -203,10 +229,15 @@ export function CustomCursor() {
     };
   }, [rawX, rawY]);
 
+  // Don't render on touch devices or when reduced motion is preferred
+  // Note: we do NOT gate on screen width — a laptop with a small window still
+  // has a fine pointer and should see the cursor. The CSS rule
+  // `@media (pointer: fine) { * { cursor: none } }` handles hiding the
+  // native cursor on any device that has a mouse/trackpad.
   if (!mounted || reducedMotion || isTouch) return null;
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-[9999] hidden md:block overflow-hidden">
+    <div className="fixed inset-0 pointer-events-none z-[9999] overflow-hidden">
       {/* Layer 1: Large spotlight blob (buttermax effect) */}
       <SpotlightBlob sourceX={rawX} sourceY={rawY} mode={mode} />
 
