@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 import { Select } from "@/components/ui/Select";
+import { toast } from "sonner";
 
 type Role = "student" | "professor";
 
@@ -33,10 +34,10 @@ export default function SignupPage() {
     const educationLevel = formData.get("education_level") as string;
     const institution = formData.get("institution") as string;
     const expertise = formData.get("expertise") as string;
-import { toast } from "sonner";
-...
+
     try {
-      const { data, error: signUpError } = await supabase.auth.signUp({
+      const { error: signUpError } = await supabase.auth.signUp({
+
         email,
         password,
         options: {
@@ -63,11 +64,11 @@ import { toast } from "sonner";
         router.push("/dashboard");
       }
     } catch (err: any) {
-      const msg = err.message || "An error occurred during signup.";
+      const msg = err instanceof Error ? err.message : "An error occurred during signup.";
       setError(msg);
       toast.error(msg);
     } finally {
-...
+      setLoading(false);
     }
   };
 

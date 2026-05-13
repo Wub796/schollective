@@ -7,6 +7,7 @@ import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
+import { toast } from "sonner";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -21,8 +22,7 @@ export default function LoginPage() {
     const formData = new FormData(e.currentTarget);
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
-import { toast } from "sonner";
-...
+
     try {
       const { data, error: signInError } = await supabase.auth.signInWithPassword({
         email,
@@ -55,11 +55,11 @@ import { toast } from "sonner";
         router.push("/dashboard");
       }
     } catch (err: any) {
-      const msg = err.message || "An error occurred during sign in.";
+      const msg = err instanceof Error ? err.message : "An error occurred during sign in.";
       setError(msg);
       toast.error(msg);
     } finally {
-...
+      setLoading(false);
     }
   };
 
@@ -77,7 +77,7 @@ import { toast } from "sonner";
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-1.5">
-            <Label htmlFor="email">Institutional Email</label>
+            <Label htmlFor="email">Institutional Email</Label>
             <Input id="email" name="email" type="email" placeholder="name@university.edu" required />
           </div>
 
@@ -101,7 +101,7 @@ import { toast } from "sonner";
         </form>
 
         <p className="text-center text-[var(--text-muted)] text-sm mt-8">
-          Don't have an account?{" "}
+          Don&apos;t have an account?{" "}
           <Link href="/auth/signup" className="text-[var(--amber)] hover:underline font-medium">
             Join Schollective
           </Link>
