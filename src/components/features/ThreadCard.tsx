@@ -85,7 +85,7 @@ export function ThreadCard({ request, viewerRole }: ThreadCardProps) {
               </span>
             </div>
             <p className="text-[0.8rem] text-[var(--text-muted)] italic truncate">
-              "{request.latest_message.content}"
+              &quot;{request.latest_message.content}&quot;
             </p>
           </div>
         )}

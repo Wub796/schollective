@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
-import { updateProfessorStatus } from "./actions";
+import { updateProfessorStatus } from "@/app/admin/dashboard/actions";
 import { CheckCircle, XCircle, Loader2, Mail, GraduationCap, Tag } from "lucide-react";
 
 interface PendingProfessor {
