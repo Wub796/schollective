@@ -226,10 +226,17 @@ export function CustomCursor() {
   const rawY = useMotionValue<number>(-1000);
 
   useEffect(() => {
-    const touchCheck =
+    // A Chromebook has a touchscreen (maxTouchPoints > 0) AND a trackpad
+    // (pointer: fine). We only want to suppress the custom cursor on
+    // touch-*only* devices (phones/tablets with no fine pointer).
+    const hasFinePointer =
       typeof window !== "undefined" &&
-      ("ontouchstart" in window || navigator.maxTouchPoints > 0);
-    setIsTouch(touchCheck);
+      window.matchMedia("(pointer: fine)").matches;
+    const touchOnly =
+      typeof window !== "undefined" &&
+      ("ontouchstart" in window || navigator.maxTouchPoints > 0) &&
+      !hasFinePointer;
+    setIsTouch(touchOnly);
 
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
     setRm(mq.matches);
