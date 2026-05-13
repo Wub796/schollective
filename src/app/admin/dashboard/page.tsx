@@ -3,7 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase-server";
 import { AdminReviewTable } from "@/components/features/AdminReviewTable";
-import { LayoutDashboard, Users, ShieldAlert, LogOut, ArrowLeft, Settings } from "lucide-react";
+import { LayoutDashboard, Users, ShieldAlert, LogOut, Settings } from "lucide-react";
 
 export default async function AdminDashboard() {
   const supabase = await createClient();
@@ -108,7 +108,7 @@ export default async function AdminDashboard() {
               <h2 className="text-xl font-serif text-[var(--ivory)] font-light">Application Queue</h2>
             </div>
             
-            <AdminReviewTable applicants={pendingProfessors as any[] || []} />
+            <AdminReviewTable applicants={(pendingProfessors || []) as any} />
           </section>
 
           {/* Footer Polish */}
