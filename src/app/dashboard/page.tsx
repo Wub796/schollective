@@ -25,8 +25,7 @@ export default async function StudentDashboard() {
   const displayName = profile.preferred_name || profile.first_name || "Scholar";
 
   // 3. Fetch Requests with Joins
-  // Note: We join with profiles for professor info and order by update_at
-  const { data: requests, error: requestsError } = await supabase
+  const { data: requests } = await supabase
     .from("requests")
     .select(`
       id,
@@ -47,21 +46,25 @@ export default async function StudentDashboard() {
     .eq("student_id", session.user.id)
     .order("updated_at", { ascending: false });
 
-  // Post-process requests to get the latest message snippet and map to polymorphic participant
-  const processedRequests = (requests || []).map((req: any) => ({
-    ...req,
-    participant: {
-      first_name: req.professor.first_name,
-      last_name: req.professor.last_name,
-      preferred_name: req.professor.preferred_name,
-      detail: req.professor.expertise
-    },
-    latest_message: req.messages && req.messages.length > 0 
-      ? req.messages.sort((a: any, b: any) => 
-          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-        )[0] 
-      : undefined
-  }));
+  // Post-process requests to handle potential array types and map to polymorphic participant
+  const processedRequests = (requests || []).map((req: any) => {
+    const prof = Array.isArray(req.professor) ? req.professor[0] : req.professor;
+    
+    return {
+      ...req,
+      participant: {
+        first_name: prof.first_name,
+        last_name: prof.last_name,
+        preferred_name: prof.preferred_name,
+        detail: prof.expertise
+      },
+      latest_message: req.messages && req.messages.length > 0 
+        ? req.messages.sort((a: any, b: any) => 
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+          )[0] 
+        : undefined
+    };
+  });
 
   return (
     <div className="flex min-h-screen">
@@ -74,7 +77,7 @@ export default async function StudentDashboard() {
         </div>
 
         <nav className="flex-grow px-6 space-y-1">
-          <Link href="/dashboard" className="flex items-center gap-3 px-4 py-3 rounded-xl bg-[rgba(212,146,42,0.08)] text-[var(--ivory)] border border-[rgba(212,146,42,0.2)]">
+          <Link href="/dashboard" className="flex items-center gap-3 px-4 py-3 rounded-xl bg-[rgba(212,146,42,0.08)] text-[var(--ivory)] border border-[rgba(212,146,42,0.2)] transition-all">
             <BookOpen size={18} className="text-[var(--amber)]" />
             <span className="text-sm font-medium">Dashboard</span>
           </Link>
@@ -108,7 +111,7 @@ export default async function StudentDashboard() {
               </h1>
               <p className="text-[var(--text-muted)] mt-2">Track your mentorship requests and active dialogues.</p>
             </div>
-            <Link href="/request">
+            <Link href="/professors">
               <Button className="flex gap-2">
                 <PlusCircle size={18} />
                 New Request
@@ -133,7 +136,7 @@ export default async function StudentDashboard() {
                 </div>
                 <h3 className="font-serif text-2xl text-[var(--ivory)] mb-3 font-light">Your dashboard is waiting</h3>
                 <p className="text-[var(--text-muted)] max-w-[400px] mx-auto mb-8 leading-relaxed">
-                  You haven't submitted any mentorship requests yet. Start your academic journey by connecting with one of our verified professors.
+                  You haven&apos;t submitted any mentorship requests yet. Start your academic journey by connecting with one of our verified professors.
                 </p>
                 <Link href="/professors">
                   <Button variant="outline">Browse the Directory</Button>
