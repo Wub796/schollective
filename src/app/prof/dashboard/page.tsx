@@ -23,7 +23,7 @@ export default async function ProfessorDashboard() {
   if (!profile || profile.role !== "professor") redirect("/auth/login");
   
   // Middleware should handle this, but as a secondary guard:
-  if (profile.status !== "approved") redirect("/professor/pending");
+  if (profile.status !== "approved") redirect("/prof/pending");
 
   const displayName = profile.preferred_name || profile.first_name || "Professor";
 
@@ -53,31 +53,38 @@ export default async function ProfessorDashboard() {
   // 4. Split into Queues
   const pendingRequests = (allRequests || [])
     .filter(req => req.status === "pending")
-    .map((req: any) => ({
-      ...req,
-      initial_message: req.messages && req.messages.length > 0 
-        ? req.messages.sort((a: any, b: any) => 
-            new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
-          )[0].content 
-        : undefined
-    }));
+    .map((req: any) => {
+      const student = Array.isArray(req.student) ? req.student[0] : req.student;
+      return {
+        ...req,
+        student,
+        initial_message: req.messages && req.messages.length > 0 
+          ? req.messages.sort((a: any, b: any) => 
+              new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+            )[0].content 
+          : undefined
+      };
+    });
 
   const activeThreads = (allRequests || [])
     .filter(req => req.status === "active")
-    .map((req: any) => ({
-      ...req,
-      participant: {
-        first_name: req.student.first_name,
-        last_name: req.student.last_name,
-        preferred_name: req.student.preferred_name,
-        detail: req.student.education_level?.replace('-', ' ')
-      },
-      latest_message: req.messages && req.messages.length > 0 
-        ? req.messages.sort((a: any, b: any) => 
-            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-          )[0] 
-        : undefined
-    }));
+    .map((req: any) => {
+      const student = Array.isArray(req.student) ? req.student[0] : req.student;
+      return {
+        ...req,
+        participant: {
+          first_name: student.first_name,
+          last_name: student.last_name,
+          preferred_name: student.preferred_name,
+          detail: student.education_level?.replace('-', ' ')
+        },
+        latest_message: req.messages && req.messages.length > 0 
+          ? req.messages.sort((a: any, b: any) => 
+              new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+            )[0] 
+          : undefined
+      };
+    });
 
   return (
     <div className="flex min-h-screen">
@@ -171,7 +178,7 @@ export default async function ProfessorDashboard() {
               </div>
 
               {activeThreads.length === 0 ? (
-                <div className="bg-[rgba(17,34,64,0.3)] border border-[rgba(155,175,192,0.1)] rounded-[32px] p-16 text-center backdrop-blur-sm">
+                <div className="bg-[rgba(17,34,64,0.3)] border border-rgba(155,175,192,0.1)] rounded-[32px] p-16 text-center backdrop-blur-sm">
                   <h3 className="font-serif text-xl text-[var(--ivory)] mb-2 font-light">No active dialogues</h3>
                   <p className="text-[var(--text-muted)] text-sm max-w-[300px] mx-auto leading-relaxed">
                     Once you accept a request from the queue, it will appear here as an active thread.

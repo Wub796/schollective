@@ -3,7 +3,7 @@ import Link from "next/link";
 import { redirect, notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase-server";
 import { ChatThread } from "@/components/features/ChatThread";
-import { ArrowLeft, MoreVertical, ShieldCheck, GraduationCap } from "lucide-react";
+import { ArrowLeft, MoreVertical, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface MessagePageProps {
@@ -56,7 +56,12 @@ export default async function MessagePage({ params }: MessagePageProps) {
 
   // Determine participant info based on who is viewing
   const isProfessor = session.user.id === request.professor_id;
-  const participant = isProfessor ? request.student : request.professor;
+  
+  // Typecasting to handle Supabase's inferrence of relations as potentially arrays
+  const student = (Array.isArray(request.student) ? request.student[0] : request.student) as any;
+  const professor = (Array.isArray(request.professor) ? request.professor[0] : request.professor) as any;
+  
+  const participant = isProfessor ? student : professor;
   const participantName = participant.preferred_name || participant.first_name;
   const participantTitle = participant.role === 'professor' ? `Dr. ${participantName} ${participant.last_name}` : `${participantName} ${participant.last_name}`;
 
@@ -120,7 +125,7 @@ export default async function MessagePage({ params }: MessagePageProps) {
         <div className="flex items-center gap-3">
           <div className="hidden md:block text-right mr-4">
             <div className="text-[0.65rem] text-[var(--text-muted)] uppercase tracking-widest font-bold mb-0.5">Thread Topic</div>
-            <div className="text-sm text-[var(--ivory)] font-light italic truncate max-w-[300px]">"{request.topic}"</div>
+            <div className="text-sm text-[var(--ivory)] font-light italic truncate max-w-[300px]">&quot;{request.topic}&quot;</div>
           </div>
           <button className="p-2.5 rounded-xl hover:bg-[rgba(255,255,255,0.05)] text-[var(--text-muted)] transition-colors">
             <MoreVertical size={20} />

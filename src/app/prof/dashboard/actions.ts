@@ -22,7 +22,7 @@ export async function updateRequestStatus(requestId: string, status: 'active' | 
   return { success: true };
 }
 
-export async function toggleAvailability(isAvailable: boolean) {
+export async function toggleAvailability() {
   const supabase = await createClient();
 
   const { data: { session } } = await supabase.auth.getSession();
