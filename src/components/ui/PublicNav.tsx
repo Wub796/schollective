@@ -478,7 +478,7 @@ function GetStartedButton({ onClose }: { onClose: () => void }) {
                 fontWeight: 400,
                 fontSize: "0.78rem",
                 letterSpacing: "0.01em",
-                color: "#fafaf9",
+                color: "#818cf8",
                 transitionDelay: `${i * 10}ms`,
               }}
             >
@@ -495,7 +495,7 @@ function GetStartedButton({ onClose }: { onClose: () => void }) {
 
       {/* Arrow */}
       <span
-        className="ml-2 transition-transform duration-500 group-hover:translate-x-1"
+        className="ml-3 transition-transform duration-500 group-hover:translate-x-1"
         style={{ position: "relative", zIndex: 3, fontSize: "0.75rem", color: "#818cf8" }}
       >
         →
