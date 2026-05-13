@@ -63,7 +63,7 @@ export default async function RequestNewPage({ searchParams }: RequestNewPagePro
             Initiate your <em>intellectual dialogue</em>
           </h1>
           <p className="text-[var(--text-muted)] text-base font-light leading-relaxed max-w-lg">
-            Every mentorship thread on Schollective starts with a focused request. Be specific about your needs to respect the professor's time.
+            Every mentorship thread on Schollective starts with a focused request. Be specific about your needs to respect the professor&apos;s time.
           </p>
         </header>
 
