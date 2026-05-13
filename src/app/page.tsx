@@ -354,20 +354,22 @@ const STEPS = [
 ];
 
 /* ── ProcessCard ────────────────────────────────────────────────────────── */
-function ProcessCard({ step, index, railInView }: { step: typeof STEPS[number]; index: number; railInView: boolean }) {
+function ProcessCard({ step, index, railInView, isSpacer, innerRef }: { step: typeof STEPS[number]; index: number; railInView: boolean; isSpacer?: boolean; innerRef?: React.Ref<HTMLDivElement> }) {
   return (
     <motion.div
+      ref={innerRef}
       initial={{ opacity: 0, x: 60 }}
       animate={railInView ? { opacity: 1, x: 0 } : {}}
       transition={{ duration: 0.7, ease: EASE, delay: 0.15 + index * 0.12 }}
       className="group relative flex flex-col justify-between flex-shrink-0 cursor-default overflow-hidden"
       style={{
         scrollSnapAlign: "start",
-        background: "var(--bg-base)",
-        width: "clamp(280px, 38vw, 520px)",
+        background: isSpacer ? "transparent" : "var(--bg-base)",
+        width: isSpacer ? undefined : "clamp(280px, 38vw, 520px)",
+        minWidth: isSpacer ? "clamp(280px, 38vw, 520px)" : undefined,
         minHeight: "26rem",
         padding: "2.5rem",
-        borderRight: "1px solid rgba(129,140,248,0.08)",
+        borderRight: isSpacer ? "none" : "1px solid rgba(129,140,248,0.08)",
         willChange: "transform, opacity",
       }}
     >
@@ -476,14 +478,21 @@ function HorizontalProcessRail() {
         }}
         className="[&::-webkit-scrollbar]:hidden"
       >
-        {STEPS.map((step, i) => (
+        {STEPS.slice(0, 4).map((step, i) => (
           <ProcessCard key={step.num} step={step} index={i} railInView={isInView} />
         ))}
-        <div ref={spacerRef} style={{ flexShrink: 0, minWidth: 0 }} aria-hidden />
+        <ProcessCard
+          key={STEPS[4].num}
+          step={STEPS[4]}
+          index={4}
+          railInView={isInView}
+          isSpacer={true}
+          innerRef={spacerRef}
+        />
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: "1.5rem", marginTop: "2rem", paddingLeft: "0.25rem" }}>
         <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
-          {STEPS.map((_, i) => (
+          {STEPS.slice(0, 4).map((_, i) => (
             <button key={i} onClick={() => scrollTo(i)} aria-label={`Go to step ${i + 1}`}
               style={{
                 width: i === activeIdx ? "1.8rem" : "0.4rem", height: "0.4rem", borderRadius: "100px",
