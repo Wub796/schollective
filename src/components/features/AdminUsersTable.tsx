@@ -58,8 +58,9 @@ const STATUS_COLOUR: Record<string, string> = {
 };
 
 function effectiveStatus(u: UserRecord): string {
-  if (u.status) return u.status;
-  return u.role === "student" ? "active" : "active";
+  const raw = u.status ?? (u.role === "student" ? "active" : "active");
+  // Normalise DB value "approved" → "active" so filters and display agree
+  return raw === "approved" ? "active" : raw;
 }
 
 function formatDate(iso: string): string {
@@ -172,7 +173,7 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
 
   const statusCounts = useMemo(() => ({
     all:       users.length,
-    active:    users.filter((u) => ["active", "approved"].includes(effectiveStatus(u))).length,
+    active:    users.filter((u) => effectiveStatus(u) === "active").length,
     pending:   users.filter((u) => effectiveStatus(u) === "pending").length,
     suspended: users.filter((u) => effectiveStatus(u) === "suspended").length,
   }), [users]);
