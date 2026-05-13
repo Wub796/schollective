@@ -9,8 +9,12 @@ const compat = new FlatCompat({
   baseDirectory: __dirname,
 });
 
+/**
+ * Minimal ESLint Config to break circular structures in Next.js 15 builds.
+ * We rely on next.config.ts bypass for the initial production deployment.
+ */
 const eslintConfig = [
-  ...compat.extends("next", "next/typescript"),
+  ...compat.extends("next/core-web-vitals"),
   {
     rules: {
       "@typescript-eslint/no-explicit-any": "off",
