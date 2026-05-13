@@ -980,3 +980,94 @@ body {
 @keyframes ping {
   75%, 100% { transform: scale(2); opacity: 0; }
 }
+
+/* ─── UNSEEN STUDIO BUTTON TRANSITIONS (Bypassing Tailwind JIT) ──────────── */
+.unseen-btn-text-1 {
+  transform: translateY(0%);
+  transition: transform 0.45s cubic-bezier(0.19, 1, 0.22, 1);
+}
+.group:hover .unseen-btn-text-1 {
+  transform: translateY(-150%);
+}
+
+.unseen-btn-text-2 {
+  transform: translateY(150%);
+  transition: transform 0.45s cubic-bezier(0.19, 1, 0.22, 1);
+}
+.group:hover .unseen-btn-text-2 {
+  transform: translateY(0%);
+}
+
+.unseen-btn-border {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  border: 1px solid #818cf8;
+  opacity: 0;
+  transform: scale(0.5);
+  transition: all 0.45s cubic-bezier(0.19, 1, 0.22, 1);
+  pointer-events: none;
+}
+.group:hover .unseen-btn-border {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.unseen-btn-border-white {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  border: 1px solid #fafaf9;
+  opacity: 0;
+  transform: scale(0.5);
+  transition: all 0.45s cubic-bezier(0.19, 1, 0.22, 1);
+  pointer-events: none;
+}
+.group:hover .unseen-btn-border-white {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Character-by-character waterfall transitions for Buttons */
+.char-layer-1-btn {
+  transform: translateY(0);
+  transition-property: transform, opacity;
+  transition-duration: 0.45s, 0.25s;
+  transition-timing-function: cubic-bezier(0.19, 1, 0.22, 1), ease;
+}
+.group:hover .char-layer-1-btn {
+  transform: translateY(-2.5rem);
+  opacity: 0;
+}
+
+.char-layer-2-btn {
+  transform: translateY(2.5rem);
+  transition-property: transform;
+  transition-duration: 0.45s;
+  transition-timing-function: cubic-bezier(0.19, 1, 0.22, 1);
+}
+.group:hover .char-layer-2-btn {
+  transform: translateY(0);
+}
+
+/* Character-by-character waterfall transitions for Fullscreen Menu */
+.char-layer-1-nav {
+  transform: translateY(0%);
+  transition-property: transform, opacity;
+  transition-duration: 0.45s, 0.25s;
+  transition-timing-function: cubic-bezier(0.19, 1, 0.22, 1), ease;
+}
+.group:hover .char-layer-1-nav {
+  transform: translateY(-110%);
+  opacity: 0;
+}
+
+.char-layer-2-nav {
+  transform: translateY(110%);
+  transition-property: transform;
+  transition-duration: 0.45s;
+  transition-timing-function: cubic-bezier(0.19, 1, 0.22, 1);
+}
+.group:hover .char-layer-2-nav {
+  transform: translateY(0%);
+}
