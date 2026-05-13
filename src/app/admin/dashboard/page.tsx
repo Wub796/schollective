@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { AdminReviewTable } from "@/components/features/AdminReviewTable";
+import { AdminUsersTable } from "@/components/features/AdminUsersTable";
 import { ShieldCheck, Users, GraduationCap, Activity, Home, User, Settings } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -58,6 +59,12 @@ export default async function AdminDashboard() {
   const { count: studentCount } = await supabase.from("profiles").select("*", { count: "exact", head: true }).eq("role", "student");
   const { count: facultyCount } = await supabase.from("profiles").select("*", { count: "exact", head: true }).eq("role", "professor").eq("status", "approved");
   const { count: activeThreadsCount } = await supabase.from("requests").select("*", { count: "exact", head: true }).eq("status", "active");
+
+  // Fetch all registered accounts for the users section
+  const { data: allUsers } = await supabase
+    .from("profiles")
+    .select("id, first_name, last_name, preferred_name, email, role, status, institution, created_at")
+    .order("created_at", { ascending: false });
 
   return (
     <div style={{ minHeight: "100vh", background: "#080c14", display: "flex", flexDirection: "column" }}>
@@ -141,6 +148,23 @@ export default async function AdminDashboard() {
         </div>
         
         <AdminReviewTable applicants={(pendingProfessors || []) as any} />
+      </section>
+
+      {/* ── Hairline ── */}
+      <div style={{ height: "1px", background: "rgba(250, 250, 249, 0.06)" }} />
+
+      {/* ── All Accounts ── */}
+      <section style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <span style={{ width: "1rem", height: "1px", background: "rgba(250, 250, 249, 0.2)", display: "block" }} />
+          <h2 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "rgba(250, 250, 249, 0.85)", letterSpacing: "-0.02em" }}>
+            Registered Accounts
+          </h2>
+          <span style={{ marginLeft: "auto", fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.25)", fontFamily: "var(--font-mono, monospace)" }}>
+            {allUsers?.length || 0} total
+          </span>
+        </div>
+        <AdminUsersTable users={(allUsers || []) as any} />
       </section>
 
         <footer style={{ marginTop: "4rem", paddingTop: "2rem", borderTop: "1px solid rgba(250, 250, 249, 0.04)", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.2)", fontFamily: "var(--font-mono, monospace)" }}>
