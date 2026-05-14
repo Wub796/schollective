@@ -66,23 +66,23 @@ export default async function MessagePage({ params }: MessagePageProps) {
             <ArrowLeft size={16} className="group-hover:-translate-x-0.5 transition-transform" />
           </Link>
 
-          <div className="flex items-center gap-3.5">
-            <div className="w-9 h-9 rounded-xl bg-[rgba(250, 250, 249, 0.04)] border border-[rgba(250, 250, 249, 0.07)] flex items-center justify-center text-sm font-semibold text-[#6a6a6a]">
+          <div className="flex items-center gap-3.5 min-w-0">
+            <div className="w-9 h-9 rounded-xl bg-[rgba(250, 250, 249, 0.04)] border border-[rgba(250, 250, 249, 0.07)] flex items-center justify-center text-sm font-semibold text-[#6a6a6a] flex-shrink-0">
               {participant.first_name[0]}{participant.last_name[0]}
             </div>
-            <div>
+            <div className="min-w-0">
               <div className="flex items-center gap-1.5 mb-0.5">
-                <h2 className="text-sm font-medium text-[#d4d4d2]">{participantTitle}</h2>
+                <h2 className="text-sm font-medium text-[#d4d4d2] truncate">{participantTitle}</h2>
                 {participant.role === "professor" && (
-                  <ShieldCheck size={12} className="text-[#4a4a4a]" />
+                  <ShieldCheck size={12} className="text-[#4a4a4a] flex-shrink-0" />
                 )}
               </div>
               <div className="flex items-center gap-2.5">
-                <span className="text-[0.6rem] text-[#4a4a4a] uppercase tracking-[0.15em] font-semibold">
+                <span className="text-[0.6rem] text-[#4a4a4a] uppercase tracking-[0.15em] font-semibold truncate">
                   {participant.role === "professor" ? (participant as any).expertise : "Student"}
                 </span>
                 <div className={cn(
-                  "px-2 py-0.5 rounded-full border text-[0.58rem] font-bold uppercase tracking-wider",
+                  "px-2 py-0.5 rounded-full border text-[0.58rem] font-bold uppercase tracking-wider flex-shrink-0",
                   statusStyles[request.status as keyof typeof statusStyles]
                 )}>
                   {request.status}

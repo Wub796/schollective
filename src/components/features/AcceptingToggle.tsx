@@ -61,7 +61,7 @@ export function AcceptingToggle({ initialValue }: AcceptingToggleProps) {
         transition: "background 0.3s",
       }} />
       <span style={{
-        fontSize: "0.5rem",
+        fontSize: "0.6rem",
         fontWeight: 700,
         letterSpacing: "0.22em",
         textTransform: "uppercase",

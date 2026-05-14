@@ -93,7 +93,7 @@ function FilterPill({
           : "1px solid rgba(250, 250, 249, 0.07)",
         background: active ? "rgba(250, 250, 249, 0.08)" : "transparent",
         color: active ? "#fafaf9" : "rgba(250, 250, 249, 0.35)",
-        fontSize: "0.55rem",
+        fontSize: "0.6rem",
         fontWeight: 700,
         letterSpacing: "0.18em",
         textTransform: "uppercase",
@@ -186,7 +186,7 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
         onClick={() => toggleSort(col)}
         style={{
           padding: "0.85rem 1.25rem",
-          fontSize: "0.5rem",
+          fontSize: "0.6rem",
           fontWeight: 700,
           letterSpacing: "0.2em",
           textTransform: "uppercase",
@@ -282,7 +282,7 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
       </div>
 
       {/* ── Results count ── */}
-      <div style={{ fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(250,250,249,0.2)", fontFamily: "var(--font-mono, monospace)" }}>
+      <div style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(250,250,249,0.2)", fontFamily: "var(--font-mono, monospace)" }}>
         {filtered.length} {filtered.length === 1 ? "account" : "accounts"} found
       </div>
 
@@ -294,10 +294,10 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
               <tr style={{ borderBottom: "1px solid rgba(250,250,249,0.05)" }}>
                 <SortTh col="name"   label="Account" />
                 <SortTh col="role"   label="Role" />
-                <th style={{ padding: "0.85rem 1.25rem", fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(250,250,249,0.2)", fontFamily: "var(--font-mono, monospace)", whiteSpace: "nowrap" }}>Status</th>
-                <th style={{ padding: "0.85rem 1.25rem", fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(250,250,249,0.2)", fontFamily: "var(--font-mono, monospace)", whiteSpace: "nowrap" }}>Institution</th>
+                <th style={{ padding: "0.85rem 1.25rem", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(250,250,249,0.2)", fontFamily: "var(--font-mono, monospace)", whiteSpace: "nowrap" }}>Status</th>
+                <th style={{ padding: "0.85rem 1.25rem", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(250,250,249,0.2)", fontFamily: "var(--font-mono, monospace)", whiteSpace: "nowrap" }}>Institution</th>
                 <SortTh col="joined" label="Joined" />
-                <th style={{ padding: "0.85rem 1.25rem", fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(250,250,249,0.2)", fontFamily: "var(--font-mono, monospace)", textAlign: "right", whiteSpace: "nowrap" }}>Actions</th>
+                <th style={{ padding: "0.85rem 1.25rem", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(250,250,249,0.2)", fontFamily: "var(--font-mono, monospace)", textAlign: "right", whiteSpace: "nowrap" }}>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -358,7 +358,7 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
                         background: `${ROLE_COLOUR[u.role]}10`,
                         border: `1px solid ${ROLE_COLOUR[u.role]}30`,
                         color: ROLE_COLOUR[u.role],
-                        fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.1em",
+                        fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.1em",
                         textTransform: "capitalize", fontFamily: "var(--font-sans)",
                       }}>
                         {ROLE_ICON[u.role]}
@@ -370,7 +370,7 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
                     <td style={{ padding: "1rem 1.25rem" }}>
                       <span style={{
                         display: "inline-flex", alignItems: "center", gap: "0.3rem",
-                        fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.08em",
+                        fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.08em",
                         textTransform: "capitalize", fontFamily: "var(--font-sans)",
                         color: STATUS_COLOUR[status] ?? "rgba(250,250,249,0.35)",
                       }}>
@@ -414,7 +414,7 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
                             color: isSuspended
                               ? "rgba(100,220,120,0.7)"
                               : "rgba(255,100,100,0.7)",
-                            fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.1em",
+                            fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.1em",
                             textTransform: "uppercase", fontFamily: "var(--font-sans)",
                             cursor: busy ? "wait" : "pointer",
                             opacity: busy ? 0.5 : 1,
@@ -484,7 +484,7 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
                   background: `${ROLE_COLOUR[u.role]}10`,
                   border: `1px solid ${ROLE_COLOUR[u.role]}30`,
                   color: ROLE_COLOUR[u.role],
-                  fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.08em",
+                  fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.08em",
                   textTransform: "capitalize", fontFamily: "var(--font-sans)",
                   flexShrink: 0,
                 }}>
@@ -495,7 +495,7 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
 
               {/* Meta row */}
               <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
-                <span style={{ display: "flex", alignItems: "center", gap: "0.3rem", fontSize: "0.55rem", color: STATUS_COLOUR[status] ?? "rgba(250,250,249,0.35)", fontFamily: "var(--font-sans)", fontWeight: 700 }}>
+                <span style={{ display: "flex", alignItems: "center", gap: "0.3rem", fontSize: "0.6rem", color: STATUS_COLOUR[status] ?? "rgba(250,250,249,0.35)", fontFamily: "var(--font-sans)", fontWeight: 700 }}>
                   <span style={{ width: "5px", height: "5px", borderRadius: "50%", background: STATUS_COLOUR[status] ?? "rgba(250,250,249,0.35)" }} />
                   {status}
                 </span>
@@ -504,7 +504,7 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
                     {u.institution}
                   </span>
                 )}
-                <span style={{ display: "flex", alignItems: "center", gap: "0.3rem", fontSize: "0.55rem", color: "rgba(250,250,249,0.25)", fontFamily: "var(--font-mono, monospace)" }}>
+                <span style={{ display: "flex", alignItems: "center", gap: "0.3rem", fontSize: "0.6rem", color: "rgba(250,250,249,0.25)", fontFamily: "var(--font-mono, monospace)" }}>
                   <Calendar size={9} />
                   {formatDate(u.created_at)}
                 </span>
@@ -524,7 +524,7 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
                     border: isSuspended ? "1px solid rgba(100,220,120,0.25)" : "1px solid rgba(255,80,80,0.2)",
                     background: isSuspended ? "rgba(100,220,120,0.05)" : "rgba(255,80,80,0.05)",
                     color: isSuspended ? "rgba(100,220,120,0.7)" : "rgba(255,100,100,0.7)",
-                    fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.1em",
+                    fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.1em",
                     textTransform: "uppercase", fontFamily: "var(--font-sans)",
                     cursor: busy ? "wait" : "pointer",
                     opacity: busy ? 0.5 : 1,

@@ -36,44 +36,40 @@ export default async function RequestNewPage({ searchParams }: RequestNewPagePro
   }
 
   return (
-    <div className="page-bg">
-      <main className="relative z-10 px-4 sm:px-6 lg:px-8 py-12 lg:py-24">
-        <div className="max-w-3xl mx-auto">
-          {/* Navigation */}
-          <Link
-            href="/professors"
-            className="inline-flex items-center gap-2 text-[0.65rem] font-bold uppercase tracking-widest text-[#3a3a3a] hover:text-[#8a8a8a] transition-colors mb-12 group no-underline"
-          >
-            <ArrowLeft size={12} className="group-hover:-translate-x-0.5 transition-transform" />
-            Back to Directory
-          </Link>
+    <div className="max-w-3xl mx-auto">
+      {/* Navigation */}
+      <Link
+        href="/professors"
+        className="inline-flex items-center gap-2 text-[0.65rem] font-bold uppercase tracking-widest text-[rgba(250,250,249,0.3)] hover:text-[rgba(250,250,249,0.7)] transition-colors mb-12 group no-underline"
+      >
+        <ArrowLeft size={12} className="group-hover:-translate-x-0.5 transition-transform" />
+        Back to Directory
+      </Link>
 
-          {/* Header */}
-          <header className="mb-12">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[rgba(250, 250, 249, 0.07)] bg-[rgba(250, 250, 249, 0.03)] text-[#6a6a6a] text-[0.62rem] font-bold tracking-widest uppercase mb-6">
-              <GraduationCap size={12} />
-              Mentorship Request
-            </div>
-            <h1 className="font-display text-4xl lg:text-5xl font-bold text-[#f2f2f0] leading-tight mb-6">
-              Initiate your <em className="italic text-[#5a5a5a]">intellectual dialogue</em>
-            </h1>
-            <p className="text-[#4a4a4a] text-lg font-light leading-relaxed max-w-2xl">
-              Every mentorship thread on Schollective starts with a focused request. Be specific
-              about your needs to respect the professor&apos;s time.
-            </p>
-          </header>
-
-          {/* Form Container */}
-          <div className="bg-[#111111] border border-[rgba(250, 250, 249, 0.06)] rounded-2xl p-8 md:p-14 shadow-[0_60px_120px_-20px_rgba(0,0,0,0.6)]">
-            <RequestForm professor={professor as any} />
-          </div>
-
-          {/* Footer note */}
-          <p className="mt-14 text-center text-[#2a2a2a] text-[0.6rem] uppercase tracking-[0.4em] font-bold">
-            Powered by academic equity · Schollective 2025
-          </p>
+      {/* Header */}
+      <header className="mb-12">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[rgba(250, 250, 249, 0.07)] bg-[rgba(250, 250, 249, 0.03)] text-[rgba(250,250,249,0.3)] text-[0.62rem] font-bold tracking-widest uppercase mb-6">
+          <GraduationCap size={12} />
+          Mentorship Request
         </div>
-      </main>
+        <h1 className="font-display text-4xl lg:text-5xl font-bold text-[#fafaf9] leading-tight mb-6">
+          Initiate your <em className="italic text-[rgba(250,250,249,0.35)]">intellectual dialogue</em>
+        </h1>
+        <p className="text-[rgba(250,250,249,0.45)] text-lg font-light leading-relaxed max-w-2xl">
+          Every mentorship thread on Schollective starts with a focused request. Be specific
+          about your needs to respect the professor&apos;s time.
+        </p>
+      </header>
+
+      {/* Form Container */}
+      <div className="bg-[#111113] border border-[rgba(250, 250, 249, 0.06)] rounded-2xl p-8 md:p-14 shadow-[0_60px_120px_-20px_rgba(0,0,0,0.6)]">
+        <RequestForm professor={professor as any} />
+      </div>
+
+      {/* Footer note */}
+      <p className="mt-14 text-center text-[rgba(250,250,249,0.15)] text-[0.6rem] uppercase tracking-[0.4em] font-bold">
+        Powered by academic equity · Schollective 2025
+      </p>
     </div>
   );
 }
