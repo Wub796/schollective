@@ -10,6 +10,8 @@ import { Label } from "@/components/ui/Label";
 import { Select } from "@/components/ui/Select";
 import { toast } from "sonner";
 
+export const dynamic = 'force-dynamic';
+
 type Role = "student" | "professor";
 
 export default function SignupPage() {
