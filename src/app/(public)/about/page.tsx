@@ -34,10 +34,10 @@ const VALUES = [
 ];
 
 const TEAM = [
-  { initials: "BJ", name: "Benjamin", role: "Founder & Engineer", desc: "Built Schollective to democratize the academic connections that shaped his own path." },
-  { initials: "AR", name: "Aiden Raj", role: "Builder", desc: "Passionate about using technology to break barriers in education and expand access to meaningful mentorship." },
+  { initials: "AR", name: "Aiden Raj", role: "Founder", desc: "Passionate about using technology to break barriers in education and expand access to meaningful mentorship." },
+  { initials: "AS", name: "Ayaan Siddiqui", role: "Founder", desc: "Driven by the belief that every student deserves a mentor, regardless of background or institution." },
+  { initials: "BJ", name: "Benjamin", role: "Builder", desc: "Built Schollective to democratize the academic connections that shaped his own path." },
   { initials: "JH", name: "Joseph Hu", role: "Builder", desc: "Dedicated to engineering systems that connect students with the guidance they need to grow academically and professionally." },
-  { initials: "AS", name: "Ayaan Siddiqui", role: "Builder", desc: "Driven by the belief that every student deserves a mentor, regardless of background or institution." },
 ];
 
 export default function AboutPage() {
