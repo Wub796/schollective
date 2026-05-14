@@ -153,7 +153,13 @@ function OnboardingContent() {
     }
 
     toast.success("Welcome to Schollective!");
-    router.push(role === "professor" ? "/prof/pending" : "/dashboard");
+    
+    const next = searchParams.get("next");
+    if (next && next !== "/dashboard") {
+      router.push(next);
+    } else {
+      router.push(role === "professor" ? "/prof/pending" : "/dashboard");
+    }
   };
 
   if (checking) {

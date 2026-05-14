@@ -16,16 +16,23 @@ import { createClient } from '@/utils/supabase/server'
  * Route: GET /auth/callback?code=<pkce_code>&next=<optional_path>
  */
 export async function GET(request: NextRequest) {
-  const { searchParams, origin } = new URL(request.url)
+  const { searchParams } = request.nextUrl
+  const origin = request.nextUrl.origin
   const code = searchParams.get('code')
+  // If "next" is in the callback URL, use it; otherwise default to dashboard.
   const next = searchParams.get('next') ?? '/dashboard'
 
   if (!code) {
-    return NextResponse.redirect(`${origin}/login?error=oauth_missing_code`)
+    // If no code, check if there's an error from the provider
+    const errorCode = searchParams.get('error')
+    const errorDescription = searchParams.get('error_description')
+    console.error('[auth/callback] No code found:', { errorCode, errorDescription })
+    return NextResponse.redirect(`${origin}/login?error=${errorCode || 'oauth_missing_code'}`)
   }
 
   const supabase = await createClient()
 
+  // Exchange the auth code for a session
   const { data, error } = await supabase.auth.exchangeCodeForSession(code)
 
   if (error || !data.session) {
@@ -33,31 +40,36 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(`${origin}/login?error=oauth_exchange_failed`)
   }
 
-  // Check profile completeness
-  const { data: profile } = await supabase
+  // Check profile completeness to decide where to send them
+  const { data: profile, error: profileError } = await supabase
     .from('profiles')
     .select('role, status, first_name')
     .eq('id', data.session.user.id)
     .single()
 
+  if (profileError && profileError.code !== 'PGRST116') {
+    console.error('[auth/callback] Profile query error:', profileError.message)
+  }
+
   let destination: string
 
   if (!profile || !profile.first_name) {
-    // New Google user — send to onboarding to complete their profile.
-    // The role they selected is stored in localStorage by the signup page
-    // and will be read by the onboarding page after this redirect.
-    destination = '/onboarding'
+    // New Google user or incomplete profile — send to onboarding.
+    // We append the original "next" as a query param so onboarding can eventually
+    // send them to their intended destination.
+    const onboardingUrl = new URL('/onboarding', origin)
+    if (next && next !== '/dashboard') {
+      onboardingUrl.searchParams.set('next', next)
+    }
+    destination = onboardingUrl.toString()
   } else if (profile.role === 'professor') {
-    destination = profile.status === 'approved' ? '/prof/dashboard' : '/prof/pending'
+    destination = `${origin}${profile.status === 'approved' ? '/prof/dashboard' : '/prof/pending'}`
   } else if (profile.role === 'admin') {
-    destination = '/admin/dashboard'
+    destination = `${origin}/admin/dashboard`
   } else {
-    destination = next === '/dashboard' ? '/dashboard' : next
+    // Standard student or default
+    destination = next.startsWith('http') ? next : `${origin}${next}`
   }
 
-  const redirectUrl = destination.startsWith('http')
-    ? destination
-    : `${origin}${destination}`
-
-  return NextResponse.redirect(redirectUrl)
+  return NextResponse.redirect(destination)
 }

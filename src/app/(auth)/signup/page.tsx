@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { toast } from "sonner";
 import { InstitutionInput } from "@/components/ui/InstitutionInput";
@@ -96,10 +96,26 @@ function FieldSelect({ id, name, label, children, required }: {
 
 export default function SignupPage() {
   const router   = useRouter();
+  const searchParams = useSearchParams();
   const supabase = createClient();
   const [role,    setRole]    = useState<Role>("student");
   const [loading, setLoading] = useState(false);
   const [error,   setError]   = useState<string | null>(null);
+
+  // If there's an error in the URL (e.g. from OAuth callback), show it
+  useEffect(() => {
+    const errorParam = searchParams.get("error");
+    if (errorParam) {
+      if (errorParam === "oauth_exchange_failed") {
+        setError("Failed to exchange Google account information. Please try again.");
+      } else if (errorParam === "oauth_missing_code") {
+        setError("The authentication code is missing. Please try again.");
+      } else {
+        setError("An error occurred during sign up with Google.");
+      }
+    }
+  }, [searchParams]);
+
   const [institution, setInstitution] = useState("");
   const [emailVal, setEmailVal] = useState<EmailValidationResult | null>(null);
   const [emailDirty, setEmailDirty] = useState(false);
@@ -172,15 +188,17 @@ export default function SignupPage() {
   const handleGoogleSignIn = async () => {
     try {
       // Store the selected role in localStorage so the onboarding page
-      // can read it after the OAuth redirect. We can't put it in the
-      // redirectTo URL because Supabase validates redirect URLs against
-      // an exact allowlist and rejects URLs with query params.
+      // can read it after the OAuth redirect.
       localStorage.setItem("signup_role", role);
+
+      const next = searchParams.get("next") || "/dashboard";
+      const callbackUrl = new URL("/auth/callback", window.location.origin);
+      callbackUrl.searchParams.set("next", next);
 
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo: callbackUrl.toString(),
         },
       });
       if (error) throw error;

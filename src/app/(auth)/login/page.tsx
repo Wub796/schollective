@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { toast } from "sonner";
 
@@ -90,11 +90,27 @@ function Field({
   );
 }
 
-export default function LoginPage() {
-  const router   = useRouter();
-  const supabase = createClient();
+/* ── Inner component that uses useSearchParams (must be inside Suspense) ── */
+function LoginContent() {
+  const router       = useRouter();
+  const searchParams = useSearchParams();
+  const supabase     = createClient();
   const [loading, setLoading] = useState(false);
   const [error,   setError]   = useState<string | null>(null);
+
+  // Show descriptive error messages from OAuth callback redirects
+  useEffect(() => {
+    const errorParam = searchParams.get("error");
+    if (errorParam) {
+      if (errorParam === "oauth_exchange_failed") {
+        setError("Failed to sign in with Google. Please try again.");
+      } else if (errorParam === "oauth_missing_code") {
+        setError("Authentication code missing. Please try again.");
+      } else {
+        setError("An error occurred during sign in.");
+      }
+    }
+  }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -116,6 +132,14 @@ export default function LoginPage() {
         .single();
 
       if (!profile) throw new Error("Profile not found.");
+
+      // Support ?next= redirect (e.g. from middleware)
+      const next = searchParams.get("next");
+      if (next) {
+        router.refresh();
+        router.push(next);
+        return;
+      }
 
       if (profile.role === "professor") {
         router.refresh();
@@ -140,6 +164,8 @@ export default function LoginPage() {
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
+        // Keep the redirect URL clean — no query params — so it passes
+        // Supabase's redirect URL allowlist validation.
         options: { redirectTo: `${window.location.origin}/auth/callback` },
       });
       if (error) throw error;
@@ -359,5 +385,22 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div style={{ minHeight: "100vh", background: "var(--bg-base)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <div style={{ width: "1.5rem", height: "1px", background: "rgba(250, 250, 249, 0.2)" }} />
+          <span style={{ fontSize: "0.55rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.3)", fontFamily: "var(--font-sans)" }}>
+            Loading…
+          </span>
+        </div>
+      </div>
+    }>
+      <LoginContent />
+    </Suspense>
   );
 }
