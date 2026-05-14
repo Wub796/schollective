@@ -19,6 +19,8 @@ export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
   const next = searchParams.get('next') ?? '/dashboard'
+  // Optional role hint passed from the signup page Google button
+  const roleHint = searchParams.get('role')
 
   if (!code) {
     return NextResponse.redirect(`${origin}/login?error=oauth_missing_code`)
@@ -43,8 +45,10 @@ export async function GET(request: NextRequest) {
   let destination: string
 
   if (!profile || !profile.first_name) {
-    // New Google user — send to onboarding to complete their profile
-    destination = '/onboarding'
+    // New Google user — send to onboarding to complete their profile.
+    // If a role hint was passed from the signup page, forward it so the
+    // onboarding form can pre-select the right tab.
+    destination = roleHint ? `/onboarding?role=${roleHint}` : '/onboarding'
   } else if (profile.role === 'professor') {
     destination = profile.status === 'approved' ? '/prof/dashboard' : '/prof/pending'
   } else if (profile.role === 'admin') {

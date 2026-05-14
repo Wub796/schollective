@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { createClient } from "@/utils/supabase/client";
 import { toast } from "sonner";
@@ -57,10 +57,15 @@ function Field({
 }
 
 export default function OnboardingPage() {
-  const router   = useRouter();
-  const supabase = createClient();
+  const router       = useRouter();
+  const searchParams = useSearchParams();
+  const supabase     = createClient();
 
-  const [role, setRole]               = useState<Role>("student");
+  // Pre-select role from URL param (passed by signup page Google button)
+  const roleParam = searchParams.get("role");
+  const initialRole: Role = roleParam === "professor" ? "professor" : "student";
+
+  const [role, setRole]               = useState<Role>(initialRole);
   const [loading, setLoading]         = useState(false);
   const [checking, setChecking]       = useState(true);
   const [userName, setUserName]       = useState("");
