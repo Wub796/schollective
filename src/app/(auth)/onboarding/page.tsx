@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import React, { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { createClient } from "@/utils/supabase/client";
 import { toast } from "sonner";
@@ -56,11 +56,16 @@ function Field({
   );
 }
 
-export default function OnboardingPage() {
-  const router   = useRouter();
-  const supabase = createClient();
+function OnboardingContent() {
+  const router       = useRouter();
+  const searchParams = useSearchParams();
+  const supabase     = createClient();
 
-  const [role, setRole]               = useState<Role>("student");
+  // Pre-select role from URL param (passed by signup page Google button)
+  const roleParam = searchParams.get("role");
+  const initialRole: Role = roleParam === "professor" ? "professor" : "student";
+
+  const [role, setRole]               = useState<Role>(initialRole);
   const [loading, setLoading]         = useState(false);
   const [checking, setChecking]       = useState(true);
   const [userName, setUserName]       = useState("");
@@ -314,5 +319,22 @@ export default function OnboardingPage() {
         </form>
       </motion.div>
     </div>
+  );
+}
+
+export default function OnboardingPage() {
+  return (
+    <Suspense fallback={
+      <div style={{ minHeight: "100vh", background: "var(--bg-base)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <div style={{ width: "1.5rem", height: "1px", background: "rgba(250, 250, 249, 0.2)" }} />
+          <span style={{ fontSize: "0.55rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.3)", fontFamily: "var(--font-sans)" }}>
+            Loading…
+          </span>
+        </div>
+      </div>
+    }>
+      <OnboardingContent />
+    </Suspense>
   );
 }
