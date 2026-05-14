@@ -111,6 +111,7 @@ export function NotificationBell() {
         type="button"
         onClick={handleOpen}
         title="Notifications"
+        className="btn-icon"
         style={{
           position: "relative",
           width: "2.2rem",
@@ -122,7 +123,6 @@ export function NotificationBell() {
           alignItems: "center",
           justifyContent: "center",
           cursor: "pointer",
-          transition: "background 0.2s",
         }}
       >
         <Bell size={14} color="rgba(250, 250, 249, 0.45)" />

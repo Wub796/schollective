@@ -149,7 +149,7 @@ export default async function ProfessorProfilePage({ params }: PageProps) {
           </div>
         ) : isAccepting ? (
           <Link href={`/request/${professor.id}`} style={{ textDecoration: "none" }}>
-            <button style={{ width: "100%", padding: "1.1rem 2rem", background: "#fafaf9", color: "#080c14", border: "none", borderRadius: "100px", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.28em", textTransform: "uppercase", cursor: "pointer", fontFamily: "var(--font-sans)", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}>
+            <button className="btn-request" style={{ width: "100%", padding: "1.1rem 2rem", background: "#fafaf9", color: "#080c14", border: "none", borderRadius: "100px", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.28em", textTransform: "uppercase", cursor: "pointer", fontFamily: "var(--font-sans)", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}>
               <Mail size={13} />
               Request Mentorship
             </button>

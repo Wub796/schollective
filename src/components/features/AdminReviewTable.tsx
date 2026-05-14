@@ -81,6 +81,7 @@ function ScoreBadge({ prof }: { prof: PendingProfessor }) {
           <button
             onClick={handleRescore}
             disabled={scoring}
+            className="btn-icon"
             style={{
               display: "flex", alignItems: "center", gap: "0.25rem",
               fontSize: "0.48rem", color: "rgba(250, 250, 249, 0.25)",

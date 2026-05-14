@@ -36,7 +36,7 @@ function formatDate(iso: string) {
 
 function FilterPill({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
   return (
-    <button onClick={onClick} style={{ padding: "0.35rem 0.85rem", borderRadius: "100px", border: active ? "1px solid rgba(250,250,249,0.3)" : "1px solid rgba(250,250,249,0.07)", background: active ? "rgba(250,250,249,0.08)" : "transparent", color: active ? "#fafaf9" : "rgba(250,250,249,0.35)", fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", fontFamily: "var(--font-sans)", cursor: "pointer", transition: "all 0.18s", whiteSpace: "nowrap" }}>
+    <button onClick={onClick} className="btn-filter-pill" style={{ padding: "0.35rem 0.85rem", borderRadius: "100px", border: active ? "1px solid rgba(250,250,249,0.3)" : "1px solid rgba(250,250,249,0.07)", background: active ? "rgba(250,250,249,0.08)" : "transparent", color: active ? "#fafaf9" : "rgba(250,250,249,0.35)", fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", fontFamily: "var(--font-sans)", cursor: "pointer", whiteSpace: "nowrap" }}>
       {label}
     </button>
   );
@@ -188,11 +188,13 @@ export function AdminProfessorsTable({ professors }: { professors: ProfessorReco
                       <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.4rem" }}>
                         {p.status === "approved" && (
                           <button disabled={isBusy} onClick={() => handleRevoke(p.id)}
+                            className="btn-action"
                             style={{ padding: "0.3rem 0.7rem", borderRadius: "7px", border: "1px solid rgba(250,204,21,0.2)", background: "rgba(250,204,21,0.05)", color: "rgba(250,204,21,0.75)", fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", fontFamily: "var(--font-sans)", cursor: isBusy ? "wait" : "pointer", opacity: isBusy ? 0.5 : 1, display: "flex", alignItems: "center", gap: "0.3rem" }}>
                             <RotateCcw size={9} />{isBusy ? "…" : "Revoke"}
                           </button>
                         )}
                         <button disabled={isBusy} onClick={() => handleSuspend(p.id, !isSuspended)}
+                          className={isSuspended ? "btn-action-success" : "btn-action-danger"}
                           style={{ padding: "0.3rem 0.7rem", borderRadius: "7px", border: isSuspended ? "1px solid rgba(74,222,128,0.2)" : "1px solid rgba(248,113,113,0.2)", background: isSuspended ? "rgba(74,222,128,0.05)" : "rgba(248,113,113,0.05)", color: isSuspended ? "rgba(74,222,128,0.75)" : "rgba(248,113,113,0.75)", fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", fontFamily: "var(--font-sans)", cursor: isBusy ? "wait" : "pointer", opacity: isBusy ? 0.5 : 1, display: "flex", alignItems: "center", gap: "0.3rem" }}>
                           {isSuspended ? <><RotateCcw size={9} />{isBusy ? "…" : "Reactivate"}</> : <><Ban size={9} />{isBusy ? "…" : "Suspend"}</>}
                         </button>
