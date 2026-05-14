@@ -84,6 +84,7 @@ function FilterPill({
   return (
     <button
       onClick={onClick}
+      className="btn-filter-pill"
       style={{
         padding: "0.35rem 0.85rem",
         borderRadius: "100px",
@@ -98,7 +99,6 @@ function FilterPill({
         textTransform: "uppercase",
         fontFamily: "var(--font-sans)",
         cursor: "pointer",
-        transition: "all 0.18s ease",
         whiteSpace: "nowrap",
       }}
     >
@@ -400,6 +400,7 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
                         <button
                           disabled={busy}
                           onClick={() => handleSuspend(u.id, !isSuspended)}
+                          className={isSuspended ? "btn-action-success" : "btn-action-danger"}
                           style={{
                             display: "inline-flex", alignItems: "center", gap: "0.35rem",
                             padding: "0.35rem 0.8rem",
@@ -417,7 +418,6 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
                             textTransform: "uppercase", fontFamily: "var(--font-sans)",
                             cursor: busy ? "wait" : "pointer",
                             opacity: busy ? 0.5 : 1,
-                            transition: "all 0.18s",
                           }}
                         >
                           {isSuspended ? <RotateCcw size={10} /> : <Ban size={10} />}
@@ -515,6 +515,7 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
                 <button
                   disabled={busy}
                   onClick={() => handleSuspend(u.id, !isSuspended)}
+                  className={isSuspended ? "btn-action-success" : "btn-action-danger"}
                   style={{
                     alignSelf: "flex-start",
                     display: "inline-flex", alignItems: "center", gap: "0.35rem",

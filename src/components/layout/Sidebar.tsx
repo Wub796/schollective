@@ -182,11 +182,11 @@ export function Sidebar({ onClose, role = "student" }: SidebarProps) {
         <div style={{ height: "1px", background: "rgba(129, 140, 248, 0.08)", marginBottom: "1.25rem", marginLeft: "0.5rem", marginRight: "0.5rem" }} />
         <button
           onClick={handleSignOut}
+          className="btn-icon"
           style={{
             display: "flex", alignItems: "center", justifyContent: "space-between",
             width: "100%", padding: "0.6rem 0.75rem", borderRadius: "8px",
             background: "transparent", border: "none", cursor: "pointer",
-            transition: "background 0.2s",
           }}
           onMouseEnter={e => (e.currentTarget.style.background = "rgba(129, 140, 248, 0.04)")}
           onMouseLeave={e => (e.currentTarget.style.background = "transparent")}

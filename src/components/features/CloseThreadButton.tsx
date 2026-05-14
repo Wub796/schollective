@@ -37,7 +37,7 @@ export function CloseThreadButton({ requestId }: CloseThreadButtonProps) {
     <button
       onClick={handleClose}
       disabled={loading}
-      className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-[rgba(255,80,80,0.15)] bg-[rgba(255,80,80,0.05)] text-[0.65rem] font-bold uppercase tracking-widest text-[#ff6b6b] hover:bg-[rgba(255,80,80,0.1)] transition-colors disabled:opacity-50"
+      className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-[rgba(255,80,80,0.15)] bg-[rgba(255,80,80,0.05)] text-[0.65rem] font-bold uppercase tracking-widest text-[#ff6b6b] hover:bg-[rgba(255,80,80,0.1)] disabled:opacity-50 btn-action-danger"
       title="Conclude Mentorship"
     >
       {loading ? <Loader2 size={12} className="animate-spin" /> : <CheckCircle2 size={12} />}
