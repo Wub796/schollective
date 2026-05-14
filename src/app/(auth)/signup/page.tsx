@@ -174,7 +174,8 @@ export default function SignupPage() {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          // Pass the selected role to /onboarding via the next param
+          redirectTo: `${window.location.origin}/auth/callback?next=/onboarding&role=${role}`,
         },
       });
       if (error) throw error;
