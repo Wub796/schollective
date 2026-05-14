@@ -61,7 +61,7 @@ function OnboardingContent() {
   const searchParams = useSearchParams();
   const supabase     = createClient();
 
-  // Pre-select role from URL param (passed by signup page Google button)
+  // Role can come from: (1) URL param (legacy), (2) localStorage set by signup page before OAuth
   const roleParam = searchParams.get("role");
   const initialRole: Role = roleParam === "professor" ? "professor" : "student";
 
@@ -74,6 +74,14 @@ function OnboardingContent() {
 
   // Verify the user is logged in; if profile is already complete, skip onboarding
   useEffect(() => {
+    // Read role from localStorage (set by signup page before Google OAuth redirect)
+    const storedRole = localStorage.getItem("signup_role");
+    if (storedRole === "professor" || storedRole === "student") {
+      setRole(storedRole);
+    }
+    // Clear it so it doesn't persist for future visits
+    localStorage.removeItem("signup_role");
+
     (async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) { router.push("/login"); return; }
