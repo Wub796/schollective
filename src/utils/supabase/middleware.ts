@@ -8,9 +8,29 @@ export async function updateSession(request: NextRequest) {
     },
   })
 
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+
+  if (!supabaseUrl || !supabaseAnonKey) {
+    return {
+      supabase: createServerClient(
+        'https://placeholder-url.supabase.co',
+        'placeholder-key',
+        {
+          cookies: {
+            get(name: string) { return undefined },
+            set(name: string, value: string, options: CookieOptions) {},
+            remove(name: string, options: CookieOptions) {},
+          },
+        }
+      ),
+      response
+    }
+  }
+
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
+    supabaseUrl,
+    supabaseAnonKey,
     {
       cookies: {
         get(name: string) {
