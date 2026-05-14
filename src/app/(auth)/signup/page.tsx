@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { toast } from "sonner";
 import { InstitutionInput } from "@/components/ui/InstitutionInput";
@@ -94,12 +94,28 @@ function FieldSelect({ id, name, label, children, required }: {
   );
 }
 
-export default function SignupPage() {
+function SignupContent() {
   const router   = useRouter();
+  const searchParams = useSearchParams();
   const supabase = createClient();
   const [role,    setRole]    = useState<Role>("student");
   const [loading, setLoading] = useState(false);
   const [error,   setError]   = useState<string | null>(null);
+
+  // If there's an error in the URL (e.g. from OAuth callback), show it
+  useEffect(() => {
+    const errorParam = searchParams.get("error");
+    if (errorParam) {
+      if (errorParam === "oauth_exchange_failed") {
+        setError("Failed to exchange Google account information. Please try again.");
+      } else if (errorParam === "oauth_missing_code") {
+        setError("The authentication code is missing. Please try again.");
+      } else {
+        setError("An error occurred during sign up with Google.");
+      }
+    }
+  }, [searchParams]);
+
   const [institution, setInstitution] = useState("");
   const [emailVal, setEmailVal] = useState<EmailValidationResult | null>(null);
   const [emailDirty, setEmailDirty] = useState(false);
@@ -171,11 +187,18 @@ export default function SignupPage() {
 
   const handleGoogleSignIn = async () => {
     try {
+      // Store the selected role in localStorage so the onboarding page
+      // can read it after the OAuth redirect.
+      localStorage.setItem("signup_role", role);
+
+      const next = searchParams.get("next") || "/dashboard";
+      const callbackUrl = new URL("/auth/callback", window.location.origin);
+      callbackUrl.searchParams.set("next", next);
+
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          // Pass the selected role to /onboarding via the next param
-          redirectTo: `${window.location.origin}/auth/callback?next=/onboarding&role=${role}`,
+          redirectTo: callbackUrl.toString(),
         },
       });
       if (error) throw error;
@@ -548,5 +571,22 @@ export default function SignupPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense fallback={
+      <div style={{ minHeight: "100vh", background: "var(--bg-base)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <div style={{ width: "1.5rem", height: "1px", background: "rgba(250, 250, 249, 0.2)" }} />
+          <span style={{ fontSize: "0.55rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.3)", fontFamily: "var(--font-sans)" }}>
+            Loading…
+          </span>
+        </div>
+      </div>
+    }>
+      <SignupContent />
+    </Suspense>
   );
 }
