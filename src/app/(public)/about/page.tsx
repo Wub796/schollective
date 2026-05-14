@@ -36,7 +36,7 @@ const VALUES = [
 const TEAM = [
   { initials: "AR", name: "Aiden Raj", role: "Founder", desc: "Passionate about using technology to break barriers in education and expand access to meaningful mentorship." },
   { initials: "AS", name: "Ayaan Siddiqui", role: "Founder", desc: "Driven by the belief that every student deserves a mentor, regardless of background or institution." },
-  { initials: "BJ", name: "Benjamin", role: "Builder", desc: "Built Schollective to democratize the academic connections that shaped his own path." },
+  { initials: "BW", name: "Benjamin Wu", role: "Builder", desc: "Built Schollective to democratize the academic connections that shaped his own path." },
   { initials: "JH", name: "Joseph Hu", role: "Builder", desc: "Dedicated to engineering systems that connect students with the guidance they need to grow academically and professionally." },
 ];
 
@@ -72,9 +72,9 @@ export default function AboutPage() {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: "2.5rem", padding: "3rem 0", borderTop: "1px solid rgba(129, 140, 248, 0.1)", borderBottom: "1px solid rgba(129, 140, 248, 0.1)", marginBottom: "6rem" }}>
             {[
               { n: "2,300+", l: "US Universities Indexed" },
-              { n: "Free",   l: "Always, for students" },
-              { n: "100%",   l: "Verified Professors" },
-              { n: "0",      l: "Cold emails required" },
+              { n: "Free", l: "Always, for students" },
+              { n: "100%", l: "Verified Professors" },
+              { n: "0", l: "Cold emails required" },
             ].map(({ n, l }) => (
               <div key={l}>
                 <div className="font-display" style={{ fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 900, color: "#fafaf9", letterSpacing: "-0.04em", lineHeight: 1 }}>{n}</div>
