@@ -9,8 +9,7 @@ import { createClient } from '@/utils/supabase/server'
  * auth cookies, then redirect the user to:
  *   - /onboarding       → new Google user with no profile yet
  *   - /dashboard        → returning student
- *   - /prof/dashboard   → approved professor
- *   - /prof/pending     → professor awaiting approval
+ *   - /prof/dashboard   → professor (auto-approved)
  *   - /admin/dashboard  → admin
  *
  * Route: GET /auth/callback?code=<pkce_code>&next=<optional_path>
@@ -63,7 +62,7 @@ export async function GET(request: NextRequest) {
     }
     destination = onboardingUrl.toString()
   } else if (profile.role === 'professor') {
-    destination = `${origin}${profile.status === 'approved' ? '/prof/dashboard' : '/prof/pending'}`
+    destination = `${origin}/prof/dashboard`
   } else if (profile.role === 'admin') {
     destination = `${origin}/admin/dashboard`
   } else {
