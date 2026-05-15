@@ -119,26 +119,25 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
   const [changingRole, setChangingRole] = useState<string | null>(null);
 
   /* ── Derived list ── */
-  const filtered = useMemo(() => {
+  // Stage 1: search + role (used for status pill counts)
+  const baseFiltered = useMemo(() => {
     let list = [...users];
-
-    // Search
     if (query.trim()) {
       const q = query.toLowerCase();
       list = list.filter((u) =>
         `${u.first_name} ${u.last_name} ${u.email} ${u.institution ?? ""}`.toLowerCase().includes(q)
       );
     }
-
-    // Role
     if (roleFilter !== "all") list = list.filter((u) => u.role === roleFilter);
+    return list;
+  }, [users, query, roleFilter]);
 
-    // Status
+  // Stage 2: apply status filter + sort
+  const filtered = useMemo(() => {
+    let list = [...baseFiltered];
     if (statusFilter !== "all") {
       list = list.filter((u) => effectiveStatus(u) === statusFilter);
     }
-
-    // Sort
     list.sort((a, b) => {
       let cmp = 0;
       if (sortKey === "name")   cmp = `${a.last_name}${a.first_name}`.localeCompare(`${b.last_name}${b.first_name}`);
@@ -146,9 +145,8 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
       if (sortKey === "joined") cmp = new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
       return sortAsc ? cmp : -cmp;
     });
-
     return list;
-  }, [users, query, roleFilter, statusFilter, sortKey, sortAsc]);
+  }, [baseFiltered, statusFilter, sortKey, sortAsc]);
 
   /* ── Sort toggle ── */
   function toggleSort(key: SortKey) {
@@ -176,6 +174,7 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
   }
 
   /* ── Counts for filter pills ── */
+  // Role counts always from the full user list (independent of status filter)
   const counts = useMemo(() => ({
     all:       users.length,
     student:   users.filter((u) => u.role === "student").length,
@@ -183,12 +182,15 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
     admin:     users.filter((u) => u.role === "admin").length,
   }), [users]);
 
+  // Status counts from baseFiltered so they match results under current role/search context
   const statusCounts = useMemo(() => ({
-    all:       users.length,
-    active:    users.filter((u) => effectiveStatus(u) === "active").length,
-    pending:   users.filter((u) => effectiveStatus(u) === "pending").length,
-    suspended: users.filter((u) => effectiveStatus(u) === "suspended").length,
-  }), [users]);
+    all:       baseFiltered.length,
+    active:    baseFiltered.filter((u) => effectiveStatus(u) === "active").length,
+    pending:   baseFiltered.filter((u) => effectiveStatus(u) === "pending").length,
+    suspended: baseFiltered.filter((u) => effectiveStatus(u) === "suspended").length,
+  }), [baseFiltered]);
+
+
 
   /* ── Sort header cell ── */
   function SortTh({ col, label }: { col: SortKey; label: string }) {
