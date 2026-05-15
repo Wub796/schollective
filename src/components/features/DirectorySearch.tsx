@@ -3,8 +3,8 @@
 import React, { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Search, X } from "lucide-react";
-import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
+
 
 interface DirectorySearchProps {
   institutions: string[];
@@ -45,20 +45,52 @@ export function DirectorySearch({ institutions, expertiseAreas }: DirectorySearc
           <label className="text-[0.62rem] font-bold text-[rgba(250,250,249,0.3)] uppercase tracking-[0.2em] pl-1">
             Search Experts
           </label>
-          <div className="relative group">
+          <div style={{ position: "relative" }}>
             <Search
               size={15}
-              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[rgba(250,250,249,0.3)] group-focus-within:text-[rgba(250,250,249,0.6)] transition-colors"
+              style={{
+                position: "absolute",
+                left: "0.875rem",
+                top: "50%",
+                transform: "translateY(-50%)",
+                color: "rgba(250, 250, 249, 0.3)",
+                pointerEvents: "none",
+                flexShrink: 0,
+              }}
             />
-            <Input
+            <input
               value={draftQuery}
               onChange={(e) => setDraftQuery(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && updateSearch({ query: draftQuery })}
-              className="pl-10"
               placeholder="Search by name, topic, or field…"
+              style={{
+                width: "100%",
+                height: "2.75rem",
+                paddingLeft: "2.5rem",
+                paddingRight: "1rem",
+                paddingTop: "0.5rem",
+                paddingBottom: "0.5rem",
+                background: "rgba(17, 17, 19, 0.6)",
+                border: "1px solid rgba(129, 140, 248, 0.12)",
+                borderRadius: "0.75rem",
+                color: "#fafaf9",
+                fontSize: "0.875rem",
+                outline: "none",
+                transition: "border-color 0.2s, background 0.2s",
+                fontFamily: "var(--font-sans)",
+              }}
+              onFocus={(e) => {
+                e.currentTarget.style.borderColor = "rgba(129, 140, 248, 0.5)";
+                e.currentTarget.style.background = "rgba(17, 17, 19, 0.85)";
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.borderColor = "rgba(129, 140, 248, 0.12)";
+                e.currentTarget.style.background = "rgba(17, 17, 19, 0.6)";
+              }}
             />
           </div>
         </div>
+
 
         {/* Institution */}
         <div className="space-y-2">
