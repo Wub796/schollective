@@ -25,7 +25,7 @@ interface RequestQueueCardProps {
 export function RequestQueueCard({ request }: RequestQueueCardProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const studentName = request.student.preferred_name || request.student.first_name;
+  const studentName = request.student?.preferred_name || request.student?.first_name || "Student";
 
   const handleAction = async (status: "active" | "closed") => {
     setLoading(true);
@@ -65,14 +65,14 @@ export function RequestQueueCard({ request }: RequestQueueCardProps) {
             display: "flex", alignItems: "center", justifyContent: "center",
             fontSize: "0.85rem", fontWeight: 600, color: "#818cf8",
           }}>
-            {request.student.first_name[0]}{request.student.last_name?.[0] || ""}
+            {request.student?.first_name?.[0] ?? "?"}{request.student?.last_name?.[0] ?? ""}
           </div>
           <div>
             <div style={{ fontSize: "0.88rem", fontWeight: 500, color: "rgba(250, 250, 249, 0.88)", lineHeight: 1.25, fontFamily: "var(--font-sans)" }}>
-              {studentName} {request.student.last_name}
+              {studentName} {request.student?.last_name}
             </div>
             <div style={{ fontSize: "0.58rem", color: "rgba(129, 140, 248, 0.5)", textTransform: "uppercase", letterSpacing: "0.12em", fontWeight: 600, marginTop: "0.2rem", fontFamily: "var(--font-mono, monospace)" }}>
-              {request.student.education_level?.replace("-", " ")}
+              {request.student?.education_level?.replace("-", " ")}
             </div>
           </div>
         </div>
