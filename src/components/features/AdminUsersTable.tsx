@@ -12,7 +12,7 @@ import {
   Ban,
   RotateCcw,
 } from "lucide-react";
-import { setUserSuspended } from "@/app/admin/dashboard/admin-actions";
+import { setUserSuspended, changeUserRole } from "@/app/admin/dashboard/admin-actions";
 import { useRouter } from "next/navigation";
 
 /* ─── Types ─────────────────────────────────────────────────────────────── */
@@ -116,28 +116,28 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
   const [sortKey,      setSortKey]      = useState<SortKey>("joined");
   const [sortAsc,      setSortAsc]      = useState(false);
   const [suspending,   setSuspending]   = useState<string | null>(null);
+  const [changingRole, setChangingRole] = useState<string | null>(null);
 
   /* ── Derived list ── */
-  const filtered = useMemo(() => {
+  // Stage 1: search + role (used for status pill counts)
+  const baseFiltered = useMemo(() => {
     let list = [...users];
-
-    // Search
     if (query.trim()) {
       const q = query.toLowerCase();
       list = list.filter((u) =>
         `${u.first_name} ${u.last_name} ${u.email} ${u.institution ?? ""}`.toLowerCase().includes(q)
       );
     }
-
-    // Role
     if (roleFilter !== "all") list = list.filter((u) => u.role === roleFilter);
+    return list;
+  }, [users, query, roleFilter]);
 
-    // Status
+  // Stage 2: apply status filter + sort
+  const filtered = useMemo(() => {
+    let list = [...baseFiltered];
     if (statusFilter !== "all") {
       list = list.filter((u) => effectiveStatus(u) === statusFilter);
     }
-
-    // Sort
     list.sort((a, b) => {
       let cmp = 0;
       if (sortKey === "name")   cmp = `${a.last_name}${a.first_name}`.localeCompare(`${b.last_name}${b.first_name}`);
@@ -145,9 +145,8 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
       if (sortKey === "joined") cmp = new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
       return sortAsc ? cmp : -cmp;
     });
-
     return list;
-  }, [users, query, roleFilter, statusFilter, sortKey, sortAsc]);
+  }, [baseFiltered, statusFilter, sortKey, sortAsc]);
 
   /* ── Sort toggle ── */
   function toggleSort(key: SortKey) {
@@ -163,7 +162,19 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
     setSuspending(null);
   }
 
+  /* ── Change role ── */
+  async function handleRoleChange(userId: string, newRole: "student" | "professor" | "admin") {
+    setChangingRole(userId);
+    const result = await changeUserRole(userId, newRole);
+    if ((result as any).error) {
+      alert((result as any).error);
+    }
+    router.refresh();
+    setChangingRole(null);
+  }
+
   /* ── Counts for filter pills ── */
+  // Role counts always from the full user list (independent of status filter)
   const counts = useMemo(() => ({
     all:       users.length,
     student:   users.filter((u) => u.role === "student").length,
@@ -171,12 +182,15 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
     admin:     users.filter((u) => u.role === "admin").length,
   }), [users]);
 
+  // Status counts from baseFiltered so they match results under current role/search context
   const statusCounts = useMemo(() => ({
-    all:       users.length,
-    active:    users.filter((u) => effectiveStatus(u) === "active").length,
-    pending:   users.filter((u) => effectiveStatus(u) === "pending").length,
-    suspended: users.filter((u) => effectiveStatus(u) === "suspended").length,
-  }), [users]);
+    all:       baseFiltered.length,
+    active:    baseFiltered.filter((u) => effectiveStatus(u) === "active").length,
+    pending:   baseFiltered.filter((u) => effectiveStatus(u) === "pending").length,
+    suspended: baseFiltered.filter((u) => effectiveStatus(u) === "suspended").length,
+  }), [baseFiltered]);
+
+
 
   /* ── Sort header cell ── */
   function SortTh({ col, label }: { col: SortKey; label: string }) {
@@ -396,34 +410,69 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
 
                     {/* Actions */}
                     <td style={{ padding: "1rem 1.25rem", textAlign: "right" }}>
-                      {u.role !== "admin" && (
-                        <button
-                          disabled={busy}
-                          onClick={() => handleSuspend(u.id, !isSuspended)}
-                          className={isSuspended ? "btn-action-success" : "btn-action-danger"}
-                          style={{
-                            display: "inline-flex", alignItems: "center", gap: "0.35rem",
-                            padding: "0.35rem 0.8rem",
-                            borderRadius: "8px",
-                            border: isSuspended
-                              ? "1px solid rgba(100,220,120,0.25)"
-                              : "1px solid rgba(255,80,80,0.2)",
-                            background: isSuspended
-                              ? "rgba(100,220,120,0.05)"
-                              : "rgba(255,80,80,0.05)",
-                            color: isSuspended
-                              ? "rgba(100,220,120,0.7)"
-                              : "rgba(255,100,100,0.7)",
-                            fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.1em",
-                            textTransform: "uppercase", fontFamily: "var(--font-sans)",
-                            cursor: busy ? "wait" : "pointer",
-                            opacity: busy ? 0.5 : 1,
-                          }}
-                        >
-                          {isSuspended ? <RotateCcw size={10} /> : <Ban size={10} />}
-                          {busy ? "…" : isSuspended ? "Reactivate" : "Suspend"}
-                        </button>
-                      )}
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", justifyContent: "flex-end", flexWrap: "wrap" }}>
+                        {/* Role selector */}
+                        {u.role !== "admin" || true ? (
+                          <select
+                            disabled={changingRole === u.id}
+                            value={u.role}
+                            onChange={(e) => handleRoleChange(u.id, e.target.value as any)}
+                            style={{
+                              padding: "0.3rem 0.6rem",
+                              borderRadius: "7px",
+                              border: "1px solid rgba(250,250,249,0.12)",
+                              background: "rgba(250,250,249,0.04)",
+                              color: changingRole === u.id ? "rgba(250,250,249,0.3)" : "rgba(250,250,249,0.75)",
+                              fontSize: "0.6rem",
+                              fontWeight: 700,
+                              letterSpacing: "0.08em",
+                              textTransform: "capitalize",
+                              fontFamily: "var(--font-sans)",
+                              cursor: changingRole === u.id ? "wait" : "pointer",
+                              outline: "none",
+                              appearance: "none",
+                              paddingRight: "1.5rem",
+                              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='rgba(250,250,249,0.3)' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E")`,
+                              backgroundRepeat: "no-repeat",
+                              backgroundPosition: "right 0.4rem center",
+                            }}
+                          >
+                            <option value="student">Student</option>
+                            <option value="professor">Professor</option>
+                            <option value="admin">Admin</option>
+                          </select>
+                        ) : null}
+
+                        {/* Ban / Reactivate */}
+                        {u.role !== "admin" && (
+                          <button
+                            disabled={busy}
+                            onClick={() => handleSuspend(u.id, !isSuspended)}
+                            className={isSuspended ? "btn-action-success" : "btn-action-danger"}
+                            style={{
+                              display: "inline-flex", alignItems: "center", gap: "0.35rem",
+                              padding: "0.35rem 0.8rem",
+                              borderRadius: "8px",
+                              border: isSuspended
+                                ? "1px solid rgba(100,220,120,0.25)"
+                                : "1px solid rgba(255,80,80,0.2)",
+                              background: isSuspended
+                                ? "rgba(100,220,120,0.05)"
+                                : "rgba(255,80,80,0.05)",
+                              color: isSuspended
+                                ? "rgba(100,220,120,0.7)"
+                                : "rgba(255,100,100,0.7)",
+                              fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.1em",
+                              textTransform: "uppercase", fontFamily: "var(--font-sans)",
+                              cursor: busy ? "wait" : "pointer",
+                              opacity: busy ? 0.5 : 1,
+                            }}
+                          >
+                            {isSuspended ? <RotateCcw size={10} /> : <Ban size={10} />}
+                            {busy ? "…" : isSuspended ? "Reactivate" : "Ban"}
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 );
@@ -511,29 +560,60 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
               </div>
 
               {/* Action */}
-              {u.role !== "admin" && (
-                <button
-                  disabled={busy}
-                  onClick={() => handleSuspend(u.id, !isSuspended)}
-                  className={isSuspended ? "btn-action-success" : "btn-action-danger"}
+              <div style={{ display: "flex", gap: "0.6rem", flexWrap: "wrap", alignItems: "center" }}>
+                {/* Role selector */}
+                <select
+                  disabled={changingRole === u.id}
+                  value={u.role}
+                  onChange={(e) => handleRoleChange(u.id, e.target.value as any)}
                   style={{
-                    alignSelf: "flex-start",
-                    display: "inline-flex", alignItems: "center", gap: "0.35rem",
-                    padding: "0.4rem 0.9rem",
-                    borderRadius: "8px",
-                    border: isSuspended ? "1px solid rgba(100,220,120,0.25)" : "1px solid rgba(255,80,80,0.2)",
-                    background: isSuspended ? "rgba(100,220,120,0.05)" : "rgba(255,80,80,0.05)",
-                    color: isSuspended ? "rgba(100,220,120,0.7)" : "rgba(255,100,100,0.7)",
-                    fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.1em",
-                    textTransform: "uppercase", fontFamily: "var(--font-sans)",
-                    cursor: busy ? "wait" : "pointer",
-                    opacity: busy ? 0.5 : 1,
+                    padding: "0.35rem 1.5rem 0.35rem 0.7rem",
+                    borderRadius: "7px",
+                    border: "1px solid rgba(250,250,249,0.12)",
+                    background: "rgba(250,250,249,0.04)",
+                    color: "rgba(250,250,249,0.75)",
+                    fontSize: "0.6rem",
+                    fontWeight: 700,
+                    letterSpacing: "0.08em",
+                    fontFamily: "var(--font-sans)",
+                    cursor: changingRole === u.id ? "wait" : "pointer",
+                    outline: "none",
+                    appearance: "none",
+                    backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='rgba(250,250,249,0.3)' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E")`,
+                    backgroundRepeat: "no-repeat",
+                    backgroundPosition: "right 0.4rem center",
                   }}
                 >
-                  {isSuspended ? <RotateCcw size={10} /> : <Ban size={10} />}
-                  {busy ? "…" : isSuspended ? "Reactivate" : "Suspend"}
-                </button>
-              )}
+                  <option value="student">Student</option>
+                  <option value="professor">Professor</option>
+                  <option value="admin">Admin</option>
+                </select>
+
+                {/* Ban / Reactivate */}
+                {u.role !== "admin" && (
+                  <button
+                    disabled={busy}
+                    onClick={() => handleSuspend(u.id, !isSuspended)}
+                    className={isSuspended ? "btn-action-success" : "btn-action-danger"}
+                    style={{
+                      alignSelf: "flex-start",
+                      display: "inline-flex", alignItems: "center", gap: "0.35rem",
+                      padding: "0.4rem 0.9rem",
+                      borderRadius: "8px",
+                      border: isSuspended ? "1px solid rgba(100,220,120,0.25)" : "1px solid rgba(255,80,80,0.2)",
+                      background: isSuspended ? "rgba(100,220,120,0.05)" : "rgba(255,80,80,0.05)",
+                      color: isSuspended ? "rgba(100,220,120,0.7)" : "rgba(255,100,100,0.7)",
+                      fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.1em",
+                      textTransform: "uppercase", fontFamily: "var(--font-sans)",
+                      cursor: busy ? "wait" : "pointer",
+                      opacity: busy ? 0.5 : 1,
+                    }}
+                  >
+                    {isSuspended ? <RotateCcw size={10} /> : <Ban size={10} />}
+                    {busy ? "…" : isSuspended ? "Reactivate" : "Ban"}
+                  </button>
+                )}
+              </div>
             </div>
           );
         })}

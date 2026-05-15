@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
 import { ThreadCard } from "@/components/features/ThreadCard";
 import { PlusCircle, BookOpen, MessageSquare, Search, ArrowRight, User } from "lucide-react";
@@ -108,7 +109,12 @@ export default async function StudentDashboard() {
     .single();
 
   if (!profile) redirect("/login");
-  if (profile.role !== "student") {
+
+  // Allow admins to preview as student
+  const cookieStore = await cookies();
+  const isAdminPreviewing = profile.role === "admin" && cookieStore.get("x-admin-view-as")?.value === "student";
+
+  if (!isAdminPreviewing && profile.role !== "student") {
     redirect(profile.role === "admin" ? "/admin/dashboard" : "/prof/dashboard");
   }
 
