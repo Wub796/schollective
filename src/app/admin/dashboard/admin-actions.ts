@@ -3,6 +3,39 @@
 import { createClient } from "@/utils/supabase/server";
 import { createAdminClient } from "@/utils/supabase/admin";
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+
+const VIEW_AS_COOKIE = "x-admin-view-as";
+
+/**
+ * Admin: enter/exit "preview as" mode.
+ * Sets an httpOnly cookie so the student/prof dashboards let the admin through.
+ */
+export async function setAdminViewAs(role: "student" | "professor" | null) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return;
+
+  const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
+  if (profile?.role !== "admin") return;
+
+  const cookieStore = await cookies();
+  if (role) {
+    cookieStore.set(VIEW_AS_COOKIE, role, {
+      httpOnly: true,
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60, // 1 hour
+    });
+    redirect(role === "student" ? "/dashboard" : "/prof/dashboard");
+  } else {
+    cookieStore.delete(VIEW_AS_COOKIE);
+    redirect("/admin/dashboard");
+  }
+}
+
+
 
 /**
  * Admin: ban or reactivate a user account.
