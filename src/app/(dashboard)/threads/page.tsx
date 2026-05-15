@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
 import { ThreadCard } from "@/components/features/ThreadCard";
 import { BookOpen, Search } from "lucide-react";
@@ -29,7 +30,13 @@ export default async function ThreadsPage() {
     .eq("id", user.id)
     .single();
 
-  if (!profile || profile.role !== "student") redirect("/prof/dashboard");
+  if (!profile) redirect("/prof/dashboard");
+
+  // Allow admins to preview as student
+  const cookieStore = await cookies();
+  const isAdminPreviewing = profile.role === "admin" && cookieStore.get("x-admin-view-as")?.value === "student";
+
+  if (!isAdminPreviewing && profile.role !== "student") redirect("/prof/dashboard");
 
   const { data: requests } = await supabase
     .from("requests")
