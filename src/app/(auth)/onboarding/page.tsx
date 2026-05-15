@@ -99,7 +99,7 @@ function OnboardingContent() {
 
       // Already onboarded — redirect to the right dashboard
       if (profile?.first_name) {
-        if (profile.role === "professor") router.push("/prof/pending");
+        if (profile.role === "professor") router.push("/prof/dashboard");
         else router.push("/dashboard");
         return;
       }
@@ -140,7 +140,7 @@ function OnboardingContent() {
       payload.expertise_fields = raw
         ? raw.split(",").map((s) => s.trim()).filter(Boolean)
         : [];
-      payload.status = "pending"; // professors await approval
+      payload.status = "approved"; // auto-approved — admin can ban if needed
     }
 
     const { error: upsertError } = await supabase
@@ -160,7 +160,7 @@ function OnboardingContent() {
     if (next && next !== "/dashboard") {
       router.push(next);
     } else {
-      router.push(role === "professor" ? "/prof/pending" : "/dashboard");
+      router.push(role === "professor" ? "/prof/dashboard" : "/dashboard");
     }
   };
 

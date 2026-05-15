@@ -4,7 +4,8 @@ import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 
 /**
- * Admin: suspend or reactivate a user account.
+ * Admin: ban or reactivate a user account.
+ * Reactivation is role-aware: students → 'active', professors → 'approved'.
  */
 export async function setUserSuspended(targetUserId: string, suspend: boolean) {
   const supabase = await createClient();
@@ -14,9 +15,18 @@ export async function setUserSuspended(targetUserId: string, suspend: boolean) {
   const { data: admin } = await supabase.from("profiles").select("role").eq("id", user.id).single();
   if (admin?.role !== "admin") return { error: "Access denied" };
 
+  // Determine the correct reactivated status for this user's role
+  let newStatus: string;
+  if (suspend) {
+    newStatus = "suspended";
+  } else {
+    const { data: target } = await supabase.from("profiles").select("role").eq("id", targetUserId).single();
+    newStatus = target?.role === "professor" ? "approved" : "active";
+  }
+
   const { error } = await supabase
     .from("profiles")
-    .update({ status: suspend ? "suspended" : "approved", updated_at: new Date().toISOString() })
+    .update({ status: newStatus, updated_at: new Date().toISOString() })
     .eq("id", targetUserId);
 
   if (error) return { error: error.message };
@@ -24,6 +34,7 @@ export async function setUserSuspended(targetUserId: string, suspend: boolean) {
   revalidatePath("/admin/users");
   return { success: true };
 }
+
 
 /**
  * Admin: revoke a professor's verified status (set back to pending).
