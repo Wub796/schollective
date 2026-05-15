@@ -51,7 +51,7 @@ export function RequestForm({ professor }: RequestFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8">
+    <form onSubmit={handleSubmit} className="space-y-10">
       <input type="hidden" name="prof_id" value={professor.id} />
 
       {/* Professor preview */}
@@ -70,8 +70,8 @@ export function RequestForm({ professor }: RequestFormProps) {
         </div>
       </div>
 
-      <div className="space-y-6">
-        <div className="space-y-2">
+      <div className="space-y-8">
+        <div className="space-y-3">
           <Label htmlFor="topic">Mentorship Topic / Focus Area</Label>
           <Input
             id="topic"
@@ -81,7 +81,7 @@ export function RequestForm({ professor }: RequestFormProps) {
           />
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-3">
           <Label htmlFor="background">Academic Background &amp; Current Progress</Label>
           <textarea
             id="background"
@@ -92,7 +92,7 @@ export function RequestForm({ professor }: RequestFormProps) {
           />
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-3">
           <Label htmlFor="goals">Specific Mentorship Goals</Label>
           <textarea
             id="goals"
