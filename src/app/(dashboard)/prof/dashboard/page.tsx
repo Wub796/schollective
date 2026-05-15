@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
 import { ThreadCard } from "@/components/features/ThreadCard";
 import { RequestQueueCard } from "@/components/features/RequestQueueCard";
@@ -43,10 +44,17 @@ export default async function ProfessorDashboard() {
     .eq("id", user.id)
     .single();
 
-  if (!profile || profile.role !== "professor") {
+  if (!profile) redirect("/login");
+
+  // Allow admins to preview as professor
+  const cookieStore = await cookies();
+  const isAdminPreviewing = profile.role === "admin" && cookieStore.get("x-admin-view-as")?.value === "professor";
+
+  if (!isAdminPreviewing && profile.role !== "professor") {
     redirect(profile?.role === "admin" ? "/admin/dashboard" : "/dashboard");
   }
-  if (profile.status !== "approved") redirect("/prof/pending");
+  // Skip status check for admin previewing
+  if (!isAdminPreviewing && profile.status !== "approved") redirect("/prof/pending");
 
   const isAccepting = profile.is_accepting_requests !== false; // default true
 
