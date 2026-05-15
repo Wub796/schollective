@@ -36,38 +36,78 @@ export default async function RequestNewPage({ searchParams }: RequestNewPagePro
   }
 
   return (
-    <div className="max-w-3xl mx-auto">
-      {/* Navigation */}
+    <div style={{ display: "flex", flexDirection: "column", gap: "3.5rem", maxWidth: "680px" }}>
+
+      {/* Back link */}
       <Link
         href="/professors"
-        className="inline-flex items-center gap-2 text-[0.65rem] font-bold uppercase tracking-widest text-[rgba(250,250,249,0.3)] hover:text-[rgba(250,250,249,0.7)] transition-colors mb-12 group no-underline"
+        style={{
+          display: "inline-flex", alignItems: "center", gap: "0.5rem",
+          textDecoration: "none", width: "fit-content",
+        }}
       >
-        <ArrowLeft size={12} className="group-hover:-translate-x-0.5 transition-transform" />
-        Back to Directory
+        <ArrowLeft size={12} style={{ color: "rgba(129, 140, 248, 0.4)" }} />
+        <span style={{
+          fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.3em",
+          textTransform: "uppercase", color: "rgba(129, 140, 248, 0.4)",
+          fontFamily: "var(--font-mono, monospace)",
+        }}>
+          Back to Directory
+        </span>
       </Link>
 
       {/* Header */}
-      <header className="mb-12">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[rgba(250, 250, 249, 0.07)] bg-[rgba(250, 250, 249, 0.03)] text-[rgba(250,250,249,0.3)] text-[0.62rem] font-bold tracking-widest uppercase mb-6">
-          <GraduationCap size={12} />
-          Mentorship Request
+      <header style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <span style={{ width: "1.5rem", height: "1px", background: "rgba(250, 250, 249, 0.2)", display: "block" }} />
+          <div style={{
+            display: "inline-flex", alignItems: "center", gap: "0.5rem",
+            fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.3em",
+            textTransform: "uppercase", color: "rgba(129, 140, 248, 0.5)",
+            fontFamily: "var(--font-mono, monospace)",
+          }}>
+            <GraduationCap size={11} />
+            Mentorship Request
+          </div>
         </div>
-        <h1 className="font-display text-4xl lg:text-5xl font-bold text-[#fafaf9] leading-tight mb-6">
-          Initiate your <em className="italic text-[rgba(250,250,249,0.35)]">intellectual dialogue</em>
+
+        <h1 className="font-display" style={{
+          fontSize: "clamp(2.2rem, 5vw, 3.5rem)", fontWeight: 900,
+          color: "#fafaf9", letterSpacing: "-0.035em", lineHeight: 1.05,
+        }}>
+          Initiate your{" "}
+          <em style={{ fontStyle: "italic", color: "rgba(250, 250, 249, 0.3)" }}>
+            intellectual dialogue
+          </em>
         </h1>
-        <p className="text-[rgba(250,250,249,0.45)] text-lg font-light leading-relaxed max-w-2xl">
-          Every mentorship thread on Schollective starts with a focused request. Be specific
-          about your needs to respect the professor&apos;s time.
+
+        <p style={{
+          fontSize: "0.88rem", color: "rgba(168, 179, 207, 0.5)",
+          fontWeight: 300, maxWidth: "44rem", lineHeight: 1.75,
+          fontFamily: "var(--font-sans)",
+        }}>
+          Every mentorship thread on Schollective starts with a focused request.
+          Be specific about your needs to respect the professor&apos;s time.
         </p>
       </header>
 
-      {/* Form */}
-      <div className="py-4">
-        <RequestForm professor={professor as any} />
-      </div>
+      {/* Hairline */}
+      <div style={{ height: "1px", background: "rgba(129, 140, 248, 0.07)" }} />
 
-      {/* Footer note */}
-      <p className="mt-14 text-center text-[rgba(250,250,249,0.15)] text-[0.6rem] uppercase tracking-[0.4em] font-bold">
+      {/* Form */}
+      <RequestForm professor={professor as any} />
+
+      {/* Footer */}
+      <p style={{
+        textAlign: "center",
+        color: "rgba(250, 250, 249, 0.12)",
+        fontSize: "0.52rem",
+        textTransform: "uppercase",
+        letterSpacing: "0.35em",
+        fontWeight: 700,
+        fontFamily: "var(--font-mono, monospace)",
+        paddingBottom: "2rem",
+      }}>
         Powered by academic equity · Schollective 2025
       </p>
     </div>

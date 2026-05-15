@@ -14,9 +14,9 @@ function StatCard({ value, label, sub }: { value: string | number; label: string
   return (
     <div style={{
       padding: "1.5rem",
-      border: "1px solid rgba(129, 140, 248, 0.1)",
+      border: "1px solid rgba(129, 140, 248, 0.08)",
       borderRadius: "14px",
-      background: "rgba(17, 17, 19, 0.5)",
+      background: "rgba(129, 140, 248, 0.03)",
       display: "flex", flexDirection: "column", gap: "0.5rem",
     }}>
       <span className="font-display" style={{
@@ -26,10 +26,10 @@ function StatCard({ value, label, sub }: { value: string | number; label: string
         {value}
       </span>
       <div>
-        <div style={{ fontSize: "0.78rem", fontWeight: 600, color: "rgba(250, 250, 249, 0.7)", fontFamily: "var(--font-sans)" }}>
+        <div style={{ fontSize: "0.78rem", fontWeight: 600, color: "rgba(250, 250, 249, 0.6)", fontFamily: "var(--font-sans)" }}>
           {label}
         </div>
-        <div style={{ fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.25)", fontFamily: "var(--font-mono, monospace)", marginTop: "0.2rem" }}>
+        <div style={{ fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(129, 140, 248, 0.3)", fontFamily: "var(--font-mono, monospace)", marginTop: "0.2rem" }}>
           {sub}
         </div>
       </div>
