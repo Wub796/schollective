@@ -117,16 +117,16 @@ export default async function ThreadsPage() {
         ].map(({ value, label, sub }) => (
           <div key={label} style={{
             padding: "1.25rem 1.75rem",
-            border: "1px solid rgba(250, 250, 249, 0.07)",
+            border: "1px solid rgba(129, 140, 248, 0.08)",
             borderRadius: "14px",
-            background: "rgba(250, 250, 249, 0.025)",
+            background: "rgba(129, 140, 248, 0.03)",
             display: "flex", flexDirection: "column", gap: "0.35rem", minWidth: "9rem",
           }}>
             <span className="font-display" style={{ fontSize: "2rem", fontWeight: 900, color: "#fafaf9", letterSpacing: "-0.04em", lineHeight: 1 }}>
               {value}
             </span>
-            <div style={{ fontSize: "0.75rem", fontWeight: 600, color: "rgba(250, 250, 249, 0.65)", fontFamily: "var(--font-sans)" }}>{label}</div>
-            <div style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.22)", fontFamily: "var(--font-mono, monospace)" }}>{sub}</div>
+            <div style={{ fontSize: "0.75rem", fontWeight: 600, color: "rgba(250, 250, 249, 0.6)", fontFamily: "var(--font-sans)" }}>{label}</div>
+            <div style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(129, 140, 248, 0.3)", fontFamily: "var(--font-mono, monospace)" }}>{sub}</div>
           </div>
         ))}
       </div>
