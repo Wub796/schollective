@@ -1,5 +1,6 @@
 import React from "react";
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
 import { ShieldCheck, GraduationCap, BookOpen, Eye } from "lucide-react";
 
@@ -16,7 +17,13 @@ export default async function ProfPublicProfilePage() {
     .eq("id", user.id)
     .single();
 
-  if (!profile || profile.role !== "professor") redirect("/dashboard");
+  if (!profile) redirect("/dashboard");
+
+  // Allow admins to preview as professor
+  const cookieStore = await cookies();
+  const isAdminPreviewing = profile.role === "admin" && cookieStore.get("x-admin-view-as")?.value === "professor";
+
+  if (!isAdminPreviewing && profile.role !== "professor") redirect("/dashboard");
 
   const displayName = profile.preferred_name || profile.first_name || "Professor";
   const initials    = `${profile.first_name?.[0] ?? ""}${profile.last_name?.[0] ?? ""}`.toUpperCase();
