@@ -59,10 +59,10 @@ export default async function AdminDashboard() {
   const [
     { data: pendingProfessors },
     { count: studentCount },
+    { count: activeStudentCount },
     { count: facultyCount },
     { count: pendingCount },
     { count: activeThreadsCount },
-    { count: closedThreadsCount },
   ] = await Promise.all([
     supabase
       .from("profiles")
@@ -70,11 +70,13 @@ export default async function AdminDashboard() {
       .eq("role", "professor").eq("status", "pending")
       .order("created_at", { ascending: true }),
     supabase.from("profiles").select("*", { count: "exact", head: true }).eq("role", "student"),
-    supabase.from("profiles").select("*", { count: "exact", head: true }).eq("role", "professor").eq("status", "approved"),
+    supabase.from("profiles").select("*", { count: "exact", head: true }).eq("role", "student").eq("status", "active"),
+    supabase.from("profiles").select("*", { count: "exact", head: true }).eq("role", "professor").in("status", ["approved", "active"]),
     supabase.from("profiles").select("*", { count: "exact", head: true }).eq("role", "professor").eq("status", "pending"),
     supabase.from("requests").select("*", { count: "exact", head: true }).eq("status", "active"),
-    supabase.from("requests").select("*", { count: "exact", head: true }).eq("status", "closed"),
   ]);
+
+  const totalActive = (activeStudentCount ?? 0) + (facultyCount ?? 0);
 
   return (
     <AdminShell>
@@ -96,10 +98,10 @@ export default async function AdminDashboard() {
 
       {/* ── Stats ── */}
       <div className="dash-stat-grid" style={{ marginBottom: "2.5rem" }}>
-        <StatCard value={studentCount ?? 0}       label="Students"       sub="Registered"   accent="#818cf8" />
-        <StatCard value={facultyCount ?? 0}        label="Faculty"        sub="Verified"      accent="#4ade80" />
-        <StatCard value={pendingCount ?? 0}         label="Pending"        sub="Awaiting review" accent="#facc15" />
-        <StatCard value={activeThreadsCount ?? 0}  label="Active Threads" sub="System-wide"  accent="#60a5fa" />
+        <StatCard value={totalActive}              label="Active Accounts" sub="Students + Faculty" accent="#4ade80" />
+        <StatCard value={studentCount ?? 0}        label="Students"        sub="Registered"          accent="#818cf8" />
+        <StatCard value={facultyCount ?? 0}        label="Faculty"         sub="Verified"            accent="#60a5fa" />
+        <StatCard value={activeThreadsCount ?? 0}  label="Active Threads"  sub="System-wide"         accent="#a78bfa" />
       </div>
 
       {/* ── Hairline ── */}
@@ -116,7 +118,15 @@ export default async function AdminDashboard() {
             {pendingProfessors?.length ?? 0} pending
           </span>
         </div>
-        <AdminReviewTable applicants={(pendingProfessors ?? []) as any} />
+        {(pendingProfessors?.length ?? 0) === 0 ? (
+          <div style={{ padding: "2.5rem 1.5rem", borderRadius: "12px", border: "1px solid rgba(250,250,249,0.05)", background: "rgba(250,250,249,0.01)", textAlign: "center" }}>
+            <div style={{ fontSize: "0.7rem", color: "rgba(250,250,249,0.2)", fontFamily: "var(--font-sans)", letterSpacing: "0.05em" }}>
+              All caught up — no pending reviews.
+            </div>
+          </div>
+        ) : (
+          <AdminReviewTable applicants={(pendingProfessors ?? []) as any} />
+        )}
       </section>
     </AdminShell>
   );
