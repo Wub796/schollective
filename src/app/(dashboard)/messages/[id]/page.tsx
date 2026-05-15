@@ -5,7 +5,6 @@ import { createClient } from "@/utils/supabase/server";
 import { ChatThread } from "@/components/features/ChatThread";
 import { CloseThreadButton } from "@/components/features/CloseThreadButton";
 import { ArrowLeft, ShieldCheck } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -50,65 +49,83 @@ export default async function MessagePage({ params }: MessagePageProps) {
     .eq("request_id", requestId)
     .order("created_at", { ascending: true });
 
-  const statusStyles = {
-    pending: "bg-[rgba(250, 250, 249, 0.04)] text-[#5a5a5a] border-[rgba(250, 250, 249, 0.07)]",
-    active:  "bg-[rgba(250, 250, 249, 0.06)] text-[#d4d4d2] border-[rgba(250, 250, 249, 0.1)]",
-    closed:  "bg-[rgba(250, 250, 249, 0.02)] text-[#3a3a3a] border-[rgba(250, 250, 249, 0.04)]",
-  };
+
 
   return (
-    <div className="flex flex-col h-screen bg-[#0d0d0d] overflow-hidden">
+    <div style={{ display: "flex", flexDirection: "column", height: "100vh", background: "#09090b", overflow: "hidden" }}>
       {/* Header */}
-      <header className="relative z-10 flex items-center justify-between px-6 py-4 bg-[rgba(13,13,13,0.92)] border-b border-[rgba(250, 250, 249, 0.05)] backdrop-blur-xl flex-shrink-0">
-        <div className="flex items-center gap-5">
+      <header style={{
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+        padding: "0 1.75rem", height: "60px",
+        background: "rgba(9, 9, 11, 0.96)",
+        borderBottom: "1px solid rgba(129, 140, 248, 0.08)",
+        backdropFilter: "blur(24px)",
+        flexShrink: 0, gap: "1rem",
+      }}>
+        {/* Left: back + participant */}
+        <div style={{ display: "flex", alignItems: "center", gap: "1rem", minWidth: 0 }}>
           <Link
             href={isProfessor ? "/prof/dashboard" : "/dashboard"}
-            className="p-2 rounded-lg bg-[rgba(250, 250, 249, 0.03)] border border-[rgba(250, 250, 249, 0.07)] text-[#4a4a4a] hover:text-[#f2f2f0] transition-all group"
+            style={{
+              display: "flex", alignItems: "center", justifyContent: "center",
+              width: "2rem", height: "2rem", borderRadius: "8px", flexShrink: 0,
+              border: "1px solid rgba(129, 140, 248, 0.1)",
+              background: "rgba(129, 140, 248, 0.04)",
+              color: "rgba(250, 250, 249, 0.4)",
+              textDecoration: "none", transition: "all 0.2s",
+            }}
           >
-            <ArrowLeft size={16} className="group-hover:-translate-x-0.5 transition-transform" />
+            <ArrowLeft size={14} />
           </Link>
-
-          <div className="flex items-center gap-3.5 min-w-0">
-            <div className="w-9 h-9 rounded-xl bg-[rgba(250, 250, 249, 0.04)] border border-[rgba(250, 250, 249, 0.07)] flex items-center justify-center text-sm font-semibold text-[#6a6a6a] flex-shrink-0">
+          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", minWidth: 0 }}>
+            <div style={{
+              width: "2rem", height: "2rem", borderRadius: "8px", flexShrink: 0,
+              background: "rgba(129, 140, 248, 0.08)",
+              border: "1px solid rgba(129, 140, 248, 0.18)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: "0.72rem", fontWeight: 700, color: "rgba(129, 140, 248, 0.9)",
+              fontFamily: "var(--font-sans)",
+            }}>
               {participant.first_name?.[0] ?? "?"}{participant.last_name?.[0] ?? ""}
             </div>
-            <div className="min-w-0">
-              <div className="flex items-center gap-1.5 mb-0.5">
-                <h2 className="text-sm font-medium text-[#d4d4d2] truncate">{participantTitle}</h2>
-                {participant.role === "professor" && (
-                  <ShieldCheck size={12} className="text-[#4a4a4a] flex-shrink-0" />
-                )}
-              </div>
-              <div className="flex items-center gap-2.5">
-                <span className="text-[0.6rem] text-[#4a4a4a] uppercase tracking-[0.15em] font-semibold truncate">
-                  {participant.role === "professor" ? (participant as any).expertise : "Student"}
+            <div style={{ minWidth: 0 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
+                <span className="font-display" style={{ fontSize: "0.9rem", fontWeight: 700, color: "rgba(250, 250, 249, 0.9)", letterSpacing: "-0.015em", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  {participantTitle}
                 </span>
-                <div className={cn(
-                  "px-2 py-0.5 rounded-full border text-[0.58rem] font-bold uppercase tracking-wider flex-shrink-0",
-                  statusStyles[request.status as keyof typeof statusStyles]
-                )}>
-                  {request.status}
-                </div>
+                {participant.role === "professor" && <ShieldCheck size={10} style={{ color: "rgba(129, 140, 248, 0.5)", flexShrink: 0 }} />}
+              </div>
+              <div style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(129, 140, 248, 0.4)", fontFamily: "var(--font-mono, monospace)" }}>
+                {participant.role === "professor" ? (participant as any).expertise : "Student"}
               </div>
             </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
-          <div className="hidden md:block text-right mr-3">
-            <div className="text-[0.58rem] text-[#3a3a3a] uppercase tracking-widest font-bold mb-0.5">Thread Topic</div>
-            <div className="text-xs text-[#6a6a6a] font-light italic truncate max-w-[280px]">
-              &quot;{request.topic}&quot;
+        {/* Right: topic + status + close */}
+        <div style={{ display: "flex", alignItems: "center", gap: "0.875rem", flexShrink: 0 }}>
+          <div className="hidden md:block" style={{ textAlign: "right" }}>
+            <div style={{ fontSize: "0.48rem", color: "rgba(129, 140, 248, 0.3)", textTransform: "uppercase", letterSpacing: "0.2em", fontWeight: 700, fontFamily: "var(--font-mono, monospace)", marginBottom: "0.15rem" }}>Thread</div>
+            <div className="font-display" style={{ fontSize: "0.78rem", color: "rgba(168, 179, 207, 0.55)", fontStyle: "italic", maxWidth: "240px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+              &ldquo;{request.topic}&rdquo;
             </div>
           </div>
-          {request.status === "active" && (
-            <CloseThreadButton requestId={request.id} />
-          )}
+          <div style={{
+            padding: "0.2rem 0.65rem", borderRadius: "100px",
+            border: `1px solid ${request.status === "active" ? "rgba(129,140,248,0.2)" : "rgba(250,250,249,0.07)"}`,
+            background: request.status === "active" ? "rgba(129,140,248,0.06)" : "transparent",
+            fontSize: "0.48rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase" as const,
+            color: request.status === "active" ? "rgba(129,140,248,0.7)" : "rgba(250,250,249,0.25)",
+            fontFamily: "var(--font-mono, monospace)",
+          }}>
+            {request.status}
+          </div>
+          {request.status === "active" && <CloseThreadButton requestId={request.id} />}
         </div>
       </header>
 
-      {/* Chat area */}
-      <main className="relative z-10 flex-grow min-h-0 max-w-5xl w-full mx-auto shadow-2xl">
+      {/* Chat — fills remaining height, no max-width centering */}
+      <main style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column" }}>
         <ChatThread
           requestId={requestId}
           initialMessages={messages as any[]}

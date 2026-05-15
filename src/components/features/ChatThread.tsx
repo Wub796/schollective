@@ -5,7 +5,6 @@ import { createClient } from "@/utils/supabase/client";
 import { Button } from "@/components/ui/Button";
 import { sendMessage } from "@/app/(dashboard)/messages/[id]/actions";
 import { Send, Lock } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
 interface Message {
@@ -120,71 +119,107 @@ export function ChatThread({
   const isDisabled = status !== "active";
 
   return (
-    <div className="flex flex-col h-full min-h-0">
-      {/* Messages Feed */}
+    <div style={{ display: "flex", flexDirection: "column", height: "100%", minHeight: 0 }}>
+      {/* Messages feed */}
       <div
         ref={scrollRef}
-        className="flex-grow overflow-y-auto px-4 md:px-8 py-8 space-y-5 scroll-smooth"
+        style={{
+          flex: 1, overflowY: "auto", minHeight: 0,
+          padding: "2rem 2rem 1.5rem",
+          display: "flex", flexDirection: "column", gap: "1.25rem",
+        }}
       >
-        {messages.map((msg) => {
-          const isOwn = msg.sender_id === currentUserId;
-          return (
-            <div
-              key={msg.id}
-              className={cn(
-                "flex flex-col max-w-[85%] md:max-w-[68%]",
-                isOwn ? "ml-auto items-end" : "mr-auto items-start"
-              )}
-            >
+        {messages.length === 0 ? (
+          <div style={{
+            flex: 1, display: "flex", flexDirection: "column",
+            alignItems: "center", justifyContent: "center",
+            gap: "0.75rem", opacity: 0.4, padding: "4rem 2rem",
+          }}>
+            <div style={{ width: "2.5rem", height: "2.5rem", borderRadius: "50%", border: "1px solid rgba(129, 140, 248, 0.2)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <Send size={14} color="rgba(129, 140, 248, 0.6)" />
+            </div>
+            <p style={{ fontSize: "0.78rem", color: "rgba(168, 179, 207, 0.5)", fontStyle: "italic", fontFamily: "var(--font-display)", textAlign: "center" }}>
+              Begin the dialogue
+            </p>
+          </div>
+        ) : (
+          messages.map((msg) => {
+            const isOwn = msg.sender_id === currentUserId;
+            return (
               <div
+                key={msg.id}
                 style={{
-                  padding: "0.875rem 1.25rem",
-                  borderRadius: isOwn ? "18px 18px 4px 18px" : "18px 18px 18px 4px",
+                  display: "flex", flexDirection: "column",
+                  maxWidth: "68%", alignSelf: isOwn ? "flex-end" : "flex-start",
+                  alignItems: isOwn ? "flex-end" : "flex-start",
+                }}
+              >
+                <div style={{
+                  padding: "0.75rem 1.1rem",
+                  borderRadius: isOwn ? "16px 16px 3px 16px" : "16px 16px 16px 3px",
                   fontSize: "0.875rem",
-                  lineHeight: 1.6,
+                  lineHeight: 1.65,
+                  fontFamily: "var(--font-sans)",
                   ...(isOwn
                     ? {
-                        background: "#818cf8",
+                        background: "rgba(129, 140, 248, 0.85)",
                         color: "#09090b",
                         fontWeight: 500,
                       }
                     : {
-                        background: "rgba(17, 17, 19, 0.8)",
-                        color: "rgba(168, 179, 207, 0.88)",
-                        border: "1px solid rgba(129, 140, 248, 0.12)",
+                        background: "rgba(17, 17, 22, 0.85)",
+                        color: "rgba(168, 179, 207, 0.9)",
+                        border: "1px solid rgba(129, 140, 248, 0.1)",
                       }),
-                }}
-              >
-                {msg.content}
+                }}>
+                  {msg.content}
+                </div>
+                <span style={{
+                  fontSize: "0.52rem", color: "rgba(82, 82, 91, 0.45)",
+                  marginTop: "0.3rem", padding: "0 0.2rem",
+                  fontWeight: 600, textTransform: "uppercase",
+                  letterSpacing: "0.12em", fontFamily: "var(--font-mono, monospace)",
+                }}>
+                  {new Date(msg.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                </span>
               </div>
-              <span style={{ fontSize: "0.55rem", color: "rgba(82, 82, 91, 0.5)", marginTop: "0.375rem", padding: "0 0.25rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.12em", fontFamily: "var(--font-mono, monospace)" }}>
-                {new Date(msg.created_at).toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </span>
-            </div>
-          );
-        })}
+            );
+          })
+        )}
       </div>
 
-      {/* Input */}
-      <div style={{ padding: "1rem 1.5rem", background: "rgba(9, 9, 11, 0.92)", borderTop: "1px solid rgba(129, 140, 248, 0.1)", backdropFilter: "blur(24px)" }}>
+      {/* Input bar */}
+      <div style={{
+        padding: "0.875rem 1.5rem",
+        background: "rgba(9, 9, 11, 0.95)",
+        borderTop: "1px solid rgba(129, 140, 248, 0.07)",
+        backdropFilter: "blur(24px)",
+        flexShrink: 0,
+      }}>
         {isDisabled ? (
-          <div style={{ background: "rgba(17, 17, 19, 0.5)", border: "1px dashed rgba(129, 140, 248, 0.12)", borderRadius: "16px", padding: "1rem", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.75rem", color: "rgba(82, 82, 91, 0.5)", fontStyle: "italic", fontSize: "0.875rem" }}>
-            <Lock size={14} style={{ flexShrink: 0 }} />
-            <span style={{ textAlign: "center", fontSize: "0.78rem", color: "rgba(82, 82, 91, 0.6)" }}>
+          <div style={{
+            display: "flex", alignItems: "center", gap: "0.75rem",
+            padding: "0.875rem 1.25rem",
+            border: "1px dashed rgba(129, 140, 248, 0.1)",
+            borderRadius: "14px",
+            background: "rgba(17, 17, 19, 0.4)",
+          }}>
+            <Lock size={13} style={{ color: "rgba(129, 140, 248, 0.3)", flexShrink: 0 }} />
+            <span style={{
+              fontSize: "0.76rem", color: "rgba(168, 179, 207, 0.35)",
+              fontStyle: "italic", fontFamily: "var(--font-display)",
+            }}>
               {status === "pending"
-                ? "Messaging will unlock once the professor accepts the request."
-                : "This thread is closed and no longer accepting messages."}
+                ? "Messaging unlocks once the professor accepts the request."
+                : "This thread has been closed."}
             </span>
           </div>
         ) : (
           <form
             onSubmit={handleSend}
-            className="flex gap-3 items-end max-w-4xl mx-auto w-full"
+            style={{ display: "flex", gap: "0.75rem", alignItems: "flex-end", maxWidth: "860px", margin: "0 auto", width: "100%" }}
           >
-            <div className="flex-grow relative">
+            <div style={{ flex: 1, position: "relative" }}>
               <textarea
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
@@ -192,10 +227,10 @@ export function ChatThread({
                 rows={1}
                 style={{
                   width: "100%",
-                  background: "rgba(17, 17, 19, 0.7)",
-                  border: "1px solid rgba(129, 140, 248, 0.15)",
-                  borderRadius: "16px",
-                  padding: "0.875rem 1.25rem",
+                  background: "rgba(17, 17, 22, 0.7)",
+                  border: "1px solid rgba(129, 140, 248, 0.12)",
+                  borderRadius: "14px",
+                  padding: "0.8rem 1.1rem",
                   fontSize: "0.875rem",
                   color: "rgba(250, 250, 249, 0.9)",
                   outline: "none",
@@ -203,19 +238,20 @@ export function ChatThread({
                   resize: "none",
                   overflow: "hidden",
                   fontFamily: "var(--font-sans)",
+                  lineHeight: 1.6,
                 }}
                 onFocus={e => {
-                  e.currentTarget.style.borderColor = "rgba(129, 140, 248, 0.45)";
-                  e.currentTarget.style.background = "rgba(17, 17, 19, 0.9)";
+                  e.currentTarget.style.borderColor = "rgba(129, 140, 248, 0.4)";
+                  e.currentTarget.style.background = "rgba(17, 17, 22, 0.92)";
                 }}
                 onBlur={e => {
-                  e.currentTarget.style.borderColor = "rgba(129, 140, 248, 0.15)";
-                  e.currentTarget.style.background = "rgba(17, 17, 19, 0.7)";
+                  e.currentTarget.style.borderColor = "rgba(129, 140, 248, 0.12)";
+                  e.currentTarget.style.background = "rgba(17, 17, 22, 0.7)";
                 }}
                 onInput={(e) => {
                   const target = e.target as HTMLTextAreaElement;
                   target.style.height = "auto";
-                  target.style.height = `${Math.min(target.scrollHeight, 200)}px`;
+                  target.style.height = `${Math.min(target.scrollHeight, 180)}px`;
                 }}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && !e.shiftKey) {
@@ -228,9 +264,13 @@ export function ChatThread({
             <Button
               type="submit"
               disabled={sending || !inputValue.trim()}
-              className="h-[52px] w-[52px] rounded-2xl p-0 flex-shrink-0"
+              style={{
+                width: "46px", height: "46px", borderRadius: "12px",
+                padding: 0, flexShrink: 0,
+                display: "flex", alignItems: "center", justifyContent: "center",
+              }}
             >
-              <Send size={18} />
+              <Send size={16} />
             </Button>
           </form>
         )}
@@ -238,3 +278,4 @@ export function ChatThread({
     </div>
   );
 }
+
