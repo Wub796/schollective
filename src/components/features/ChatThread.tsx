@@ -95,7 +95,7 @@ export function ChatThread({
   const isDisabled = status !== "active";
 
   return (
-    <div className="flex flex-col h-full max-h-[calc(100vh-80px)] md:max-h-[calc(100vh-100px)]">
+    <div className="flex flex-col h-full min-h-0">
       {/* Messages Feed */}
       <div
         ref={scrollRef}

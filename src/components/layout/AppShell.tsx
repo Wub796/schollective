@@ -53,15 +53,15 @@ export function AppShell({ children, role = "student" }: AppShellProps) {
         </button>
 
         {/* Wordmark — matches landing page nav exactly */}
-        <a href="/dashboard" className="flex items-center gap-2.5 no-underline group">
+        <a href="/dashboard" className="flex items-center gap-2 no-underline group min-w-0 flex-1 sm:flex-none">
           <span
-            className="font-display font-bold text-[#fafaf9]"
+            className="font-display font-bold text-[#fafaf9] truncate"
             style={{ fontSize: "1.05rem", letterSpacing: "-0.02em" }}
           >
             Schollective
           </span>
           <span
-            className="font-mono uppercase hidden sm:block"
+            className="font-mono uppercase hidden lg:block"
             style={{ fontSize: "0.42rem", letterSpacing: "0.38em", color: "rgba(250, 250, 249, 0.35)", paddingTop: "2px" }}
           >
             Academic Mentorship
@@ -85,7 +85,7 @@ export function AppShell({ children, role = "student" }: AppShellProps) {
               key={href}
               href={href}
               className="no-underline"
-              style={{ fontSize: "0.48rem", letterSpacing: "0.32em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.45)", fontFamily: "var(--font-mono, 'DM Mono', monospace)", transition: "color 0.2s" }}
+              style={{ fontSize: "0.6rem", letterSpacing: "0.32em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.45)", fontFamily: "var(--font-mono, 'DM Mono', monospace)", transition: "color 0.2s" }}
               onMouseEnter={e => (e.currentTarget.style.color = "rgba(250, 250, 249, 0.9)")}
               onMouseLeave={e => (e.currentTarget.style.color = "rgba(250, 250, 249, 0.45)")}
             >

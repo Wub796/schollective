@@ -84,7 +84,7 @@ export function RequestQueueCard({ request }: RequestQueueCardProps) {
 
       {/* Topic */}
       <div style={{ marginBottom: "1.25rem" }}>
-        <div style={{ fontSize: "0.5rem", color: "rgba(129, 140, 248, 0.4)", textTransform: "uppercase", letterSpacing: "0.18em", fontWeight: 700, marginBottom: "0.5rem", fontFamily: "var(--font-mono, monospace)" }}>Topic</div>
+        <div style={{ fontSize: "0.6rem", color: "rgba(129, 140, 248, 0.4)", textTransform: "uppercase", letterSpacing: "0.18em", fontWeight: 700, marginBottom: "0.5rem", fontFamily: "var(--font-mono, monospace)" }}>Topic</div>
         <p className="font-display" style={{ fontSize: "0.88rem", color: "rgba(168, 179, 207, 0.7)", lineHeight: 1.5, fontStyle: "italic" }}>
           &ldquo;{request.topic}&rdquo;
         </p>
@@ -93,7 +93,7 @@ export function RequestQueueCard({ request }: RequestQueueCardProps) {
       {/* Initial message preview */}
       {request.initial_message && (
         <div style={{ background: "rgba(9, 9, 11, 0.5)", borderRadius: "12px", padding: "1rem", border: "1px solid rgba(129, 140, 248, 0.08)", marginBottom: "1.25rem" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", fontSize: "0.5rem", color: "rgba(129, 140, 248, 0.4)", textTransform: "uppercase", letterSpacing: "0.18em", fontWeight: 700, marginBottom: "0.5rem", fontFamily: "var(--font-mono, monospace)" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", fontSize: "0.6rem", color: "rgba(129, 140, 248, 0.4)", textTransform: "uppercase", letterSpacing: "0.18em", fontWeight: 700, marginBottom: "0.5rem", fontFamily: "var(--font-mono, monospace)" }}>
             <MessageSquare size={10} />
             Initial Message
           </div>

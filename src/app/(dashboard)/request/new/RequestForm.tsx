@@ -21,9 +21,9 @@ interface RequestFormProps {
 
 const textareaClass =
   "flex min-h-[140px] w-full rounded-xl border border-[rgba(250, 250, 249, 0.07)] " +
-  "bg-[rgba(250, 250, 249, 0.03)] px-4 py-3 text-sm text-[#f2f2f0] outline-none " +
+  "bg-[rgba(250, 250, 249, 0.03)] px-4 py-3 text-sm text-[#fafaf9] outline-none " +
   "focus:border-[rgba(232,232,230,0.4)] focus:bg-[rgba(250, 250, 249, 0.05)] " +
-  "focus:ring-2 focus:ring-[rgba(232,232,230,0.06)] placeholder:text-[#3a3a3a] " +
+  "focus:ring-2 focus:ring-[rgba(232,232,230,0.06)] placeholder:text-[rgba(250,250,249,0.2)] " +
   "transition-all resize-none";
 
 export function RequestForm({ professor }: RequestFormProps) {
@@ -55,18 +55,18 @@ export function RequestForm({ professor }: RequestFormProps) {
       <input type="hidden" name="prof_id" value={professor.id} />
 
       {/* Professor preview */}
-      <div className="bg-[rgba(250, 250, 249, 0.03)] border border-[rgba(250, 250, 249, 0.07)] rounded-xl p-5 flex items-center gap-4">
-        <div className="w-11 h-11 rounded-xl bg-[rgba(250, 250, 249, 0.06)] border border-[rgba(250, 250, 249, 0.09)] flex items-center justify-center text-base font-semibold text-[#8a8a8a]">
+      <div className="bg-[rgba(250, 250, 249, 0.02)] border border-[rgba(250, 250, 249, 0.07)] rounded-xl p-5 flex items-center gap-4">
+        <div className="w-11 h-11 rounded-xl bg-[rgba(250, 250, 249, 0.04)] border border-[rgba(250, 250, 249, 0.09)] flex items-center justify-center text-base font-semibold text-[rgba(250,250,249,0.4)]">
           {professor.first_name[0]}{professor.last_name[0]}
         </div>
         <div>
-          <div className="text-[0.6rem] text-[#3a3a3a] uppercase tracking-[0.2em] font-semibold mb-0.5">
+          <div className="text-[0.6rem] text-[rgba(250,250,249,0.25)] uppercase tracking-[0.2em] font-semibold mb-0.5">
             Receiving Professor
           </div>
-          <div className="font-display text-lg text-[#d4d4d2]">
+          <div className="font-display text-lg text-[rgba(250,250,249,0.9)]">
             Dr. {profDisplayName} {professor.last_name}
           </div>
-          <div className="text-[0.72rem] text-[#4a4a4a] font-light">{professor.institution}</div>
+          <div className="text-[0.72rem] text-[rgba(250,250,249,0.35)] font-light">{professor.institution}</div>
         </div>
       </div>
 

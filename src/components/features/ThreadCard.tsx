@@ -63,9 +63,9 @@ export function ThreadCard({ request, viewerRole }: ThreadCardProps) {
         }} />
 
         {/* Header row */}
-        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "1.25rem" }}>
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "1rem", marginBottom: "1.25rem" }}>
           {/* Avatar + name */}
-          <div style={{ display: "flex", alignItems: "center", gap: "0.875rem" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.875rem", minWidth: 0, flex: 1 }}>
             <div style={{
               width: "2.5rem", height: "2.5rem", borderRadius: "50%",
               background: "rgba(129, 140, 248, 0.07)",
@@ -77,14 +77,19 @@ export function ThreadCard({ request, viewerRole }: ThreadCardProps) {
             }}>
               {initials}
             </div>
-            <div>
-              <div style={{ fontSize: "0.88rem", fontWeight: 500, color: "rgba(250, 250, 249, 0.88)", lineHeight: 1.2, fontFamily: "var(--font-sans)" }}>
+            <div style={{ minWidth: 0 }}>
+              <div style={{ 
+                fontSize: "0.88rem", fontWeight: 500, color: "rgba(250, 250, 249, 0.88)", 
+                lineHeight: 1.2, fontFamily: "var(--font-sans)",
+                overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap"
+              }}>
                 {prefix}{displayName} {request.participant.last_name}
               </div>
               <div style={{
                 fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.22em",
                 textTransform: "uppercase", color: "rgba(129, 140, 248, 0.45)",
                 marginTop: "0.25rem", fontFamily: "var(--font-mono, monospace)",
+                overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap"
               }}>
                 {request.participant.detail}
               </div>
@@ -98,10 +103,11 @@ export function ThreadCard({ request, viewerRole }: ThreadCardProps) {
             border: `1px solid ${status.glow}`,
             background: status.glow,
             flexShrink: 0,
+            whiteSpace: "nowrap"
           }}>
             <span style={{ width: "5px", height: "5px", borderRadius: "50%", background: status.color, flexShrink: 0 }} />
             <span style={{
-              fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.22em",
+              fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.22em",
               textTransform: "uppercase", color: status.color,
               fontFamily: "var(--font-mono, monospace)",
             }}>
@@ -113,7 +119,7 @@ export function ThreadCard({ request, viewerRole }: ThreadCardProps) {
         {/* Topic */}
         <div style={{ flex: 1, marginBottom: "1.25rem" }}>
           <div style={{
-            fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.28em",
+            fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.28em",
             textTransform: "uppercase", color: "rgba(129, 140, 248, 0.35)",
             marginBottom: "0.5rem", fontFamily: "var(--font-mono, monospace)",
           }}>
@@ -137,7 +143,7 @@ export function ThreadCard({ request, viewerRole }: ThreadCardProps) {
             marginTop: "auto",
           }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.4rem" }}>
-              <span style={{ fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(129, 140, 248, 0.35)", fontFamily: "var(--font-mono, monospace)" }}>
+              <span style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(129, 140, 248, 0.35)", fontFamily: "var(--font-mono, monospace)" }}>
                 Last activity
               </span>
               <span style={{ fontSize: "0.6rem", color: "rgba(82, 82, 91, 0.6)", fontFamily: "var(--font-sans)" }}>

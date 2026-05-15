@@ -169,7 +169,7 @@ export function NotificationBell() {
               Notifications
             </span>
             {unreadCount > 0 && (
-              <span style={{ fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", color: "rgba(255,120,80,0.8)", fontFamily: "var(--font-sans)" }}>
+              <span style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", color: "rgba(255,120,80,0.8)", fontFamily: "var(--font-sans)" }}>
                 {unreadCount} new
               </span>
             )}
@@ -207,7 +207,7 @@ export function NotificationBell() {
                       {n.body}
                     </span>
                   )}
-                  <span style={{ fontSize: "0.5rem", fontWeight: 600, letterSpacing: "0.15em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.18)", fontFamily: "var(--font-mono, monospace)", marginTop: "0.1rem" }}>
+                  <span style={{ fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.15em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.18)", fontFamily: "var(--font-mono, monospace)", marginTop: "0.1rem" }}>
                     {formatTime(n.created_at)}
                   </span>
                 </Link>
