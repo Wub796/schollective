@@ -191,13 +191,13 @@ export default function ProfilePage() {
   return (
     <motion.div
       variants={stagger} initial="hidden" animate="show"
-      style={{ padding: "3rem 0", display: "flex", flexDirection: "column", gap: "4rem", maxWidth: "640px" }}
+      style={{ display: "flex", flexDirection: "column", gap: "4rem", maxWidth: "640px" }}
     >
       {/* ── Header ── */}
       <motion.header variants={fadeUp} style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
           <span style={{ width: "1.5rem", height: "1px", background: "rgba(250, 250, 249, 0.2)", display: "block" }} />
-          <span style={{ fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.38em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.3)", fontFamily: "var(--font-mono, monospace)" }}>
+          <span style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.38em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.3)", fontFamily: "var(--font-mono, monospace)" }}>
             Account Settings
           </span>
         </div>
@@ -287,7 +287,7 @@ export default function ProfilePage() {
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
             <span style={{
-              fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.25em",
+              fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.25em",
               textTransform: "uppercase", color: "rgba(250, 250, 249, 0.3)",
               fontFamily: "var(--font-mono, monospace)",
               padding: "0.25rem 0.65rem", border: "1px solid rgba(250, 250, 249, 0.1)",
@@ -298,7 +298,7 @@ export default function ProfilePage() {
             {profile?.status === "approved" && (
               <span style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
                 <span style={{ width: "5px", height: "5px", borderRadius: "50%", background: "rgba(120,220,120,0.8)" }} />
-                <span style={{ fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.3)", fontFamily: "var(--font-mono, monospace)" }}>
+                <span style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.3)", fontFamily: "var(--font-mono, monospace)" }}>
                   Verified
                 </span>
               </span>
@@ -317,7 +317,7 @@ export default function ProfilePage() {
       <motion.div variants={fadeUp}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "2.5rem" }}>
           <span style={{ width: "1rem", height: "1px", background: "rgba(250, 250, 249, 0.2)", display: "block" }} />
-          <span style={{ fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.35em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.3)", fontFamily: "var(--font-mono, monospace)" }}>
+          <span style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.35em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.3)", fontFamily: "var(--font-mono, monospace)" }}>
             Personal Information
           </span>
         </div>
@@ -404,7 +404,7 @@ export default function ProfilePage() {
       <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
           <span style={{ width: "1rem", height: "1px", background: "rgba(250, 250, 249, 0.15)", display: "block" }} />
-          <span style={{ fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.35em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.25)", fontFamily: "var(--font-mono, monospace)" }}>
+          <span style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.35em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.25)", fontFamily: "var(--font-mono, monospace)" }}>
             Security
           </span>
         </div>
@@ -438,7 +438,7 @@ export default function ProfilePage() {
       <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
           <span style={{ width: "1rem", height: "1px", background: "rgba(250, 250, 249, 0.15)", display: "block" }} />
-          <span style={{ fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.35em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.25)", fontFamily: "var(--font-mono, monospace)" }}>
+          <span style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.35em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.25)", fontFamily: "var(--font-mono, monospace)" }}>
             Session
           </span>
         </div>

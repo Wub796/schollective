@@ -150,13 +150,13 @@ export default async function StudentDashboard() {
   const isEmpty       = totalRequests === 0;
 
   return (
-    <div style={{ padding: "3rem 0", display: "flex", flexDirection: "column", gap: "3.5rem" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "3.5rem" }}>
 
       {/* ── Header ─────────────────────────────────────────────── */}
       <header style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
           <span style={{ width: "1.5rem", height: "1px", background: "rgba(250, 250, 249, 0.2)", display: "block" }} />
-          <span style={{ fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.38em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.3)", fontFamily: "var(--font-mono, monospace)" }}>
+          <span style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.38em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.3)", fontFamily: "var(--font-mono, monospace)" }}>
             Student Portal
           </span>
         </div>
@@ -240,7 +240,7 @@ export default async function StudentDashboard() {
               </h2>
             </div>
             {!isEmpty && (
-              <span style={{ fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.28em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.25)", fontFamily: "var(--font-mono, monospace)" }}>
+              <span style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.28em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.25)", fontFamily: "var(--font-mono, monospace)" }}>
                 {totalRequests} total
               </span>
             )}

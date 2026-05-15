@@ -51,7 +51,7 @@ export function ProfessorCard({ professor }: ProfessorCardProps) {
       }} />
 
       {/* Header row: avatar + verified badge */}
-      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "1.5rem" }}>
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "1rem", marginBottom: "1.5rem" }}>
         {/* Avatar */}
         <div style={{
           width: "3rem", height: "3rem", borderRadius: "50%",
@@ -61,6 +61,7 @@ export function ProfessorCard({ professor }: ProfessorCardProps) {
           fontSize: "0.85rem", fontWeight: 600,
           color: "#818cf8",
           letterSpacing: "0.04em",
+          flexShrink: 0,
           fontFamily: "var(--font-sans)",
         }}>
           {initials}
@@ -72,10 +73,11 @@ export function ProfessorCard({ professor }: ProfessorCardProps) {
           padding: "0.3rem 0.7rem", borderRadius: "100px",
           border: "1px solid rgba(129, 140, 248, 0.15)",
           background: "rgba(129, 140, 248, 0.05)",
+          flexShrink: 0,
         }}>
-          <span style={{ width: "5px", height: "5px", borderRadius: "50%", background: "rgba(129, 140, 248, 0.8)" }} />
+          <span style={{ width: "5px", height: "5px", borderRadius: "50%", background: "rgba(129, 140, 248, 0.8)", flexShrink: 0 }} />
           <span style={{
-            fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.22em",
+            fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.22em",
             textTransform: "uppercase", color: "rgba(129, 140, 248, 0.6)",
             fontFamily: "var(--font-mono, monospace)",
           }}>
@@ -85,17 +87,19 @@ export function ProfessorCard({ professor }: ProfessorCardProps) {
       </div>
 
       {/* Name + institution */}
-      <div style={{ marginBottom: "1.5rem" }}>
+      <div style={{ marginBottom: "1.5rem", minWidth: 0 }}>
         <h3 className="font-display" style={{
           fontSize: "1.2rem", fontWeight: 700,
           color: "rgba(250, 250, 249, 0.92)", lineHeight: 1.2,
           marginBottom: "0.4rem", letterSpacing: "-0.02em",
+          overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap"
         }}>
           Dr. {displayName} {professor.last_name}
         </h3>
         <div style={{
           fontSize: "0.68rem", color: "rgba(82, 82, 91, 0.7)",
           fontFamily: "var(--font-sans)", lineHeight: 1.4,
+          overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap"
         }}>
           {professor.institution || "Independent Researcher"}
         </div>
@@ -107,7 +111,7 @@ export function ProfessorCard({ professor }: ProfessorCardProps) {
       {/* Expertise tags */}
       <div style={{ flex: 1, marginBottom: "1.75rem" }}>
         <div style={{
-          fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.28em",
+          fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.28em",
           textTransform: "uppercase", color: "rgba(129, 140, 248, 0.4)",
           marginBottom: "0.75rem", fontFamily: "var(--font-mono, monospace)",
         }}>
