@@ -76,7 +76,7 @@ export default async function ProfessorDashboard() {
       const student = Array.isArray(req.student) ? req.student[0] : req.student;
       return {
         ...req,
-        student,
+        student: student ?? { first_name: "Unknown", last_name: "", preferred_name: null, education_level: "" },
         initial_message:
           req.messages?.length > 0
             ? [...req.messages].sort(
@@ -94,10 +94,10 @@ export default async function ProfessorDashboard() {
       return {
         ...req,
         participant: {
-          first_name: student.first_name,
-          last_name: student.last_name,
-          preferred_name: student.preferred_name,
-          detail: student.education_level?.replace("-", " "),
+          first_name: student?.first_name ?? "Unknown",
+          last_name: student?.last_name ?? "",
+          preferred_name: student?.preferred_name ?? null,
+          detail: student?.education_level?.replace("-", " "),
         },
         latest_message:
           req.messages?.length > 0
@@ -116,10 +116,10 @@ export default async function ProfessorDashboard() {
       return {
         ...req,
         participant: {
-          first_name: student.first_name,
-          last_name: student.last_name,
-          preferred_name: student.preferred_name,
-          detail: student.education_level?.replace("-", " "),
+          first_name: student?.first_name ?? "Unknown",
+          last_name: student?.last_name ?? "",
+          preferred_name: student?.preferred_name ?? null,
+          detail: student?.education_level?.replace("-", " "),
         },
         latest_message:
           req.messages?.length > 0
