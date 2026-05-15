@@ -35,12 +35,12 @@ export default async function MessagePage({ params }: MessagePageProps) {
   const isProfessor = session.user.id === request.professor_id;
   const student = (Array.isArray(request.student) ? request.student[0] : request.student) as any;
   const professor = (Array.isArray(request.professor) ? request.professor[0] : request.professor) as any;
-  const participant = isProfessor ? student : professor;
-  const participantName = participant.preferred_name || participant.first_name;
+  const participant = (isProfessor ? student : professor) ?? {};
+  const participantName = participant.preferred_name || participant.first_name || "Unknown";
   const participantTitle =
     participant.role === "professor"
-      ? `Dr. ${participantName} ${participant.last_name}`
-      : `${participantName} ${participant.last_name}`;
+      ? `Dr. ${participantName} ${participant.last_name ?? ""}`
+      : `${participantName} ${participant.last_name ?? ""}`;
 
   const { data: messages } = await supabase
     .from("messages")
@@ -68,7 +68,7 @@ export default async function MessagePage({ params }: MessagePageProps) {
 
           <div className="flex items-center gap-3.5 min-w-0">
             <div className="w-9 h-9 rounded-xl bg-[rgba(250, 250, 249, 0.04)] border border-[rgba(250, 250, 249, 0.07)] flex items-center justify-center text-sm font-semibold text-[#6a6a6a] flex-shrink-0">
-              {participant.first_name[0]}{participant.last_name[0]}
+              {participant.first_name?.[0] ?? "?"}{participant.last_name?.[0] ?? ""}
             </div>
             <div className="min-w-0">
               <div className="flex items-center gap-1.5 mb-0.5">
