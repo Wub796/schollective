@@ -58,8 +58,18 @@ export function ChatThread({
         (payload) => {
           const newMessage = payload.new as Message;
           setMessages((prev) => {
+            // Already have the real message
             if (prev.find((m) => m.id === newMessage.id)) return prev;
-            return [...prev, newMessage];
+            // Remove any optimistic placeholder with same content+sender, then add real
+            const withoutOptimistic = prev.filter(
+              (m) =>
+                !(
+                  m.id.startsWith("optimistic-") &&
+                  m.sender_id === newMessage.sender_id &&
+                  m.content === newMessage.content
+                )
+            );
+            return [...withoutOptimistic, newMessage];
           });
         }
       )
@@ -75,16 +85,31 @@ export function ChatThread({
     if (!inputValue.trim() || sending || status !== "active") return;
 
     setSending(true);
-    const content = inputValue;
+    const content = inputValue.trim();
     setInputValue("");
+
+    // Optimistically add the message immediately
+    const optimisticMsg: Message = {
+      id: `optimistic-${Date.now()}`,
+      content,
+      sender_id: currentUserId,
+      created_at: new Date().toISOString(),
+    };
+    setMessages((prev) => [...prev, optimisticMsg]);
 
     try {
       const result = await sendMessage(requestId, content);
       if (result?.error) {
+        // Remove optimistic message and restore input on failure
+        setMessages((prev) => prev.filter((m) => m.id !== optimisticMsg.id));
         toast.error(result.error);
         setInputValue(content);
       }
+      // On success: realtime will replace the optimistic msg with the real one
+      // The dedup check (prev.find m.id === newMessage.id) won't match the temp id,
+      // so the real message appends and we clean up the optimistic one
     } catch {
+      setMessages((prev) => prev.filter((m) => m.id !== optimisticMsg.id));
       toast.error("Failed to send message.");
       setInputValue(content);
     } finally {
