@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/utils/supabase/server";
+import { createAdminClient } from "@/utils/supabase/admin";
 import { revalidatePath } from "next/cache";
 
 /**
@@ -8,6 +9,7 @@ import { revalidatePath } from "next/cache";
  * Reactivation is role-aware: students → 'active', professors → 'approved'.
  */
 export async function setUserSuspended(targetUserId: string, suspend: boolean) {
+  // Verify the caller is an admin (uses session RLS client)
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
@@ -15,16 +17,18 @@ export async function setUserSuspended(targetUserId: string, suspend: boolean) {
   const { data: admin } = await supabase.from("profiles").select("role").eq("id", user.id).single();
   if (admin?.role !== "admin") return { error: "Access denied" };
 
-  // Determine the correct reactivated status for this user's role
+  // Use service-role client to bypass RLS on all mutations
+  const adminClient = createAdminClient();
+
   let newStatus: string;
   if (suspend) {
     newStatus = "suspended";
   } else {
-    const { data: target } = await supabase.from("profiles").select("role").eq("id", targetUserId).single();
+    const { data: target } = await adminClient.from("profiles").select("role").eq("id", targetUserId).single();
     newStatus = target?.role === "professor" ? "approved" : "active";
   }
 
-  const { error } = await supabase
+  const { error } = await adminClient
     .from("profiles")
     .update({ status: newStatus, updated_at: new Date().toISOString() })
     .eq("id", targetUserId);
@@ -34,7 +38,6 @@ export async function setUserSuspended(targetUserId: string, suspend: boolean) {
   revalidatePath("/admin/users");
   return { success: true };
 }
-
 
 /**
  * Admin: revoke a professor's verified status (set back to pending).
@@ -47,7 +50,8 @@ export async function revokeVerification(professorId: string) {
   const { data: admin } = await supabase.from("profiles").select("role").eq("id", user.id).single();
   if (admin?.role !== "admin") return { error: "Access denied" };
 
-  const { error } = await supabase
+  const adminClient = createAdminClient();
+  const { error } = await adminClient
     .from("profiles")
     .update({ status: "pending", updated_at: new Date().toISOString() })
     .eq("id", professorId)

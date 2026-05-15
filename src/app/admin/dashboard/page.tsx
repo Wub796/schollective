@@ -1,6 +1,7 @@
 import React from "react";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
+import { createAdminClient } from "@/utils/supabase/admin";
 import { AdminShell } from "@/components/ui/AdminShell";
 import { AdminReviewTable } from "@/components/features/AdminReviewTable";
 import {
@@ -55,7 +56,9 @@ export default async function AdminDashboard() {
     redirect(profile?.role === "professor" ? "/prof/dashboard" : "/dashboard");
   }
 
-  // ── Data fetches ─────────────────────────────────────────────────────────
+  // Use service-role client for all data queries (bypasses RLS)
+  const adminClient = createAdminClient();
+
   const [
     { data: pendingProfessors },
     { count: studentCount },
@@ -64,16 +67,16 @@ export default async function AdminDashboard() {
     { count: pendingCount },
     { count: activeThreadsCount },
   ] = await Promise.all([
-    supabase
+    adminClient
       .from("profiles")
       .select("id, first_name, last_name, preferred_name, email, institution, expertise_fields, ai_score, ai_level, ai_flags")
       .eq("role", "professor").eq("status", "pending")
       .order("created_at", { ascending: true }),
-    supabase.from("profiles").select("*", { count: "exact", head: true }).eq("role", "student"),
-    supabase.from("profiles").select("*", { count: "exact", head: true }).eq("role", "student").eq("status", "active"),
-    supabase.from("profiles").select("*", { count: "exact", head: true }).eq("role", "professor").in("status", ["approved", "active"]),
-    supabase.from("profiles").select("*", { count: "exact", head: true }).eq("role", "professor").eq("status", "pending"),
-    supabase.from("requests").select("*", { count: "exact", head: true }).eq("status", "active"),
+    adminClient.from("profiles").select("*", { count: "exact", head: true }).eq("role", "student"),
+    adminClient.from("profiles").select("*", { count: "exact", head: true }).eq("role", "student").eq("status", "active"),
+    adminClient.from("profiles").select("*", { count: "exact", head: true }).eq("role", "professor").in("status", ["approved", "active"]),
+    adminClient.from("profiles").select("*", { count: "exact", head: true }).eq("role", "professor").eq("status", "pending"),
+    adminClient.from("requests").select("*", { count: "exact", head: true }).eq("status", "active"),
   ]);
 
   const totalActive = (activeStudentCount ?? 0) + (facultyCount ?? 0);
