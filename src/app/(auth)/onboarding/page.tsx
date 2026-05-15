@@ -148,8 +148,8 @@ function OnboardingContent() {
       .upsert(payload, { onConflict: "id" });
 
     if (upsertError) {
-      console.error("[onboarding] upsert error:", upsertError.message);
-      setError("Could not save your profile. Please try again.");
+      console.error("[onboarding] upsert error:", upsertError.message, upsertError.details, upsertError.hint);
+      setError(`Save failed: ${upsertError.message}`);
       setLoading(false);
       return;
     }
