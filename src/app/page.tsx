@@ -91,21 +91,21 @@ export default function LandingPage() {
       <nav id="navbar" className="fixed top-0 left-0 right-0 z-[100] flex items-center justify-between px-4 sm:px-6 lg:px-8 py-5 bg-[rgba(11,22,40,0.72)] backdrop-blur-xl border-b border-[rgba(212,146,42,0.1)] transition-all">
         <div className="max-w-7xl mx-auto w-full flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3">
-            <div className="w-8 h-8 relative flex items-center justify-center bg-[var(--amber)] rounded-lg font-serif text-[var(--navy)] text-xl font-bold animate-pulse">S</div>
-            <div className="font-serif text-2xl text-[var(--ivory)] font-medium">Schol<span className="text-[var(--amber)]">lective</span></div>
+            <div className="w-8 h-8 relative flex items-center justify-center bg-[var(--amber)] rounded-lg font-serif text-[var(--navy)] text-xl font-bold animate-pulse shrink-0">S</div>
+            <div className="font-serif text-xl sm:text-2xl text-[var(--ivory)] font-medium">Schol<span className="hidden sm:inline text-[var(--amber)]">lective</span></div>
           </Link>
-          <ul className="hidden lg:flex items-center gap-12 list-none">
+          <ul className="hidden lg:flex items-center gap-8 list-none">
             <li><Link href="#how" className="text-sm text-[var(--text-muted)] hover:text-[var(--ivory)] transition-colors">How it works</Link></li>
             <li><Link href="#students" className="text-sm text-[var(--text-muted)] hover:text-[var(--ivory)] transition-colors">For students</Link></li>
             <li><Link href="#roles" className="text-sm text-[var(--text-muted)] hover:text-[var(--ivory)] transition-colors">For professors</Link></li>
             <li><Link href="/features" className="text-sm text-[var(--text-muted)] hover:text-[var(--ivory)] transition-colors">Features</Link></li>
           </ul>
-          <div className="flex items-center gap-4">
-            <Link href="/auth/login">
+          <div className="flex items-center gap-3 sm:gap-4">
+            <Link href="/auth/login" className="hidden sm:block">
               <Button variant="ghost" size="sm">Log in</Button>
             </Link>
             <Link href="/auth/signup">
-              <Button size="sm">Get started free</Button>
+              <Button size="sm" className="whitespace-nowrap">Get started free</Button>
             </Link>
           </div>
         </div>
@@ -122,35 +122,35 @@ export default function LandingPage() {
 
           <div className="max-w-[680px] relative z-[2] animate-in fade-in slide-in-from-bottom-12 duration-1000">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[rgba(212,146,42,0.09)] border border-[rgba(212,146,42,0.22)] text-[var(--amber)] text-[0.78rem] font-medium tracking-widest uppercase mb-8">
-              <span className="w-1.5 h-1.5 rounded-full bg-[var(--amber)] animate-pulse"></span>
-              Now open for students & professors
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--amber)] animate-pulse shrink-0"></span>
+              <span className="truncate">Now open for students & professors</span>
             </div>
-            <h1 className="font-serif text-[clamp(3rem,5.5vw,5.2rem)] font-light leading-[1.08] text-[var(--ivory)] mb-7">
+            <h1 className="font-serif text-[clamp(2.5rem,5.5vw,5.2rem)] font-light leading-[1.08] text-[var(--ivory)] mb-7">
               Academic mentorship,<br /><em className="italic text-[var(--amber-light)]">finally democratized</em>
             </h1>
             <p className="text-lg lg:text-xl font-light text-[var(--text-muted)] max-w-[520px] leading-relaxed mb-10">
               Schollective connects students directly with verified professors for structured guidance, research help, and intellectual mentorship &mdash; free of charge, free of barriers.
             </p>
-            <div className="flex items-center gap-5 mb-5 flex-wrap">
-              <Link href="/auth/signup">
-                <Button size="lg">Start as a student</Button>
+            <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-5 mb-5 w-full">
+              <Link href="/auth/signup" className="w-full sm:w-auto">
+                <Button size="lg" className="w-full">Start as a student</Button>
               </Link>
-              <Link href="/auth/signup">
-                <Button variant="ghost" size="lg">Join as a professor</Button>
+              <Link href="/auth/signup" className="w-full sm:w-auto">
+                <Button variant="ghost" size="lg" className="w-full">Join as a professor</Button>
               </Link>
             </div>
             <p className="text-xs text-[var(--text-muted)] opacity-60 font-medium tracking-wide italic">✦ Free for students &nbsp;·&nbsp; Volunteer-based &nbsp;·&nbsp; No cold emails</p>
           </div>
 
           <div className="w-[min(480px,40vw)] z-[2] hidden lg:block animate-in fade-in slide-in-from-bottom-12 delay-200 duration-1000 preserve-3d">
-            <div ref={clusterRef} className="relative h-[480px] preserve-3d transition-transform duration-500 ease-out">
-              <div data-depth="18" className="absolute top-[4%] right-[-10px] w-[210px] bg-[rgba(17,34,64,0.82)] border border-[rgba(212,146,42,0.14)] rounded-[18px] p-5 backdrop-blur-3xl shadow-2xl transition-all duration-500 hover:border-[rgba(212,146,42,0.3)] z-[2]">
+            <div ref={clusterRef} className="relative h-[480px] preserve-3d transition-transform duration-500 ease-out max-w-[400px]">
+              <div data-depth="18" className="absolute top-[4%] right-0 sm:right-[-10px] w-[210px] bg-[rgba(17,34,64,0.82)] border border-[rgba(212,146,42,0.14)] rounded-[18px] p-5 backdrop-blur-3xl shadow-2xl transition-all duration-500 hover:border-[rgba(212,146,42,0.3)] z-[2]">
                 <div className="text-[0.68rem] font-medium tracking-widest text-[var(--text-muted)] uppercase mb-3">Professor profile</div>
                 <div className="w-10 h-10 rounded-full bg-[rgba(212,146,42,0.18)] text-[var(--amber-light)] flex items-center justify-center font-serif text-lg mb-3 shadow-inner">RK</div>
                 <div className="font-serif text-lg text-[var(--ivory)] mb-1">Dr. Rachel Kim</div>
                 <div className="text-[0.78rem] text-[var(--text-muted)] mb-3">Computational Biology · MIT</div>
                 <div className="flex gap-2">
-                  <span className="px-2.5 py-0.5 rounded-full bg-[rgba(212,146,42,0.1)] text-[var(--amber-light)] border border-[rgba(212,146,42,0.18)] text-[0.68rem]">Available now</span>
+                  <span className="px-2.5 py-0.5 rounded-full bg-[rgba(212,146,42,0.1)] text-[var(--amber-light)] border border-[rgba(212,146,42,0.18)] text-[0.68rem] whitespace-nowrap">Available now</span>
                 </div>
               </div>
 
@@ -161,8 +161,8 @@ export default function LandingPage() {
                   <strong className="text-[var(--ivory)] font-normal">Maya S.</strong> is asking for guidance on structuring a literature review for a machine learning thesis in healthcare applications.
                 </div>
                 <div className="flex gap-2 mt-4">
-                  <Button size="sm" className="text-[0.75rem] px-4 py-1.5 shadow-none">Accept</Button>
-                  <Button variant="ghost" size="sm" className="text-[0.75rem] px-4 py-1.5 shadow-none">View</Button>
+                  <Button size="sm" className="text-[0.75rem] px-4 py-1.5 shadow-none whitespace-nowrap">Accept</Button>
+                  <Button variant="ghost" size="sm" className="text-[0.75rem] px-4 py-1.5 shadow-none whitespace-nowrap">View</Button>
                 </div>
               </div>
 
@@ -190,8 +190,8 @@ export default function LandingPage() {
             { num: "∞", label: "Fields of expertise" },
             { num: "24h", label: "Avg. response time" },
           ].map((stat, i) => (
-            <div key={i} className={`flex-1 text-center px-8 w-full md:w-auto ${i !== 3 ? 'md:border-r md:border-[rgba(155,175,192,0.08)]' : ''}`}>
-              <div className="font-serif text-6xl lg:text-7xl font-light text-[var(--ivory)] mb-3">
+            <div key={i} className={`flex-1 text-center px-4 md:px-8 w-full md:w-auto ${i !== 3 ? 'md:border-r md:border-[rgba(155,175,192,0.08)]' : ''}`}>
+              <div className="font-serif text-4xl md:text-5xl lg:text-7xl font-light text-[var(--ivory)] mb-3">
                 {stat.num.replace('%', '')}<span className="text-[var(--amber)]">{stat.num.includes('%') ? '%' : ''}</span>
               </div>
               <div className="text-[0.75rem] lg:text-[0.85rem] tracking-[0.25em] text-[var(--text-muted)] uppercase font-bold">{stat.label}</div>
@@ -201,12 +201,12 @@ export default function LandingPage() {
       </div>
 
       {/* How It Works Section */}
-      <section id="how" className="py-32 lg:py-48 px-4 sm:px-6 lg:px-8 overflow-hidden relative scroll-mt-24">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 lg:gap-32 items-center">
+      <section id="how" className="py-32 lg:py-48 px-4 sm:px-6 lg:px-8 overflow-hidden relative scroll-mt-32">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 xl:grid-cols-2 gap-16 xl:gap-32 items-center">
           <div className="space-y-16">
             <div>
               <div className="text-[0.7rem] font-bold tracking-[0.2em] text-[var(--amber)] uppercase mb-4">The Methodology</div>
-              <h2 className="font-serif text-5xl lg:text-7xl font-light text-[var(--ivory)] leading-tight mb-8">
+              <h2 className="font-serif text-4xl md:text-5xl lg:text-7xl font-light text-[var(--ivory)] leading-tight mb-8">
                 From sign-up to<br /><em className="italic text-[var(--amber-light)]">meaningful dialogue</em>
               </h2>
               <p className="text-xl text-[var(--text-muted)] font-light leading-relaxed max-w-lg">
@@ -221,8 +221,8 @@ export default function LandingPage() {
                 { n: "3", t: "Submit a structured request", d: "Craft a focused mentorship request &mdash; not a cold email. The structure helps professors respond efficiently." },
                 { n: "4", t: "Engage in guided dialogue", d: "Communicate through organized one-on-one threads. Real academic guidance, on your terms." },
               ].map((step) => (
-                <div key={step.n} className="flex gap-8 animate-in fade-in slide-in-from-left-4 duration-700">
-                  <div className="w-12 h-12 rounded-full border border-[var(--amber)]/30 flex items-center justify-center text-[var(--amber)] font-serif text-xl shrink-0 mt-1">
+                <div key={step.n} className="flex gap-6 sm:gap-8 animate-in fade-in slide-in-from-left-4 duration-700">
+                  <div className="w-12 h-12 rounded-full border border-[var(--amber)]/30 flex items-center justify-center text-[var(--amber)] font-serif text-xl shrink-0 mt-0 sm:mt-1">
                     {step.n}
                   </div>
                   <div>
@@ -234,9 +234,9 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <div className="relative group lg:block hidden animate-in fade-in slide-in-from-right-8 duration-1000">
+          <div className="relative group xl:block hidden animate-in fade-in slide-in-from-right-8 duration-1000">
             <div className="absolute -inset-10 bg-[var(--amber)]/5 blur-[120px] rounded-full transition-all group-hover:bg-[var(--amber)]/10" />
-            <div className="relative bg-[rgba(17,34,64,0.6)] border border-[rgba(212,146,42,0.15)] rounded-[48px] p-10 lg:p-14 backdrop-blur-3xl shadow-2xl">
+            <div className="relative bg-[rgba(17,34,64,0.6)] border border-[rgba(212,146,42,0.15)] rounded-[48px] p-10 lg:p-14 backdrop-blur-3xl shadow-2xl overflow-hidden">
               <div className="flex items-center justify-between mb-10 pb-6 border-b border-[rgba(155,175,192,0.08)]">
                 <div className="font-serif text-2xl text-[var(--ivory)]">Incoming Requests</div>
                 <div className="w-3 h-3 rounded-full bg-[var(--sage-light)] animate-pulse" />
@@ -271,11 +271,11 @@ export default function LandingPage() {
       </section>
 
       {/* Roles Section */}
-      <section id="roles" className="py-32 lg:py-48 px-4 sm:px-6 lg:px-8 relative bg-[rgba(17,34,64,0.3)] scroll-mt-24">
-        <div className="max-w-7xl mx-auto text-center space-y-20">
+      <section id="roles" className="py-32 lg:py-48 px-4 sm:px-6 lg:px-8 relative bg-[rgba(17,34,64,0.3)] scroll-mt-32">
+        <div className="max-w-7xl mx-auto text-center space-y-16 sm:space-y-20">
           <div className="max-w-2xl mx-auto">
             <div className="text-[0.7rem] font-bold tracking-[0.2em] text-[var(--amber)] uppercase mb-4">The Community</div>
-            <h2 className="font-serif text-5xl lg:text-7xl font-light text-[var(--ivory)] leading-tight mb-8">
+            <h2 className="font-serif text-4xl md:text-5xl lg:text-7xl font-light text-[var(--ivory)] leading-tight mb-8">
               Built for <em>both sides</em><br />of the conversation
             </h2>
             <p className="text-xl text-[var(--text-muted)] font-light leading-relaxed">Whether you&apos;re seeking knowledge or sharing it, Schollective structures the experience around you.</p>
@@ -283,10 +283,10 @@ export default function LandingPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-16 text-left">
             {/* Students */}
-            <div id="students" className="bg-[rgba(11,22,40,0.6)] border border-[rgba(155,175,192,0.1)] rounded-[48px] p-12 lg:p-16 transition-all hover:border-[var(--amber)]/20 hover:bg-[rgba(11,22,40,0.8)] relative group overflow-hidden shadow-2xl scroll-mt-32">
+            <div id="students" className="bg-[rgba(11,22,40,0.6)] border border-[rgba(155,175,192,0.1)] rounded-[40px] md:rounded-[48px] p-8 sm:p-12 lg:p-16 transition-all hover:border-[var(--amber)]/20 hover:bg-[rgba(11,22,40,0.8)] relative group overflow-hidden shadow-2xl scroll-mt-40">
               <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-[var(--sage)] to-transparent opacity-50" />
-              <div className="w-16 h-16 rounded-2xl bg-[rgba(61,122,107,0.1)] flex items-center justify-center text-3xl mb-10 border border-[rgba(61,122,107,0.2)] shadow-inner">🎓</div>
-              <h3 className="font-serif text-4xl text-[var(--ivory)] mb-6 font-light">For Students</h3>
+              <div className="w-16 h-16 rounded-2xl bg-[rgba(61,122,107,0.1)] flex items-center justify-center text-3xl mb-10 border border-[rgba(61,122,107,0.2)] shadow-inner shrink-0">🎓</div>
+              <h3 className="font-serif text-3xl md:text-4xl text-[var(--ivory)] mb-6 font-light">For Students</h3>
               <p className="text-lg text-[var(--text-muted)] font-light leading-relaxed mb-10">High school, undergraduate, or graduate &mdash; get direct access to professors without cold-emailing into the void.</p>
               <ul className="space-y-6 mb-12">
                 {[
@@ -307,10 +307,10 @@ export default function LandingPage() {
             </div>
 
             {/* Professors */}
-            <div className="bg-[rgba(11,22,40,0.6)] border border-[rgba(155,175,192,0.1)] rounded-[48px] p-12 lg:p-16 transition-all hover:border-[var(--amber)]/20 hover:bg-[rgba(11,22,40,0.8)] relative group overflow-hidden shadow-2xl">
+            <div className="bg-[rgba(11,22,40,0.6)] border border-[rgba(155,175,192,0.1)] rounded-[40px] md:rounded-[48px] p-8 sm:p-12 lg:p-16 transition-all hover:border-[var(--amber)]/20 hover:bg-[rgba(11,22,40,0.8)] relative group overflow-hidden shadow-2xl">
               <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-[var(--amber)] to-transparent opacity-50" />
-              <div className="w-16 h-16 rounded-2xl bg-[rgba(212,146,42,0.1)] flex items-center justify-center text-3xl mb-10 border border-[rgba(212,146,42,0.2)] shadow-inner">🧑‍🏫</div>
-              <h3 className="font-serif text-4xl text-[var(--ivory)] mb-6 font-light">For Professors</h3>
+              <div className="w-16 h-16 rounded-2xl bg-[rgba(212,146,42,0.1)] flex items-center justify-center text-3xl mb-10 border border-[rgba(212,146,42,0.2)] shadow-inner shrink-0">🧑‍🏫</div>
+              <h3 className="font-serif text-3xl md:text-4xl text-[var(--ivory)] mb-6 font-light">For Professors</h3>
               <p className="text-lg text-[var(--text-muted)] font-light leading-relaxed mb-10">Volunteer-based. Share expertise on your own schedule, with full control over availability and topics.</p>
               <ul className="space-y-6 mb-12">
                 {[
@@ -334,10 +334,10 @@ export default function LandingPage() {
       </section>
 
       {/* Features Grid Section */}
-      <section id="features" className="py-32 lg:py-48 px-4 sm:px-6 lg:px-8 scroll-mt-24">
+      <section id="features" className="py-32 lg:py-48 px-4 sm:px-6 lg:px-8 scroll-mt-32">
         <div className="max-w-7xl mx-auto text-center">
           <div className="text-[0.7rem] font-bold tracking-[0.2em] text-[var(--amber)] uppercase mb-4">Core Infrastructure</div>
-          <h2 className="font-serif text-5xl lg:text-7xl font-light text-[var(--ivory)] leading-tight mb-20">
+          <h2 className="font-serif text-4xl md:text-5xl lg:text-7xl font-light text-[var(--ivory)] leading-tight mb-16 lg:mb-20">
             Everything you need,<br /><em className="italic text-[var(--amber-light)]">nothing you don&apos;t</em>
           </h2>
           
@@ -361,12 +361,12 @@ export default function LandingPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="relative text-center px-4 sm:px-6 lg:px-8 py-48 lg:py-64 overflow-hidden bg-[radial-gradient(ellipse_70%_70%_at_50%_50%,rgba(212,146,42,0.055),transparent_70%)]">
+      <section className="relative text-center px-4 sm:px-6 lg:px-8 py-32 sm:py-48 lg:py-64 overflow-hidden bg-[radial-gradient(ellipse_70%_70%_at_50%_50%,rgba(212,146,42,0.055),transparent_70%)]">
         <div className="max-w-7xl mx-auto relative z-10">
           <div ref={lottieRef} className="mx-auto mb-12 w-[220px] h-[220px] relative z-10 filter drop-shadow-[0_0_24px_rgba(212,146,42,0.22)]"></div>
           
           <div className="text-[0.75rem] font-medium tracking-[0.25em] text-[var(--amber)] uppercase mb-8">Join Schollective</div>
-          <h2 className="font-serif text-6xl lg:text-8xl font-light text-[var(--ivory)] mb-10 max-w-[900px] mx-auto leading-tight">
+          <h2 className="font-serif text-4xl md:text-6xl lg:text-8xl font-light text-[var(--ivory)] mb-10 max-w-[900px] mx-auto leading-tight">
             The conversation<br /><em className="italic text-[var(--amber-light)]">starts here</em>
           </h2>
           <p className="text-[var(--text-muted)] max-w-[600px] mx-auto mb-16 text-xl lg:text-2xl font-light leading-relaxed opacity-90">
