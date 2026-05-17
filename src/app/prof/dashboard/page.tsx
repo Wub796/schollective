@@ -1,10 +1,11 @@
 import React from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase-server";
+import { createClient } from "@/utils/supabase/server";
 import { ThreadCard } from "@/components/features/ThreadCard";
 import { RequestQueueCard } from "@/components/features/RequestQueueCard";
-import { LayoutDashboard, MessageSquare, User, Settings, LogOut, Inbox, Clock } from "lucide-react";
+import { Sidebar } from "@/components/layout/Sidebar";
+import { LayoutDashboard, Inbox, Clock } from "lucide-react";
 
 export default async function ProfessorDashboard() {
   const supabase = await createClient();
@@ -20,9 +21,12 @@ export default async function ProfessorDashboard() {
     .eq("id", session.user.id)
     .single();
 
-  if (!profile || profile.role !== "professor") redirect("/auth/login");
+  if (!profile || profile.role !== "professor") {
+    const fallback = profile?.role === 'admin' ? '/admin/dashboard' : '/dashboard';
+    redirect(fallback);
+  }
   
-  // Middleware should handle this, but as a secondary guard:
+  // Verification Guard
   if (profile.status !== "approved") redirect("/prof/pending");
 
   const displayName = profile.preferred_name || profile.first_name || "Professor";
@@ -87,79 +91,48 @@ export default async function ProfessorDashboard() {
     });
 
   return (
-    <div className="flex min-h-screen">
-      {/* Sidebar */}
-      <aside className="w-[280px] bg-[rgba(11,22,40,0.95)] border-r border-[rgba(155,175,192,0.1)] flex flex-col fixed inset-y-0 z-50">
-        <div className="p-10">
-          <Link href="/" className="font-serif text-2xl text-[var(--ivory)] hover:opacity-80 transition-opacity">
-            Schol<span className="text-[var(--amber)]">lective</span>
-          </Link>
-        </div>
-
-        <nav className="flex-grow px-6 space-y-1">
-          <Link href="/prof/dashboard" className="flex items-center gap-3 px-4 py-3 rounded-xl bg-[rgba(212,146,42,0.08)] text-[var(--ivory)] border border-[rgba(212,146,42,0.2)]">
-            <LayoutDashboard size={18} className="text-[var(--amber)]" />
-            <span className="text-sm font-medium">Professor Portal</span>
-          </Link>
-          <Link href="/messages" className="flex items-center gap-3 px-4 py-3 rounded-xl text-[var(--text-muted)] hover:bg-[rgba(255,255,255,0.04)] hover:text-[var(--ivory)] transition-all">
-            <MessageSquare size={18} />
-            <span className="text-sm font-medium">All Messages</span>
-          </Link>
-          <Link href="/prof/profile" className="flex items-center gap-3 px-4 py-3 rounded-xl text-[var(--text-muted)] hover:bg-[rgba(255,255,255,0.04)] hover:text-[var(--ivory)] transition-all">
-            <User size={18} />
-            <span className="text-sm font-medium">My Profile</span>
-          </Link>
-          <Link href="/prof/settings" className="flex items-center gap-3 px-4 py-3 rounded-xl text-[var(--text-muted)] hover:bg-[rgba(255,255,255,0.04)] hover:text-[var(--ivory)] transition-all">
-            <Settings size={18} />
-            <span className="text-sm font-medium">Settings</span>
-          </Link>
-        </nav>
-
-        <div className="p-6 border-t border-[rgba(155,175,192,0.05)]">
-          <button className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-[var(--text-muted)] hover:bg-red-500/10 hover:text-red-400 transition-all">
-            <LogOut size={18} />
-            <span className="text-sm font-medium">Log Out</span>
-          </button>
-        </div>
-      </aside>
+    <div className="flex min-h-screen bg-[var(--navy)]">
+      <Sidebar role="professor" />
 
       {/* Main Content */}
-      <main className="flex-grow pl-[280px]">
-        <div className="p-12 max-w-7xl mx-auto">
+      <main className="flex-grow lg:pl-[280px]">
+        <div className="content-container py-12 lg:py-20">
           
           {/* Header */}
-          <header className="flex justify-between items-start mb-16 animate-in fade-in slide-in-from-top-4 duration-700">
+          <header className="flex flex-col md:flex-row justify-between items-start gap-8 mb-20 animate-in fade-in slide-in-from-top-4 duration-700">
             <div>
               <div className="text-[0.75rem] font-bold tracking-[0.15em] text-[var(--amber)] uppercase mb-2">Academic Dashboard</div>
-              <h1 className="font-serif text-4xl font-light text-[var(--ivory)]">
+              <h1 className="font-serif text-4xl lg:text-5xl font-light text-[var(--ivory)] leading-tight">
                 Welcome, Dr. <em className="italic text-[var(--amber-light)]">{displayName}</em>
               </h1>
-              <p className="text-[var(--text-muted)] mt-2">Manage your student mentorship pipeline and active research dialogues.</p>
+              <p className="text-[var(--text-muted)] mt-4 text-lg font-light max-w-2xl">
+                Manage your student mentorship pipeline and active research dialogues.
+              </p>
             </div>
-            <div className="flex items-center gap-4 bg-[rgba(17,34,64,0.5)] border border-[rgba(212,146,42,0.15)] rounded-full px-5 py-2.5 backdrop-blur-md">
+            <div className="flex items-center gap-4 bg-[rgba(17,34,64,0.5)] border border-[rgba(212,146,42,0.15)] rounded-2xl px-6 py-3 backdrop-blur-md">
               <div className="w-2.5 h-2.5 rounded-full bg-[var(--sage-light)] animate-pulse"></div>
-              <span className="text-xs font-medium text-[var(--ivory)] tracking-wide uppercase">Accepting Requests</span>
+              <span className="text-xs font-bold text-[var(--ivory)] tracking-widest uppercase">Accepting Requests</span>
             </div>
           </header>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-12 lg:gap-16">
             
             {/* Left Column: Request Queue */}
-            <div className="lg:col-span-1 space-y-8">
-              <div className="flex items-center gap-3">
+            <div className="xl:col-span-1 space-y-8">
+              <div className="flex items-center gap-3 border-b border-[rgba(155,175,192,0.1)] pb-4">
                 <Inbox size={20} className="text-[var(--amber)]" />
-                <h2 className="text-xl font-serif text-[var(--ivory)] font-light">Request Queue</h2>
-                <span className="bg-[rgba(212,146,42,0.1)] text-[var(--amber-light)] text-[0.65rem] font-bold px-2 py-0.5 rounded-full border border-[var(--amber)]/20">
-                  {pendingRequests.length}
+                <h2 className="text-xl font-serif text-[var(--ivory)] font-light text-center md:text-left">Request Queue</h2>
+                <span className="ml-auto bg-[rgba(212,146,42,0.1)] text-[var(--amber-light)] text-[0.65rem] font-bold px-3 py-1 rounded-full border border-[var(--amber)]/20">
+                  {pendingRequests.length} Pending
                 </span>
               </div>
 
               {pendingRequests.length === 0 ? (
-                <div className="bg-[rgba(17,34,64,0.2)] border border-dashed border-[rgba(155,175,192,0.1)] rounded-3xl p-10 text-center">
-                  <p className="text-[var(--text-muted)] text-sm italic">No pending requests at this time.</p>
+                <div className="bg-[rgba(17,34,64,0.2)] border border-dashed border-[rgba(155,175,192,0.1)] rounded-3xl p-10 text-center backdrop-blur-sm">
+                  <p className="text-[var(--text-muted)] text-sm italic font-light">No pending requests at this time.</p>
                 </div>
               ) : (
-                <div className="space-y-6">
+                <div className="grid grid-cols-1 gap-6">
                   {pendingRequests.map(req => (
                     <RequestQueueCard key={req.id} request={req as any} />
                   ))}
@@ -168,24 +141,24 @@ export default async function ProfessorDashboard() {
             </div>
 
             {/* Right Column: Active Threads */}
-            <div className="lg:col-span-2 space-y-8">
-              <div className="flex items-center gap-3">
+            <div className="xl:col-span-2 space-y-8">
+              <div className="flex items-center gap-3 border-b border-[rgba(155,175,192,0.1)] pb-4">
                 <Clock size={20} className="text-[var(--sage-light)]" />
-                <h2 className="text-xl font-serif text-[var(--ivory)] font-light">Active Mentorships</h2>
-                <span className="bg-[rgba(91,160,144,0.1)] text-[var(--sage-light)] text-[0.65rem] font-bold px-2 py-0.5 rounded-full border border-[var(--sage)]/20">
-                  {activeThreads.length}
+                <h2 className="text-xl font-serif text-[var(--ivory)] font-light text-center md:text-left">Active Mentorships</h2>
+                <span className="ml-auto bg-[rgba(91,160,144,0.1)] text-[var(--sage-light)] text-[0.65rem] font-bold px-3 py-1 rounded-full border border-[var(--sage)]/20">
+                  {activeThreads.length} Active
                 </span>
               </div>
 
               {activeThreads.length === 0 ? (
-                <div className="bg-[rgba(17,34,64,0.3)] border border-rgba(155,175,192,0.1)] rounded-[32px] p-16 text-center backdrop-blur-sm">
-                  <h3 className="font-serif text-xl text-[var(--ivory)] mb-2 font-light">No active dialogues</h3>
-                  <p className="text-[var(--text-muted)] text-sm max-w-[300px] mx-auto leading-relaxed">
+                <div className="bg-[rgba(17,34,64,0.3)] border border-[rgba(155,175,192,0.1)] rounded-[32px] p-20 text-center backdrop-blur-sm font-light">
+                  <h3 className="font-serif text-2xl text-[var(--ivory)] mb-3 font-light">No active dialogues</h3>
+                  <p className="text-[var(--text-muted)] text-base max-w-[320px] mx-auto leading-relaxed">
                     Once you accept a request from the queue, it will appear here as an active thread.
                   </p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100">
                   {activeThreads.map(req => (
                     <ThreadCard key={req.id} request={req as any} viewerRole="professor" />
                   ))}

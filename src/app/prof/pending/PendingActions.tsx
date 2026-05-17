@@ -2,12 +2,13 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/utils/supabase/client";
 import { Button } from "@/components/ui/Button";
 import { RefreshCw, LogOut } from "lucide-react";
 
 export function PendingActions() {
   const router = useRouter();
+  const supabase = createClient();
   const [refreshing, setRefreshing] = useState(false);
 
   const handleRefresh = async () => {
