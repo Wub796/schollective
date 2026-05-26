@@ -10,7 +10,7 @@ export async function middleware(request: NextRequest) {
   const path = url.pathname
 
   // Protected route patterns — use exact prefixes to avoid false matches
-  const isStudentRoute  = path === '/dashboard' || path.startsWith('/dashboard/') || path.startsWith('/request') || path.startsWith('/messages')
+  const isStudentRoute  = path === '/dashboard' || path.startsWith('/dashboard/') || path.startsWith('/request') || path.startsWith('/messages') || path.startsWith('/profile')
   const isProfessorRoute = path === '/prof/dashboard' || path === '/prof/profile' || path.startsWith('/prof/dashboard') || path.startsWith('/prof/profile') || path.startsWith('/prof/pending')
   const isAdminRoute    = path.startsWith('/admin')
   // /professors is a student-accessible browse route, NOT a professor-only route
