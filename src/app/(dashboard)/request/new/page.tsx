@@ -36,18 +36,7 @@ export default async function RequestNewPage({ searchParams }: RequestNewPagePro
   }
 
   return (
-    <div className="min-h-screen bg-[#0d0d0d] relative overflow-x-hidden">
-      {/* Grid bg */}
-      <div
-        className="fixed inset-0 z-0 pointer-events-none opacity-40"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg,rgba(255,255,255,0.03) 1px, transparent 1px)",
-          backgroundSize: "48px 48px",
-        }}
-        aria-hidden="true"
-      />
-
+    <div className="page-bg">
       <main className="relative z-10 px-4 sm:px-6 lg:px-8 py-12 lg:py-24">
         <div className="max-w-3xl mx-auto">
           {/* Navigation */}
