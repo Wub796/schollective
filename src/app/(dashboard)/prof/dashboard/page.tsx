@@ -76,46 +76,92 @@ export default async function ProfessorDashboard() {
     });
 
   return (
-    <div className="py-10 lg:py-16 space-y-16">
-      {/* Header */}
-      <header className="flex flex-col md:flex-row justify-between items-start gap-6">
-        <div>
-          <p className="text-[0.62rem] font-bold tracking-[0.25em] text-[#3a3a3a] uppercase mb-3">
-            Academic Dashboard
-          </p>
-          <h1 className="font-display text-4xl lg:text-5xl font-bold text-[#f2f2f0] leading-tight">
-            Welcome, Dr. <em className="italic text-[#5a5a5a]">{displayName}</em>
-          </h1>
-          <p className="text-[#4a4a4a] mt-4 text-base font-light max-w-xl leading-relaxed">
-            Manage your student mentorship pipeline and active research dialogues.
-          </p>
-        </div>
-        <div className="flex items-center gap-2 border border-[rgba(255,255,255,0.06)] rounded-xl px-5 py-2.5">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#5a5a5a] animate-pulse" />
-          <span className="text-[0.65rem] font-semibold text-[#6a6a6a] uppercase tracking-widest">
-            Accepting Requests
+    <div style={{ padding: "3rem 0", display: "flex", flexDirection: "column", gap: "4rem" }}>
+
+      {/* ── Header ──────────────────────────────────────────────── */}
+      <header style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <span style={{ width: "1.5rem", height: "1px", background: "rgba(255,255,255,0.2)", display: "block" }} />
+          <span style={{
+            fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.38em",
+            textTransform: "uppercase", color: "rgba(255,255,255,0.3)",
+            fontFamily: "var(--font-mono, monospace)",
+          }}>
+            Faculty Portal
           </span>
         </div>
+
+        <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: "2rem", flexWrap: "wrap" }}>
+          <h1 className="font-display" style={{
+            fontSize: "clamp(2.4rem, 5vw, 3.8rem)", fontWeight: 900,
+            color: "#fff", letterSpacing: "-0.035em", lineHeight: 1.05,
+          }}>
+            Dr. <em style={{ fontStyle: "italic", color: "rgba(255,255,255,0.35)" }}>{displayName}</em>
+          </h1>
+
+          {/* Accepting badge */}
+          <div style={{
+            display: "flex", alignItems: "center", gap: "0.5rem",
+            padding: "0.6rem 1.25rem",
+            border: "1px solid rgba(255,255,255,0.1)",
+            borderRadius: "100px",
+            background: "rgba(255,255,255,0.04)",
+            flexShrink: 0,
+          }}>
+            <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "rgba(120,220,120,0.8)", animation: "pulse 2s infinite" }} />
+            <span style={{
+              fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.22em",
+              textTransform: "uppercase", color: "rgba(255,255,255,0.5)",
+              fontFamily: "var(--font-mono, monospace)",
+            }}>
+              Accepting Requests
+            </span>
+          </div>
+        </div>
+
+        <p style={{
+          fontSize: "0.9rem", color: "rgba(255,255,255,0.4)", fontWeight: 300,
+          maxWidth: "42rem", lineHeight: 1.7, fontFamily: "var(--font-sans)", marginTop: "0.25rem",
+        }}>
+          Manage your student mentorship pipeline and active research dialogues.
+        </p>
       </header>
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-12">
-        {/* Request Queue */}
-        <div className="xl:col-span-1 space-y-6">
-          <div className="flex items-center gap-3 border-b border-[rgba(255,255,255,0.05)] pb-4">
-            <Inbox size={16} className="text-[#4a4a4a]" />
-            <h2 className="font-display text-lg font-semibold text-[#d4d4d2]">
+      {/* ── Hairline ─────────────────────────────────────────────── */}
+      <div style={{ height: "1px", background: "rgba(255,255,255,0.06)" }} />
+
+      {/* ── Two-column layout ─────────────────────────────────────── */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: "4rem", alignItems: "start" }}>
+
+        {/* ── Request Queue ─────────────────────────────────────── */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+            <span style={{ width: "1rem", height: "1px", background: "rgba(255,255,255,0.2)", display: "block" }} />
+            <h2 className="font-display" style={{ fontSize: "1.1rem", fontWeight: 700, color: "rgba(255,255,255,0.85)", letterSpacing: "-0.02em" }}>
               Request Queue
             </h2>
-            <span className="ml-auto text-[0.62rem] text-[#3a3a3a] uppercase tracking-widest font-bold">
+            <span style={{
+              marginLeft: "auto",
+              fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.25em",
+              textTransform: "uppercase", color: "rgba(255,255,255,0.25)",
+              fontFamily: "var(--font-mono, monospace)",
+            }}>
               {pendingRequests.length} pending
             </span>
           </div>
+
           {pendingRequests.length === 0 ? (
-            <div className="border border-dashed border-[rgba(255,255,255,0.05)] rounded-2xl p-12 text-center">
-              <p className="text-[#3a3a3a] text-sm italic font-light">No pending requests.</p>
+            <div style={{
+              border: "1px dashed rgba(255,255,255,0.07)",
+              borderRadius: "16px", padding: "2.5rem 1.5rem", textAlign: "center",
+            }}>
+              <Inbox size={20} color="rgba(255,255,255,0.2)" style={{ margin: "0 auto 0.75rem" }} />
+              <p style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.3)", fontStyle: "italic", fontFamily: "var(--font-sans)" }}>
+                No pending requests
+              </p>
             </div>
           ) : (
-            <div className="space-y-4">
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
               {pendingRequests.map((req) => (
                 <RequestQueueCard key={req.id} request={req as any} />
               ))}
@@ -123,28 +169,41 @@ export default async function ProfessorDashboard() {
           )}
         </div>
 
-        {/* Active Threads */}
-        <div className="xl:col-span-2 space-y-6">
-          <div className="flex items-center gap-3 border-b border-[rgba(255,255,255,0.05)] pb-4">
-            <Clock size={16} className="text-[#4a4a4a]" />
-            <h2 className="font-display text-lg font-semibold text-[#d4d4d2]">
+        {/* ── Active Threads ───────────────────────────────────── */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+            <span style={{ width: "1rem", height: "1px", background: "rgba(255,255,255,0.2)", display: "block" }} />
+            <h2 className="font-display" style={{ fontSize: "1.1rem", fontWeight: 700, color: "rgba(255,255,255,0.85)", letterSpacing: "-0.02em" }}>
               Active Mentorships
             </h2>
-            <span className="ml-auto text-[0.62rem] text-[#3a3a3a] uppercase tracking-widest font-bold">
+            <span style={{
+              marginLeft: "auto",
+              fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.25em",
+              textTransform: "uppercase", color: "rgba(255,255,255,0.25)",
+              fontFamily: "var(--font-mono, monospace)",
+            }}>
               {activeThreads.length} active
             </span>
           </div>
+
           {activeThreads.length === 0 ? (
-            <div className="border border-dashed border-[rgba(255,255,255,0.05)] rounded-2xl p-20 text-center">
-              <h3 className="font-display text-xl text-[#d4d4d2] mb-3 font-semibold">
-                No active dialogues
-              </h3>
-              <p className="text-[#3a3a3a] text-sm font-light max-w-xs mx-auto leading-relaxed">
-                Once you accept a request, it will appear here as an active thread.
-              </p>
+            <div style={{
+              border: "1px dashed rgba(255,255,255,0.07)",
+              borderRadius: "16px", padding: "4rem 2rem", textAlign: "center",
+              display: "flex", flexDirection: "column", alignItems: "center", gap: "1rem",
+            }}>
+              <Clock size={20} color="rgba(255,255,255,0.2)" />
+              <div>
+                <h3 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "rgba(255,255,255,0.6)", marginBottom: "0.4rem", letterSpacing: "-0.02em" }}>
+                  No active dialogues
+                </h3>
+                <p style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.3)", maxWidth: "22rem", lineHeight: 1.7, fontFamily: "var(--font-sans)" }}>
+                  Once you accept a request, it will appear here as an active mentorship thread.
+                </p>
+              </div>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "1.25rem" }}>
               {activeThreads.map((req) => (
                 <ThreadCard key={req.id} request={req as any} viewerRole="professor" />
               ))}
