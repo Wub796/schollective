@@ -766,3 +766,12 @@ body {
   color: #fff !important;
   border-color: rgba(255, 255, 255, 0.5) !important;
 }
+
+/* Quick Action Cards */
+.quick-action-card {
+  transition: background 0.2s, border-color 0.2s;
+}
+.quick-action-card:hover {
+  background: rgba(255, 255, 255, 0.055) !important;
+  border-color: rgba(255, 255, 255, 0.13) !important;
+}
