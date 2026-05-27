@@ -1,84 +1,224 @@
 import React from "react";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
-import { Label } from "@/components/ui/Label";
-import { ShieldCheck } from "lucide-react";
+import { ShieldCheck, GraduationCap, BookOpen, Eye } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
-export default async function ProfessorProfilePage() {
+export default async function ProfPublicProfilePage() {
   const supabase = await createClient();
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session) redirect("/login");
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
 
   const { data: profile } = await supabase
     .from("profiles")
     .select("*")
-    .eq("id", session.user.id)
+    .eq("id", user.id)
     .single();
 
   if (!profile || profile.role !== "professor") redirect("/dashboard");
 
+  const displayName = profile.preferred_name || profile.first_name || "Professor";
+  const initials    = `${profile.first_name?.[0] ?? ""}${profile.last_name?.[0] ?? ""}`.toUpperCase();
+
   return (
-    <div className="py-10 lg:py-16 space-y-10">
-      {/* Header */}
-      <header>
-        <p className="text-[0.62rem] font-bold tracking-[0.25em] text-[#3a3a3a] uppercase mb-3">
-          Profile Management
-        </p>
-        <h1 className="font-display text-4xl lg:text-5xl font-bold text-[#f2f2f0] leading-tight mb-4">
-          Edit Academic <em className="italic text-[#5a5a5a]">Credentials</em>
+    <div style={{ padding: "3rem 0", display: "flex", flexDirection: "column", gap: "3.5rem", maxWidth: "680px" }}>
+
+      {/* ── Header ── */}
+      <header style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <span style={{ width: "1.5rem", height: "1px", background: "rgba(255,255,255,0.2)", display: "block" }} />
+          <span style={{ fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.38em", textTransform: "uppercase", color: "rgba(255,255,255,0.3)", fontFamily: "var(--font-mono, monospace)" }}>
+            Faculty Portal
+          </span>
+        </div>
+        <h1 className="font-display" style={{ fontSize: "clamp(2.4rem, 5vw, 3.8rem)", fontWeight: 900, color: "#fff", letterSpacing: "-0.035em", lineHeight: 1.05 }}>
+          Your public{" "}
+          <em style={{ fontStyle: "italic", color: "rgba(255,255,255,0.35)" }}>profile</em>
         </h1>
-        <p className="text-[#4a4a4a] text-base font-light max-w-xl leading-relaxed">
-          Update your expertise, institution, and availability to help students find you more effectively.
-        </p>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+          <Eye size={12} color="rgba(255,255,255,0.3)" />
+          <p style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.35)", fontFamily: "var(--font-sans)", lineHeight: 1.6 }}>
+            This is exactly how students see your card in the mentor directory.
+          </p>
+        </div>
       </header>
 
-      {/* Form */}
-      <div className="bg-[#111111] border border-[rgba(255,255,255,0.06)] rounded-2xl p-8 md:p-12 max-w-2xl">
-        <form className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <div className="space-y-2">
-              <Label>First Name</Label>
-              <Input defaultValue={profile.first_name} />
-            </div>
-            <div className="space-y-2">
-              <Label>Last Name</Label>
-              <Input defaultValue={profile.last_name} />
-            </div>
-          </div>
-          <div className="space-y-2">
-            <Label>Institution</Label>
-            <Input defaultValue={profile.institution} placeholder="e.g. Stanford University" />
-          </div>
-          <div className="space-y-2">
-            <Label>Expertise Fields (comma separated)</Label>
-            <Input
-              defaultValue={profile.expertise_fields?.join(", ")}
-              placeholder="e.g. Quantum Computing, AI Ethics"
-            />
-          </div>
-          <div className="pt-2">
-            <Button>Save Changes</Button>
-          </div>
-        </form>
-      </div>
+      {/* ── Hairline ── */}
+      <div style={{ height: "1px", background: "rgba(255,255,255,0.06)" }} />
 
-      {/* Verification status */}
-      <div className="flex items-center justify-between gap-6 max-w-2xl bg-[#111111] border border-[rgba(255,255,255,0.06)] rounded-xl p-5">
-        <div className="flex items-center gap-3">
-          <ShieldCheck size={20} className="text-[#4a4a4a]" />
-          <div>
-            <div className="text-xs font-semibold text-[#d4d4d2] uppercase tracking-widest mb-0.5">
-              Account Status
+      {/* ── Profile card preview (mimics ProfessorCard) ── */}
+      <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.25rem" }}>
+          <span style={{ width: "1rem", height: "1px", background: "rgba(255,255,255,0.2)", display: "block" }} />
+          <span style={{ fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.35em", textTransform: "uppercase", color: "rgba(255,255,255,0.3)", fontFamily: "var(--font-mono, monospace)" }}>
+            Student View
+          </span>
+        </div>
+
+        <div style={{
+          position: "relative",
+          background: "rgba(255,255,255,0.025)",
+          border: "1px solid rgba(255,255,255,0.08)",
+          borderRadius: "16px",
+          padding: "2rem",
+          display: "flex",
+          flexDirection: "column",
+          overflow: "hidden",
+        }}>
+          {/* Top shimmer */}
+          <div style={{
+            position: "absolute", insetInline: 0, top: 0, height: "1px",
+            background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent)",
+          }} />
+
+          {/* Header row */}
+          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "1.5rem" }}>
+            <div style={{
+              width: "3rem", height: "3rem", borderRadius: "50%",
+              background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.12)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: "0.85rem", fontWeight: 600, color: "rgba(255,255,255,0.6)",
+              fontFamily: "var(--font-sans)",
+            }}>
+              {initials || "?"}
             </div>
-            <div className="text-[0.72rem] text-[#5a5a5a]">Verified Professor</div>
+            <div style={{
+              display: "flex", alignItems: "center", gap: "0.35rem",
+              padding: "0.3rem 0.7rem", borderRadius: "100px",
+              border: "1px solid rgba(255,255,255,0.08)",
+              background: "rgba(255,255,255,0.03)",
+            }}>
+              <span style={{ width: "5px", height: "5px", borderRadius: "50%", background: "rgba(120,200,120,0.7)" }} />
+              <span style={{ fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(255,255,255,0.35)", fontFamily: "var(--font-mono, monospace)" }}>
+                Verified
+              </span>
+            </div>
+          </div>
+
+          {/* Name + institution */}
+          <div style={{ marginBottom: "1.5rem" }}>
+            <h3 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "rgba(255,255,255,0.88)", lineHeight: 1.2, marginBottom: "0.4rem", letterSpacing: "-0.02em" }}>
+              Dr. {displayName} {profile.last_name}
+            </h3>
+            <div style={{ fontSize: "0.68rem", color: "rgba(255,255,255,0.38)", fontFamily: "var(--font-sans)", lineHeight: 1.4, display: "flex", alignItems: "center", gap: "0.4rem" }}>
+              <GraduationCap size={12} color="rgba(255,255,255,0.25)" />
+              {profile.institution || "Independent Researcher"}
+            </div>
+          </div>
+
+          {/* Hairline */}
+          <div style={{ height: "1px", background: "rgba(255,255,255,0.06)", marginBottom: "1.25rem" }} />
+
+          {/* Expertise tags */}
+          <div style={{ marginBottom: "1.75rem" }}>
+            <div style={{ fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.28em", textTransform: "uppercase", color: "rgba(255,255,255,0.2)", marginBottom: "0.75rem", fontFamily: "var(--font-mono, monospace)" }}>
+              Focus Areas
+            </div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem" }}>
+              {profile.expertise_fields?.slice(0, 4).map((field: string, idx: number) => (
+                <span key={idx} style={{
+                  padding: "0.3rem 0.7rem", borderRadius: "100px",
+                  border: "1px solid rgba(255,255,255,0.08)",
+                  background: "rgba(255,255,255,0.03)",
+                  fontSize: "0.65rem", color: "rgba(255,255,255,0.5)", fontFamily: "var(--font-sans)",
+                }}>
+                  {field}
+                </span>
+              )) || (
+                <span style={{ fontSize: "0.72rem", fontStyle: "italic", color: "rgba(255,255,255,0.22)", fontFamily: "var(--font-sans)" }}>
+                  Open to all topics
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* CTA (non-functional preview) */}
+          <div style={{
+            padding: "0.85rem 1.5rem",
+            background: "rgba(255,255,255,0.08)",
+            border: "1px solid rgba(255,255,255,0.12)",
+            borderRadius: "100px",
+            textAlign: "center",
+            fontSize: "0.58rem", fontWeight: 700,
+            letterSpacing: "0.24em", textTransform: "uppercase",
+            color: "rgba(255,255,255,0.8)", fontFamily: "var(--font-sans)",
+            cursor: "default",
+          }}>
+            Request Mentorship
           </div>
         </div>
-        <div className="text-[0.65rem] text-[#2e2e2e] font-light">
-          Last verified: {new Date(profile.updated_at).toLocaleDateString()}
+      </div>
+
+      {/* ── Hairline ── */}
+      <div style={{ height: "1px", background: "rgba(255,255,255,0.06)" }} />
+
+      {/* ── Info breakdown ── */}
+      <div style={{ display: "flex", flexDirection: "column", gap: "2.25rem" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <span style={{ width: "1rem", height: "1px", background: "rgba(255,255,255,0.2)", display: "block" }} />
+          <span style={{ fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.35em", textTransform: "uppercase", color: "rgba(255,255,255,0.3)", fontFamily: "var(--font-mono, monospace)" }}>
+            Profile Details
+          </span>
+        </div>
+
+        {/* Fields */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.75rem" }}>
+          {[
+            { icon: <BookOpen size={14} color="rgba(255,255,255,0.3)" />, label: "Full Name",    value: `Dr. ${profile.first_name ?? ""} ${profile.last_name ?? ""}` },
+            { icon: <GraduationCap size={14} color="rgba(255,255,255,0.3)" />, label: "Institution", value: profile.institution || "Not specified" },
+          ].map(({ icon, label, value }) => (
+            <div key={label}>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", marginBottom: "0.5rem" }}>
+                {icon}
+                <span style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(255,255,255,0.28)", fontFamily: "var(--font-mono, monospace)" }}>
+                  {label}
+                </span>
+              </div>
+              <p style={{ fontSize: "0.88rem", color: "rgba(255,255,255,0.7)", fontFamily: "var(--font-sans)" }}>{value}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Expertise list */}
+        <div>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", marginBottom: "0.75rem" }}>
+            <span style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(255,255,255,0.28)", fontFamily: "var(--font-mono, monospace)" }}>
+              Expertise Fields
+            </span>
+          </div>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
+            {profile.expertise_fields?.map((field: string, idx: number) => (
+              <span key={idx} style={{
+                padding: "0.35rem 0.85rem", borderRadius: "100px",
+                border: "1px solid rgba(255,255,255,0.1)",
+                background: "rgba(255,255,255,0.04)",
+                fontSize: "0.72rem", color: "rgba(255,255,255,0.55)", fontFamily: "var(--font-sans)",
+              }}>
+                {field}
+              </span>
+            )) || (
+              <span style={{ fontSize: "0.78rem", fontStyle: "italic", color: "rgba(255,255,255,0.22)", fontFamily: "var(--font-sans)" }}>
+                No fields specified yet — update them in your profile settings.
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* ── Hairline ── */}
+      <div style={{ height: "1px", background: "rgba(255,255,255,0.06)" }} />
+
+      {/* ── Verification status ── */}
+      <div style={{ display: "flex", alignItems: "center", gap: "1.25rem" }}>
+        <ShieldCheck size={18} color="rgba(120,200,120,0.6)" />
+        <div>
+          <div style={{ fontSize: "0.75rem", fontWeight: 600, color: "rgba(255,255,255,0.6)", fontFamily: "var(--font-sans)", marginBottom: "0.2rem" }}>
+            Verified Faculty Account
+          </div>
+          <div style={{ fontSize: "0.6rem", color: "rgba(255,255,255,0.25)", fontFamily: "var(--font-sans)" }}>
+            Your account was reviewed and approved by the Schollective admin team.
+          </div>
         </div>
       </div>
     </div>
