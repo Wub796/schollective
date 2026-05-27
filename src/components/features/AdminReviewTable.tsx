@@ -44,7 +44,7 @@ export function AdminReviewTable({ applicants }: AdminReviewTableProps) {
           <CheckCircle size={24} className="text-[#4a4a4a]" />
         </div>
         <h3 className="font-display text-2xl text-[#d4d4d2] mb-3 font-semibold">Queue Cleared</h3>
-        <p className="text-[#4a4a4a] max-w-[320px] mx-auto leading-relaxed text-sm font-light">
+        <p className="text-[#4a4a4a] max-w-[320px] mx-auto leading-relaxed text-sm font-light text-center">
           There are no pending professor applications currently awaiting review.
         </p>
       </div>
