@@ -36,7 +36,7 @@ function Field({
           display: "block",
           fontSize: "0.6rem",
           fontWeight: 700,
-          letterSpacing: "0.2em",
+          letterSpacing: "0.22em",
           textTransform: "uppercase",
           color: focused ? "rgba(250, 250, 249, 0.65)" : "rgba(250, 250, 249, 0.3)",
           marginBottom: "0.6rem",
@@ -60,7 +60,7 @@ function Field({
             background: "transparent",
             border: "none",
             borderBottom: `1px solid ${focused ? "rgba(129, 140, 248, 0.6)" : "rgba(129, 140, 248, 0.18)"}`,
-            padding: "0.75rem 0",
+            padding: "0.85rem 0",
             fontSize: "1rem",
             color: "#fafaf9",
             outline: "none",
@@ -70,7 +70,7 @@ function Field({
           }}
         />
         {suffix && (
-          <span style={{ position: "absolute", right: 0, bottom: "0.75rem" }}>
+          <span style={{ position: "absolute", right: 0, bottom: "0.85rem" }}>
             {suffix}
           </span>
         )}
@@ -217,7 +217,7 @@ function LoginContent() {
           variants={stagger}
           initial="hidden"
           animate="show"
-          style={{ width: "100%", maxWidth: "420px" }}
+          style={{ width: "100%", maxWidth: "480px" }}
         >
           {/* Eyebrow */}
           <motion.div variants={fadeUp} style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.75rem" }}>
@@ -233,7 +233,7 @@ function LoginContent() {
 
           {/* Headline */}
           <motion.h1 variants={fadeUp} className="font-display" style={{
-            fontSize: "clamp(2.5rem, 6vw, 3.5rem)", fontWeight: 900,
+            fontSize: "clamp(2.6rem, 6vw, 3.8rem)", fontWeight: 900,
             color: "#fafaf9", letterSpacing: "-0.035em", lineHeight: 1.05,
             marginBottom: "2.75rem",
           }}>
@@ -242,7 +242,7 @@ function LoginContent() {
           </motion.h1>
 
           <form onSubmit={handleSubmit}>
-            <div style={{ display: "flex", flexDirection: "column", gap: "2.25rem" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }}>
               <motion.div variants={fadeUp}>
                 <Field id="email" name="email" type="email" label="Institutional Email" placeholder="name@university.edu" required />
               </motion.div>
@@ -275,7 +275,7 @@ function LoginContent() {
                   whileHover={{ scale: 1.015 }}
                   whileTap={{ scale: 0.985 }}
                   style={{
-                    width: "100%", padding: "1rem 2rem",
+                    width: "100%", padding: "1.15rem 2.5rem",
                     background: "#818cf8", color: "#09090b",
                     border: "none", borderRadius: "100px",
                     fontSize: "0.6rem", fontWeight: 700,
@@ -303,7 +303,7 @@ function LoginContent() {
                   whileHover={{ scale: 1.015, backgroundColor: "rgba(250, 250, 249, 0.07)" }}
                   whileTap={{ scale: 0.985 }}
                   style={{
-                    width: "100%", padding: "1rem 2rem",
+                    width: "100%", padding: "1.15rem 2.5rem",
                     background: "rgba(250, 250, 249, 0.04)",
                     color: "#fafaf9",
                     border: "1px solid rgba(250, 250, 249, 0.1)",

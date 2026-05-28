@@ -19,7 +19,7 @@ function StatCard({
   return (
     <div
       style={{
-        padding: "1.5rem",
+        padding: "2rem",
         border: `1px solid ${accent ? `${accent}18` : "rgba(250,250,249,0.07)"}`,
         borderRadius: "14px",
         background: accent ? `${accent}06` : "rgba(250,250,249,0.025)",
@@ -28,7 +28,7 @@ function StatCard({
     >
       <span
         className="font-display"
-        style={{ fontSize: "2.6rem", fontWeight: 900, color: accent ?? "#fafaf9", letterSpacing: "-0.04em", lineHeight: 1 }}
+        style={{ fontSize: "2.8rem", fontWeight: 900, color: accent ?? "#fafaf9", letterSpacing: "-0.04em", lineHeight: 1 }}
       >
         {value}
       </span>
@@ -88,14 +88,14 @@ export default async function AdminDashboard() {
       <div style={{ marginBottom: "2.5rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", marginBottom: "0.75rem" }}>
           <span style={{ width: "1.25rem", height: "1px", background: "rgba(250,250,249,0.2)", display: "block" }} />
-          <span style={{ fontSize: "0.48rem", fontWeight: 700, letterSpacing: "0.38em", textTransform: "uppercase", color: "rgba(250,250,249,0.3)", fontFamily: "var(--font-mono, monospace)" }}>
+          <span style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.42em", textTransform: "uppercase", color: "rgba(250,250,249,0.3)", fontFamily: "var(--font-mono, monospace)" }}>
             Internal Systems
           </span>
         </div>
-        <h1 className="font-display" style={{ fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 900, color: "#fafaf9", letterSpacing: "-0.035em", lineHeight: 1.05 }}>
+        <h1 className="font-display" style={{ fontSize: "clamp(2.6rem, 4vw, 3.5rem)", fontWeight: 900, color: "#fafaf9", letterSpacing: "-0.035em", lineHeight: 1.05 }}>
           Admin <em style={{ fontStyle: "italic", color: "rgba(250,250,249,0.3)" }}>Overview</em>
         </h1>
-        <p style={{ fontSize: "0.85rem", color: "rgba(250,250,249,0.38)", fontWeight: 300, maxWidth: "38rem", lineHeight: 1.7, fontFamily: "var(--font-sans)", marginTop: "0.5rem" }}>
+        <p style={{ fontSize: "0.95rem", color: "rgba(250,250,249,0.38)", fontWeight: 300, maxWidth: "38rem", lineHeight: 1.8, fontFamily: "var(--font-sans)", marginTop: "0.5rem" }}>
           Platform health at a glance. Manage the verification queue, user accounts, and mentorship activity.
         </p>
         <AdminPreviewControls />
@@ -116,10 +116,10 @@ export default async function AdminDashboard() {
       <section style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.65rem" }}>
           <span style={{ width: "1rem", height: "1px", background: "rgba(250,250,249,0.2)", display: "block" }} />
-          <h2 className="font-display" style={{ fontSize: "1.15rem", fontWeight: 700, color: "rgba(250,250,249,0.85)", letterSpacing: "-0.02em" }}>
+          <h2 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "rgba(250,250,249,0.85)", letterSpacing: "-0.025em" }}>
             Verification Queue
           </h2>
-          <span style={{ marginLeft: "auto", fontSize: "0.48rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(250,250,249,0.25)", fontFamily: "var(--font-mono, monospace)" }}>
+          <span style={{ marginLeft: "auto", fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.42em", textTransform: "uppercase", color: "rgba(250,250,249,0.25)", fontFamily: "var(--font-mono, monospace)" }}>
             {pendingProfessors?.length ?? 0} pending
           </span>
         </div>

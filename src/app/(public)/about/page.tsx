@@ -38,29 +38,27 @@ const TEAM = [
   { initials: "AS", name: "Ayaan Siddiqui", role: "Founder", desc: "Driven by the belief that every student deserves a mentor, regardless of background or institution." },
   { initials: "BW", name: "Benjamin Wu", role: "Builder", desc: "Built Schollective to democratize the academic connections that shaped his own path." },
   { initials: "JH", name: "Joseph Hu", role: "Builder", desc: "Dedicated to engineering systems that connect students with the guidance they need to grow academically and professionally." },
-];
-
-export default function AboutPage() {
+];export default function AboutPage() {
   return (
-    <div style={{ background: "var(--bg-base)", color: "#fafaf9", minHeight: "100vh" }}>
+    <div style={{ background: "var(--bg-base)", color: "var(--text-primary)", minHeight: "100vh" }}>
       <PublicNav />
 
       {/* Ambient glow */}
-      <div style={{ position: "fixed", inset: 0, pointerEvents: "none", background: "radial-gradient(ellipse 80% 60% at 20% 30%, rgba(99,102,241,0.12) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 80% 70%, rgba(129,140,248,0.08) 0%, transparent 60%)", zIndex: 0 }} />
+      <div style={{ position: "fixed", inset: 0, pointerEvents: "none", background: "radial-gradient(ellipse 80% 60% at 20% 30%, rgba(99,102,241,0.08) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 80% 70%, rgba(129,140,248,0.05) 0%, transparent 60%)", zIndex: 0 }} />
 
-      <div style={{ position: "relative", zIndex: 1, maxWidth: "1000px", margin: "0 auto", padding: "10rem 2.5rem 6rem" }}>
+      <div style={{ position: "relative", zIndex: 1, maxWidth: "920px", margin: "0 auto", padding: "12rem 2rem 8rem" }}>
 
         {/* ── HERO ─────────────────────────────────────── */}
         <FadeIn>
           <Eyebrow>Our Story</Eyebrow>
-          <h1 className="font-display" style={{ fontSize: "clamp(3.2rem, 8vw, 6.5rem)", fontWeight: 900, letterSpacing: "-0.045em", lineHeight: 0.93, marginBottom: "2.5rem", color: "#fafaf9" }}>
+          <h1 className="font-display" style={{ fontSize: "clamp(3rem, 7.5vw, 5.5rem)", fontWeight: 900, letterSpacing: "-0.04em", lineHeight: 1.0, marginBottom: "3rem", color: "var(--text-primary)" }}>
             Democratizing<br />
-            <em style={{ fontStyle: "italic", color: "rgba(129, 140, 248, 0.6)" }}>academic mentorship.</em>
+            <em style={{ fontStyle: "italic", color: "var(--accent)" }}>academic mentorship.</em>
           </h1>
         </FadeIn>
 
         <FadeIn delay={0.15}>
-          <p style={{ fontSize: "clamp(1rem, 1.4vw, 1.2rem)", color: "rgba(168, 179, 207, 0.7)", lineHeight: 1.8, maxWidth: "600px", marginBottom: "6rem" }}>
+          <p style={{ fontSize: "clamp(1.05rem, 1.4vw, 1.25rem)", color: "var(--text-secondary)", lineHeight: 1.85, maxWidth: "680px", marginBottom: "7rem" }}>
             Schollective was built on a simple belief: students should be able to reach the academics
             who can change their trajectory — without needing to know the right people, attend the right school,
             or send hundreds of cold emails into the void.
@@ -69,7 +67,7 @@ export default function AboutPage() {
 
         {/* ── STATS ─────────────────────────────────────── */}
         <FadeIn delay={0.1}>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: "2.5rem", padding: "3rem 0", borderTop: "1px solid rgba(129, 140, 248, 0.1)", borderBottom: "1px solid rgba(129, 140, 248, 0.1)", marginBottom: "6rem" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "3.5rem", padding: "4rem 0", borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)", marginBottom: "7rem" }}>
             {[
               { n: "2,300+", l: "US Universities Indexed" },
               { n: "Free", l: "Always, for students" },
@@ -77,8 +75,8 @@ export default function AboutPage() {
               { n: "0", l: "Cold emails required" },
             ].map(({ n, l }) => (
               <div key={l}>
-                <div className="font-display" style={{ fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 900, color: "#fafaf9", letterSpacing: "-0.04em", lineHeight: 1 }}>{n}</div>
-                <div style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.28em", textTransform: "uppercase", color: "rgba(129, 140, 248, 0.45)", marginTop: "0.6rem", fontFamily: "var(--font-sans)" }}>{l}</div>
+                <div className="font-display" style={{ fontSize: "clamp(2.2rem, 4vw, 3.2rem)", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.04em", lineHeight: 1 }}>{n}</div>
+                <div style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.28em", textTransform: "uppercase", color: "var(--accent)", opacity: 0.75, marginTop: "0.75rem", fontFamily: "var(--font-sans)" }}>{l}</div>
               </div>
             ))}
           </div>
@@ -87,20 +85,20 @@ export default function AboutPage() {
         {/* ── THE PROBLEM ─────────────────────────────── */}
         <FadeIn>
           <Eyebrow>The Problem</Eyebrow>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4rem", marginBottom: "6rem" }} className="prose-two-col">
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "5rem", marginBottom: "7rem" }} className="prose-two-col">
             <div>
-              <h2 className="font-display" style={{ fontSize: "clamp(1.6rem, 2.8vw, 2.4rem)", fontWeight: 800, letterSpacing: "-0.03em", lineHeight: 1.15, color: "#fafaf9", marginBottom: "1.25rem" }}>
+              <h2 className="font-display" style={{ fontSize: "clamp(1.8rem, 2.8vw, 2.4rem)", fontWeight: 800, letterSpacing: "-0.03em", lineHeight: 1.2, color: "var(--text-primary)", marginBottom: "1.5rem" }}>
                 Mentorship is gated by proximity.
               </h2>
-              <p style={{ fontSize: "0.92rem", color: "rgba(168, 179, 207, 0.6)", lineHeight: 1.85 }}>
+              <p style={{ fontSize: "0.95rem", color: "var(--text-secondary)", lineHeight: 1.85 }}>
                 Students at underfunded schools or outside major research hubs rarely connect with the professors whose work matches their interests. Geography, institutional prestige, and sheer luck create invisible walls that have nothing to do with talent.
               </p>
             </div>
             <div>
-              <h2 className="font-display" style={{ fontSize: "clamp(1.6rem, 2.8vw, 2.4rem)", fontWeight: 800, letterSpacing: "-0.03em", lineHeight: 1.15, color: "#fafaf9", marginBottom: "1.25rem" }}>
+              <h2 className="font-display" style={{ fontSize: "clamp(1.8rem, 2.8vw, 2.4rem)", fontWeight: 800, letterSpacing: "-0.03em", lineHeight: 1.2, color: "var(--text-primary)", marginBottom: "1.5rem" }}>
                 Cold emails don't scale.
               </h2>
-              <p style={{ fontSize: "0.92rem", color: "rgba(168, 179, 207, 0.6)", lineHeight: 1.85 }}>
+              <p style={{ fontSize: "0.95rem", color: "var(--text-secondary)", lineHeight: 1.85 }}>
                 Professors receive hundreds of unfocused requests. Students spend days crafting emails that go unread. Both sides lose. Schollective replaces that broken system with structured, purposeful academic dialogue.
               </p>
             </div>
@@ -110,53 +108,53 @@ export default function AboutPage() {
         {/* ── VALUES ─────────────────────────────────────── */}
         <FadeIn>
           <Eyebrow>What We Stand For</Eyebrow>
-          <h2 className="font-display" style={{ fontSize: "clamp(2rem, 4vw, 3.5rem)", fontWeight: 900, letterSpacing: "-0.04em", lineHeight: 0.95, marginBottom: "3.5rem", color: "#fafaf9" }}>
-            Four principles.<br /><em style={{ fontStyle: "italic", color: "rgba(168, 179, 207, 0.4)" }}>One direction.</em>
+          <h2 className="font-display" style={{ fontSize: "clamp(2.2rem, 4vw, 3.5rem)", fontWeight: 900, letterSpacing: "-0.04em", lineHeight: 1.0, marginBottom: "4rem", color: "var(--text-primary)" }}>
+            Four principles.<br /><em style={{ fontStyle: "italic", color: "var(--accent)" }}>One direction.</em>
           </h2>
         </FadeIn>
 
-        <div style={{ marginBottom: "6rem" }}>
+        <div style={{ marginBottom: "7rem" }}>
           {VALUES.map((v, i) => (
             <FadeIn key={v.n} delay={i * 0.07}>
               <div
                 style={{
                   display: "grid",
                   gridTemplateColumns: "3.5rem 1fr",
-                  gap: "2rem",
-                  padding: "2.5rem 0",
-                  borderTop: "1px solid rgba(129, 140, 248, 0.08)",
+                  gap: "2.5rem",
+                  padding: "3rem 0",
+                  borderTop: "1px solid var(--border)",
                   alignItems: "start",
                 }}
               >
-                <span style={{ fontFamily: "monospace", fontSize: "0.52rem", letterSpacing: "0.18em", color: "rgba(82, 82, 91, 0.5)", paddingTop: "0.35rem" }}>{v.n}</span>
+                <span style={{ fontFamily: "monospace", fontSize: "0.55rem", letterSpacing: "0.18em", color: "var(--text-tertiary)", paddingTop: "0.35rem" }}>{v.n}</span>
                 <div>
-                  <h3 className="font-display" style={{ fontSize: "1.35rem", fontWeight: 800, color: "#fafaf9", letterSpacing: "-0.02em", marginBottom: "0.75rem" }}>{v.title}</h3>
-                  <p style={{ fontSize: "0.9rem", color: "rgba(168, 179, 207, 0.55)", lineHeight: 1.8 }}>{v.body}</p>
+                  <h3 className="font-display" style={{ fontSize: "1.45rem", fontWeight: 800, color: "var(--text-primary)", letterSpacing: "-0.02em", marginBottom: "0.85rem" }}>{v.title}</h3>
+                  <p style={{ fontSize: "0.95rem", color: "var(--text-secondary)", lineHeight: 1.8 }}>{v.body}</p>
                 </div>
               </div>
             </FadeIn>
           ))}
-          <div style={{ borderTop: "1px solid rgba(129, 140, 248, 0.06)" }} />
+          <div style={{ borderTop: "1px solid var(--border)" }} />
         </div>
 
         {/* ── TEAM ─────────────────────────────────────── */}
         <FadeIn>
           <Eyebrow>The Builders</Eyebrow>
-          <h2 className="font-display" style={{ fontSize: "clamp(2rem, 3.5vw, 3rem)", fontWeight: 900, letterSpacing: "-0.04em", marginBottom: "3rem", color: "#fafaf9" }}>
-            Built by someone who<br /><em style={{ fontStyle: "italic", color: "rgba(168, 179, 207, 0.35)" }}>lived the problem.</em>
+          <h2 className="font-display" style={{ fontSize: "clamp(2.2rem, 3.5vw, 3rem)", fontWeight: 900, letterSpacing: "-0.04em", marginBottom: "4rem", color: "var(--text-primary)" }}>
+            Built by someone who<br /><em style={{ fontStyle: "italic", color: "var(--accent)" }}>lived the problem.</em>
           </h2>
         </FadeIn>
 
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "1.5rem", marginBottom: "6rem" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "2rem", marginBottom: "7rem" }}>
           {TEAM.map((m) => (
             <FadeIn key={m.name}>
-              <div style={{ padding: "2rem", border: "1px solid rgba(129, 140, 248, 0.12)", borderRadius: "16px", background: "rgba(17, 17, 19, 0.7)", maxWidth: "320px" }}>
-                <div style={{ width: "48px", height: "48px", borderRadius: "12px", background: "linear-gradient(135deg, #6366f1, #818cf8)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "1.25rem" }}>
-                  <span className="font-display" style={{ fontWeight: 900, fontSize: "1rem", color: "#fafaf9" }}>{m.initials}</span>
+              <div style={{ padding: "2.25rem", border: "1px solid var(--border)", borderRadius: "16px", background: "var(--bg-surface-1)", height: "100%", display: "flex", flexDirection: "column" }}>
+                <div style={{ width: "48px", height: "48px", borderRadius: "12px", background: "linear-gradient(135deg, var(--accent-blue), var(--accent))", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "1.5rem" }}>
+                  <span className="font-display" style={{ fontWeight: 900, fontSize: "1.1rem", color: "var(--text-primary)" }}>{m.initials}</span>
                 </div>
-                <div className="font-display" style={{ fontWeight: 800, fontSize: "1.1rem", color: "#fafaf9", letterSpacing: "-0.02em", marginBottom: "0.25rem" }}>{m.name}</div>
-                <div style={{ fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(129, 140, 248, 0.5)", marginBottom: "1rem" }}>{m.role}</div>
-                <p style={{ fontSize: "0.85rem", color: "rgba(168, 179, 207, 0.55)", lineHeight: 1.75 }}>{m.desc}</p>
+                <div className="font-display" style={{ fontWeight: 800, fontSize: "1.15rem", color: "var(--text-primary)", letterSpacing: "-0.02em", marginBottom: "0.35rem" }}>{m.name}</div>
+                <div style={{ fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--accent)", marginBottom: "1.25rem" }}>{m.role}</div>
+                <p style={{ fontSize: "0.9rem", color: "var(--text-secondary)", lineHeight: 1.8 }}>{m.desc}</p>
               </div>
             </FadeIn>
           ))}
@@ -164,20 +162,20 @@ export default function AboutPage() {
 
         {/* ── CTA ─────────────────────────────────────── */}
         <FadeIn>
-          <div style={{ padding: "3.5rem", border: "1px solid rgba(129, 140, 248, 0.14)", borderRadius: "20px", background: "rgba(99, 102, 241, 0.06)", display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", gap: "2rem" }}>
+          <div style={{ padding: "4.5rem 3rem", border: "1px solid var(--border)", borderRadius: "20px", background: "rgba(99, 102, 241, 0.04)", display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", gap: "3rem" }}>
             <div>
-              <h2 className="font-display" style={{ fontSize: "clamp(1.8rem, 3vw, 2.5rem)", fontWeight: 900, letterSpacing: "-0.04em", color: "#fafaf9", marginBottom: "0.75rem" }}>
+              <h2 className="font-display" style={{ fontSize: "clamp(2rem, 3vw, 2.6rem)", fontWeight: 900, letterSpacing: "-0.04em", color: "var(--text-primary)", marginBottom: "1rem" }}>
                 Ready to connect?
               </h2>
-              <p style={{ fontSize: "0.9rem", color: "rgba(168, 179, 207, 0.55)", maxWidth: "360px" }}>
+              <p style={{ fontSize: "0.95rem", color: "var(--text-secondary)", maxWidth: "420px", lineHeight: 1.8 }}>
                 Join the platform where serious students meet verified professors.
               </p>
             </div>
-            <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
-              <Link href="/signup" style={{ textDecoration: "none", padding: "0.9rem 2rem", background: "#818cf8", color: "#09090b", borderRadius: "100px", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase" }}>
+            <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+              <Link href="/signup" className="group relative inline-flex items-center justify-center rounded-full" style={{ textDecoration: "none", padding: "1rem 2.25rem", background: "var(--accent)", color: "var(--bg-base)", fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", transition: "background 0.3s" }}>
                 Create Account
               </Link>
-              <Link href="/" style={{ textDecoration: "none", padding: "0.9rem 2rem", border: "1px solid rgba(129, 140, 248, 0.3)", color: "rgba(168, 179, 207, 0.7)", borderRadius: "100px", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase" }}>
+              <Link href="/" className="group relative inline-flex items-center justify-center rounded-full" style={{ textDecoration: "none", padding: "1rem 2.25rem", border: "1px solid var(--border)", color: "var(--text-secondary)", fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", transition: "border-color 0.3s, color 0.3s" }}>
                 Back to Home
               </Link>
             </div>

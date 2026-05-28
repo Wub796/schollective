@@ -29,23 +29,23 @@ export default async function ProfPublicProfilePage() {
   const initials    = `${profile.first_name?.[0] ?? ""}${profile.last_name?.[0] ?? ""}`.toUpperCase();
 
   return (
-    <div style={{ padding: "3rem 0", display: "flex", flexDirection: "column", gap: "3.5rem", maxWidth: "680px" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "5rem", maxWidth: "680px" }}>
 
       {/* ── Header ── */}
       <header style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
           <span style={{ width: "1.5rem", height: "1px", background: "rgba(250, 250, 249, 0.2)", display: "block" }} />
-          <span style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.38em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.3)", fontFamily: "var(--font-mono, monospace)" }}>
+          <span style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.42em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.3)", fontFamily: "var(--font-mono, monospace)" }}>
             Faculty Portal
           </span>
         </div>
-        <h1 className="font-display" style={{ fontSize: "clamp(2.4rem, 5vw, 3.8rem)", fontWeight: 900, color: "#fafaf9", letterSpacing: "-0.035em", lineHeight: 1.05 }}>
+        <h1 className="font-display" style={{ fontSize: "clamp(2.6rem, 5vw, 4rem)", fontWeight: 900, color: "#fafaf9", letterSpacing: "-0.035em", lineHeight: 1.05 }}>
           Your public{" "}
           <em style={{ fontStyle: "italic", color: "rgba(250, 250, 249, 0.35)" }}>profile</em>
         </h1>
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
           <Eye size={12} color="rgba(250, 250, 249, 0.3)" />
-          <p style={{ fontSize: "0.75rem", color: "rgba(250, 250, 249, 0.35)", fontFamily: "var(--font-sans)", lineHeight: 1.6 }}>
+          <p style={{ fontSize: "0.85rem", color: "rgba(250, 250, 249, 0.35)", fontFamily: "var(--font-sans)", lineHeight: 1.6 }}>
             This is exactly how students see your card in the mentor directory.
           </p>
         </div>
@@ -58,7 +58,7 @@ export default async function ProfPublicProfilePage() {
       <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.25rem" }}>
           <span style={{ width: "1rem", height: "1px", background: "rgba(250, 250, 249, 0.2)", display: "block" }} />
-          <span style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.35em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.3)", fontFamily: "var(--font-mono, monospace)" }}>
+          <span style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.42em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.3)", fontFamily: "var(--font-mono, monospace)" }}>
             Student View
           </span>
         </div>
@@ -164,7 +164,7 @@ export default async function ProfPublicProfilePage() {
       <div style={{ display: "flex", flexDirection: "column", gap: "2.25rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
           <span style={{ width: "1rem", height: "1px", background: "rgba(250, 250, 249, 0.2)", display: "block" }} />
-          <span style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.35em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.3)", fontFamily: "var(--font-mono, monospace)" }}>
+          <span style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.42em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.3)", fontFamily: "var(--font-mono, monospace)" }}>
             Profile Details
           </span>
         </div>

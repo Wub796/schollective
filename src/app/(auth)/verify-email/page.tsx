@@ -26,7 +26,7 @@ export default function VerifyEmailPage() {
         variants={stagger}
         initial="hidden"
         animate="show"
-        style={{ position: "relative", zIndex: 1, maxWidth: 480, width: "100%", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: "2rem" }}
+        style={{ position: "relative", zIndex: 1, maxWidth: 480, width: "100%", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: "2.5rem" }}
       >
         {/* Wordmark */}
         <motion.div variants={fadeUp}>
@@ -57,7 +57,7 @@ export default function VerifyEmailPage() {
         </motion.div>
 
         {/* Headline */}
-        <motion.h1 variants={fadeUp} className="font-display" style={{ fontSize: "clamp(2rem, 5vw, 3rem)", fontWeight: 900, color: "#fafaf9", letterSpacing: "-0.035em", lineHeight: 1.1 }}>
+        <motion.h1 variants={fadeUp} className="font-display" style={{ fontSize: "clamp(2.4rem, 5vw, 3.5rem)", fontWeight: 900, color: "#fafaf9", letterSpacing: "-0.035em", lineHeight: 1.1 }}>
           Check your<br />
           <em style={{ fontStyle: "italic", color: "rgba(250, 250, 249, 0.35)" }}>inbox.</em>
         </motion.h1>

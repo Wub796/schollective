@@ -41,7 +41,7 @@ function Field({
           display: "block",
           fontSize: "0.6rem",
           fontWeight: 600,
-          letterSpacing: "0.18em",
+          letterSpacing: "0.22em",
           textTransform: "uppercase",
           color: focused ? "rgba(250, 250, 249, 0.65)" : "rgba(250, 250, 249, 0.3)",
           marginBottom: "0.55rem",
@@ -61,7 +61,7 @@ function Field({
           background: "transparent",
           border: "none",
           borderBottom: `1px solid ${focused ? "rgba(129, 140, 248, 0.6)" : "rgba(129, 140, 248, 0.15)"}`,
-          padding: "0.7rem 0",
+          padding: "0.85rem 0",
           fontSize: "0.95rem",
           color: "#fafaf9",
           outline: "none",
@@ -80,13 +80,13 @@ function FieldSelect({ id, name, label, children, required }: {
   const [focused, setFocused] = useState(false);
   return (
     <div>
-      <label htmlFor={id} style={{ display: "block", fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.18em", textTransform: "uppercase", color: focused ? "rgba(250, 250, 249, 0.65)" : "rgba(250, 250, 249, 0.3)", marginBottom: "0.55rem", transition: "color 0.25s", fontFamily: "var(--font-sans)" }}>
+      <label htmlFor={id} style={{ display: "block", fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.22em", textTransform: "uppercase", color: focused ? "rgba(250, 250, 249, 0.65)" : "rgba(250, 250, 249, 0.3)", marginBottom: "0.55rem", transition: "color 0.25s", fontFamily: "var(--font-sans)" }}>
         {label}
       </label>
       <select
         id={id} name={name} required={required}
         onFocus={() => setFocused(true)} onBlur={() => setFocused(false)}
-        style={{ width: "100%", background: "#111113", border: "none", borderBottom: `1px solid ${focused ? "rgba(129, 140, 248, 0.6)" : "rgba(129, 140, 248, 0.15)"}`, padding: "0.7rem 0", fontSize: "0.95rem", color: "#fafaf9", outline: "none", fontFamily: "var(--font-sans)", transition: "border-color 0.3s", cursor: "pointer" }}
+        style={{ width: "100%", background: "#111113", border: "none", borderBottom: `1px solid ${focused ? "rgba(129, 140, 248, 0.6)" : "rgba(129, 140, 248, 0.15)"}`, padding: "0.85rem 0", fontSize: "0.95rem", color: "#fafaf9", outline: "none", fontFamily: "var(--font-sans)", transition: "border-color 0.3s", cursor: "pointer" }}
       >
         {children}
       </select>
@@ -266,7 +266,7 @@ function SignupContent() {
           variants={stagger}
           initial="hidden"
           animate="show"
-          style={{ width: "100%", maxWidth: "460px" }}
+          style={{ width: "100%", maxWidth: "480px" }}
         >
           {/* Eyebrow */}
           <motion.div variants={fadeUp} style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.75rem" }}>
@@ -281,7 +281,7 @@ function SignupContent() {
           </motion.div>
 
           {/* Headline */}
-          <motion.h1 variants={fadeUp} className="font-display" style={{ fontSize: "clamp(2.5rem, 6vw, 3.5rem)", fontWeight: 900, color: "#fafaf9", letterSpacing: "-0.035em", lineHeight: 1.05, marginBottom: "2.5rem" }}>
+          <motion.h1 variants={fadeUp} className="font-display" style={{ fontSize: "clamp(2.6rem, 6vw, 3.8rem)", fontWeight: 900, color: "#fafaf9", letterSpacing: "-0.035em", lineHeight: 1.05, marginBottom: "2.5rem" }}>
             Create your<br />
             <em style={{ fontStyle: "italic", color: "rgba(250, 250, 249, 0.38)" }}>account.</em>
           </motion.h1>
@@ -315,7 +315,7 @@ function SignupContent() {
           </motion.div>
 
           <form onSubmit={handleSubmit}>
-            <div style={{ display: "flex", flexDirection: "column", gap: "1.75rem" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "2.25rem" }}>
 
               {/* Name row */}
               <motion.div variants={fadeUp} className="grid-2" style={{ gap: "1.5rem" }}>
@@ -334,7 +334,7 @@ function SignupContent() {
                     htmlFor="email"
                     style={{
                       display: "block", fontSize: "0.6rem", fontWeight: 600,
-                      letterSpacing: "0.18em", textTransform: "uppercase",
+                      letterSpacing: "0.22em", textTransform: "uppercase",
                       color: emailVal?.state === "error" ? "rgba(255,100,100,0.8)"
                            : emailVal?.state === "warn"  ? "rgba(255,190,80,0.8)"
                            : emailVal?.state === "valid" ? "rgba(120,220,120,0.8)"
@@ -358,7 +358,7 @@ function SignupContent() {
                       : emailVal?.state === "valid" ? "rgba(120,220,120,0.5)"
                       : "rgba(129, 140, 248, 0.15)"
                       }`,
-                      padding: "0.7rem 0", fontSize: "0.95rem", color: "#fafaf9",
+                      padding: "0.85rem 0", fontSize: "0.95rem", color: "#fafaf9",
                       outline: "none", transition: "border-color 0.3s",
                       fontFamily: "var(--font-sans)",
                     }}
@@ -422,7 +422,7 @@ function SignupContent() {
                           display: "block",
                           fontSize: "0.6rem",
                           fontWeight: 600,
-                          letterSpacing: "0.18em",
+                          letterSpacing: "0.22em",
                           textTransform: "uppercase",
                           color: "rgba(250, 250, 249, 0.3)",
                           marginBottom: "0.55rem",
@@ -466,7 +466,7 @@ function SignupContent() {
                   whileHover={{ scale: 1.01 }}
                   whileTap={{ scale: 0.98 }}
                   style={{
-                    width: "100%", padding: "1.1rem 2rem", background: "#818cf8", color: "#09090b",
+                    width: "100%", padding: "1.15rem 2.5rem", background: "#818cf8", color: "#09090b",
                     border: "none", borderRadius: "100px", fontSize: "0.6rem", fontWeight: 700,
                     letterSpacing: "0.28em", textTransform: "uppercase", cursor: loading ? "not-allowed" : "pointer",
                     opacity: loading ? 0.6 : 1, transition: "opacity 0.2s", fontFamily: "var(--font-sans)",
@@ -487,7 +487,7 @@ function SignupContent() {
                   whileHover={{ scale: 1.01, backgroundColor: "rgba(250, 250, 249, 0.08)" }}
                   whileTap={{ scale: 0.98 }}
                   style={{
-                    width: "100%", padding: "1.1rem 2rem", background: "rgba(250, 250, 249, 0.04)",
+                    width: "100%", padding: "1.15rem 2.5rem", background: "rgba(250, 250, 249, 0.04)",
                     color: "#fafaf9", border: "1px solid rgba(250, 250, 249, 0.12)", borderRadius: "100px",
                     fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.28em", textTransform: "uppercase",
                     cursor: "pointer", transition: "all 0.2s", fontFamily: "var(--font-sans)",

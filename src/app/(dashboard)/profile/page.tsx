@@ -46,7 +46,7 @@ function Field({
         style={{
           width: "100%", background: "transparent", border: "none",
           borderBottom: `1px solid ${disabled ? "rgba(250, 250, 249, 0.06)" : focused ? "rgba(250, 250, 249, 0.5)" : "rgba(250, 250, 249, 0.12)"}`,
-          padding: "0.7rem 0", fontSize: "0.95rem",
+          padding: "0.85rem 0", fontSize: "0.95rem",
           color: disabled ? "rgba(250, 250, 249, 0.3)" : "#fafaf9",
           outline: "none", transition: "border-color 0.3s",
           fontFamily: "var(--font-sans)", cursor: disabled ? "not-allowed" : "text",
@@ -191,17 +191,17 @@ export default function ProfilePage() {
   return (
     <motion.div
       variants={stagger} initial="hidden" animate="show"
-      style={{ display: "flex", flexDirection: "column", gap: "4rem", maxWidth: "640px" }}
+      style={{ display: "flex", flexDirection: "column", gap: "5rem", maxWidth: "640px" }}
     >
       {/* ── Header ── */}
       <motion.header variants={fadeUp} style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
           <span style={{ width: "1.5rem", height: "1px", background: "rgba(250, 250, 249, 0.2)", display: "block" }} />
-          <span style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.38em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.3)", fontFamily: "var(--font-mono, monospace)" }}>
+          <span style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.42em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.3)", fontFamily: "var(--font-mono, monospace)" }}>
             Account Settings
           </span>
         </div>
-        <h1 className="font-display" style={{ fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 900, color: "#fafaf9", letterSpacing: "-0.035em", lineHeight: 1.05 }}>
+        <h1 className="font-display" style={{ fontSize: "clamp(2.4rem, 4vw, 3.5rem)", fontWeight: 900, color: "#fafaf9", letterSpacing: "-0.035em", lineHeight: 1.05 }}>
           {displayName}&apos;s{" "}
           <em style={{ fontStyle: "italic", color: "rgba(250, 250, 249, 0.35)" }}>profile</em>
         </h1>
@@ -317,7 +317,7 @@ export default function ProfilePage() {
       <motion.div variants={fadeUp}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "2.5rem" }}>
           <span style={{ width: "1rem", height: "1px", background: "rgba(250, 250, 249, 0.2)", display: "block" }} />
-          <span style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.35em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.3)", fontFamily: "var(--font-mono, monospace)" }}>
+          <span style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.42em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.3)", fontFamily: "var(--font-mono, monospace)" }}>
             Personal Information
           </span>
         </div>
@@ -380,7 +380,7 @@ export default function ProfilePage() {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.97 }}
               style={{
-                padding: "0.85rem 2.25rem",
+                padding: "1rem 2.5rem",
                 background: "#fafaf9", color: "#080c14",
                 border: "none", borderRadius: "100px",
                 fontSize: "0.58rem", fontWeight: 700,
@@ -404,7 +404,7 @@ export default function ProfilePage() {
       <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
           <span style={{ width: "1rem", height: "1px", background: "rgba(250, 250, 249, 0.15)", display: "block" }} />
-          <span style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.35em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.25)", fontFamily: "var(--font-mono, monospace)" }}>
+          <span style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.42em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.25)", fontFamily: "var(--font-mono, monospace)" }}>
             Security
           </span>
         </div>
@@ -438,7 +438,7 @@ export default function ProfilePage() {
       <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
           <span style={{ width: "1rem", height: "1px", background: "rgba(250, 250, 249, 0.15)", display: "block" }} />
-          <span style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.35em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.25)", fontFamily: "var(--font-mono, monospace)" }}>
+          <span style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.42em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.25)", fontFamily: "var(--font-mono, monospace)" }}>
             Session
           </span>
         </div>

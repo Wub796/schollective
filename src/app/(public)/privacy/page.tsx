@@ -1,5 +1,8 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
+import { PublicNav } from "@/components/ui/PublicNav";
 
 export default function PrivacyPage() {
   const sections = [
@@ -46,46 +49,37 @@ export default function PrivacyPage() {
   ];
 
   return (
-    <div style={{ minHeight: "100vh", background: "#080c14", color: "#fafaf9" }}>
-      <div style={{ maxWidth: "760px", margin: "0 auto", padding: "6rem 2rem" }}>
-        {/* Nav */}
-        <nav style={{ marginBottom: "5rem", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <Link href="/" style={{ textDecoration: "none" }}>
-            <span className="font-display" style={{ fontSize: "1.05rem", fontWeight: 800, color: "#fafaf9", letterSpacing: "-0.02em" }}>Schollective</span>
-          </Link>
-          <div style={{ display: "flex", gap: "1.5rem" }}>
-            <Link href="/about" style={{ fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.3)", textDecoration: "none", fontFamily: "var(--font-sans)" }}>About</Link>
-            <Link href="/terms" style={{ fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.3)", textDecoration: "none", fontFamily: "var(--font-sans)" }}>Terms</Link>
-          </div>
-        </nav>
+    <div style={{ minHeight: "100vh", background: "var(--bg-base)", color: "var(--text-primary)" }}>
+      <PublicNav />
 
+      <div style={{ maxWidth: "760px", margin: "0 auto", padding: "12rem 2rem 8rem" }}>
         {/* Eyebrow */}
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.75rem" }}>
-          <span style={{ width: "1.5rem", height: "1px", background: "rgba(250, 250, 249, 0.2)", display: "block" }} />
-          <span style={{ fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.38em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.32)", fontFamily: "var(--font-sans)" }}>Legal</span>
+          <span style={{ width: "1.5rem", height: "1px", background: "var(--border)", display: "block" }} />
+          <span style={{ fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.38em", textTransform: "uppercase", color: "var(--accent)", fontFamily: "var(--font-sans)" }}>Legal</span>
         </div>
 
-        <h1 className="font-display" style={{ fontSize: "clamp(2.4rem, 5vw, 3.8rem)", fontWeight: 900, color: "#fafaf9", letterSpacing: "-0.04em", lineHeight: 1.05, marginBottom: "0.75rem" }}>
-          Privacy <em style={{ fontStyle: "italic", color: "rgba(250, 250, 249, 0.3)" }}>Policy</em>
+        <h1 className="font-display" style={{ fontSize: "clamp(2.4rem, 5vw, 3.8rem)", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.04em", lineHeight: 1.05, marginBottom: "0.75rem" }}>
+          Privacy <em style={{ fontStyle: "italic", color: "var(--accent)" }}>Policy</em>
         </h1>
-        <p style={{ fontSize: "0.78rem", color: "rgba(250, 250, 249, 0.3)", fontFamily: "var(--font-sans)", marginBottom: "4rem" }}>
+        <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)", fontFamily: "var(--font-sans)", marginBottom: "4rem" }}>
           Last updated: May 2025
         </p>
 
-        <div style={{ height: "1px", background: "rgba(250, 250, 249, 0.06)", marginBottom: "3rem" }} />
+        <div style={{ height: "1px", background: "var(--border)", marginBottom: "4rem" }} />
 
-        <div style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "3.5rem" }}>
           {sections.map(({ title, body }) => (
             <div key={title}>
-              <h2 className="font-display" style={{ fontSize: "1rem", fontWeight: 700, color: "rgba(250, 250, 249, 0.75)", letterSpacing: "-0.015em", marginBottom: "0.75rem" }}>{title}</h2>
-              <p style={{ fontSize: "0.88rem", color: "rgba(250, 250, 249, 0.38)", lineHeight: 1.85, fontFamily: "var(--font-sans)" }}>{body}</p>
+              <h2 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 800, color: "var(--text-primary)", letterSpacing: "-0.015em", marginBottom: "1rem" }}>{title}</h2>
+              <p style={{ fontSize: "0.95rem", color: "var(--text-secondary)", lineHeight: 1.85, fontFamily: "var(--font-sans)" }}>{body}</p>
             </div>
           ))}
         </div>
 
-        <div style={{ height: "1px", background: "rgba(250, 250, 249, 0.06)", marginTop: "4rem", marginBottom: "2rem" }} />
-        <p style={{ fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.15)", fontFamily: "var(--font-sans)" }}>
-          © 2025 Schollective · <Link href="/terms" style={{ color: "rgba(250, 250, 249, 0.25)", textDecoration: "none" }}>Terms of Service</Link>
+        <div style={{ height: "1px", background: "var(--border)", marginTop: "5rem", marginBottom: "2rem" }} />
+        <p style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--text-tertiary)", fontFamily: "var(--font-sans)" }}>
+          © 2025 Schollective · <Link href="/terms" style={{ color: "var(--accent)", textDecoration: "none" }}>Terms of Service</Link>
         </p>
       </div>
     </div>

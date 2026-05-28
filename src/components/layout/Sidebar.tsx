@@ -44,7 +44,7 @@ function NavLink({
         display: "flex",
         alignItems: "center",
         gap: "0.85rem",
-        padding: "0.65rem 0.85rem",
+        padding: "0.8rem 1rem",
         borderRadius: "10px",
         textDecoration: "none",
         background: active ? "rgba(129, 140, 248, 0.09)" : "transparent",
@@ -143,20 +143,20 @@ export function Sidebar({ onClose, role = "student" }: SidebarProps) {
     >
       {/* ── Wordmark header ── */}
       <div style={{
-        padding: "1.75rem 1.5rem 1.5rem",
+        padding: "2rem 1.5rem 1.75rem",
         borderBottom: "1px solid rgba(129, 140, 248, 0.07)",
         marginBottom: "0.5rem",
       }}>
         <Link href="/" style={{ textDecoration: "none" }}>
           <span className="font-display" style={{
-            fontSize: "1.05rem", fontWeight: 800,
+            fontSize: "1.1rem", fontWeight: 800,
             color: "#fafaf9", letterSpacing: "-0.025em",
           }}>
             Schollective
           </span>
         </Link>
         <div style={{
-          fontSize: "0.48rem", fontWeight: 700, letterSpacing: "0.32em",
+          fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.32em",
           textTransform: "uppercase", color: "rgba(129, 140, 248, 0.35)",
           fontFamily: "var(--font-mono, monospace)", marginTop: "0.3rem",
         }}>
@@ -167,7 +167,7 @@ export function Sidebar({ onClose, role = "student" }: SidebarProps) {
       {/* ── Main nav ── */}
       <div style={{ padding: "0.5rem 0.85rem", flex: 1 }}>
         <p style={{
-          fontSize: "0.48rem", fontWeight: 700, letterSpacing: "0.36em",
+          fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.36em",
           textTransform: "uppercase", color: "rgba(129, 140, 248, 0.3)",
           marginBottom: "0.6rem", paddingLeft: "0.85rem",
           fontFamily: "var(--font-mono, monospace)",
@@ -178,7 +178,7 @@ export function Sidebar({ onClose, role = "student" }: SidebarProps) {
           variants={stagger} initial="hidden" animate="show"
           style={{
             listStyle: "none", display: "flex", flexDirection: "column",
-            gap: "0.1rem", marginBottom: "2rem",
+            gap: "0.25rem", marginBottom: "2rem",
           }}
         >
           {navItems.map((navItem) => (
@@ -196,7 +196,7 @@ export function Sidebar({ onClose, role = "student" }: SidebarProps) {
 
         {/* Account section */}
         <p style={{
-          fontSize: "0.48rem", fontWeight: 700, letterSpacing: "0.36em",
+          fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.36em",
           textTransform: "uppercase", color: "rgba(129, 140, 248, 0.3)",
           marginBottom: "0.6rem", paddingLeft: "0.85rem",
           fontFamily: "var(--font-mono, monospace)",
@@ -205,7 +205,7 @@ export function Sidebar({ onClose, role = "student" }: SidebarProps) {
         </p>
         <motion.ul
           variants={stagger} initial="hidden" animate="show"
-          style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "0.1rem" }}
+          style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "0.25rem" }}
         >
           {accountNav.map((navItem) => (
             <motion.li key={navItem.href} variants={itemVariant}>
@@ -220,14 +220,14 @@ export function Sidebar({ onClose, role = "student" }: SidebarProps) {
 
       {/* ── Sign out — pinned to bottom ── */}
       <div style={{
-        padding: "1rem 0.85rem 1.75rem",
+        padding: "1.25rem 1rem 2rem",
         borderTop: "1px solid rgba(129, 140, 248, 0.07)",
       }}>
         <button
           onClick={handleSignOut}
           style={{
             display: "flex", alignItems: "center", gap: "0.85rem",
-            width: "100%", padding: "0.65rem 0.85rem",
+            width: "100%", padding: "0.8rem 1rem",
             borderRadius: "10px", background: "transparent",
             border: "1px solid transparent", cursor: "pointer",
             textAlign: "left", transition: "all 0.2s",
