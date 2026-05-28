@@ -48,35 +48,35 @@ export function RequestQueueCard({ request }: RequestQueueCardProps) {
     <div
       style={{
         background: "rgba(17, 17, 19, 0.65)",
-        border: "1px solid rgba(129, 140, 248, 0.1)",
+        border: "1px solid rgba(37, 99, 235, 0.1)",
         borderRadius: "16px",
         padding: "1.5rem",
         transition: "border-color 0.2s",
       }}
-      onMouseEnter={e => (e.currentTarget.style.borderColor = "rgba(129, 140, 248, 0.22)")}
-      onMouseLeave={e => (e.currentTarget.style.borderColor = "rgba(129, 140, 248, 0.1)")}
+      onMouseEnter={e => (e.currentTarget.style.borderColor = "rgba(37, 99, 235, 0.22)")}
+      onMouseLeave={e => (e.currentTarget.style.borderColor = "rgba(37, 99, 235, 0.1)")}
     >
       {/* Student */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "1rem", marginBottom: "1.5rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
           <div style={{
             width: "2.5rem", height: "2.5rem", borderRadius: "10px",
-            background: "rgba(129, 140, 248, 0.07)", border: "1px solid rgba(129, 140, 248, 0.18)",
+            background: "rgba(37, 99, 235, 0.07)", border: "1px solid rgba(37, 99, 235, 0.18)",
             display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: "0.85rem", fontWeight: 600, color: "#818cf8",
+            fontSize: "0.85rem", fontWeight: 600, color: "var(--accent)",
           }}>
             {request.student?.first_name?.[0] ?? "?"}{request.student?.last_name?.[0] ?? ""}
           </div>
           <div>
-            <div style={{ fontSize: "0.88rem", fontWeight: 500, color: "rgba(250, 250, 249, 0.88)", lineHeight: 1.25, fontFamily: "var(--font-sans)" }}>
+            <div style={{ fontSize: "0.88rem", fontWeight: 500, color: "rgba(15, 23, 42, 0.88)", lineHeight: 1.25, fontFamily: "var(--font-sans)" }}>
               {studentName} {request.student?.last_name}
             </div>
-            <div style={{ fontSize: "0.58rem", color: "rgba(129, 140, 248, 0.5)", textTransform: "uppercase", letterSpacing: "0.12em", fontWeight: 600, marginTop: "0.2rem", fontFamily: "var(--font-mono, monospace)" }}>
+            <div style={{ fontSize: "0.58rem", color: "rgba(37, 99, 235, 0.5)", textTransform: "uppercase", letterSpacing: "0.12em", fontWeight: 600, marginTop: "0.2rem", fontFamily: "var(--font-sans, monospace)" }}>
               {request.student?.education_level?.replace("-", " ")}
             </div>
           </div>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: "0.3rem", fontSize: "0.58rem", color: "rgba(82, 82, 91, 0.5)", textTransform: "uppercase", letterSpacing: "0.12em", fontWeight: 600, fontFamily: "var(--font-mono, monospace)", flexShrink: 0 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.3rem", fontSize: "0.58rem", color: "rgba(15, 23, 42, 0.5)", textTransform: "uppercase", letterSpacing: "0.12em", fontWeight: 600, fontFamily: "var(--font-sans, monospace)", flexShrink: 0 }}>
           <Calendar size={10} style={{ opacity: 0.6 }} />
           {new Date(request.created_at).toLocaleDateString()}
         </div>
@@ -84,8 +84,8 @@ export function RequestQueueCard({ request }: RequestQueueCardProps) {
 
       {/* Topic */}
       <div style={{ marginBottom: "1.25rem" }}>
-        <div style={{ fontSize: "0.6rem", color: "rgba(129, 140, 248, 0.4)", textTransform: "uppercase", letterSpacing: "0.18em", fontWeight: 700, marginBottom: "0.5rem", fontFamily: "var(--font-mono, monospace)" }}>Topic</div>
-        <p className="font-display" style={{ fontSize: "0.88rem", color: "rgba(168, 179, 207, 0.7)", lineHeight: 1.5, fontStyle: "italic" }}>
+        <div style={{ fontSize: "0.6rem", color: "rgba(37, 99, 235, 0.4)", textTransform: "uppercase", letterSpacing: "0.18em", fontWeight: 700, marginBottom: "0.5rem", fontFamily: "var(--font-sans, monospace)" }}>Topic</div>
+        <p className="font-display" style={{ fontSize: "0.88rem", color: "rgba(15, 23, 42, 0.7)", lineHeight: 1.5, fontStyle: "italic" }}>
           &ldquo;{request.topic}&rdquo;
         </p>
       </div>
@@ -97,15 +97,15 @@ export function RequestQueueCard({ request }: RequestQueueCardProps) {
           <div style={{
             position: "absolute", left: 0, top: 0, bottom: 0,
             width: "2px",
-            background: "linear-gradient(to bottom, rgba(129,140,248,0.5), rgba(129,140,248,0.05))",
+            background: "linear-gradient(to bottom, rgba(37, 99, 235,0.5), rgba(37, 99, 235,0.05))",
             borderRadius: "2px",
           }} />
           <div style={{ paddingLeft: "1rem" }}>
             <div style={{
-              fontSize: "0.52rem", color: "rgba(129,140,248,0.45)",
+              fontSize: "0.52rem", color: "rgba(37, 99, 235,0.45)",
               textTransform: "uppercase", letterSpacing: "0.22em",
               fontWeight: 700, marginBottom: "0.6rem",
-              fontFamily: "var(--font-mono, monospace)",
+              fontFamily: "var(--font-sans, monospace)",
             }}>
               Student&apos;s Message
             </div>
@@ -113,7 +113,7 @@ export function RequestQueueCard({ request }: RequestQueueCardProps) {
             <div style={{ position: "relative", maxHeight: "5.5rem", overflow: "hidden" }}>
               <p className="font-display" style={{
                 fontSize: "0.82rem",
-                color: "rgba(168,179,207,0.65)",
+                color: "rgba(15, 23, 42,0.65)",
                 lineHeight: 1.75,
                 fontStyle: "italic",
                 fontWeight: 400,
@@ -137,7 +137,7 @@ export function RequestQueueCard({ request }: RequestQueueCardProps) {
         <Button
           onClick={() => handleAction("active")}
           disabled={loading}
-          className="gap-2 h-10 rounded-lg text-[0.68rem] uppercase font-bold tracking-widest"
+          className="gap-2 h-10 rounded-lg text-[0.68rem] uppercase font-bold tracking-wider"
         >
           {loading ? <Loader2 size={14} className="animate-spin" /> : <Check size={14} />}
           Accept
@@ -146,7 +146,7 @@ export function RequestQueueCard({ request }: RequestQueueCardProps) {
           onClick={() => handleAction("closed")}
           disabled={loading}
           variant="ghost"
-          className="gap-2 h-10 rounded-lg text-[0.68rem] uppercase font-bold tracking-widest hover:bg-[rgba(255,80,80,0.08)] hover:text-[#ff8080] hover:border-[rgba(255,80,80,0.18)]"
+          className="gap-2 h-10 rounded-lg text-[0.68rem] uppercase font-bold tracking-wider hover:bg-[rgba(255,80,80,0.08)] hover:text-[#ff8080] hover:border-[rgba(255,80,80,0.18)]"
         >
           {loading ? <Loader2 size={14} className="animate-spin" /> : <X size={14} />}
           Decline

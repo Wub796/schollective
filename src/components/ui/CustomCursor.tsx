@@ -44,8 +44,9 @@ function SpotlightBlob({
 
   return (
     <motion.div
-      className="absolute bg-indigo-500/10 pointer-events-none rounded-full blur-[80px]"
+      className="absolute pointer-events-none rounded-full blur-[80px]"
       style={{
+        background: "var(--accent-glow)",
         x,
         y,
         translateX: "-50%",
@@ -76,13 +77,13 @@ function PrecisionDot({
 
   return (
     <motion.div
-      className="absolute bg-[#fafaf9] pointer-events-none"
+      className="absolute pointer-events-none"
       style={{
+        background: "var(--accent)",
         x: sourceX,
         y: sourceY,
         translateX: "-50%",
         translateY: "-50%",
-        mixBlendMode: "difference",
         zIndex: 2,
       }}
       animate={{
@@ -145,10 +146,10 @@ function CursorRing({
 
   // Border colour:
   const borderColor = isButton
-    ? "rgba(129, 140, 248, 0.85)"
+    ? "rgba(37, 99, 235, 0.85)"
     : isCanvas
-    ? "rgba(250, 250, 249, 0.4)"
-    : "rgba(250, 250, 249, 0.5)";
+    ? "rgba(15, 23, 42, 0.4)"
+    : "rgba(15, 23, 42, 0.5)";
 
   return (
     <>
@@ -159,8 +160,6 @@ function CursorRing({
           y,
           translateX: "-50%",
           translateY: "-50%",
-          // Link uses difference blend; button uses normal so accent colour shows
-          mixBlendMode: isButton ? "normal" : "difference",
           zIndex: 1,
         }}
         animate={{
@@ -178,7 +177,7 @@ function CursorRing({
           opacity: isText ? 0.7 : 1,
           // Inner dot / cross for button mode
           boxShadow: isButton
-            ? `0 0 12px rgba(129, 140, 248, 0.35), inset 0 0 8px rgba(129, 140, 248, 0.08)`
+            ? `0 0 12px rgba(37, 99, 235, 0.35), inset 0 0 8px rgba(37, 99, 235, 0.08)`
             : "none",
         }}
         transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
@@ -196,8 +195,8 @@ function CursorRing({
               translateX: "-50%",
               translateY: "-50%",
               border: isButton
-                ? "1px solid rgba(129, 140, 248, 0.25)"
-                : "1px solid rgba(250, 250, 249, 0.2)",
+                ? "1px solid var(--accent-glow)"
+                : "1px solid var(--border)",
               borderRadius: borderRadius,
               zIndex: 1,
             }}

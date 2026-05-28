@@ -54,7 +54,7 @@ export function AdminViewBanner({ role }: AdminViewBannerProps) {
           style={{
             fontSize: "0.6rem",
             fontWeight: 500,
-            color: "rgba(250, 250, 249, 0.45)",
+            color: "rgba(15, 23, 42, 0.45)",
             letterSpacing: "0.05em",
           }}
         >
