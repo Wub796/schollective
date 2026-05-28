@@ -47,7 +47,7 @@ function Field({
           width: "100%", background: "transparent", border: "none",
           borderBottom: `1px solid ${disabled ? "rgba(15, 23, 42, 0.06)" : focused ? "rgba(15, 23, 42, 0.5)" : "rgba(15, 23, 42, 0.12)"}`,
           padding: "0.85rem 0", fontSize: "0.95rem",
-          color: disabled ? "rgba(15, 23, 42, 0.3)" : "#fafaf9",
+          color: disabled ? "rgba(15, 23, 42, 0.3)" : "var(--text-primary)",
           outline: "none", transition: "border-color 0.3s",
           fontFamily: "var(--font-sans)", cursor: disabled ? "not-allowed" : "text",
         }}
@@ -346,7 +346,7 @@ export default function ProfilePage() {
                 id="education_level"
                 name="education_level"
                 defaultValue={profile?.education_level ?? ""}
-                style={{ width: "100%", background: "transparent", border: "none", borderBottom: "1px solid rgba(15, 23, 42, 0.12)", padding: "0.7rem 0", fontSize: "0.95rem", color: profile?.education_level ? "#fafaf9" : "rgba(15, 23, 42, 0.3)", outline: "none", fontFamily: "var(--font-sans)", cursor: "pointer", appearance: "none" }}
+                style={{ width: "100%", background: "transparent", border: "none", borderBottom: "1px solid rgba(15, 23, 42, 0.12)", padding: "0.7rem 0", fontSize: "0.95rem", color: profile?.education_level ? "var(--text-primary)" : "rgba(15, 23, 42, 0.3)", outline: "none", fontFamily: "var(--font-sans)", cursor: "pointer", appearance: "none" }}
               >
                 <option value="" style={{ background: "#080c14" }}>Select level…</option>
                 <option value="high-school"  style={{ background: "#080c14" }}>High School</option>
@@ -381,7 +381,7 @@ export default function ProfilePage() {
               whileTap={{ scale: 0.97 }}
               style={{
                 padding: "1rem 2.5rem",
-                background: "#fafaf9", color: "#080c14",
+                background: "var(--text-primary)", color: "#080c14",
                 border: "none", borderRadius: "100px",
                 fontSize: "0.58rem", fontWeight: 700,
                 letterSpacing: "0.1em", textTransform: "uppercase",

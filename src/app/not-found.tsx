@@ -39,7 +39,7 @@ export default function NotFound() {
         {/* Actions */}
         <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
           <Link href="/" style={{ textDecoration: "none" }}>
-            <div style={{ padding: "0.85rem 2rem", background: "#fafaf9", color: "#080c14", borderRadius: "100px", fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", fontFamily: "var(--font-sans)", cursor: "pointer" }}>
+            <div style={{ padding: "0.85rem 2rem", background: "var(--text-primary)", color: "#080c14", borderRadius: "100px", fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", fontFamily: "var(--font-sans)", cursor: "pointer" }}>
               Go Home
             </div>
           </Link>
