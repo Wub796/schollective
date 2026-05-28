@@ -180,23 +180,23 @@ function LoginContent() {
       }}>
         <div style={{
           display: "flex", alignItems: "center", gap: "2rem",
-          background: "rgba(17, 17, 19, 0.85)",
+          background: "rgba(253, 253, 253, 0.85)",
           backdropFilter: "blur(20px)",
-          border: "1px solid rgba(79, 70, 229, 0.12)",
+          border: "1.5px solid rgba(79, 70, 229, 0.15)",
           borderRadius: "100px",
-          padding: "0.6rem 1.5rem",
-          boxShadow: "0 8px 32px rgba(0,0,0,0.4)",
+          padding: "0.6rem 1.6rem",
+          boxShadow: "0 4px 30px rgba(0, 0, 0, 0.03)",
         }}>
           <Link href="/" style={{ textDecoration: "none" }}>
-            <span className="font-display" style={{ fontSize: "0.95rem", fontWeight: 800, color: "var(--text-primary)", letterSpacing: "-0.02em" }}>
+            <span className="font-display hover:text-indigo-600 transition-colors" style={{ fontSize: "0.95rem", fontWeight: 800, color: "var(--text-primary)", letterSpacing: "-0.02em" }}>
               Schollective
             </span>
           </Link>
-          <div style={{ width: "1px", height: "1rem", background: "rgba(15, 23, 42, 0.1)" }} />
+          <div style={{ width: "1px", height: "1rem", background: "rgba(79, 70, 229, 0.15)" }} />
           <Link href="/signup" style={{ textDecoration: "none" }}>
-            <span style={{
+            <span className="hover:text-indigo-700 transition-colors" style={{
               fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.2em",
-              textTransform: "uppercase", color: "rgba(15, 23, 42, 0.45)",
+              textTransform: "uppercase", color: "#4f46e5",
               fontFamily: "var(--font-sans)",
             }}>
               Create Account →
