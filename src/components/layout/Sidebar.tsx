@@ -36,18 +36,29 @@ export function Sidebar({ onClose, role = "student" }: SidebarProps) {
   const router   = useRouter();
   const supabase = createClient();
 
-  const isActive = (href: string) =>
-    href === "/dashboard" ? pathname === href : pathname.startsWith(href);
+  const isActive = (href: string) => {
+    const exactRoutes = ["/dashboard", "/prof/dashboard"];
+    if (exactRoutes.includes(href)) return pathname === href;
+    return pathname.startsWith(href);
+  };
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     router.push("/login");
   };
 
-  const navItems = [
-    { href: "/dashboard", label: "Dashboard", sub: "Overview" },
-    ...(role === "student" ? [{ href: "/professors", label: "Mentors", sub: "Browse All" }] : []),
-  ];
+  const navItems =
+    role === "professor"
+      ? [
+          { href: "/prof/dashboard",  label: "Dashboard",      sub: "Overview"     },
+          { href: "/prof/students",   label: "My Students",    sub: "All Time"     },
+          { href: "/prof/profile",    label: "Profile Preview",sub: "Student View" },
+        ]
+      : [
+          { href: "/dashboard",   label: "Dashboard",    sub: "Overview"  },
+          { href: "/professors",  label: "Browse Mentors",sub: "Directory" },
+          { href: "/threads",     label: "My Threads",   sub: "All Sessions" },
+        ];
 
   return (
     <nav
