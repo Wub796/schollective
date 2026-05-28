@@ -51,7 +51,7 @@ export default async function ProfessorsPage({ searchParams }: ProfessorsPagePro
   ).sort();
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "3.5rem" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "5rem" }}>
       {/* Header */}
       <header style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
         <Link
@@ -66,16 +66,16 @@ export default async function ProfessorsPage({ searchParams }: ProfessorsPagePro
 
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
           <span style={{ width: "1.5rem", height: "1px", background: "rgba(250, 250, 249, 0.2)", display: "block" }} />
-          <span style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.38em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.3)", fontFamily: "var(--font-mono, monospace)" }}>
+          <span style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.42em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.3)", fontFamily: "var(--font-mono, monospace)" }}>
             Academic Bridge
           </span>
         </div>
 
-        <h1 className="font-display" style={{ fontSize: "clamp(2.4rem, 5vw, 3.8rem)", fontWeight: 900, color: "#fafaf9", letterSpacing: "-0.035em", lineHeight: 1.05 }}>
+        <h1 className="font-display" style={{ fontSize: "clamp(2.6rem, 5vw, 4rem)", fontWeight: 900, color: "#fafaf9", letterSpacing: "-0.035em", lineHeight: 1.05 }}>
           Discover your{" "}
           <em style={{ fontStyle: "italic", color: "rgba(250, 250, 249, 0.35)" }}>intellectual mentor</em>
         </h1>
-        <p style={{ fontSize: "0.9rem", color: "rgba(250, 250, 249, 0.4)", fontWeight: 300, maxWidth: "42rem", lineHeight: 1.7, fontFamily: "var(--font-sans)", marginTop: "0.25rem" }}>
+        <p style={{ fontSize: "0.95rem", color: "rgba(250, 250, 249, 0.4)", fontWeight: 300, maxWidth: "42rem", lineHeight: 1.8, fontFamily: "var(--font-sans)", marginTop: "0.25rem" }}>
           Connect with verified experts across all academic disciplines. Every professor
           is manually approved via institutional credentials.
         </p>
@@ -87,7 +87,7 @@ export default async function ProfessorsPage({ searchParams }: ProfessorsPagePro
       />
 
       {professors && professors.length > 0 ? (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "1.25rem" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "1.5rem" }}>
           {professors.map((prof) => (
             <ProfessorCard key={prof.id} professor={prof as any} />
           ))}

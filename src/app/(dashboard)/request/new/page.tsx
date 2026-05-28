@@ -36,7 +36,7 @@ export default async function RequestNewPage({ searchParams }: RequestNewPagePro
   }
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "3.5rem", maxWidth: "680px" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "5rem", maxWidth: "720px" }}>
 
       {/* Back link */}
       <Link
@@ -62,7 +62,7 @@ export default async function RequestNewPage({ searchParams }: RequestNewPagePro
           <span style={{ width: "1.5rem", height: "1px", background: "rgba(250, 250, 249, 0.2)", display: "block" }} />
           <div style={{
             display: "inline-flex", alignItems: "center", gap: "0.5rem",
-            fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.3em",
+            fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.42em",
             textTransform: "uppercase", color: "rgba(129, 140, 248, 0.5)",
             fontFamily: "var(--font-mono, monospace)",
           }}>
@@ -72,7 +72,7 @@ export default async function RequestNewPage({ searchParams }: RequestNewPagePro
         </div>
 
         <h1 className="font-display" style={{
-          fontSize: "clamp(2.2rem, 5vw, 3.5rem)", fontWeight: 900,
+          fontSize: "clamp(2.6rem, 5vw, 4rem)", fontWeight: 900,
           color: "#fafaf9", letterSpacing: "-0.035em", lineHeight: 1.05,
         }}>
           Initiate your{" "}
@@ -82,8 +82,8 @@ export default async function RequestNewPage({ searchParams }: RequestNewPagePro
         </h1>
 
         <p style={{
-          fontSize: "0.88rem", color: "rgba(168, 179, 207, 0.5)",
-          fontWeight: 300, maxWidth: "44rem", lineHeight: 1.75,
+          fontSize: "0.95rem", color: "rgba(168, 179, 207, 0.5)",
+          fontWeight: 300, maxWidth: "44rem", lineHeight: 1.8,
           fontFamily: "var(--font-sans)",
         }}>
           Every mentorship thread on Schollective starts with a focused request.

@@ -12,7 +12,7 @@ function SectionLabel({ text }: { text: string }) {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
       <span style={{ width: "1rem", height: "1px", background: "rgba(250, 250, 249, 0.2)", display: "block" }} />
-      <h2 className="font-display" style={{ fontSize: "1.1rem", fontWeight: 700, color: "rgba(250, 250, 249, 0.85)", letterSpacing: "-0.02em" }}>
+      <h2 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "rgba(250, 250, 249, 0.85)", letterSpacing: "-0.025em" }}>
         {text}
       </h2>
     </div>
@@ -73,18 +73,18 @@ export default async function ThreadsPage() {
   const displayName = profile.preferred_name || profile.first_name || "Scholar";
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "3.5rem" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "5rem" }}>
 
       {/* ── Header ── */}
       <header style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
           <span style={{ width: "1.5rem", height: "1px", background: "rgba(250, 250, 249, 0.2)", display: "block" }} />
-          <span style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.38em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.3)", fontFamily: "var(--font-mono, monospace)" }}>
+          <span style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.42em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.3)", fontFamily: "var(--font-mono, monospace)" }}>
             Student Portal
           </span>
         </div>
         <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: "2rem", flexWrap: "wrap" }}>
-          <h1 className="font-display" style={{ fontSize: "clamp(2.4rem, 5vw, 3.8rem)", fontWeight: 900, color: "#fafaf9", letterSpacing: "-0.035em", lineHeight: 1.05 }}>
+          <h1 className="font-display" style={{ fontSize: "clamp(2.6rem, 5vw, 4rem)", fontWeight: 900, color: "#fafaf9", letterSpacing: "-0.035em", lineHeight: 1.05 }}>
             {displayName}&apos;s{" "}
             <em style={{ fontStyle: "italic", color: "rgba(250, 250, 249, 0.35)" }}>threads</em>
           </h1>
@@ -103,7 +103,7 @@ export default async function ThreadsPage() {
             </div>
           </Link>
         </div>
-        <p style={{ fontSize: "0.9rem", color: "rgba(250, 250, 249, 0.4)", fontWeight: 300, maxWidth: "42rem", lineHeight: 1.7, fontFamily: "var(--font-sans)", marginTop: "0.25rem" }}>
+        <p style={{ fontSize: "0.95rem", color: "rgba(250, 250, 249, 0.4)", fontWeight: 300, maxWidth: "42rem", lineHeight: 1.8, fontFamily: "var(--font-sans)", marginTop: "0.25rem" }}>
           All your mentorship threads in one place — ongoing dialogues and completed sessions.
         </p>
       </header>
@@ -122,7 +122,7 @@ export default async function ThreadsPage() {
             background: "rgba(129, 140, 248, 0.03)",
             display: "flex", flexDirection: "column", gap: "0.35rem", minWidth: "9rem",
           }}>
-            <span className="font-display" style={{ fontSize: "2rem", fontWeight: 900, color: "#fafaf9", letterSpacing: "-0.04em", lineHeight: 1 }}>
+            <span className="font-display" style={{ fontSize: "2.4rem", fontWeight: 900, color: "#fafaf9", letterSpacing: "-0.04em", lineHeight: 1 }}>
               {value}
             </span>
             <div style={{ fontSize: "0.75rem", fontWeight: 600, color: "rgba(250, 250, 249, 0.6)", fontFamily: "var(--font-sans)" }}>{label}</div>
@@ -179,7 +179,7 @@ export default async function ThreadsPage() {
               {ongoing.length} thread{ongoing.length !== 1 ? "s" : ""}
             </span>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "1.25rem" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "1.5rem" }}>
             {ongoing.map((req: any) => (
               <ThreadCard key={req.id} request={req} viewerRole="student" />
             ))}
@@ -193,7 +193,7 @@ export default async function ThreadsPage() {
           <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
               <span style={{ width: "1rem", height: "1px", background: "rgba(250, 250, 249, 0.2)", display: "block" }} />
-              <h2 className="font-display" style={{ fontSize: "1.1rem", fontWeight: 700, color: "rgba(250, 250, 249, 0.45)", letterSpacing: "-0.02em" }}>
+              <h2 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "rgba(250, 250, 249, 0.45)", letterSpacing: "-0.025em" }}>
                 Past Sessions
               </h2>
             </div>
@@ -201,7 +201,7 @@ export default async function ThreadsPage() {
               {past.length} completed
             </span>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "1.25rem", opacity: 0.75 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "1.5rem", opacity: 0.75 }}>
             {past.map((req: any) => (
               <ThreadCard key={req.id} request={req} viewerRole="student" />
             ))}

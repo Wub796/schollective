@@ -25,13 +25,13 @@ function Field({ id, name, type = "text", label, placeholder, required = false }
   const [focused, setFocused] = useState(false);
   return (
     <div style={{ position: "relative" }}>
-      <label htmlFor={id} style={{ display: "block", fontSize: "0.62rem", fontWeight: 600, letterSpacing: "0.18em", textTransform: "uppercase", color: focused ? "rgba(250, 250, 249, 0.7)" : "rgba(250, 250, 249, 0.3)", marginBottom: "0.6rem", transition: "color 0.25s", fontFamily: "var(--font-sans)" }}>
+      <label htmlFor={id} style={{ display: "block", fontSize: "0.62rem", fontWeight: 600, letterSpacing: "0.22em", textTransform: "uppercase", color: focused ? "rgba(250, 250, 249, 0.7)" : "rgba(250, 250, 249, 0.3)", marginBottom: "0.6rem", transition: "color 0.25s", fontFamily: "var(--font-sans)" }}>
         {label}
       </label>
       <input id={id} name={name} type={type} placeholder={placeholder} required={required}
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
-        style={{ width: "100%", background: "transparent", border: "none", borderBottom: `1px solid ${focused ? "rgba(250, 250, 249, 0.55)" : "rgba(250, 250, 249, 0.12)"}`, padding: "0.75rem 0", fontSize: "1rem", color: "#fafaf9", outline: "none", transition: "border-color 0.3s", fontFamily: "var(--font-sans)" }}
+        style={{ width: "100%", background: "transparent", border: "none", borderBottom: `1px solid ${focused ? "rgba(250, 250, 249, 0.55)" : "rgba(250, 250, 249, 0.12)"}`, padding: "0.85rem 0", fontSize: "1rem", color: "#fafaf9", outline: "none", transition: "border-color 0.3s", fontFamily: "var(--font-sans)" }}
       />
       <motion.div
         animate={{ scaleX: focused ? 1 : 0, opacity: focused ? 1 : 0 }}
@@ -113,7 +113,7 @@ function ResetPasswordContent() {
       <div style={{ position: "fixed", top: "30%", left: "50%", transform: "translateX(-50%)", width: "60vw", height: "60vw", maxWidth: 600, maxHeight: 600, borderRadius: "50%", background: "radial-gradient(circle, rgba(35,70,180,0.1) 0%, transparent 70%)", filter: "blur(60px)", pointerEvents: "none" }} />
 
       <motion.div variants={stagger} initial="hidden" animate="show"
-        style={{ position: "relative", zIndex: 1, maxWidth: 440, width: "100%", display: "flex", flexDirection: "column", gap: "2rem" }}
+        style={{ position: "relative", zIndex: 1, maxWidth: 480, width: "100%", display: "flex", flexDirection: "column", gap: "2.5rem" }}
       >
         {/* Wordmark */}
         <motion.div variants={fadeUp}>
@@ -131,7 +131,7 @@ function ResetPasswordContent() {
         </motion.div>
 
         {/* Headline */}
-        <motion.h1 variants={fadeUp} className="font-display" style={{ fontSize: "clamp(2.2rem, 5vw, 3.2rem)", fontWeight: 900, color: "#fafaf9", letterSpacing: "-0.035em", lineHeight: 1.05 }}>
+        <motion.h1 variants={fadeUp} className="font-display" style={{ fontSize: "clamp(2.4rem, 5vw, 3.5rem)", fontWeight: 900, color: "#fafaf9", letterSpacing: "-0.035em", lineHeight: 1.05 }}>
           {step === "request" ? <>Recover your<br /><em style={{ fontStyle: "italic", color: "rgba(250, 250, 249, 0.35)" }}>access.</em></> : <>Set a new<br /><em style={{ fontStyle: "italic", color: "rgba(250, 250, 249, 0.35)" }}>password.</em></>}
         </motion.h1>
 
@@ -140,7 +140,7 @@ function ResetPasswordContent() {
           {step === "request" && !sent && (
             <motion.form key="request" onSubmit={handleRequest}
               initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
-              style={{ display: "flex", flexDirection: "column", gap: "2rem" }}
+              style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }}
             >
               <p style={{ fontSize: "0.85rem", color: "rgba(250, 250, 249, 0.4)", lineHeight: 1.8, fontFamily: "var(--font-sans)" }}>
                 Enter the email address on your account and we&apos;ll send a reset link.
@@ -148,7 +148,7 @@ function ResetPasswordContent() {
               <Field id="email" name="email" type="email" label="Institutional Email" placeholder="name@university.edu" required />
               {error && <p style={{ fontSize: "0.78rem", color: "#ff7070", fontFamily: "var(--font-sans)" }}>{error}</p>}
               <motion.button type="submit" disabled={loading} whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }}
-                style={{ width: "100%", padding: "1.1rem 2rem", background: "#fafaf9", color: "#080c14", border: "none", borderRadius: "100px", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.28em", textTransform: "uppercase", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.6 : 1, fontFamily: "var(--font-sans)" }}
+                style={{ width: "100%", padding: "1.15rem 2.5rem", background: "#fafaf9", color: "#080c14", border: "none", borderRadius: "100px", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.28em", textTransform: "uppercase", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.6 : 1, fontFamily: "var(--font-sans)" }}
               >
                 {loading ? "Sending…" : "Send Reset Link"}
               </motion.button>
@@ -174,7 +174,7 @@ function ResetPasswordContent() {
           {step === "update" && (
             <motion.form key="update" onSubmit={handleUpdate}
               initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
-              style={{ display: "flex", flexDirection: "column", gap: "2rem" }}
+              style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }}
             >
               <p style={{ fontSize: "0.85rem", color: "rgba(250, 250, 249, 0.4)", lineHeight: 1.8, fontFamily: "var(--font-sans)" }}>
                 Choose a new password. Minimum 8 characters.
@@ -183,7 +183,7 @@ function ResetPasswordContent() {
               <Field id="password2" name="password2" type="password" label="Confirm Password"  placeholder="Repeat password"   required />
               {error && <p style={{ fontSize: "0.78rem", color: "#ff7070", fontFamily: "var(--font-sans)" }}>{error}</p>}
               <motion.button type="submit" disabled={loading} whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }}
-                style={{ width: "100%", padding: "1.1rem 2rem", background: "#fafaf9", color: "#080c14", border: "none", borderRadius: "100px", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.28em", textTransform: "uppercase", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.6 : 1, fontFamily: "var(--font-sans)" }}
+                style={{ width: "100%", padding: "1.15rem 2.5rem", background: "#fafaf9", color: "#080c14", border: "none", borderRadius: "100px", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.28em", textTransform: "uppercase", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.6 : 1, fontFamily: "var(--font-sans)" }}
               >
                 {loading ? "Updating…" : "Set New Password"}
               </motion.button>

@@ -31,7 +31,7 @@ function Field({
     <div style={{ position: "relative" }}>
       <label htmlFor={id} style={{
         display: "block", fontSize: "0.6rem", fontWeight: 600,
-        letterSpacing: "0.18em", textTransform: "uppercase",
+        letterSpacing: "0.22em", textTransform: "uppercase",
         color: focused ? "rgba(250, 250, 249, 0.65)" : "rgba(250, 250, 249, 0.3)",
         marginBottom: "0.55rem", transition: "color 0.25s",
         fontFamily: "var(--font-sans)",
@@ -47,7 +47,7 @@ function Field({
         style={{
           width: "100%", background: "transparent", border: "none",
           borderBottom: `1px solid ${focused ? "rgba(129, 140, 248, 0.6)" : "rgba(129, 140, 248, 0.15)"}`,
-          padding: "0.7rem 0", fontSize: "0.95rem", color: "#fafaf9",
+          padding: "0.85rem 0", fontSize: "0.95rem", color: "#fafaf9",
           outline: "none", transition: "border-color 0.3s",
           fontFamily: "var(--font-sans)",
         }}
@@ -199,7 +199,7 @@ function OnboardingContent() {
         variants={stagger} initial="hidden" animate="show"
         style={{
           position: "relative", zIndex: 1,
-          width: "100%", maxWidth: "500px",
+          width: "100%", maxWidth: "480px",
         }}
       >
         {/* Wordmark */}
@@ -219,7 +219,7 @@ function OnboardingContent() {
 
         {/* Headline */}
         <motion.h1 variants={fadeUp} className="font-display" style={{
-          fontSize: "clamp(2rem, 5vw, 3rem)", fontWeight: 900, color: "#fafaf9",
+          fontSize: "clamp(2.4rem, 5vw, 3.5rem)", fontWeight: 900, color: "#fafaf9",
           letterSpacing: "-0.035em", lineHeight: 1.05, marginBottom: "0.75rem",
         }}>
           Complete your<br />
@@ -258,7 +258,7 @@ function OnboardingContent() {
         </motion.div>
 
         <form onSubmit={handleSubmit}>
-          <motion.div variants={fadeUp} style={{ display: "flex", flexDirection: "column", gap: "1.75rem" }}>
+          <motion.div variants={fadeUp} style={{ display: "flex", flexDirection: "column", gap: "2.25rem" }}>
 
             {/* Name row */}
             <div className="grid-2" style={{ gap: "1.5rem" }}>
@@ -272,7 +272,7 @@ function OnboardingContent() {
             <AnimatePresence mode="wait">
               {role === "student" ? (
                 <motion.div key="student" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.25 }}>
-                  <div style={{ display: "flex", flexDirection: "column", gap: "1.75rem" }}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "2.25rem" }}>
                     <div>
                       <label htmlFor="education_level" style={{ display: "block", fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.3)", marginBottom: "0.55rem", fontFamily: "var(--font-sans)" }}>
                         Education Level
@@ -293,7 +293,7 @@ function OnboardingContent() {
                 </motion.div>
               ) : (
                 <motion.div key="prof" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.25 }}>
-                  <div style={{ display: "flex", flexDirection: "column", gap: "1.75rem" }}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "2.25rem" }}>
                     <div>
                       <label htmlFor="institution" style={{
                         display: "block", fontSize: "0.6rem", fontWeight: 600,
@@ -326,7 +326,7 @@ function OnboardingContent() {
               type="submit" disabled={loading}
               whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }}
               style={{
-                width: "100%", padding: "1.1rem 2rem",
+                width: "100%", padding: "1.15rem 2.5rem",
                 background: "#818cf8", color: "#09090b",
                 border: "none", borderRadius: "100px",
                 fontSize: "0.6rem", fontWeight: 700,
