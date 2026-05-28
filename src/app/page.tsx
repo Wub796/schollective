@@ -531,19 +531,23 @@ export default function LandingPage() {
         {/* ══ FINAL CTA ═══════════════════════════════════════════════════ */}
         <section className="js-fade relative py-36 md:py-52 border-t border-slate-100" style={{ background: "#fdfdfd" }}>
           <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12 text-center flex flex-col items-center">
-            <Label>Get started</Label>
-
             <h2
-              className="font-display font-bold text-slate-900 mt-6 mb-0 tracking-tighter leading-[1.1] text-center"
+              className="font-display font-bold text-slate-900 mt-0 mb-0 tracking-tighter leading-[1.1] text-center"
               style={{ fontSize: "clamp(2.5rem, 5vw, 4rem)" }}
             >
               Your research mentor is<br />
               <span className="italic font-light text-indigo-600">one structured request away.</span>
             </h2>
 
-            <p className="font-sans leading-relaxed tracking-normal text-slate-500 mt-8 mb-0 text-sm">
+            <p className="font-sans leading-relaxed tracking-normal text-slate-500 mt-8 mb-12 text-sm">
               Free to use. No credit card required.
             </p>
+
+            <div className="flex items-center justify-center">
+              <Button href="/signup" variant="primary" size="lg">
+                Create Account →
+              </Button>
+            </div>
           </div>
         </section>
 
