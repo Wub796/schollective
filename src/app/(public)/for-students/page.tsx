@@ -134,7 +134,7 @@ export default function ForStudentsPage() {
 
         {/* ── CTA ─────────────────────────────────────── */}
         <FadeIn>
-          <div style={{ padding: "4.5rem 3rem", border: "1px solid var(--border)", borderRadius: "20px", background: "rgba(99, 102, 241, 0.04)", display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", gap: "3rem" }}>
+          <div style={{ padding: "4.5rem 3rem", border: "1px solid var(--border)", borderRadius: "20px", background: "rgba(99, 102, 241, 0.04)", display: "flex", flexWrap: "wrap", justifyContent: "center", alignItems: "center", gap: "3rem", textAlign: "center" }}>
             <div>
               <h2 className="font-display" style={{ fontSize: "clamp(2rem, 3vw, 2.6rem)", fontWeight: 900, letterSpacing: "-0.04em", color: "var(--text-primary)", marginBottom: "1rem" }}>
                 Start for free, today.
