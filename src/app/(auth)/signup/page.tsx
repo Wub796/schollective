@@ -208,137 +208,86 @@ function SignupContent() {
   };
 
   return (
-    <div className="auth-two-col signup-layout" style={{ background: "var(--bg-base)" }}>
+    <div
+      style={{
+        minHeight: "100vh",
+        background: "var(--bg-base)",
+        display: "flex",
+        flexDirection: "column",
+        position: "relative",
+        overflow: "hidden",
+      }}
+    >
+      {/* Background glow */}
+      <div style={{
+        position: "fixed", inset: 0, pointerEvents: "none",
+        background: "radial-gradient(ellipse 60% 50% at 50% 0%, rgba(99, 102, 241, 0.15) 0%, transparent 70%)",
+      }} />
 
-      {/* ════════════════════════════════════════
-          LEFT — Brand panel (mirrors login's right)
-      ════════════════════════════════════════ */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1.6, ease: EASE }}
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-          padding: "2.5rem 5vw",
-          position: "relative",
-          overflow: "hidden",
-          borderRight: "1px solid rgba(129, 140, 248, 0.08)",
-          background: "linear-gradient(135deg, #09090b 0%, #111113 100%)",
-        }}
-      >
-        {/* Glow orbs */}
-        <div style={{ position: "absolute", top: "20%", left: "0%", width: "45vw", height: "45vw", maxWidth: 440, maxHeight: 440, borderRadius: "50%", background: "radial-gradient(circle, rgba(99, 102, 241, 0.18) 0%, transparent 70%)", filter: "blur(40px)", pointerEvents: "none" }} />
-        <div style={{ position: "absolute", bottom: "10%", right: "-10%", width: "35vw", height: "35vw", maxWidth: 340, maxHeight: 340, borderRadius: "50%", background: "radial-gradient(circle, rgba(129, 140, 248, 0.07) 0%, transparent 70%)", filter: "blur(60px)", pointerEvents: "none" }} />
-
-        {/* Academic network SVG */}
-        <svg viewBox="0 0 400 400" style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%) rotate(12deg)", width: "min(50vw, 420px)", opacity: 0.07, pointerEvents: "none" }}>
-          <circle cx="200" cy="200" r="3" fill="white" />
-          {[[90,150],[310,150],[90,280],[310,280],[200,60],[200,340]].map(([cx,cy],i) => (
-            <React.Fragment key={i}>
-              <circle cx={cx} cy={cy} r="2" fill="white" />
-              <line x1="200" y1="200" x2={cx} y2={cy} stroke="white" strokeWidth="0.7" />
-            </React.Fragment>
-          ))}
-          {[[140,130],[260,130],[140,290],[260,290]].map(([cx,cy],i) => (
-            <circle key={`s${i}`} cx={cx} cy={cy} r="1.2" fill="white" opacity="0.7" />
-          ))}
-        </svg>
-
-        {/* Wordmark */}
-        <Link href="/" className="no-underline" style={{ position: "relative", zIndex: 1 }}>
-          <span className="font-display" style={{ fontSize: "1.25rem", fontWeight: 800, color: "#fafaf9", letterSpacing: "-0.02em" }}>
-            Schollective
-          </span>
-        </Link>
-
-        {/* Editorial content */}
-        <div style={{ position: "relative", zIndex: 1, maxWidth: 400 }}>
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 1.4, ease: EASE }}
-          >
-            <p className="font-display" style={{ fontSize: "clamp(1.5rem, 2.8vw, 2.4rem)", fontWeight: 700, lineHeight: 1.2, color: "rgba(250, 250, 249, 0.85)", letterSpacing: "-0.02em", marginBottom: "2rem", maxWidth: 380 }}>
-              Your research journey
-              begins with the{" "}
-              <em style={{ color: "rgba(250, 250, 249, 0.35)", fontStyle: "italic" }}>right mentor.</em>
-            </p>
-
-            <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem", marginBottom: "2.5rem" }}>
-              {[
-                { step: "01", text: "Create your scholar profile" },
-                { step: "02", text: "Browse verified professors"  },
-                { step: "03", text: "Open a mentorship thread"    },
-              ].map(({ step, text }) => (
-                <div key={step} style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-                  <span className="font-display" style={{ fontSize: "0.9rem", fontWeight: 800, color: "rgba(250, 250, 249, 0.18)", letterSpacing: "-0.02em", minWidth: "2rem" }}>{step}</span>
-                  <span style={{ fontSize: "0.82rem", color: "rgba(250, 250, 249, 0.5)", fontFamily: "var(--font-sans)", fontWeight: 400 }}>{text}</span>
-                </div>
-              ))}
-            </div>
-
-            <div style={{ width: "3rem", height: "1px", background: "rgba(250, 250, 249, 0.15)", marginBottom: "1.5rem" }} />
-            <p style={{ fontSize: "0.55rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.2)", fontFamily: "var(--font-sans)", fontWeight: 600 }}>
-              Manually verified · Institutionally credentialed
-            </p>
-          </motion.div>
-        </div>
-
-        <div style={{ position: "relative", zIndex: 1 }}>
-          <span style={{ fontSize: "0.52rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.18)", fontFamily: "var(--font-sans)" }}>
-            © 2025 Schollective
-          </span>
-        </div>
-      </motion.div>
-
-      {/* ════════════════════════════════════════
-          RIGHT — Form panel
-      ════════════════════════════════════════ */}
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-          padding: "2.5rem 5vw",
-          overflowY: "auto",
-          position: "relative",
-        }}
-      >
-        {/* Subtle right-side glow */}
-        <div style={{ position: "absolute", inset: 0, pointerEvents: "none", background: "radial-gradient(ellipse 80% 60% at 100% 50%, rgba(30,55,120,0.12) 0%, transparent 70%)" }} />
-
-        {/* Top right nav */}
-        <div style={{ display: "flex", justifyContent: "flex-end", position: "relative", zIndex: 1 }}>
-          <Link href="/login" className="no-underline" style={{ fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.35)", fontFamily: "var(--font-sans)" }}>
-            Already a member? <span style={{ color: "rgba(250, 250, 249, 0.75)" }}>Log In →</span>
+      {/* ── Pill Nav ─────────────────────────────────────────── */}
+      <div style={{
+        position: "fixed", top: "1.5rem", left: "50%", transform: "translateX(-50%)",
+        zIndex: 50, display: "flex", alignItems: "center",
+      }}>
+        <div style={{
+          display: "flex", alignItems: "center", gap: "2rem",
+          background: "rgba(17, 17, 19, 0.85)",
+          backdropFilter: "blur(20px)",
+          border: "1px solid rgba(129, 140, 248, 0.12)",
+          borderRadius: "100px",
+          padding: "0.6rem 1.5rem",
+          boxShadow: "0 8px 32px rgba(0,0,0,0.4)",
+        }}>
+          <Link href="/" style={{ textDecoration: "none" }}>
+            <span className="font-display" style={{ fontSize: "0.95rem", fontWeight: 800, color: "#fafaf9", letterSpacing: "-0.02em" }}>
+              Schollective
+            </span>
+          </Link>
+          <div style={{ width: "1px", height: "1rem", background: "rgba(250, 250, 249, 0.1)" }} />
+          <Link href="/login" style={{ textDecoration: "none" }}>
+            <span style={{
+              fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.2em",
+              textTransform: "uppercase", color: "rgba(250, 250, 249, 0.45)",
+              fontFamily: "var(--font-sans)",
+            }}>
+              Sign In →
+            </span>
           </Link>
         </div>
+      </div>
 
-        {/* Form container */}
+      {/* ── Form centered ──────────────────────────────────────── */}
+      <div style={{
+        flex: 1, display: "flex", alignItems: "center", justifyContent: "center",
+        padding: "8rem 1.5rem 4rem",
+        position: "relative", zIndex: 1,
+      }}>
         <motion.div
           variants={stagger}
           initial="hidden"
           animate="show"
-          style={{ position: "relative", zIndex: 1, maxWidth: 460, width: "100%", margin: "0 auto", paddingTop: "2rem", paddingBottom: "2rem" }}
+          style={{ width: "100%", maxWidth: "460px" }}
         >
           {/* Eyebrow */}
-          <motion.div variants={fadeUp} style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.5rem" }}>
-            <span style={{ width: "1.5rem", height: "1px", background: "rgba(250, 250, 249, 0.2)", display: "block" }} />
-            <span style={{ fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.38em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.32)", fontFamily: "var(--font-sans)" }}>
+          <motion.div variants={fadeUp} style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.75rem" }}>
+            <span style={{ width: "1.5rem", height: "1px", background: "rgba(129, 140, 248, 0.4)", display: "block" }} />
+            <span style={{
+              fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.38em",
+              textTransform: "uppercase", color: "rgba(129, 140, 248, 0.7)",
+              fontFamily: "var(--font-sans)",
+            }}>
               Join the Collective
             </span>
           </motion.div>
 
           {/* Headline */}
-          <motion.h1 variants={fadeUp} className="font-display" style={{ fontSize: "clamp(2.2rem, 4vw, 3.2rem)", fontWeight: 900, color: "#fafaf9", letterSpacing: "-0.035em", lineHeight: 1.05, marginBottom: "2rem" }}>
+          <motion.h1 variants={fadeUp} className="font-display" style={{ fontSize: "clamp(2.5rem, 6vw, 3.5rem)", fontWeight: 900, color: "#fafaf9", letterSpacing: "-0.035em", lineHeight: 1.05, marginBottom: "2.5rem" }}>
             Create your<br />
-            <em style={{ fontStyle: "italic", color: "rgba(250, 250, 249, 0.4)" }}>account.</em>
+            <em style={{ fontStyle: "italic", color: "rgba(250, 250, 249, 0.38)" }}>account.</em>
           </motion.h1>
 
           {/* Role selector — pill tabs */}
-          <motion.div variants={fadeUp} style={{ display: "flex", gap: "0.5rem", marginBottom: "2.5rem", padding: "0.3rem", background: "rgba(250, 250, 249, 0.04)", borderRadius: "100px", border: "1px solid rgba(250, 250, 249, 0.07)" }}>
+          <motion.div variants={fadeUp} style={{ display: "flex", gap: "0.5rem", marginBottom: "2.5rem", padding: "0.3rem", background: "rgba(250, 250, 249, 0.04)", borderRadius: "100px", border: "1px solid rgba(250, 250, 249, 0.07)", width: "100%" }}>
             {(["student", "professor"] as Role[]).map(r => (
               <button
                 key={r}
@@ -555,20 +504,22 @@ function SignupContent() {
                 </motion.button>
               </motion.div>
 
-              <motion.p variants={fadeUp} style={{ textAlign: "center", fontSize: "0.55rem", fontWeight: 600, letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.22)", fontFamily: "var(--font-sans)" }}>
-                By joining, you agree to our{" "}
-                <span style={{ color: "rgba(250, 250, 249, 0.5)" }}>Terms of Service</span>
+              <motion.p variants={fadeUp} style={{ textAlign: "center", fontSize: "0.55rem", fontWeight: 600, letterSpacing: "0.1em", color: "rgba(250, 250, 249, 0.22)", fontFamily: "var(--font-sans)" }}>
+                Already have an account?{" "}
+                <Link href="/login" style={{ color: "rgba(250, 250, 249, 0.55)", textDecoration: "none" }}>
+                  Sign in →
+                </Link>
               </motion.p>
             </div>
           </form>
         </motion.div>
+      </div>
 
-        {/* Bottom spacer */}
-        <div style={{ position: "relative", zIndex: 1 }}>
-          <span style={{ fontSize: "0.52rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.14)", fontFamily: "var(--font-sans)" }}>
-            Academic integrity · Verified credentials
-          </span>
-        </div>
+      {/* Footer note */}
+      <div style={{ position: "relative", zIndex: 1, textAlign: "center", padding: "1.5rem" }}>
+        <span style={{ fontSize: "0.5rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.14)", fontFamily: "var(--font-sans)" }}>
+          Manually verified · Institutionally credentialed · © 2025 Schollective
+        </span>
       </div>
     </div>
   );
