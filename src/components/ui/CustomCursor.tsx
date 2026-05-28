@@ -35,6 +35,24 @@ function getMode(target: HTMLElement): CursorMode {
 }
 
 function getTargetRect(el: Element): TargetRect {
+  const navItem = el.closest("[data-nav-item]");
+  if (navItem) {
+    const menuBar = navItem.closest("[data-menu-bar]");
+    if (menuBar) {
+      const itemRect = navItem.getBoundingClientRect();
+      const menuRect = menuBar.getBoundingClientRect();
+      const height = menuRect.height;
+      const radius = height / 2;
+      return {
+        x: itemRect.left + itemRect.width / 2,
+        y: menuRect.top + menuRect.height / 2,
+        width: itemRect.width + 12,
+        height: height,
+        radius,
+      };
+    }
+  }
+
   const rect = el.getBoundingClientRect();
   const computedStyle = window.getComputedStyle(el);
   const radiusStr = computedStyle.borderRadius;
@@ -308,6 +326,15 @@ export function CustomCursor() {
 
     const onOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
+
+      const navEl = target.closest("[data-nav-item]");
+      if (navEl) {
+        setMode("hover-button");
+        hoveredEl.current = navEl;
+        setTargetRect(getTargetRect(navEl));
+        return;
+      }
+
       const newMode = getMode(target);
       setMode(newMode);
 
