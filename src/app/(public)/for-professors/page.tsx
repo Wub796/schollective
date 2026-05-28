@@ -21,7 +21,7 @@ function FadeIn({ children, delay = 0, className = "" }: { children: React.React
 function Eyebrow({ children }: { children: string }) {
   return (
     <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.75rem", marginBottom: "1.5rem" }}>
-      <span style={{ width: "1.5rem", height: "1px", background: "rgba(37, 99, 235, 0.4)", display: "block", flexShrink: 0 }} />
+      <span style={{ width: "1.5rem", height: "1px", background: "rgba(79, 70, 229, 0.4)", display: "block", flexShrink: 0 }} />
       <span style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--accent)", fontFamily: "var(--font-sans)" }}>{children}</span>
     </div>
   );
@@ -167,17 +167,6 @@ export default function ForProfessorsPage() {
           <div style={{ borderTop: "1px solid var(--border)" }} />
         </div>
 
-        {/* ── QUOTE ─────────────────────────────────────── */}
-        <FadeIn>
-          <div style={{ padding: "4rem 3rem", borderLeft: "3px solid var(--accent)", marginBottom: "7.5rem", textAlign: "center" }}>
-            <p className="font-display" style={{ fontSize: "clamp(1.4rem, 2.5vw, 2.2rem)", fontWeight: 700, color: "var(--text-primary)", letterSpacing: "-0.02em", lineHeight: 1.4, marginBottom: "2rem" }}>
-              &ldquo;The students who reach out through Schollective are genuinely curious and well-prepared. It's the kind of mentorship interaction I wish was available when I was an undergrad.&rdquo;
-            </p>
-            <div style={{ fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.28em", textTransform: "uppercase", color: "var(--accent)" }}>
-              Associate Professor — Computer Science
-            </div>
-          </div>
-        </FadeIn>
 
         {/* ── CTA ─────────────────────────────────────── */}
         <FadeIn>

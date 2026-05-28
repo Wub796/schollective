@@ -35,7 +35,7 @@ const Button = React.forwardRef<HTMLElement, ButtonProps>(
         dot.style.width = `${width + 24}px`;
         dot.style.height = `${height + 18}px`;
         dot.style.borderRadius = "100px";
-        dot.style.borderColor = variant === 'primary' ? 'var(--text-primary)' : 'var(--accent)';
+        dot.style.borderColor = variant === 'primary' ? 'rgba(79,70,229,0.6)' : 'rgba(79,70,229,0.8)';
       };
       const leave = () => {
         dot.style.width = "10px";
@@ -53,9 +53,9 @@ const Button = React.forwardRef<HTMLElement, ButtonProps>(
     }, [resolvedRef, variant]);
 
     const variants = {
-      primary: "bg-transparent text-[var(--text-primary)] border-2 border-slate-900 shadow-sm",
-      ghost: "bg-transparent backdrop-blur-md text-slate-900 border-2 border-[var(--text-primary)] hover:border-[var(--accent)] hover:text-[var(--accent)]",
-      outline: "bg-transparent text-slate-900 border-2 border-[var(--text-primary)] hover:border-[var(--accent)]",
+      primary: "bg-indigo-600 text-white border-2 border-indigo-600 hover:bg-indigo-700 hover:border-indigo-700 shadow-sm transition-all duration-200",
+      ghost: "bg-transparent backdrop-blur-md text-slate-900 border-2 border-slate-900 hover:border-indigo-600 hover:text-indigo-600 transition-all duration-200",
+      outline: "bg-transparent text-indigo-600 border-2 border-indigo-600 hover:bg-indigo-600 hover:text-white transition-all duration-200",
     };
 
     const sizes = {
@@ -89,7 +89,7 @@ const Button = React.forwardRef<HTMLElement, ButtonProps>(
         </span>
         
         {/* Layer 2 — slides up and in (ABSOLUTE) */}
-        <span className="flex" style={{ position: "absolute", inset: 0, alignItems: "center", justifyContent: "center", gap: icon ? "0.5rem" : "0", color: "var(--accent)", pointerEvents: "none" }}>
+        <span className="flex" style={{ position: "absolute", inset: 0, alignItems: "center", justifyContent: "center", gap: icon ? "0.5rem" : "0", color: "#4f46e5", pointerEvents: "none" }}>
           {icon && <span className="flex-shrink-0">{icon}</span>}
           <span className="flex" style={{ overflow: "hidden", padding: "0.1em 0.1em" }}>
             {chars.map((ch, i) => (
