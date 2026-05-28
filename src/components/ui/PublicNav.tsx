@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { SchollectiveLogo } from "@/components/ui/SchollectiveLogo";
+import { Button } from "@/components/ui/Button";
 
 const NAV_LINKS = [
   { label: "About", href: "/about" },
@@ -92,417 +93,7 @@ function NavItem({ label, href, active }: {
   );
 }
 
-/* ─── Sign Up pill button — cursor morphs into border ─────────────────
-   The trick:
-   - A tiny circle (8×8px, border-radius 50%) sits centered on the button
-   - On hover it expands to 100%×100% with border-radius 100px
-   - This mimics the cursor "landing" on the button and stretching to wrap it
-   - Text layers use a shared overflow-hidden wrapper for clean vertical slides
-──────────────────────────────────────────────────────────────────────── */
-function SignUpButton() {
-  const label = "Sign Up";
-  const chars = label.split("");
 
-  return (
-    <Link
-      href="/signup"
-      className="hidden md:inline-flex group relative items-center justify-center rounded-full"
-      style={{
-        textDecoration: "none",
-        padding: "0.65rem 1.4rem",
-        color: "var(--text-primary)",
-        /* Base border — very subtle, lets the hover border replace it */
-        border: "1px solid rgba(255,255,255,0.15)",
-        /* Must NOT clip here — clipping kills the expanding border pseudo-element */
-        overflow: "visible",
-      }}
-    >
-      {/* ── Cursor-morphing border ──────────────────────────────────────
-          Starts as a ~10px circle (cursor size), centered.
-          On hover expands to fill the button outline exactly.
-          Uses inset -1px so it sits on top of the base border.
-      ─────────────────────────────────────────────────────────────────── */}
-      <span
-        aria-hidden
-        className="pointer-events-none absolute"
-        style={{
-          /* Center the tiny circle */
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          /* Start as a small cursor-like circle */
-          width: "10px",
-          height: "10px",
-          borderRadius: "50%",
-          border: "1.5px solid rgba(255,255,255,0)",
-          /* Expand to full button bounds on hover — driven by group-hover via inline transition */
-          transition:
-            "width 480ms cubic-bezier(0.19,1,0.22,1), " +
-            "height 480ms cubic-bezier(0.19,1,0.22,1), " +
-            "border-radius 480ms cubic-bezier(0.19,1,0.22,1), " +
-            "border-color 300ms ease",
-        }}
-      /* We drive the hover expansion with a data attribute trick via CSS custom props.
-         Since Tailwind group-hover can't animate width/height from arbitrary values,
-         we use a JS ref approach below — see CursorBorderSpan component. */
-      />
-
-      {/* ── Text stack — overflow-hidden clips the vertical slide ────── */}
-      <span
-        style={{
-          position: "relative",
-          display: "flex",
-          overflow: "hidden",         /* ← this is the key clip */
-          height: "1em",
-          alignItems: "center",
-        }}
-      >
-        {/* Layer 1: normal text — slides UP out */}
-        <span
-          className="flex transition-transform duration-[430ms] ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:-translate-y-full"
-          style={{ position: "absolute", inset: 0, alignItems: "center", display: "flex" }}
-        >
-          {chars.map((ch, i) => (
-            <span
-              key={i}
-              style={{
-                fontSize: "0.65rem",
-                fontWeight: 600,
-                letterSpacing: "0.05em",
-                textTransform: "uppercase" as const,
-                transitionDelay: `${i * 10}ms`,
-              }}
-            >
-              {ch === " " ? "\u00A0" : ch}
-            </span>
-          ))}
-        </span>
-
-        {/* Layer 2: italic serif — slides UP in from below */}
-        <span
-          className="flex translate-y-full group-hover:translate-y-0 transition-transform duration-[430ms] ease-[cubic-bezier(0.19,1,0.22,1)]"
-          style={{ position: "absolute", inset: 0, alignItems: "center", display: "flex" }}
-        >
-          {chars.map((ch, i) => (
-            <span
-              key={i}
-              style={{
-                fontFamily: "var(--font-display)",
-                fontStyle: "italic",
-                fontWeight: 400,
-                fontSize: "0.8rem",
-                letterSpacing: "0.01em",
-                color: "var(--text-primary)",
-                transitionDelay: `${i * 10}ms`,
-              }}
-            >
-              {ch === " " ? "\u00A0" : ch}
-            </span>
-          ))}
-        </span>
-
-        {/* Invisible spacer so the button doesn't collapse */}
-        <span style={{ visibility: "hidden", fontSize: "0.65rem", fontWeight: 600, letterSpacing: "0.05em", textTransform: "uppercase" as const }}>
-          {label}
-        </span>
-      </span>
-
-      {/* Arrow */}
-      <span
-        className="ml-2 transition-transform duration-500 group-hover:translate-x-1"
-        style={{ fontSize: "0.75rem" }}
-      >
-        →
-      </span>
-    </Link>
-  );
-}
-
-/* ─── We need JS to drive the cursor-border because CSS group-hover
-   can't animate from `10px` to `calc(100% + 2px)`. We attach a
-   ref and toggle inline styles on mouseenter/leave. ──────────────── */
-function SignUpButtonWithCursorBorder() {
-  const wrapRef = useRef<HTMLAnchorElement>(null);
-  const borderRef = useRef<HTMLSpanElement>(null);
-
-  useEffect(() => {
-    const el = wrapRef.current;
-    const dot = borderRef.current;
-    if (!el || !dot) return;
-
-    const enter = () => {
-      const { width, height } = el.getBoundingClientRect();
-      dot.style.width = `${width + 2}px`;
-      dot.style.height = `${height + 2}px`;
-      dot.style.borderRadius = "100px";
-      dot.style.borderColor = "var(--text-primary)";
-    };
-    const leave = () => {
-      dot.style.width = "10px";
-      dot.style.height = "10px";
-      dot.style.borderRadius = "50%";
-      dot.style.borderColor = "rgba(255,255,255,0)";
-    };
-
-    el.addEventListener("mouseenter", enter);
-    el.addEventListener("mouseleave", leave);
-    return () => {
-      el.removeEventListener("mouseenter", enter);
-      el.removeEventListener("mouseleave", leave);
-    };
-  }, []);
-
-  const label = "Sign Up";
-  const chars = label.split("");
-
-  return (
-    <Link
-      ref={wrapRef}
-      href="/signup"
-      data-cursor-hide="true"
-      className="hidden md:inline-flex group relative items-center justify-center rounded-full"
-      style={{
-        textDecoration: "none",
-        padding: "0.65rem 1.4rem",
-        color: "var(--text-primary)",
-        border: "1px solid rgba(15, 23, 42, 0.12)",
-        overflow: "visible",
-        position: "relative",
-      }}
-    >
-      {/* Cursor-morphing border span */}
-      <span
-        ref={borderRef}
-        aria-hidden
-        style={{
-          pointerEvents: "none",
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          width: "10px",
-          height: "10px",
-          borderRadius: "50%",
-          border: "1.5px solid rgba(255,255,255,0)",
-          transition:
-            "width 520ms cubic-bezier(0.19,1,0.22,1), " +
-            "height 520ms cubic-bezier(0.19,1,0.22,1), " +
-            "border-radius 520ms cubic-bezier(0.19,1,0.22,1), " +
-            "border-color 200ms ease",
-          zIndex: 2,
-        }}
-      />
-
-      {/* Text stack */}
-      <span
-        style={{
-          position: "relative",
-          display: "flex",
-          clipPath: "inset(0 -0.15em 0 0)",
-          height: "1em",
-          alignItems: "center",
-          zIndex: 3,
-        }}
-      >
-        {/* Layer 1: normal, slides UP out */}
-        <span
-          className="flex transition-transform duration-[430ms] ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:-translate-y-full"
-          style={{ position: "absolute", inset: 0, alignItems: "center", display: "flex" }}
-        >
-          {chars.map((ch, i) => (
-            <span
-              key={i}
-              style={{
-                fontSize: "0.65rem",
-                fontWeight: 600,
-                letterSpacing: "0.05em",
-                textTransform: "uppercase" as const,
-              }}
-            >
-              {ch === " " ? "\u00A0" : ch}
-            </span>
-          ))}
-        </span>
-
-        {/* Layer 2: italic serif, slides UP in from below */}
-        <span
-          className="flex translate-y-full group-hover:translate-y-0 transition-transform duration-[430ms] ease-[cubic-bezier(0.19,1,0.22,1)]"
-          style={{ position: "absolute", inset: 0, alignItems: "center", display: "flex" }}
-        >
-          {chars.map((ch, i) => (
-            <span
-              key={i}
-              style={{
-                fontFamily: "var(--font-display)",
-                fontStyle: "italic",
-                fontWeight: 400,
-                fontSize: "0.8rem",
-                letterSpacing: "0.01em",
-                color: "var(--text-primary)",
-              }}
-            >
-              {ch === " " ? "\u00A0" : ch}
-            </span>
-          ))}
-        </span>
-
-        {/* Spacer */}
-        <span aria-hidden style={{ visibility: "hidden", fontSize: "0.65rem", fontWeight: 600, letterSpacing: "0.05em", textTransform: "uppercase" as const }}>
-          {label}
-        </span>
-      </span>
-
-      {/* Arrow */}
-      <span
-        className="ml-2 transition-transform duration-500 group-hover:translate-x-1"
-        style={{ position: "relative", zIndex: 3, fontSize: "0.75rem" }}
-      >
-        →
-      </span>
-    </Link>
-  );
-}
-
-/* ─── Get Started button used in the fullscreen menu footer ─────────────
-   Same cursor-morphing + char slide treatment as Sign Up. ─────────────── */
-function GetStartedButton({ onClose }: { onClose: () => void }) {
-  const wrapRef   = useRef<HTMLAnchorElement>(null);
-  const borderRef = useRef<HTMLSpanElement>(null);
-  const label = "Get Started";
-  const chars = label.split("");
-
-  useEffect(() => {
-    const el  = wrapRef.current;
-    const dot = borderRef.current;
-    if (!el || !dot) return;
-    const enter = () => {
-      const { width, height } = el.getBoundingClientRect();
-      dot.style.width        = `${width + 2}px`;
-      dot.style.height       = `${height + 2}px`;
-      dot.style.borderRadius = "100px";
-      dot.style.borderColor  = "rgba(37, 99, 235,0.9)";
-    };
-    const leave = () => {
-      dot.style.width        = "10px";
-      dot.style.height       = "10px";
-      dot.style.borderRadius = "50%";
-      dot.style.borderColor  = "rgba(37, 99, 235,0)";
-    };
-    el.addEventListener("mouseenter", enter);
-    el.addEventListener("mouseleave", leave);
-    return () => { el.removeEventListener("mouseenter", enter); el.removeEventListener("mouseleave", leave); };
-  }, []);
-
-  return (
-    <Link
-      ref={wrapRef}
-      href="/signup"
-      onClick={onClose}
-      data-cursor-hide="true"
-      className="group relative inline-flex items-center justify-center"
-      style={{
-        textDecoration: "none",
-        padding: "0.6rem 1.4rem",
-        border: "1px solid rgba(37, 99, 235,0.35)",
-        borderRadius: "100px",
-        color: "var(--text-primary)",
-        overflow: "visible",
-        position: "relative",
-      }}
-    >
-      {/* Cursor-morphing border */}
-      <span
-        ref={borderRef}
-        aria-hidden
-        style={{
-          pointerEvents: "none",
-          position: "absolute",
-          top: "50%", left: "50%",
-          transform: "translate(-50%, -50%)",
-          width: "10px", height: "10px",
-          borderRadius: "50%",
-          border: "1.5px solid rgba(37, 99, 235,0)",
-          transition:
-            "width 520ms cubic-bezier(0.19,1,0.22,1), " +
-            "height 520ms cubic-bezier(0.19,1,0.22,1), " +
-            "border-radius 520ms cubic-bezier(0.19,1,0.22,1), " +
-            "border-color 200ms ease",
-          zIndex: 2,
-        }}
-      />
-
-      {/* Text stack */}
-      <span
-        style={{
-          position: "relative",
-          display: "flex",
-          overflow: "hidden",
-          height: "1em",
-          alignItems: "center",
-          zIndex: 3,
-        }}
-      >
-        {/* Layer 1: normal → slides UP out */}
-        <span
-          className="flex transition-transform duration-[430ms] ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:-translate-y-full"
-          style={{ position: "absolute", inset: 0, alignItems: "center", display: "flex" }}
-        >
-          {chars.map((ch, i) => (
-            <span
-              key={i}
-              style={{
-                fontSize: "0.6rem",
-                fontWeight: 600,
-                letterSpacing: "0.2em",
-                textTransform: "uppercase" as const,
-                color: "var(--accent)",
-                transitionDelay: `${i * 10}ms`,
-              }}
-            >
-              {ch === " " ? "\u00A0" : ch}
-            </span>
-          ))}
-        </span>
-
-        {/* Layer 2: italic serif → slides UP in from below */}
-        <span
-          className="flex translate-y-full group-hover:translate-y-0 transition-transform duration-[430ms] ease-[cubic-bezier(0.19,1,0.22,1)]"
-          style={{ position: "absolute", inset: 0, alignItems: "center", display: "flex" }}
-        >
-          {chars.map((ch, i) => (
-            <span
-              key={i}
-              style={{
-                fontFamily: "var(--font-display)",
-                fontStyle: "italic",
-                fontWeight: 400,
-                fontSize: "0.78rem",
-                letterSpacing: "0.01em",
-                color: "var(--accent)",
-                transitionDelay: `${i * 10}ms`,
-              }}
-            >
-              {ch === " " ? "\u00A0" : ch}
-            </span>
-          ))}
-        </span>
-
-        {/* Invisible spacer */}
-        <span aria-hidden style={{ visibility: "hidden", fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase" as const }}>
-          {label}
-        </span>
-      </span>
-
-      {/* Arrow */}
-      <span
-        className="ml-3 transition-transform duration-500 group-hover:translate-x-1"
-        style={{ position: "relative", zIndex: 3, fontSize: "0.75rem", color: "var(--accent)" }}
-      >
-        →
-      </span>
-    </Link>
-  );
-}
 
 function FullscreenMenu({
   open, onClose, pathname,
@@ -639,7 +230,7 @@ function FullscreenMenu({
                   © {new Date().getFullYear()} Schollective, Inc.
                 </p>
               </div>
-              <GetStartedButton onClose={onClose} />
+              <Button onClick={() => { onClose(); router.push("/signup"); }} variant="primary" size="lg">Get Started</Button>
             </motion.div>
           </motion.div>
         </>
@@ -653,8 +244,7 @@ export function PublicNav() {
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const menuWrapRef = useRef<HTMLButtonElement>(null);
-  const menuBorderRef = useRef<HTMLSpanElement>(null);
+  // Removed unused refs for hamburger menu
 
   useEffect(() => { setMounted(true); }, []);
 
@@ -766,46 +356,17 @@ export function PublicNav() {
             <span className="absolute bottom-0 right-0 h-[1px] bg-[var(--text-primary)] w-1/2 origin-right transition-transform duration-300 ease-out group-hover:translate-x-full" />
           </Link>
 
-          {/* Sign Up — cursor-morphing border + clean text slide */}
-          <SignUpButtonWithCursorBorder />
+          {/* Sign Up */}
+          <Button href="/signup" variant="ghost" size="sm" className="hidden md:inline-flex uppercase tracking-wider text-[0.65rem]">Sign Up</Button>
 
           {/* Hamburger */}
-          <button
-            ref={menuWrapRef}
+          <Button
+            variant="ghost"
             onClick={() => setMenuOpen(v => !v)}
             aria-label="Toggle menu"
             data-cursor-hide="true"
-            style={{
-              position: "relative",
-              pointerEvents: "all", background: "rgba(37, 99, 235,0.08)",
-              border: "1px solid rgba(37, 99, 235,0.18)", borderRadius: "100px",
-              width: "2.6rem", height: "2.6rem", display: "flex",
-              alignItems: "center", justifyContent: "center", cursor: "pointer",
-              transition: "background 0.3s ease, border-color 0.3s ease", flexShrink: 0,
-            }}
+            style={{ width: "2.6rem", height: "2.6rem", padding: 0 }}
           >
-            {/* Cursor-morphing border span */}
-            <span
-              ref={menuBorderRef}
-              aria-hidden
-              style={{
-                pointerEvents: "none",
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-                width: "10px",
-                height: "10px",
-                borderRadius: "50%",
-                border: "1.5px solid rgba(255,255,255,0)",
-                transition:
-                  "width 520ms cubic-bezier(0.19,1,0.22,1), " +
-                  "height 520ms cubic-bezier(0.19,1,0.22,1), " +
-                  "border-radius 520ms cubic-bezier(0.19,1,0.22,1), " +
-                  "border-color 200ms ease",
-                zIndex: 2,
-              }}
-            />
             <AnimatePresence mode="wait">
               {menuOpen ? (
                 <motion.span
@@ -832,7 +393,7 @@ export function PublicNav() {
                 </motion.svg>
               )}
             </AnimatePresence>
-          </button>
+          </Button>
         </motion.div>
       </nav>
     </>

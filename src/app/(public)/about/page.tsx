@@ -19,9 +19,9 @@ function FadeIn({ children, delay = 0, className = "" }: { children: React.React
 
 function Eyebrow({ children }: { children: string }) {
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.5rem" }}>
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.75rem", marginBottom: "1.5rem" }}>
       <span style={{ width: "1.5rem", height: "1px", background: "rgba(37, 99, 235, 0.4)", display: "block", flexShrink: 0 }} />
-      <span style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(37, 99, 235, 0.6)", fontFamily: "var(--font-sans)" }}>{children}</span>
+      <span style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--accent)", fontFamily: "var(--font-sans)" }}>{children}</span>
     </div>
   );
 }
@@ -40,13 +40,10 @@ const TEAM = [
   { initials: "JH", name: "Joseph Hu", role: "Builder", desc: "Dedicated to engineering systems that connect students with the guidance they need to grow academically and professionally." },
 ];export default function AboutPage() {
   return (
-    <div style={{ background: "var(--bg-base)", color: "var(--text-primary)", minHeight: "100vh" }}>
+    <div style={{ background: "transparent", color: "var(--text-primary)", minHeight: "100vh" }}>
       <PublicNav />
 
-      {/* Ambient glow */}
-      <div style={{ position: "fixed", inset: 0, pointerEvents: "none", background: "radial-gradient(ellipse 80% 60% at 20% 30%, rgba(99,102,241,0.08) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 80% 70%, rgba(37, 99, 235,0.05) 0%, transparent 60%)", zIndex: 0 }} />
-
-      <div style={{ position: "relative", zIndex: 1, maxWidth: "920px", margin: "0 auto", padding: "12rem 2rem 8rem" }}>
+      <div style={{ position: "relative", zIndex: 1, maxWidth: "920px", margin: "0 auto", padding: "12rem 2rem 8rem", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
 
         {/* ── HERO ─────────────────────────────────────── */}
         <FadeIn>
@@ -65,22 +62,7 @@ const TEAM = [
           </p>
         </FadeIn>
 
-        {/* ── STATS ─────────────────────────────────────── */}
-        <FadeIn delay={0.1}>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "3.5rem", padding: "4rem 0", borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)", marginBottom: "7rem" }}>
-            {[
-              { n: "2,300+", l: "US Universities Indexed" },
-              { n: "Free", l: "Always, for students" },
-              { n: "100%", l: "Verified Professors" },
-              { n: "0", l: "Cold emails required" },
-            ].map(({ n, l }) => (
-              <div key={l}>
-                <div className="font-display" style={{ fontSize: "clamp(2.2rem, 4vw, 3.2rem)", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.04em", lineHeight: 1 }}>{n}</div>
-                <div style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.28em", textTransform: "uppercase", color: "var(--accent)", opacity: 0.75, marginTop: "0.75rem", fontFamily: "var(--font-sans)" }}>{l}</div>
-              </div>
-            ))}
-          </div>
-        </FadeIn>
+
 
         {/* ── THE PROBLEM ─────────────────────────────── */}
         <FadeIn>
