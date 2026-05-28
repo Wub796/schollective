@@ -154,18 +154,11 @@ function Label({ children }: { children: React.ReactNode }) {
 export default function LandingPage() {
   const router = useRouter();
   const [loaderDone, setLoaderDone] = useState(false);
-  const [interest, setInterest] = useState("");
-  const [university, setUniversity] = useState("");
 
   useEffect(() => {
     const t = setTimeout(() => setLoaderDone(true), 1300);
     return () => clearTimeout(t);
   }, []);
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    router.push(`/signup?interest=${encodeURIComponent(interest)}&university=${encodeURIComponent(university)}`);
-  };
 
   return (
     <>
@@ -210,53 +203,12 @@ export default function LandingPage() {
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.9, ease: EASE, delay: 1.1 }}
-              className="flex items-center justify-center mb-16"
+              className="flex items-center justify-center"
             >
               <Button href="/signup" variant="primary" size="lg">
                 Get Started →
               </Button>
             </motion.div>
-
-            {/* Search Bar UI Element */}
-            <motion.form
-              onSubmit={handleSearch}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, ease: EASE, delay: 1.3 }}
-              className="w-full max-w-2xl p-2 bg-white border border-slate-200/80 rounded-full flex flex-col sm:flex-row items-center gap-2"
-            >
-              <div className="flex-1 w-full flex items-center px-4 py-2 gap-2.5">
-                <svg className="w-4 h-4 text-indigo-600/50 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-                <input
-                  type="text"
-                  placeholder="Research Interest"
-                  value={interest}
-                  onChange={(e) => setInterest(e.target.value)}
-                  className="w-full bg-transparent text-sm text-slate-800 placeholder-slate-400 font-sans focus:outline-none"
-                />
-              </div>
-              <div className="hidden sm:block w-px h-6 bg-slate-200" />
-              <div className="flex-1 w-full flex items-center px-4 py-2 gap-2.5">
-                <svg className="w-4 h-4 text-indigo-600/50 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                </svg>
-                <input
-                  type="text"
-                  placeholder="University"
-                  value={university}
-                  onChange={(e) => setUniversity(e.target.value)}
-                  className="w-full bg-transparent text-sm text-slate-800 placeholder-slate-400 font-sans focus:outline-none"
-                />
-              </div>
-              <button
-                type="submit"
-                className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-indigo-600 text-white hover:bg-indigo-700 font-bold text-xs uppercase tracking-wider transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2"
-              >
-                Search
-              </button>
-            </motion.form>
           </div>
         </section>
 
