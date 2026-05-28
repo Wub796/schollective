@@ -42,7 +42,7 @@ function NavLink({
         textDecoration: "none",
         background: active ? "rgba(37, 99, 235,0.1)" : "transparent",
         border: active ? "1px solid rgba(37, 99, 235,0.2)" : "1px solid transparent",
-        color: active ? "#818cf8" : "rgba(15, 23, 42,0.45)",
+        color: active ? "var(--accent)" : "rgba(15, 23, 42,0.45)",
         fontSize: "0.7rem",
         fontWeight: 600,
         letterSpacing: "0.03em",

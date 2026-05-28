@@ -92,7 +92,7 @@ function FilterPill({
           ? "1px solid rgba(15, 23, 42, 0.3)"
           : "1px solid rgba(15, 23, 42, 0.07)",
         background: active ? "rgba(15, 23, 42, 0.08)" : "transparent",
-        color: active ? "#fafaf9" : "rgba(15, 23, 42, 0.35)",
+        color: active ? "var(--text-primary)" : "rgba(15, 23, 42, 0.35)",
         fontSize: "0.6rem",
         fontWeight: 700,
         letterSpacing: "0.18em",
@@ -352,7 +352,7 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
                           {u.first_name[0]}{u.last_name[0]}
                         </div>
                         <div>
-                          <div style={{ fontSize: "0.82rem", fontWeight: 600, color: isSuspended ? "rgba(15, 23, 42,0.35)" : "#fafaf9", fontFamily: "var(--font-sans)", textDecoration: isSuspended ? "line-through" : "none" }}>
+                          <div style={{ fontSize: "0.82rem", fontWeight: 600, color: isSuspended ? "rgba(15, 23, 42,0.35)" : "var(--text-primary)", fontFamily: "var(--font-sans)", textDecoration: isSuspended ? "line-through" : "none" }}>
                             {displayName} {u.last_name}
                           </div>
                           <div style={{ display: "flex", alignItems: "center", gap: "0.3rem", fontSize: "0.6rem", color: "rgba(15, 23, 42,0.3)", fontFamily: "var(--font-sans)", marginTop: "0.15rem" }}>

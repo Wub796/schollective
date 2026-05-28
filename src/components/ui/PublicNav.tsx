@@ -47,7 +47,7 @@ function NavItem({ label, href, active }: {
               fontSize: "0.68rem",
               fontWeight: 600,
               letterSpacing: "0.01em",
-              color: active ? "#fafaf9" : "rgba(168,179,207,0.55)",
+              color: active ? "var(--text-primary)" : "rgba(15, 23, 42, 0.55)",
               transitionDelay: `${i * 12}ms`,
               willChange: "transform",
             }}
@@ -591,7 +591,7 @@ function FullscreenMenu({
                                 fontFamily: "var(--font-display)",
                                 fontSize: "clamp(3rem, 6vw, 6rem)", fontWeight: 400,
                                 letterSpacing: "-0.03em",
-                                color: isActive ? "#fafaf9" : "rgba(168,179,207,0.65)",
+                                color: isActive ? "var(--text-primary)" : "rgba(15, 23, 42, 0.65)",
                                 transitionDelay: `${i * 15}ms`,
                               }}
                             >
@@ -733,8 +733,8 @@ export function PublicNav() {
             }}
           >
             <span style={{ position: "relative", zIndex: 2 }}>Log In</span>
-            <span className="absolute bottom-0 left-0 h-[1px] bg-[#fafaf9] w-1/2 origin-left transition-transform duration-300 ease-out group-hover:-translate-x-full" />
-            <span className="absolute bottom-0 right-0 h-[1px] bg-[#fafaf9] w-1/2 origin-right transition-transform duration-300 ease-out group-hover:translate-x-full" />
+            <span className="absolute bottom-0 left-0 h-[1px] bg-[var(--text-primary)] w-1/2 origin-left transition-transform duration-300 ease-out group-hover:-translate-x-full" />
+            <span className="absolute bottom-0 right-0 h-[1px] bg-[var(--text-primary)] w-1/2 origin-right transition-transform duration-300 ease-out group-hover:translate-x-full" />
           </Link>
 
           {/* Sign Up — cursor-morphing border + clean text slide */}
