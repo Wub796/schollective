@@ -82,23 +82,6 @@ export default function ForProfessorsPage() {
           </div>
         </FadeIn>
 
-        {/* ── STATS ─────────────────────────────────────── */}
-        <FadeIn>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "3rem", padding: "3.5rem 0", borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)", marginBottom: "7.5rem" }}>
-            {[
-              { n: "100%", l: "Free for professors" },
-              { n: "Manual", l: "Verification process" },
-              { n: "You", l: "Control every thread" },
-              { n: "12K+", l: "Active students" },
-            ].map(({ n, l }) => (
-              <div key={l}>
-                <div className="font-display" style={{ fontSize: "clamp(2.2rem, 3.2vw, 3.2rem)", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.04em", lineHeight: 1 }}>{n}</div>
-                <div style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.28em", textTransform: "uppercase", color: "var(--accent)", opacity: 0.75, marginTop: "0.75rem", fontFamily: "var(--font-sans)" }}>{l}</div>
-              </div>
-            ))}
-          </div>
-        </FadeIn>
-
         {/* ── WHY SCHOLLECTIVE ─────────────────────────── */}
         <FadeIn>
           <Eyebrow>Why Professors Join</Eyebrow>
