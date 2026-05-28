@@ -135,10 +135,10 @@ export function ChatThread({
             alignItems: "center", justifyContent: "center",
             gap: "0.75rem", opacity: 0.4, padding: "4rem 2rem",
           }}>
-            <div style={{ width: "2.5rem", height: "2.5rem", borderRadius: "50%", border: "1px solid rgba(129, 140, 248, 0.2)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <Send size={14} color="rgba(129, 140, 248, 0.6)" />
+            <div style={{ width: "2.5rem", height: "2.5rem", borderRadius: "50%", border: "1px solid rgba(37, 99, 235, 0.2)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <Send size={14} color="rgba(37, 99, 235, 0.6)" />
             </div>
-            <p style={{ fontSize: "0.78rem", color: "rgba(168, 179, 207, 0.5)", fontStyle: "italic", fontFamily: "var(--font-display)", textAlign: "center" }}>
+            <p style={{ fontSize: "0.78rem", color: "rgba(15, 23, 42, 0.5)", fontStyle: "italic", fontFamily: "var(--font-display)", textAlign: "center" }}>
               Begin the dialogue
             </p>
           </div>
@@ -162,20 +162,20 @@ export function ChatThread({
                   fontFamily: "var(--font-sans)",
                   ...(isOwn
                     ? {
-                        background: "rgba(129, 140, 248, 0.85)",
-                        color: "#09090b",
+                        background: "rgba(37, 99, 235, 0.85)",
+                        color: "var(--bg-base)",
                         fontWeight: 500,
                       }
                     : {
                         background: "rgba(17, 17, 22, 0.85)",
-                        color: "rgba(168, 179, 207, 0.9)",
-                        border: "1px solid rgba(129, 140, 248, 0.1)",
+                        color: "rgba(15, 23, 42, 0.9)",
+                        border: "1px solid rgba(37, 99, 235, 0.1)",
                       }),
                 }}>
                   {msg.content}
                 </div>
                 <span style={{
-                  fontSize: "0.52rem", color: "rgba(82, 82, 91, 0.45)",
+                  fontSize: "0.52rem", color: "rgba(15, 23, 42, 0.45)",
                   marginTop: "0.3rem", padding: "0 0.2rem",
                   fontWeight: 600, textTransform: "uppercase",
                   letterSpacing: "0.12em", fontFamily: "var(--font-mono, monospace)",
@@ -191,8 +191,8 @@ export function ChatThread({
       {/* Input bar */}
       <div style={{
         padding: "0.875rem 1.5rem",
-        background: "rgba(9, 9, 11, 0.95)",
-        borderTop: "1px solid rgba(129, 140, 248, 0.07)",
+        background: "rgba(255, 255, 255, 0.95)",
+        borderTop: "1px solid rgba(37, 99, 235, 0.07)",
         backdropFilter: "blur(24px)",
         flexShrink: 0,
       }}>
@@ -200,13 +200,13 @@ export function ChatThread({
           <div style={{
             display: "flex", alignItems: "center", gap: "0.75rem",
             padding: "0.875rem 1.25rem",
-            border: "1px dashed rgba(129, 140, 248, 0.1)",
+            border: "1px dashed rgba(37, 99, 235, 0.1)",
             borderRadius: "14px",
-            background: "rgba(17, 17, 19, 0.4)",
+            background: "var(--bg-surface-2)",
           }}>
-            <Lock size={13} style={{ color: "rgba(129, 140, 248, 0.3)", flexShrink: 0 }} />
+            <Lock size={13} style={{ color: "rgba(37, 99, 235, 0.3)", flexShrink: 0 }} />
             <span style={{
-              fontSize: "0.76rem", color: "rgba(168, 179, 207, 0.35)",
+              fontSize: "0.76rem", color: "rgba(15, 23, 42, 0.35)",
               fontStyle: "italic", fontFamily: "var(--font-display)",
             }}>
               {status === "pending"
@@ -228,11 +228,11 @@ export function ChatThread({
                 style={{
                   width: "100%",
                   background: "rgba(17, 17, 22, 0.7)",
-                  border: "1px solid rgba(129, 140, 248, 0.12)",
+                  border: "1px solid rgba(37, 99, 235, 0.12)",
                   borderRadius: "14px",
                   padding: "0.8rem 1.1rem",
                   fontSize: "0.875rem",
-                  color: "rgba(250, 250, 249, 0.9)",
+                  color: "var(--text-primary)",
                   outline: "none",
                   transition: "border-color 0.2s, background 0.2s",
                   resize: "none",
@@ -241,11 +241,11 @@ export function ChatThread({
                   lineHeight: 1.6,
                 }}
                 onFocus={e => {
-                  e.currentTarget.style.borderColor = "rgba(129, 140, 248, 0.4)";
+                  e.currentTarget.style.borderColor = "rgba(37, 99, 235, 0.4)";
                   e.currentTarget.style.background = "rgba(17, 17, 22, 0.92)";
                 }}
                 onBlur={e => {
-                  e.currentTarget.style.borderColor = "rgba(129, 140, 248, 0.12)";
+                  e.currentTarget.style.borderColor = "rgba(37, 99, 235, 0.12)";
                   e.currentTarget.style.background = "rgba(17, 17, 22, 0.7)";
                 }}
                 onInput={(e) => {

@@ -25,9 +25,9 @@ interface ThreadCardProps {
 }
 
 const statusConfig = {
-  pending: { label: "Awaiting Reply", color: "rgba(168, 179, 207, 0.5)",  glow: "rgba(99, 102, 241, 0.12)"  },
-  active:  { label: "Active",         color: "rgba(129, 140, 248, 0.9)",   glow: "rgba(129, 140, 248, 0.12)" },
-  closed:  { label: "Closed",         color: "rgba(82, 82, 91, 0.45)",  glow: "rgba(17, 17, 19, 0.5)"    },
+  pending: { label: "Awaiting Reply", color: "rgba(15, 23, 42, 0.5)",  glow: "rgba(99, 102, 241, 0.12)"  },
+  active:  { label: "Active",         color: "rgba(37, 99, 235, 0.9)",   glow: "rgba(37, 99, 235, 0.12)" },
+  closed:  { label: "Closed",         color: "rgba(15, 23, 42, 0.45)",  glow: "rgba(17, 17, 19, 0.5)"    },
 };
 
 export function ThreadCard({ request, viewerRole }: ThreadCardProps) {
@@ -44,7 +44,7 @@ export function ThreadCard({ request, viewerRole }: ThreadCardProps) {
         style={{
           position: "relative",
           background: "rgba(17, 17, 19, 0.6)",
-          border: "1px solid rgba(129, 140, 248, 0.1)",
+          border: "1px solid rgba(37, 99, 235, 0.1)",
           borderRadius: "16px",
           padding: "1.75rem",
           display: "flex",
@@ -59,7 +59,7 @@ export function ThreadCard({ request, viewerRole }: ThreadCardProps) {
         {/* Top shimmer line on hover */}
         <div style={{
           position: "absolute", insetInline: 0, top: 0, height: "1px",
-          background: "linear-gradient(90deg, transparent, rgba(129, 140, 248, 0.25), transparent)",
+          background: "linear-gradient(90deg, transparent, rgba(37, 99, 235, 0.25), transparent)",
         }} />
 
         {/* Header row */}
@@ -68,10 +68,10 @@ export function ThreadCard({ request, viewerRole }: ThreadCardProps) {
           <div style={{ display: "flex", alignItems: "center", gap: "0.875rem", minWidth: 0, flex: 1 }}>
             <div style={{
               width: "2.5rem", height: "2.5rem", borderRadius: "50%",
-              background: "rgba(129, 140, 248, 0.07)",
-              border: "1px solid rgba(129, 140, 248, 0.18)",
+              background: "rgba(37, 99, 235, 0.07)",
+              border: "1px solid rgba(37, 99, 235, 0.18)",
               display: "flex", alignItems: "center", justifyContent: "center",
-              fontSize: "0.72rem", fontWeight: 600, color: "#818cf8",
+              fontSize: "0.72rem", fontWeight: 600, color: "var(--accent)",
               letterSpacing: "0.05em", flexShrink: 0,
               fontFamily: "var(--font-sans)",
             }}>
@@ -79,7 +79,7 @@ export function ThreadCard({ request, viewerRole }: ThreadCardProps) {
             </div>
             <div style={{ minWidth: 0 }}>
               <div style={{ 
-                fontSize: "0.88rem", fontWeight: 500, color: "rgba(250, 250, 249, 0.88)", 
+                fontSize: "0.88rem", fontWeight: 500, color: "rgba(15, 23, 42, 0.88)", 
                 lineHeight: 1.2, fontFamily: "var(--font-sans)",
                 overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap"
               }}>
@@ -87,7 +87,7 @@ export function ThreadCard({ request, viewerRole }: ThreadCardProps) {
               </div>
               <div style={{
                 fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.22em",
-                textTransform: "uppercase", color: "rgba(129, 140, 248, 0.45)",
+                textTransform: "uppercase", color: "rgba(37, 99, 235, 0.45)",
                 marginTop: "0.25rem", fontFamily: "var(--font-mono, monospace)",
                 overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap"
               }}>
@@ -120,14 +120,14 @@ export function ThreadCard({ request, viewerRole }: ThreadCardProps) {
         <div style={{ flex: 1, marginBottom: "1.25rem" }}>
           <div style={{
             fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.28em",
-            textTransform: "uppercase", color: "rgba(129, 140, 248, 0.35)",
+            textTransform: "uppercase", color: "rgba(37, 99, 235, 0.35)",
             marginBottom: "0.5rem", fontFamily: "var(--font-mono, monospace)",
           }}>
             Research Topic
           </div>
           <p className="font-display" style={{
             fontSize: "0.95rem", lineHeight: 1.5,
-            color: "rgba(168, 179, 207, 0.75)", fontStyle: "italic",
+            color: "rgba(15, 23, 42, 0.75)", fontStyle: "italic",
             display: "-webkit-box", WebkitLineClamp: 3,
             WebkitBoxOrient: "vertical", overflow: "hidden",
           }}>
@@ -139,19 +139,19 @@ export function ThreadCard({ request, viewerRole }: ThreadCardProps) {
         {request.latest_message ? (
           <div style={{
             paddingTop: "1rem",
-            borderTop: "1px solid rgba(129, 140, 248, 0.08)",
+            borderTop: "1px solid rgba(37, 99, 235, 0.08)",
             marginTop: "auto",
           }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.4rem" }}>
-              <span style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(129, 140, 248, 0.35)", fontFamily: "var(--font-mono, monospace)" }}>
+              <span style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(37, 99, 235, 0.35)", fontFamily: "var(--font-mono, monospace)" }}>
                 Last activity
               </span>
-              <span style={{ fontSize: "0.6rem", color: "rgba(82, 82, 91, 0.6)", fontFamily: "var(--font-sans)" }}>
+              <span style={{ fontSize: "0.6rem", color: "rgba(15, 23, 42, 0.6)", fontFamily: "var(--font-sans)" }}>
                 {new Date(request.latest_message.created_at).toLocaleDateString()}
               </span>
             </div>
             <p style={{
-              fontSize: "0.78rem", color: "rgba(168, 179, 207, 0.45)",
+              fontSize: "0.78rem", color: "rgba(15, 23, 42, 0.45)",
               overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
               fontFamily: "var(--font-sans)",
             }}>
@@ -159,8 +159,8 @@ export function ThreadCard({ request, viewerRole }: ThreadCardProps) {
             </p>
           </div>
         ) : (
-          <div style={{ marginTop: "auto", paddingTop: "1rem", borderTop: "1px solid rgba(129, 140, 248, 0.08)" }}>
-            <span style={{ fontSize: "0.6rem", color: "rgba(82, 82, 91, 0.4)", fontFamily: "var(--font-sans)", fontStyle: "italic" }}>
+          <div style={{ marginTop: "auto", paddingTop: "1rem", borderTop: "1px solid rgba(37, 99, 235, 0.08)" }}>
+            <span style={{ fontSize: "0.6rem", color: "rgba(15, 23, 42, 0.4)", fontFamily: "var(--font-sans)", fontStyle: "italic" }}>
               No messages yet
             </span>
           </div>

@@ -29,7 +29,7 @@ function formatDate(iso: string) {
 
 function FilterPill({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
   return (
-    <button onClick={onClick} className="btn-filter-pill" style={{ padding: "0.35rem 0.85rem", borderRadius: "100px", border: active ? "1px solid rgba(250,250,249,0.3)" : "1px solid rgba(250,250,249,0.07)", background: active ? "rgba(250,250,249,0.08)" : "transparent", color: active ? "#fafaf9" : "rgba(250,250,249,0.35)", fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", fontFamily: "var(--font-sans)", cursor: "pointer", whiteSpace: "nowrap" }}>
+    <button onClick={onClick} className="btn-filter-pill" style={{ padding: "0.35rem 0.85rem", borderRadius: "100px", border: active ? "1px solid rgba(15, 23, 42,0.3)" : "1px solid rgba(15, 23, 42,0.07)", background: active ? "rgba(15, 23, 42,0.08)" : "transparent", color: active ? "#fafaf9" : "rgba(15, 23, 42,0.35)", fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", fontFamily: "var(--font-sans)", cursor: "pointer", whiteSpace: "nowrap" }}>
       {label}
     </button>
   );
@@ -79,7 +79,7 @@ export function AdminThreadsTable({ threads }: { threads: ThreadRecord[] }) {
   function SortTh({ col, label }: { col: SortKey; label: string }) {
     const active = sortKey === col;
     return (
-      <th onClick={() => toggleSort(col)} style={{ padding: "0.85rem 1.1rem", fontSize: "0.48rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: active ? "rgba(250,250,249,0.55)" : "rgba(250,250,249,0.2)", fontFamily: "var(--font-mono, monospace)", cursor: "pointer", userSelect: "none", whiteSpace: "nowrap" }}>
+      <th onClick={() => toggleSort(col)} style={{ padding: "0.85rem 1.1rem", fontSize: "0.48rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: active ? "rgba(15, 23, 42,0.55)" : "rgba(15, 23, 42,0.2)", fontFamily: "var(--font-mono, monospace)", cursor: "pointer", userSelect: "none", whiteSpace: "nowrap" }}>
         <span style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
           {label}<ChevronDown size={9} style={{ opacity: active ? 1 : 0.3, transform: active && sortAsc ? "rotate(180deg)" : "none", transition: "transform 0.18s" }} />
         </span>
@@ -92,11 +92,11 @@ export function AdminThreadsTable({ threads }: { threads: ThreadRecord[] }) {
       {/* Search + filters */}
       <div style={{ display: "flex", flexDirection: "column", gap: "0.85rem" }}>
         <div style={{ position: "relative", maxWidth: "26rem" }}>
-          <Search size={13} style={{ position: "absolute", left: "0.85rem", top: "50%", transform: "translateY(-50%)", color: "rgba(250,250,249,0.25)", pointerEvents: "none" }} />
+          <Search size={13} style={{ position: "absolute", left: "0.85rem", top: "50%", transform: "translateY(-50%)", color: "rgba(15, 23, 42,0.25)", pointerEvents: "none" }} />
           <input type="text" placeholder="Search by subject, student, or professor…" value={query} onChange={(e) => setQuery(e.target.value)}
-            style={{ width: "100%", padding: "0.6rem 1rem 0.6rem 2.4rem", background: "rgba(250,250,249,0.03)", border: "1px solid rgba(250,250,249,0.08)", borderRadius: "10px", color: "#fafaf9", fontSize: "0.75rem", fontFamily: "var(--font-sans)", outline: "none" }}
-            onFocus={(e) => (e.currentTarget.style.borderColor = "rgba(250,250,249,0.2)")}
-            onBlur={(e)  => (e.currentTarget.style.borderColor = "rgba(250,250,249,0.08)")} />
+            style={{ width: "100%", padding: "0.6rem 1rem 0.6rem 2.4rem", background: "rgba(15, 23, 42,0.03)", border: "1px solid rgba(15, 23, 42,0.08)", borderRadius: "10px", color: "var(--text-primary)", fontSize: "0.75rem", fontFamily: "var(--font-sans)", outline: "none" }}
+            onFocus={(e) => (e.currentTarget.style.borderColor = "rgba(15, 23, 42,0.2)")}
+            onBlur={(e)  => (e.currentTarget.style.borderColor = "rgba(15, 23, 42,0.08)")} />
         </div>
         <div style={{ display: "flex", gap: "0.4rem", flexWrap: "wrap" }}>
           {(["all", "active", "pending", "closed"] as StatusFilter[]).map((s) => (
@@ -105,15 +105,15 @@ export function AdminThreadsTable({ threads }: { threads: ThreadRecord[] }) {
         </div>
       </div>
 
-      <div style={{ fontSize: "0.48rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(250,250,249,0.2)", fontFamily: "var(--font-mono, monospace)" }}>
+      <div style={{ fontSize: "0.48rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(15, 23, 42,0.2)", fontFamily: "var(--font-mono, monospace)" }}>
         {filtered.length} {filtered.length === 1 ? "thread" : "threads"}
       </div>
 
-      <div style={{ border: "1px solid rgba(250,250,249,0.06)", borderRadius: "14px", overflow: "hidden", background: "rgba(250,250,249,0.012)" }}>
+      <div style={{ border: "1px solid rgba(15, 23, 42,0.06)", borderRadius: "14px", overflow: "hidden", background: "rgba(15, 23, 42,0.012)" }}>
         <div style={{ overflowX: "auto" }}>
           <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
             <thead>
-              <tr style={{ borderBottom: "1px solid rgba(250,250,249,0.05)" }}>
+              <tr style={{ borderBottom: "1px solid rgba(15, 23, 42,0.05)" }}>
                 <SortTh col="subject"   label="Subject" />
                 <SortTh col="status"    label="Status" />
                 <SortTh col="student"   label="Student" />
@@ -124,20 +124,20 @@ export function AdminThreadsTable({ threads }: { threads: ThreadRecord[] }) {
             </thead>
             <tbody>
               {filtered.length === 0 ? (
-                <tr><td colSpan={6} style={{ padding: "3rem 1.1rem", textAlign: "center", fontSize: "0.75rem", color: "rgba(250,250,249,0.2)", fontFamily: "var(--font-sans)" }}>No threads match the current filters.</td></tr>
+                <tr><td colSpan={6} style={{ padding: "3rem 1.1rem", textAlign: "center", fontSize: "0.75rem", color: "rgba(15, 23, 42,0.2)", fontFamily: "var(--font-sans)" }}>No threads match the current filters.</td></tr>
               ) : filtered.map((t) => {
-                const sColor = STATUS_COLOUR[t.status] ?? "rgba(250,250,249,0.3)";
+                const sColor = STATUS_COLOUR[t.status] ?? "rgba(15, 23, 42,0.3)";
                 return (
-                  <tr key={t.id} style={{ borderBottom: "1px solid rgba(250,250,249,0.04)", transition: "background 0.15s" }}
-                    onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(250,250,249,0.02)")}
+                  <tr key={t.id} style={{ borderBottom: "1px solid rgba(15, 23, 42,0.04)", transition: "background 0.15s" }}
+                    onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(15, 23, 42,0.02)")}
                     onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}>
 
                     {/* Subject */}
                     <td style={{ padding: "0.9rem 1.1rem", maxWidth: "220px" }}>
-                      <span style={{ fontSize: "0.78rem", fontWeight: 500, color: t.subject ? "#fafaf9" : "rgba(250,250,249,0.25)", fontFamily: "var(--font-sans)", display: "block", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontStyle: t.subject ? "normal" : "italic" }}>
+                      <span style={{ fontSize: "0.78rem", fontWeight: 500, color: t.subject ? "#fafaf9" : "rgba(15, 23, 42,0.25)", fontFamily: "var(--font-sans)", display: "block", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontStyle: t.subject ? "normal" : "italic" }}>
                         {t.subject ?? "No subject"}
                       </span>
-                      <span style={{ fontSize: "0.52rem", color: "rgba(250,250,249,0.2)", fontFamily: "var(--font-mono, monospace)" }}>
+                      <span style={{ fontSize: "0.52rem", color: "rgba(15, 23, 42,0.2)", fontFamily: "var(--font-mono, monospace)" }}>
                         #{t.id.slice(0, 8)}
                       </span>
                     </td>
@@ -153,32 +153,32 @@ export function AdminThreadsTable({ threads }: { threads: ThreadRecord[] }) {
                     <td style={{ padding: "0.9rem 1.1rem" }}>
                       {t.student ? (
                         <div>
-                          <div style={{ fontSize: "0.75rem", fontWeight: 500, color: "#fafaf9", fontFamily: "var(--font-sans)" }}>{t.student.first_name} {t.student.last_name}</div>
-                          <div style={{ fontSize: "0.55rem", color: "rgba(250,250,249,0.3)", fontFamily: "var(--font-sans)" }}>{t.student.email}</div>
+                          <div style={{ fontSize: "0.75rem", fontWeight: 500, color: "var(--text-primary)", fontFamily: "var(--font-sans)" }}>{t.student.first_name} {t.student.last_name}</div>
+                          <div style={{ fontSize: "0.55rem", color: "rgba(15, 23, 42,0.3)", fontFamily: "var(--font-sans)" }}>{t.student.email}</div>
                         </div>
-                      ) : <span style={{ color: "rgba(250,250,249,0.2)", fontSize: "0.6rem" }}>—</span>}
+                      ) : <span style={{ color: "rgba(15, 23, 42,0.2)", fontSize: "0.6rem" }}>—</span>}
                     </td>
 
                     {/* Professor */}
                     <td style={{ padding: "0.9rem 1.1rem" }}>
                       {t.professor ? (
                         <div>
-                          <div style={{ fontSize: "0.75rem", fontWeight: 500, color: "#fafaf9", fontFamily: "var(--font-sans)" }}>Dr. {t.professor.first_name} {t.professor.last_name}</div>
-                          <div style={{ fontSize: "0.55rem", color: "rgba(250,250,249,0.3)", fontFamily: "var(--font-sans)" }}>{t.professor.institution ?? "—"}</div>
+                          <div style={{ fontSize: "0.75rem", fontWeight: 500, color: "var(--text-primary)", fontFamily: "var(--font-sans)" }}>Dr. {t.professor.first_name} {t.professor.last_name}</div>
+                          <div style={{ fontSize: "0.55rem", color: "rgba(15, 23, 42,0.3)", fontFamily: "var(--font-sans)" }}>{t.professor.institution ?? "—"}</div>
                         </div>
-                      ) : <span style={{ color: "rgba(250,250,249,0.2)", fontSize: "0.6rem" }}>—</span>}
+                      ) : <span style={{ color: "rgba(15, 23, 42,0.2)", fontSize: "0.6rem" }}>—</span>}
                     </td>
 
                     {/* Started */}
                     <td style={{ padding: "0.9rem 1.1rem" }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: "0.3rem", fontSize: "0.58rem", color: "rgba(250,250,249,0.3)", fontFamily: "var(--font-mono, monospace)" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.3rem", fontSize: "0.58rem", color: "rgba(15, 23, 42,0.3)", fontFamily: "var(--font-mono, monospace)" }}>
                         <Calendar size={9} />{formatDate(t.created_at)}
                       </div>
                     </td>
 
                     {/* Last Activity */}
                     <td style={{ padding: "0.9rem 1.1rem" }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: "0.3rem", fontSize: "0.58rem", color: "rgba(250,250,249,0.3)", fontFamily: "var(--font-mono, monospace)" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.3rem", fontSize: "0.58rem", color: "rgba(15, 23, 42,0.3)", fontFamily: "var(--font-mono, monospace)" }}>
                         <Calendar size={9} />{formatDate(t.updated_at)}
                       </div>
                     </td>

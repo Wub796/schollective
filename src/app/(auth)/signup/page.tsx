@@ -43,7 +43,7 @@ function Field({
           fontWeight: 600,
           letterSpacing: "0.22em",
           textTransform: "uppercase",
-          color: focused ? "rgba(250, 250, 249, 0.65)" : "rgba(250, 250, 249, 0.3)",
+          color: focused ? "rgba(15, 23, 42, 0.65)" : "rgba(15, 23, 42, 0.3)",
           marginBottom: "0.55rem",
           transition: "color 0.25s",
           fontFamily: "var(--font-sans)",
@@ -60,10 +60,10 @@ function Field({
           width: "100%",
           background: "transparent",
           border: "none",
-          borderBottom: `1px solid ${focused ? "rgba(129, 140, 248, 0.6)" : "rgba(129, 140, 248, 0.15)"}`,
+          borderBottom: `1px solid ${focused ? "rgba(37, 99, 235, 0.6)" : "rgba(37, 99, 235, 0.15)"}`,
           padding: "0.85rem 0",
           fontSize: "0.95rem",
-          color: "#fafaf9",
+          color: "var(--text-primary)",
           outline: "none",
           transition: "border-color 0.3s",
           fontFamily: "var(--font-sans)",
@@ -80,13 +80,13 @@ function FieldSelect({ id, name, label, children, required }: {
   const [focused, setFocused] = useState(false);
   return (
     <div>
-      <label htmlFor={id} style={{ display: "block", fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.22em", textTransform: "uppercase", color: focused ? "rgba(250, 250, 249, 0.65)" : "rgba(250, 250, 249, 0.3)", marginBottom: "0.55rem", transition: "color 0.25s", fontFamily: "var(--font-sans)" }}>
+      <label htmlFor={id} style={{ display: "block", fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.22em", textTransform: "uppercase", color: focused ? "rgba(15, 23, 42, 0.65)" : "rgba(15, 23, 42, 0.3)", marginBottom: "0.55rem", transition: "color 0.25s", fontFamily: "var(--font-sans)" }}>
         {label}
       </label>
       <select
         id={id} name={name} required={required}
         onFocus={() => setFocused(true)} onBlur={() => setFocused(false)}
-        style={{ width: "100%", background: "#111113", border: "none", borderBottom: `1px solid ${focused ? "rgba(129, 140, 248, 0.6)" : "rgba(129, 140, 248, 0.15)"}`, padding: "0.85rem 0", fontSize: "0.95rem", color: "#fafaf9", outline: "none", fontFamily: "var(--font-sans)", transition: "border-color 0.3s", cursor: "pointer" }}
+        style={{ width: "100%", background: "#111113", border: "none", borderBottom: `1px solid ${focused ? "rgba(37, 99, 235, 0.6)" : "rgba(37, 99, 235, 0.15)"}`, padding: "0.85rem 0", fontSize: "0.95rem", color: "var(--text-primary)", outline: "none", fontFamily: "var(--font-sans)", transition: "border-color 0.3s", cursor: "pointer" }}
       >
         {children}
       </select>
@@ -233,21 +233,21 @@ function SignupContent() {
           display: "flex", alignItems: "center", gap: "2rem",
           background: "rgba(17, 17, 19, 0.85)",
           backdropFilter: "blur(20px)",
-          border: "1px solid rgba(129, 140, 248, 0.12)",
+          border: "1px solid rgba(37, 99, 235, 0.12)",
           borderRadius: "100px",
           padding: "0.6rem 1.5rem",
           boxShadow: "0 8px 32px rgba(0,0,0,0.4)",
         }}>
           <Link href="/" style={{ textDecoration: "none" }}>
-            <span className="font-display" style={{ fontSize: "0.95rem", fontWeight: 800, color: "#fafaf9", letterSpacing: "-0.02em" }}>
+            <span className="font-display" style={{ fontSize: "0.95rem", fontWeight: 800, color: "var(--text-primary)", letterSpacing: "-0.02em" }}>
               Schollective
             </span>
           </Link>
-          <div style={{ width: "1px", height: "1rem", background: "rgba(250, 250, 249, 0.1)" }} />
+          <div style={{ width: "1px", height: "1rem", background: "rgba(15, 23, 42, 0.1)" }} />
           <Link href="/login" style={{ textDecoration: "none" }}>
             <span style={{
               fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.2em",
-              textTransform: "uppercase", color: "rgba(250, 250, 249, 0.45)",
+              textTransform: "uppercase", color: "rgba(15, 23, 42, 0.45)",
               fontFamily: "var(--font-sans)",
             }}>
               Sign In →
@@ -270,10 +270,10 @@ function SignupContent() {
         >
           {/* Eyebrow */}
           <motion.div variants={fadeUp} style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.75rem" }}>
-            <span style={{ width: "1.5rem", height: "1px", background: "rgba(129, 140, 248, 0.4)", display: "block" }} />
+            <span style={{ width: "1.5rem", height: "1px", background: "rgba(37, 99, 235, 0.4)", display: "block" }} />
             <span style={{
               fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.38em",
-              textTransform: "uppercase", color: "rgba(129, 140, 248, 0.7)",
+              textTransform: "uppercase", color: "rgba(37, 99, 235, 0.7)",
               fontFamily: "var(--font-sans)",
             }}>
               Join the Collective
@@ -281,13 +281,13 @@ function SignupContent() {
           </motion.div>
 
           {/* Headline */}
-          <motion.h1 variants={fadeUp} className="font-display" style={{ fontSize: "clamp(2.6rem, 6vw, 3.8rem)", fontWeight: 900, color: "#fafaf9", letterSpacing: "-0.035em", lineHeight: 1.05, marginBottom: "2.5rem" }}>
+          <motion.h1 variants={fadeUp} className="font-display" style={{ fontSize: "clamp(2.6rem, 6vw, 3.8rem)", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.035em", lineHeight: 1.05, marginBottom: "2.5rem" }}>
             Create your<br />
-            <em style={{ fontStyle: "italic", color: "rgba(250, 250, 249, 0.38)" }}>account.</em>
+            <em style={{ fontStyle: "italic", color: "rgba(15, 23, 42, 0.38)" }}>account.</em>
           </motion.h1>
 
           {/* Role selector — pill tabs */}
-          <motion.div variants={fadeUp} style={{ display: "flex", gap: "0.5rem", marginBottom: "2.5rem", padding: "0.3rem", background: "rgba(250, 250, 249, 0.04)", borderRadius: "100px", border: "1px solid rgba(250, 250, 249, 0.07)", width: "100%" }}>
+          <motion.div variants={fadeUp} style={{ display: "flex", gap: "0.5rem", marginBottom: "2.5rem", padding: "0.3rem", background: "rgba(15, 23, 42, 0.04)", borderRadius: "100px", border: "1px solid rgba(15, 23, 42, 0.07)", width: "100%" }}>
             {(["student", "professor"] as Role[]).map(r => (
               <button
                 key={r}
@@ -299,7 +299,7 @@ function SignupContent() {
                   borderRadius: "100px",
                   border: "none",
                   background: role === r ? "#818cf8" : "transparent",
-                  color: role === r ? "#09090b" : "rgba(168, 179, 207, 0.5)",
+                  color: role === r ? "var(--bg-base)" : "rgba(168, 179, 207, 0.5)",
                   fontSize: "0.58rem",
                   fontWeight: 700,
                   letterSpacing: "0.2em",
@@ -338,7 +338,7 @@ function SignupContent() {
                       color: emailVal?.state === "error" ? "rgba(255,100,100,0.8)"
                            : emailVal?.state === "warn"  ? "rgba(255,190,80,0.8)"
                            : emailVal?.state === "valid" ? "rgba(120,220,120,0.8)"
-                           : "rgba(250, 250, 249, 0.3)",
+                           : "rgba(15, 23, 42, 0.3)",
                       marginBottom: "0.55rem", transition: "color 0.25s",
                       fontFamily: "var(--font-sans)",
                     }}
@@ -356,9 +356,9 @@ function SignupContent() {
                         emailVal?.state === "error" ? "rgba(255,100,100,0.6)"
                       : emailVal?.state === "warn"  ? "rgba(255,190,80,0.6)"
                       : emailVal?.state === "valid" ? "rgba(120,220,120,0.5)"
-                      : "rgba(129, 140, 248, 0.15)"
+                      : "rgba(37, 99, 235, 0.15)"
                       }`,
-                      padding: "0.85rem 0", fontSize: "0.95rem", color: "#fafaf9",
+                      padding: "0.85rem 0", fontSize: "0.95rem", color: "var(--text-primary)",
                       outline: "none", transition: "border-color 0.3s",
                       fontFamily: "var(--font-sans)",
                     }}
@@ -424,7 +424,7 @@ function SignupContent() {
                           fontWeight: 600,
                           letterSpacing: "0.22em",
                           textTransform: "uppercase",
-                          color: "rgba(250, 250, 249, 0.3)",
+                          color: "rgba(15, 23, 42, 0.3)",
                           marginBottom: "0.55rem",
                           fontFamily: "var(--font-sans)",
                         }}
@@ -466,7 +466,7 @@ function SignupContent() {
                   whileHover={{ scale: 1.01 }}
                   whileTap={{ scale: 0.98 }}
                   style={{
-                    width: "100%", padding: "1.15rem 2.5rem", background: "#818cf8", color: "#09090b",
+                    width: "100%", padding: "1.15rem 2.5rem", background: "#818cf8", color: "var(--bg-base)",
                     border: "none", borderRadius: "100px", fontSize: "0.6rem", fontWeight: 700,
                     letterSpacing: "0.28em", textTransform: "uppercase", cursor: loading ? "not-allowed" : "pointer",
                     opacity: loading ? 0.6 : 1, transition: "opacity 0.2s", fontFamily: "var(--font-sans)",
@@ -476,19 +476,19 @@ function SignupContent() {
                 </motion.button>
 
                 <div style={{ display: "flex", alignItems: "center", gap: "1rem", margin: "0.5rem 0" }}>
-                  <div style={{ flex: 1, height: "1px", background: "rgba(250, 250, 249, 0.1)" }} />
-                  <span style={{ fontSize: "0.55rem", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.3)", fontFamily: "var(--font-sans)" }}>Or</span>
-                  <div style={{ flex: 1, height: "1px", background: "rgba(250, 250, 249, 0.1)" }} />
+                  <div style={{ flex: 1, height: "1px", background: "rgba(15, 23, 42, 0.1)" }} />
+                  <span style={{ fontSize: "0.55rem", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.3)", fontFamily: "var(--font-sans)" }}>Or</span>
+                  <div style={{ flex: 1, height: "1px", background: "rgba(15, 23, 42, 0.1)" }} />
                 </div>
 
                 <motion.button
                   type="button"
                   onClick={handleGoogleSignIn}
-                  whileHover={{ scale: 1.01, backgroundColor: "rgba(250, 250, 249, 0.08)" }}
+                  whileHover={{ scale: 1.01, backgroundColor: "rgba(15, 23, 42, 0.08)" }}
                   whileTap={{ scale: 0.98 }}
                   style={{
-                    width: "100%", padding: "1.15rem 2.5rem", background: "rgba(250, 250, 249, 0.04)",
-                    color: "#fafaf9", border: "1px solid rgba(250, 250, 249, 0.12)", borderRadius: "100px",
+                    width: "100%", padding: "1.15rem 2.5rem", background: "rgba(15, 23, 42, 0.04)",
+                    color: "var(--text-primary)", border: "1px solid rgba(15, 23, 42, 0.12)", borderRadius: "100px",
                     fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.28em", textTransform: "uppercase",
                     cursor: "pointer", transition: "all 0.2s", fontFamily: "var(--font-sans)",
                     display: "flex", alignItems: "center", justifyContent: "center", gap: "0.75rem"
@@ -504,9 +504,9 @@ function SignupContent() {
                 </motion.button>
               </motion.div>
 
-              <motion.p variants={fadeUp} style={{ textAlign: "center", fontSize: "0.55rem", fontWeight: 600, letterSpacing: "0.1em", color: "rgba(250, 250, 249, 0.22)", fontFamily: "var(--font-sans)" }}>
+              <motion.p variants={fadeUp} style={{ textAlign: "center", fontSize: "0.55rem", fontWeight: 600, letterSpacing: "0.1em", color: "rgba(15, 23, 42, 0.22)", fontFamily: "var(--font-sans)" }}>
                 Already have an account?{" "}
-                <Link href="/login" style={{ color: "rgba(250, 250, 249, 0.55)", textDecoration: "none" }}>
+                <Link href="/login" style={{ color: "rgba(15, 23, 42, 0.55)", textDecoration: "none" }}>
                   Sign in →
                 </Link>
               </motion.p>
@@ -517,7 +517,7 @@ function SignupContent() {
 
       {/* Footer note */}
       <div style={{ position: "relative", zIndex: 1, textAlign: "center", padding: "1.5rem" }}>
-        <span style={{ fontSize: "0.5rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.14)", fontFamily: "var(--font-sans)" }}>
+        <span style={{ fontSize: "0.5rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.14)", fontFamily: "var(--font-sans)" }}>
           Manually verified · Institutionally credentialed · © 2025 Schollective
         </span>
       </div>
@@ -530,8 +530,8 @@ export default function SignupPage() {
     <Suspense fallback={
       <div style={{ minHeight: "100vh", background: "var(--bg-base)", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <div style={{ width: "1.5rem", height: "1px", background: "rgba(250, 250, 249, 0.2)" }} />
-          <span style={{ fontSize: "0.55rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.3)", fontFamily: "var(--font-sans)" }}>
+          <div style={{ width: "1.5rem", height: "1px", background: "rgba(15, 23, 42, 0.2)" }} />
+          <span style={{ fontSize: "0.55rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.3)", fontFamily: "var(--font-sans)" }}>
             Loading…
           </span>
         </div>

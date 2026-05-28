@@ -22,9 +22,9 @@ export function AdminPreviewControls() {
           display: "inline-flex", alignItems: "center", gap: "0.4rem",
           padding: "0.5rem 1rem",
           borderRadius: "8px",
-          border: "1px solid rgba(129, 140, 248, 0.2)",
-          background: "rgba(129, 140, 248, 0.05)",
-          color: "rgba(129, 140, 248, 0.9)",
+          border: "1px solid rgba(37, 99, 235, 0.2)",
+          background: "rgba(37, 99, 235, 0.05)",
+          color: "rgba(37, 99, 235, 0.9)",
           fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase",
           fontFamily: "var(--font-sans)",
           cursor: loading ? "wait" : "pointer",
@@ -33,13 +33,13 @@ export function AdminPreviewControls() {
         }}
         onMouseEnter={(e) => {
           if (loading) return;
-          e.currentTarget.style.background = "rgba(129, 140, 248, 0.1)";
-          e.currentTarget.style.borderColor = "rgba(129, 140, 248, 0.4)";
+          e.currentTarget.style.background = "rgba(37, 99, 235, 0.1)";
+          e.currentTarget.style.borderColor = "rgba(37, 99, 235, 0.4)";
         }}
         onMouseLeave={(e) => {
           if (loading) return;
-          e.currentTarget.style.background = "rgba(129, 140, 248, 0.05)";
-          e.currentTarget.style.borderColor = "rgba(129, 140, 248, 0.2)";
+          e.currentTarget.style.background = "rgba(37, 99, 235, 0.05)";
+          e.currentTarget.style.borderColor = "rgba(37, 99, 235, 0.2)";
         }}
       >
         <Users size={12} />
