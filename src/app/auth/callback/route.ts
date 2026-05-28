@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server'
-import { createClient } from '@/utils/supabase/server'
+import { createServerClient, type CookieOptions } from '@supabase/ssr'
 
 /**
  * OAuth / magic-link callback handler.
@@ -29,7 +29,38 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(`${origin}/login?error=${errorCode || 'oauth_missing_code'}`)
   }
 
-  const supabase = await createClient()
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+    ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+  if (!supabaseUrl || !supabaseAnonKey) {
+    console.error('[auth/callback] Missing Supabase env variables')
+    return NextResponse.redirect(`${origin}/login?error=oauth_exchange_failed`)
+  }
+
+  // We collect cookies to set or remove during the OAuth exchange and profile check,
+  // then apply them to the final redirect response. This is because GET Route Handlers
+  // in Next.js 15 cannot write to the read-only cookies() header directly.
+  const cookiesToSet: { name: string; value: string; options: CookieOptions }[] = []
+  const cookiesToRemove: { name: string; options: CookieOptions }[] = []
+
+  const supabase = createServerClient(
+    supabaseUrl,
+    supabaseAnonKey,
+    {
+      cookies: {
+        get(name: string) {
+          return request.cookies.get(name)?.value
+        },
+        set(name: string, value: string, options: CookieOptions) {
+          cookiesToSet.push({ name, value, options })
+        },
+        remove(name: string, options: CookieOptions) {
+          cookiesToRemove.push({ name, options })
+        },
+      },
+    }
+  )
 
   // Exchange the auth code for a session
   const { data, error } = await supabase.auth.exchangeCodeForSession(code)
@@ -70,5 +101,16 @@ export async function GET(request: NextRequest) {
     destination = next.startsWith('http') ? next : `${origin}${next}`
   }
 
-  return NextResponse.redirect(destination)
+  const response = NextResponse.redirect(destination)
+
+  // Set the collected cookies on the redirect response
+  for (const { name, value, options } of cookiesToSet) {
+    response.cookies.set({ name, value, ...options })
+  }
+  for (const { name, options } of cookiesToRemove) {
+    response.cookies.set({ name, value: '', ...options })
+  }
+
+  return response
 }
+
