@@ -225,7 +225,7 @@ export default function LandingPage() {
               <span className="italic font-light text-slate-600/40">before finishing the first line.</span>
             </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full mb-14 text-left">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full mb-14 text-center">
               {[
                 "Professors can spot AI-written emails instantly.",
                 "Generic requests that could go to anyone get ignored.",
@@ -233,12 +233,12 @@ export default function LandingPage() {
               ].map((reason, i) => (
                 <div
                   key={i}
-                  className="flex flex-col items-start p-6 rounded-2xl border border-slate-200/50 bg-[#fdfdfd] w-full"
+                  className="flex flex-col items-center justify-center p-6 rounded-2xl border border-slate-200/50 bg-[#fdfdfd] w-full text-center"
                 >
-                  <span className="w-7 h-7 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500 text-xs font-bold font-sans mb-4">
+                  <span className="w-7 h-7 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500 text-xs font-bold font-sans mb-4 mx-auto select-none">
                     ✕
                   </span>
-                  <span className="text-slate-600 text-sm leading-[1.7]">{reason}</span>
+                  <span className="text-slate-600 text-sm leading-[1.7] max-w-xs">{reason}</span>
                 </div>
               ))}
             </div>
@@ -326,12 +326,12 @@ export default function LandingPage() {
 
           {/* Step 01 */}
           <div className="js-fade max-w-[80rem] mx-auto px-6 md:px-12 w-full grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
-            <div className="flex flex-col items-start text-left">
+            <div className="flex flex-col items-center text-center">
               <span className="font-sans text-3xl font-light text-indigo-600/40 mb-6 font-mono select-none">01</span>
               <h3 className="font-display font-bold text-3xl md:text-4xl text-slate-900 tracking-tight mb-6 leading-[1.2]">
                 Search any research interest.
               </h3>
-              <p className="text-slate-600 leading-[1.7] text-sm mb-8 font-sans max-w-md">
+              <p className="text-slate-600 leading-[1.7] text-sm mb-8 font-sans max-w-md mx-auto">
                 Type what you care about: quantum computing, cognitive neuroscience, or climate policy. We surface top professors publishing in that exact space, ranked by impact.
               </p>
               <Link
@@ -417,12 +417,12 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <div className="order-1 lg:order-2 flex flex-col items-start text-left">
+            <div className="order-1 lg:order-2 flex flex-col items-center text-center">
               <span className="font-sans text-3xl font-light text-indigo-600/40 mb-6 font-mono select-none">02</span>
               <h3 className="font-display font-bold text-3xl md:text-4xl text-slate-900 tracking-tight mb-6 leading-[1.2]">
                 Understand their research in plain English.
               </h3>
-              <p className="text-slate-600 leading-[1.7] text-sm mb-8 font-sans max-w-md">
+              <p className="text-slate-600 leading-[1.7] text-sm mb-8 font-sans max-w-md mx-auto">
                 Every professor profile has an AI-synthesized summary of their key findings, written so a high schooler or undergrad can understand it and reference it with precision. No more pretending to read 40-page papers.
               </p>
               <Link
@@ -437,12 +437,12 @@ export default function LandingPage() {
 
           {/* Step 03 */}
           <div className="js-fade max-w-[80rem] mx-auto px-6 md:px-12 w-full grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
-            <div className="flex flex-col items-start text-left">
+            <div className="flex flex-col items-center text-center">
               <span className="font-sans text-3xl font-light text-indigo-600/40 mb-6 font-mono select-none">03</span>
               <h3 className="font-display font-bold text-3xl md:text-4xl text-slate-900 tracking-tight mb-6 leading-[1.2]">
                 Draft structured requests that get answered.
               </h3>
-              <p className="text-slate-600 leading-[1.7] text-sm mb-8 font-sans max-w-md">
+              <p className="text-slate-600 leading-[1.7] text-sm mb-8 font-sans max-w-md mx-auto">
                 Our structured request model, co-designed with research faculty, guides you through describing your understanding, interests, and availability. No more guessing what professors want to hear.
               </p>
               <Link
@@ -555,92 +555,85 @@ export default function LandingPage() {
 
         {/* ══ FOOTER ═══════════════════════════════════════════════════════ */}
         <footer style={{ background: "#fdfdfd", borderTop: "1px solid rgba(79, 70, 229, 0.08)" }}>
-          <div style={{ maxWidth: "80rem", margin: "0 auto", padding: "4.5rem 2.5rem 3rem", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: "3rem" }}>
-            <FadeIn delay={0}>
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "1.25rem" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-                  <SchollectiveLogo size={44} />
-                  <span className="font-display font-bold" style={{ fontSize: "1.15rem", letterSpacing: "-0.02em", color: "var(--text-primary)" }}>
-                    Schollective
-                  </span>
-                </div>
-                <p className="font-light leading-relaxed font-sans" style={{ fontSize: "0.88rem", color: "rgba(15, 23, 42, 0.65)", maxWidth: "22rem" }}>
-                  Connecting ambitious students with verified professors for structured, transparent academic mentorship. Every question deserves a real answer.
-                </p>
+          <div className="max-w-[80rem] mx-auto px-6 md:px-12 lg:px-16 py-16 grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-12 text-left">
+            <FadeIn delay={0} className="md:col-span-2 flex flex-col items-start gap-4">
+              <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                <SchollectiveLogo size={44} />
+                <span className="font-display font-bold text-xl text-slate-900 tracking-tight">
+                  Schollective
+                </span>
               </div>
+              <p className="font-light leading-relaxed font-sans text-sm text-slate-500 max-w-sm">
+                Connecting ambitious students with verified professors for structured, transparent academic mentorship. Every question deserves a real answer.
+              </p>
             </FadeIn>
 
-            <FadeIn delay={0.1}>
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "1.5rem" }}>
-                <span className="font-sans uppercase" style={{ fontSize: "0.55rem", letterSpacing: "0.35em", color: "rgba(79, 70, 229, 0.6)" }}>
-                  Quick Links
-                </span>
-                <nav style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "1.5rem" }}>
-                  {[
-                    { label: "Home", href: "/" },
-                    { label: "About", href: "/about" },
-                    { label: "For Students", href: "/for-students" },
-                    { label: "For Professors", href: "/for-professors" },
-                    { label: "Sign Up", href: "/signup" },
-                    { label: "Log In", href: "/login" },
-                  ].map((link) => (
-                    <Link key={link.label} href={link.href}
-                      style={{ fontSize: "0.88rem", color: "rgba(15, 23, 42, 0.7)", transition: "color 0.2s ease", display: "inline-block" }}
-                      className="hover:text-indigo-600">
-                      {link.label}
-                    </Link>
-                  ))}
-                </nav>
-              </div>
+            <FadeIn delay={0.1} className="col-span-1 flex flex-col items-start gap-4">
+              <span className="font-sans uppercase text-[0.62rem] tracking-widest text-indigo-600/70 font-bold">
+                Quick Links
+              </span>
+              <nav className="flex flex-col gap-3 items-start">
+                {[
+                  { label: "Home", href: "/" },
+                  { label: "About", href: "/about" },
+                  { label: "For Students", href: "/for-students" },
+                  { label: "For Professors", href: "/for-professors" },
+                  { label: "Sign Up", href: "/signup" },
+                  { label: "Log In", href: "/login" },
+                ].map((link) => (
+                  <Link key={link.label} href={link.href}
+                    className="font-sans text-sm text-slate-500 hover:text-indigo-600 transition-colors">
+                    {link.label}
+                  </Link>
+                ))}
+              </nav>
             </FadeIn>
 
-            <FadeIn delay={0.2}>
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "1.5rem" }}>
-                <span className="font-sans uppercase" style={{ fontSize: "0.55rem", letterSpacing: "0.35em", color: "rgba(79, 70, 229, 0.6)" }}>
-                  Contact Us
-                </span>
-                <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "2rem" }}>
-                  {[
-                    { icon: <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />, extra: <polyline points="22,6 12,13 2,6" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />, text: "schollective.corp@gmail.com", href: "mailto:schollective.corp@gmail.com" },
-                    { icon: <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />, extra: <polyline points="9,22 9,12 15,12 15,22" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />, text: "Serving schools worldwide" },
-                    { icon: <circle cx="12" cy="12" r="10" stroke="var(--accent)" strokeWidth="1.5" />, extra: <polyline points="12,6 12,12 16,14" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />, text: "Free to use — always" },
-                  ].map((item, i) => {
-                    const inner = (
-                      <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-                        <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: "rgba(99, 102, 241, 0.12)", border: "1px solid rgba(79, 70, 229, 0.15)", display: "flex", alignItems: "center", justifyItems: "center", flexShrink: 0, justifyContent: "center" }}>
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            {item.icon}{item.extra}
-                          </svg>
-                        </div>
-                        <span style={{ fontSize: "0.83rem", color: "rgba(15, 23, 42, 0.7)" }} className="font-sans">{item.text}</span>
+            <FadeIn delay={0.2} className="md:col-span-2 lg:col-span-2 flex flex-col items-start gap-4">
+              <span className="font-sans uppercase text-[0.62rem] tracking-widest text-indigo-600/70 font-bold">
+                Contact Us
+              </span>
+              <div className="flex flex-col gap-4 items-start w-full">
+                {[
+                  { icon: <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="rgba(79, 70, 229, 0.7)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />, extra: <polyline points="22,6 12,13 2,6" stroke="rgba(79, 70, 229, 0.7)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />, text: "schollective.corp@gmail.com", href: "mailto:schollective.corp@gmail.com" },
+                  { icon: <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" stroke="rgba(79, 70, 229, 0.7)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />, extra: <polyline points="9,22 9,12 15,12 15,22" stroke="rgba(79, 70, 229, 0.7)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />, text: "Serving schools worldwide" },
+                  { icon: <circle cx="12" cy="12" r="10" stroke="rgba(79, 70, 229, 0.7)" strokeWidth="1.5" />, extra: <polyline points="12,6 12,12 16,14" stroke="rgba(79, 70, 229, 0.7)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />, text: "Free to use — always" },
+                ].map((item, i) => {
+                  const inner = (
+                    <div className="flex items-center gap-3 text-left">
+                      <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: "rgba(99, 102, 241, 0.12)", border: "1px solid rgba(79, 70, 229, 0.15)", display: "flex", alignItems: "center", justifyItems: "center", flexShrink: 0, justifyContent: "center" }}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          {item.icon}{item.extra}
+                        </svg>
                       </div>
-                    );
-                    return item.href
-                      ? <a key={i} href={item.href} style={{ textDecoration: "none" }}>{inner}</a>
-                      : <div key={i}>{inner}</div>;
-                  })}
-                </div>
+                      <span className="font-sans text-sm text-slate-500">{item.text}</span>
+                    </div>
+                  );
+                  return item.href
+                    ? <a key={i} href={item.href} style={{ textDecoration: "none" }}>{inner}</a>
+                    : <div key={i}>{inner}</div>;
+                })}
               </div>
             </FadeIn>
           </div>
 
           <div style={{ maxWidth: "80rem", margin: "0 auto", height: "1px", background: "rgba(79, 70, 229, 0.09)", marginLeft: "2.5rem", marginRight: "2.5rem" }} />
 
-          <div style={{ maxWidth: "80rem", margin: "0 auto", padding: "1.5rem 2.5rem", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: "1rem" }}>
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem", alignItems: "center" }}>
-              <span className="font-sans" style={{ fontSize: "0.72rem", color: "rgba(15, 23, 42, 0.7)", letterSpacing: "0.02em" }}>
+          <div className="max-w-[80rem] mx-auto px-6 md:px-12 lg:px-16 py-8 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div className="flex flex-col gap-1 items-center md:items-start text-center md:text-left">
+              <span className="font-sans text-xs text-slate-500">
                 © 2026 Schollective, Inc. All rights reserved.
               </span>
-              <span className="font-sans" style={{ fontSize: "0.68rem", color: "rgba(15, 23, 42, 0.5)", letterSpacing: "0.02em" }}>
+              <span className="font-sans text-[0.68rem] text-slate-400">
                 Not a substitute for official academic advising.
               </span>
             </div>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}>
-              <span className="font-sans" style={{ fontSize: "0.68rem", color: "rgba(15, 23, 42, 0.55)", letterSpacing: "0.04em" }}>Built with</span>
+            <div className="flex items-center gap-2">
+              <span className="font-sans text-[0.68rem] text-slate-400">Built with</span>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ opacity: 0.55 }}>
                 <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" stroke="rgba(79, 70, 229, 0.7)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-              <span className="font-sans" style={{ fontSize: "0.68rem", color: "rgba(15, 23, 42, 0.55)", letterSpacing: "0.04em" }}>for students seeking knowledge</span>
+              <span className="font-sans text-[0.68rem] text-slate-400">for students seeking knowledge</span>
             </div>
           </div>
         </footer>
