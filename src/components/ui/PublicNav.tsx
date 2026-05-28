@@ -235,7 +235,7 @@ function SignUpButtonWithCursorBorder() {
       dot.style.width = `${width + 2}px`;
       dot.style.height = `${height + 2}px`;
       dot.style.borderRadius = "100px";
-      dot.style.borderColor = "rgba(255,255,255,0.85)";
+      dot.style.borderColor = "var(--text-primary)";
     };
     const leave = () => {
       dot.style.width = "10px";
@@ -653,6 +653,8 @@ export function PublicNav() {
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const menuWrapRef = useRef<HTMLButtonElement>(null);
+  const menuBorderRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => { setMounted(true); }, []);
 
@@ -660,6 +662,33 @@ export function PublicNav() {
     document.body.style.overflow = menuOpen ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
   }, [menuOpen]);
+
+  useEffect(() => {
+    const el = menuWrapRef.current;
+    const dot = menuBorderRef.current;
+    if (!el || !dot) return;
+
+    const enter = () => {
+      const { width, height } = el.getBoundingClientRect();
+      dot.style.width = `${width + 2}px`;
+      dot.style.height = `${height + 2}px`;
+      dot.style.borderRadius = "100px";
+      dot.style.borderColor = "var(--text-primary)";
+    };
+    const leave = () => {
+      dot.style.width = "10px";
+      dot.style.height = "10px";
+      dot.style.borderRadius = "50%";
+      dot.style.borderColor = "rgba(255,255,255,0)";
+    };
+
+    el.addEventListener("mouseenter", enter);
+    el.addEventListener("mouseleave", leave);
+    return () => {
+      el.removeEventListener("mouseenter", enter);
+      el.removeEventListener("mouseleave", leave);
+    };
+  }, []);
 
   const EASE: [number, number, number, number] = [0.19, 1, 0.22, 1];
   const baseDelay = 0.5;
@@ -742,10 +771,12 @@ export function PublicNav() {
 
           {/* Hamburger */}
           <button
+            ref={menuWrapRef}
             onClick={() => setMenuOpen(v => !v)}
             aria-label="Toggle menu"
-            data-cursor-engulf="true"
+            data-cursor-hide="true"
             style={{
+              position: "relative",
               pointerEvents: "all", background: "rgba(37, 99, 235,0.08)",
               border: "1px solid rgba(37, 99, 235,0.18)", borderRadius: "100px",
               width: "2.6rem", height: "2.6rem", display: "flex",
@@ -753,6 +784,28 @@ export function PublicNav() {
               transition: "background 0.3s ease, border-color 0.3s ease", flexShrink: 0,
             }}
           >
+            {/* Cursor-morphing border span */}
+            <span
+              ref={menuBorderRef}
+              aria-hidden
+              style={{
+                pointerEvents: "none",
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                width: "10px",
+                height: "10px",
+                borderRadius: "50%",
+                border: "1.5px solid rgba(255,255,255,0)",
+                transition:
+                  "width 520ms cubic-bezier(0.19,1,0.22,1), " +
+                  "height 520ms cubic-bezier(0.19,1,0.22,1), " +
+                  "border-radius 520ms cubic-bezier(0.19,1,0.22,1), " +
+                  "border-color 200ms ease",
+                zIndex: 2,
+              }}
+            />
             <AnimatePresence mode="wait">
               {menuOpen ? (
                 <motion.span
