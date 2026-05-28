@@ -372,13 +372,13 @@ export default function LandingPage() {
           </div>
 
           {/* Feature 01 */}
-          <div className="js-fade max-w-[50rem] mx-auto px-6 w-full flex flex-col items-center text-center gap-12">
-            <div className="flex flex-col items-center">
+          <div className="js-fade max-w-[80rem] mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <div className="flex flex-col items-start text-left">
               <span className="font-sans text-2xl text-blue-600/45 mb-4">01</span>
               <h3 className="font-display font-bold text-3xl md:text-4xl text-slate-900 tracking-tight mb-6">
                 Search any research interest.
               </h3>
-              <p className="text-slate-600 leading-relaxed text-base mb-8 max-w-md mx-auto">
+              <p className="text-slate-600 leading-relaxed text-base mb-8 max-w-md">
                 Type what you care about: quantum computing, cognitive neuroscience, or climate policy. We surface top professors publishing in that exact space, ranked by impact.
               </p>
               <Link href="/signup" className="font-sans text-xs uppercase tracking-wider text-blue-600 border-b border-blue-600/20 pb-1 hover:border-blue-600/80 transition-colors">
@@ -428,22 +428,9 @@ export default function LandingPage() {
           </div>
 
           {/* Feature 02 */}
-          <div className="js-fade max-w-[50rem] mx-auto px-6 w-full flex flex-col items-center text-center gap-12">
-            <div className="flex flex-col items-center">
-              <span className="font-sans text-2xl text-blue-600/45 mb-4">02</span>
-              <h3 className="font-display font-bold text-3xl md:text-4xl text-slate-900 tracking-tight mb-6">
-                Understand their research in plain English.
-              </h3>
-              <p className="text-slate-600 leading-relaxed text-base mb-8 max-w-md mx-auto">
-                Every professor profile has an AI-synthesized summary of their key findings, written so a high schooler or undergrad can understand it and reference it with precision. No more pretending to read 40-page papers.
-              </p>
-              <Link href="/signup" className="font-sans text-xs uppercase tracking-wider text-blue-600 border-b border-blue-600/20 pb-1 hover:border-blue-600/80 transition-colors">
-                See an example →
-              </Link>
-            </div>
-
-            {/* Visual Mockup 02 */}
-            <div className="relative p-8 rounded-3xl border border-slate-200 bg-white shadow-xl shadow-2xl flex flex-col gap-8 w-full text-left">
+          <div className="js-fade max-w-[80rem] mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            {/* Visual Mockup 02 (Left side for desktop layout) */}
+            <div className="order-2 lg:order-1 relative p-8 rounded-3xl border border-slate-200 bg-white shadow-xl shadow-2xl flex flex-col gap-8 w-full text-left">
               <div className="flex items-center justify-between border-b border-slate-200 pb-4">
                 <div className="flex items-center gap-1.5">
                   <div className="w-2.5 h-2.5 rounded-full bg-red-500/40" />
@@ -470,16 +457,29 @@ export default function LandingPage() {
                 </div>
               </div>
             </div>
+
+            <div className="order-1 lg:order-2 flex flex-col items-start text-left">
+              <span className="font-sans text-2xl text-blue-600/45 mb-4">02</span>
+              <h3 className="font-display font-bold text-3xl md:text-4xl text-slate-900 tracking-tight mb-6">
+                Understand their research in plain English.
+              </h3>
+              <p className="text-slate-600 leading-relaxed text-base mb-8 max-w-md">
+                Every professor profile has an AI-synthesized summary of their key findings, written so a high schooler or undergrad can understand it and reference it with precision. No more pretending to read 40-page papers.
+              </p>
+              <Link href="/signup" className="font-sans text-xs uppercase tracking-wider text-blue-600 border-b border-blue-600/20 pb-1 hover:border-blue-600/80 transition-colors">
+                See an example →
+              </Link>
+            </div>
           </div>
 
           {/* Feature 03 */}
-          <div className="js-fade max-w-[50rem] mx-auto px-6 w-full flex flex-col items-center text-center gap-12">
-            <div className="flex flex-col items-center">
+          <div className="js-fade max-w-[80rem] mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <div className="flex flex-col items-start text-left">
               <span className="font-sans text-2xl text-blue-600/45 mb-4">03</span>
               <h3 className="font-display font-bold text-3xl md:text-4xl text-slate-900 tracking-tight mb-6">
                 Draft structured requests that get answered.
               </h3>
-              <p className="text-slate-600 leading-relaxed text-base mb-8 max-w-md mx-auto">
+              <p className="text-slate-600 leading-relaxed text-base mb-8 max-w-md">
                 Our structured request model, co-designed with research faculty, guides you through describing your understanding, interests, and availability. No more guessing what professors want to hear.
               </p>
               <Link href="/signup" className="font-sans text-xs uppercase tracking-wider text-blue-600 border-b border-blue-600/20 pb-1 hover:border-blue-600/80 transition-colors">
