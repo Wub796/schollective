@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { NotificationBell } from "@/components/features/NotificationBell";
 import { Sidebar } from "./Sidebar";
 
@@ -14,9 +14,18 @@ interface AppShellProps {
 
 export function AppShell({ children, role = "student" }: AppShellProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [scrolled, setScrolled]       = useState(false);
   const pathname = usePathname();
 
   useEffect(() => { setSidebarOpen(false); }, [pathname]);
+
+  useEffect(() => {
+    const main = document.querySelector(".app-main");
+    if (!main) return;
+    const handleScroll = () => setScrolled(main.scrollTop > 12);
+    main.addEventListener("scroll", handleScroll, { passive: true });
+    return () => main.removeEventListener("scroll", handleScroll);
+  }, []);
 
   useEffect(() => {
     if (!sidebarOpen) return;
@@ -35,11 +44,38 @@ export function AppShell({ children, role = "student" }: AppShellProps) {
   const openSidebar  = useCallback(() => setSidebarOpen(true),  []);
   const closeSidebar = useCallback(() => setSidebarOpen(false), []);
 
+  const navItems = role === "professor"
+    ? [
+        { href: "/prof/dashboard", label: "Dashboard"       },
+        { href: "/prof/students",  label: "My Students"     },
+        { href: "/prof/profile",   label: "Profile Preview" },
+      ]
+    : [
+        { href: "/dashboard",  label: "Dashboard"      },
+        { href: "/professors", label: "Browse Mentors" },
+        { href: "/threads",    label: "My Threads"     },
+      ];
+
+  const isActive = (href: string) => {
+    const exact = ["/dashboard", "/prof/dashboard"];
+    if (exact.includes(href)) return pathname === href;
+    return pathname.startsWith(href);
+  };
+
   return (
     <>
       {/* ── Top nav bar ─────────────────────────────────────────── */}
-      <header className="app-nav" style={{ background: "rgba(9, 9, 11, 0.94)" }}>
-        {/* Hamburger */}
+      <header
+        className="app-nav"
+        style={{
+          background: scrolled ? "rgba(9, 9, 11, 0.97)" : "rgba(9, 9, 11, 0.92)",
+          borderBottom: scrolled
+            ? "1px solid rgba(129, 140, 248, 0.1)"
+            : "1px solid rgba(129, 140, 248, 0.07)",
+          transition: "background 0.3s ease, border-color 0.3s ease",
+        }}
+      >
+        {/* Hamburger — mobile only */}
         <button
           className="nav-hamburger"
           onClick={openSidebar}
@@ -52,61 +88,92 @@ export function AppShell({ children, role = "student" }: AppShellProps) {
           </svg>
         </button>
 
-        {/* Wordmark — matches landing page nav exactly */}
-        <a href="/dashboard" className="flex items-center gap-2 no-underline group min-w-0 flex-1 sm:flex-none">
+        {/* Wordmark */}
+        <Link href={role === "professor" ? "/prof/dashboard" : "/dashboard"} style={{ textDecoration: "none", flexShrink: 0 }}>
           <span
-            className="font-display font-bold text-[#fafaf9] truncate"
-            style={{ fontSize: "1.05rem", letterSpacing: "-0.02em" }}
+            className="font-display"
+            style={{ fontSize: "1rem", fontWeight: 800, letterSpacing: "-0.025em", color: "#fafaf9" }}
           >
             Schollective
           </span>
-          <span
-            className="font-mono uppercase hidden lg:block"
-            style={{ fontSize: "0.42rem", letterSpacing: "0.38em", color: "rgba(250, 250, 249, 0.35)", paddingTop: "2px" }}
-          >
-            Academic Mentorship
-          </span>
-        </a>
+        </Link>
 
-        <nav className="app-nav-links hidden lg:flex items-center gap-8" aria-label="Main navigation">
-          {(role === "professor"
-            ? [
-                { href: "/prof/dashboard", label: "Dashboard"      },
-                { href: "/prof/students",  label: "My Students"    },
-                { href: "/prof/profile",   label: "Profile Preview"},
-              ]
-            : [
-                { href: "/dashboard",  label: "Dashboard"     },
-                { href: "/professors", label: "Browse Mentors"},
-                { href: "/threads",    label: "My Threads"    },
-              ]
-          ).map(({ href, label }) => (
-            <a
-              key={href}
-              href={href}
-              className="no-underline"
-              style={{ fontSize: "0.6rem", letterSpacing: "0.32em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.45)", fontFamily: "var(--font-mono, 'DM Mono', monospace)", transition: "color 0.2s" }}
-              onMouseEnter={e => (e.currentTarget.style.color = "rgba(250, 250, 249, 0.9)")}
-              onMouseLeave={e => (e.currentTarget.style.color = "rgba(250, 250, 249, 0.45)")}
-            >
-              {label}
-            </a>
-          ))}
+        {/* Desktop nav links — pill-style */}
+        <nav
+          className="hidden lg:flex"
+          style={{
+            display: "flex", alignItems: "center", gap: "0.15rem",
+            padding: "0.3rem",
+            background: "rgba(250, 250, 249, 0.03)",
+            border: "1px solid rgba(250, 250, 249, 0.07)",
+            borderRadius: "100px",
+          }}
+          aria-label="Main navigation"
+        >
+          {navItems.map(({ href, label }) => {
+            const active = isActive(href);
+            return (
+              <Link
+                key={href}
+                href={href}
+                style={{
+                  display: "block",
+                  padding: "0.4rem 1rem",
+                  borderRadius: "100px",
+                  textDecoration: "none",
+                  fontSize: "0.58rem",
+                  fontWeight: active ? 700 : 500,
+                  letterSpacing: "0.22em",
+                  textTransform: "uppercase",
+                  fontFamily: "var(--font-sans)",
+                  color: active ? "#fafaf9" : "rgba(168, 179, 207, 0.5)",
+                  background: active ? "rgba(129, 140, 248, 0.12)" : "transparent",
+                  border: active ? "1px solid rgba(129, 140, 248, 0.2)" : "1px solid transparent",
+                  transition: "all 0.2s cubic-bezier(0.22, 1, 0.36, 1)",
+                  whiteSpace: "nowrap",
+                }}
+                onMouseEnter={(e) => {
+                  if (!active) (e.currentTarget as HTMLElement).style.color = "rgba(250, 250, 249, 0.85)";
+                }}
+                onMouseLeave={(e) => {
+                  if (!active) (e.currentTarget as HTMLElement).style.color = "rgba(168, 179, 207, 0.5)";
+                }}
+              >
+                {label}
+              </Link>
+            );
+          })}
         </nav>
 
-        {/* User area — matches landing page button style */}
-        <div className="flex items-center gap-2.5">
+        {/* Right: notification + account */}
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexShrink: 0 }}>
           <NotificationBell />
-          {/* Avatar capsule — same border style as landing page SIGN UP button */}
           <Link href="/profile" style={{ textDecoration: "none" }}>
             <div
-              className="flex h-7 px-3 cursor-pointer items-center justify-center rounded-full border text-[0.58rem] font-semibold tracking-widest uppercase transition-all"
-              style={{ borderColor: "rgba(250, 250, 249, 0.2)", color: "rgba(250, 250, 249, 0.7)", background: "transparent" }}
+              style={{
+                height: "28px", padding: "0 0.9rem",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                borderRadius: "100px",
+                border: "1px solid rgba(250, 250, 249, 0.14)",
+                background: "transparent",
+                fontSize: "0.52rem", fontWeight: 700,
+                letterSpacing: "0.24em", textTransform: "uppercase",
+                color: "rgba(250, 250, 249, 0.6)",
+                fontFamily: "var(--font-sans)",
+                transition: "all 0.2s",
+                cursor: "pointer",
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLElement).style.borderColor = "rgba(250, 250, 249, 0.32)";
+                (e.currentTarget as HTMLElement).style.color = "#fafaf9";
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.borderColor = "rgba(250, 250, 249, 0.14)";
+                (e.currentTarget as HTMLElement).style.color = "rgba(250, 250, 249, 0.6)";
+              }}
               role="button"
               tabIndex={0}
-              aria-label="User menu"
-              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = "rgba(250, 250, 249, 0.5)"; (e.currentTarget as HTMLElement).style.color = "#fafaf9"; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = "rgba(250, 250, 249, 0.2)"; (e.currentTarget as HTMLElement).style.color = "rgba(250, 250, 249, 0.7)"; }}
+              aria-label="Account settings"
             >
               Account
             </div>
@@ -126,10 +193,13 @@ export function AppShell({ children, role = "student" }: AppShellProps) {
       <div className="app-shell">
         <aside
           id="app-sidebar"
-          className="app-sidebar border-r border-[rgba(129, 140, 248, 0.08)]"
+          className="app-sidebar"
           data-open={sidebarOpen ? "true" : "false"}
           aria-label="Sidebar navigation"
-          style={{ background: "var(--bg-base)" }}
+          style={{
+            background: "var(--bg-base)",
+            borderRight: "1px solid rgba(129, 140, 248, 0.07)",
+          }}
         >
           <Sidebar onClose={closeSidebar} role={role} />
         </aside>
