@@ -59,7 +59,7 @@ export default async function ProfessorProfilePage({ params }: PageProps) {
       <header style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
           <span style={{ width: "1.5rem", height: "1px", background: "rgba(15, 23, 42, 0.2)", display: "block" }} />
-          <span style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.42em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.3)", fontFamily: "var(--font-mono, monospace)" }}>
+          <span style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.3)", fontFamily: "var(--font-sans, monospace)" }}>
             Faculty Profile
           </span>
         </div>
@@ -83,10 +83,10 @@ export default async function ProfessorProfilePage({ params }: PageProps) {
               {/* Verified badge */}
               <span style={{ display: "flex", alignItems: "center", gap: "0.35rem", padding: "0.3rem 0.8rem", border: "1px solid rgba(120,220,120,0.25)", borderRadius: "100px", background: "rgba(120,220,120,0.04)" }}>
                 <span style={{ width: "5px", height: "5px", borderRadius: "50%", background: "rgba(120,220,120,0.8)" }} />
-                <span style={{ fontSize: "0.48rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(120,220,120,0.8)", fontFamily: "var(--font-mono, monospace)" }}>Verified Faculty</span>
+                <span style={{ fontSize: "0.48rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(120,220,120,0.8)", fontFamily: "var(--font-sans, monospace)" }}>Verified Faculty</span>
               </span>
               {/* Availability */}
-              <span style={{ padding: "0.3rem 0.8rem", border: `1px solid ${isAccepting ? "rgba(15, 23, 42, 0.1)" : "rgba(15, 23, 42, 0.06)"}`, borderRadius: "100px", fontSize: "0.48rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: isAccepting ? "rgba(15, 23, 42, 0.4)" : "rgba(15, 23, 42, 0.2)", fontFamily: "var(--font-mono, monospace)" }}>
+              <span style={{ padding: "0.3rem 0.8rem", border: `1px solid ${isAccepting ? "rgba(15, 23, 42, 0.1)" : "rgba(15, 23, 42, 0.06)"}`, borderRadius: "100px", fontSize: "0.48rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: isAccepting ? "rgba(15, 23, 42, 0.4)" : "rgba(15, 23, 42, 0.2)", fontFamily: "var(--font-sans, monospace)" }}>
                 {isAccepting ? "Accepting Requests" : "Not Accepting"}
               </span>
             </div>
@@ -106,7 +106,7 @@ export default async function ProfessorProfilePage({ params }: PageProps) {
               <Building2 size={12} color="rgba(15, 23, 42, 0.4)" />
             </div>
             <div>
-              <div style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.25)", fontFamily: "var(--font-mono, monospace)", marginBottom: "0.35rem" }}>Institution</div>
+              <div style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.25)", fontFamily: "var(--font-sans, monospace)", marginBottom: "0.35rem" }}>Institution</div>
               <div style={{ fontSize: "0.95rem", fontWeight: 500, color: "rgba(15, 23, 42, 0.8)", fontFamily: "var(--font-sans)" }}>{professor.institution}</div>
             </div>
           </div>
@@ -119,7 +119,7 @@ export default async function ProfessorProfilePage({ params }: PageProps) {
               <BookOpen size={12} color="rgba(15, 23, 42, 0.4)" />
             </div>
             <div>
-              <div style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.25)", fontFamily: "var(--font-mono, monospace)", marginBottom: "0.75rem" }}>Research Areas</div>
+              <div style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.25)", fontFamily: "var(--font-sans, monospace)", marginBottom: "0.75rem" }}>Research Areas</div>
               <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
                 {professor.expertise_fields.map((field: string) => (
                   <span key={field} style={{ padding: "0.35rem 0.85rem", border: "1px solid rgba(15, 23, 42, 0.1)", borderRadius: "100px", fontSize: "0.72rem", fontWeight: 500, color: "rgba(15, 23, 42, 0.6)", fontFamily: "var(--font-sans)" }}>

@@ -56,7 +56,7 @@ function FormField({
           fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.22em",
           textTransform: "uppercase",
           color: focused ? "rgba(37, 99, 235, 0.6)" : "rgba(15, 23, 42, 0.3)",
-          fontFamily: "var(--font-mono, monospace)",
+          fontFamily: "var(--font-sans, monospace)",
           transition: "color 0.2s",
         }}
       >
@@ -143,7 +143,7 @@ export function RequestForm({ professor }: RequestFormProps) {
           <div style={{
             fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.22em",
             textTransform: "uppercase", color: "rgba(37, 99, 235, 0.4)",
-            fontFamily: "var(--font-mono, monospace)", marginBottom: "0.3rem",
+            fontFamily: "var(--font-sans, monospace)", marginBottom: "0.3rem",
           }}>
             Receiving Professor
           </div>

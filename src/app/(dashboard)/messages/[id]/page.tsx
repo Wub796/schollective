@@ -95,7 +95,7 @@ export default async function MessagePage({ params }: MessagePageProps) {
                 </span>
                 {participant.role === "professor" && <ShieldCheck size={10} style={{ color: "rgba(37, 99, 235, 0.5)", flexShrink: 0 }} />}
               </div>
-              <div style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(37, 99, 235, 0.4)", fontFamily: "var(--font-mono, monospace)" }}>
+              <div style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(37, 99, 235, 0.4)", fontFamily: "var(--font-sans, monospace)" }}>
                 {participant.role === "professor" ? (participant as any).expertise : "Student"}
               </div>
             </div>
@@ -105,7 +105,7 @@ export default async function MessagePage({ params }: MessagePageProps) {
         {/* Right: topic + status + close */}
         <div style={{ display: "flex", alignItems: "center", gap: "0.875rem", flexShrink: 0 }}>
           <div className="hidden md:block" style={{ textAlign: "right" }}>
-            <div style={{ fontSize: "0.48rem", color: "rgba(37, 99, 235, 0.3)", textTransform: "uppercase", letterSpacing: "0.2em", fontWeight: 700, fontFamily: "var(--font-mono, monospace)", marginBottom: "0.15rem" }}>Thread</div>
+            <div style={{ fontSize: "0.48rem", color: "rgba(37, 99, 235, 0.3)", textTransform: "uppercase", letterSpacing: "0.2em", fontWeight: 700, fontFamily: "var(--font-sans, monospace)", marginBottom: "0.15rem" }}>Thread</div>
             <div className="font-display" style={{ fontSize: "0.78rem", color: "rgba(15, 23, 42, 0.55)", fontStyle: "italic", maxWidth: "240px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
               &ldquo;{request.topic}&rdquo;
             </div>
@@ -116,7 +116,7 @@ export default async function MessagePage({ params }: MessagePageProps) {
             background: request.status === "active" ? "rgba(37, 99, 235,0.06)" : "transparent",
             fontSize: "0.48rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase" as const,
             color: request.status === "active" ? "rgba(37, 99, 235,0.7)" : "rgba(15, 23, 42,0.25)",
-            fontFamily: "var(--font-mono, monospace)",
+            fontFamily: "var(--font-sans, monospace)",
           }}>
             {request.status}
           </div>

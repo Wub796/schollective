@@ -79,7 +79,7 @@ export function ProfessorCard({ professor }: ProfessorCardProps) {
           <span style={{
             fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.22em",
             textTransform: "uppercase", color: "rgba(37, 99, 235, 0.6)",
-            fontFamily: "var(--font-mono, monospace)",
+            fontFamily: "var(--font-sans, monospace)",
           }}>
             Verified
           </span>
@@ -113,7 +113,7 @@ export function ProfessorCard({ professor }: ProfessorCardProps) {
         <div style={{
           fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.28em",
           textTransform: "uppercase", color: "rgba(37, 99, 235, 0.4)",
-          marginBottom: "0.75rem", fontFamily: "var(--font-mono, monospace)",
+          marginBottom: "0.75rem", fontFamily: "var(--font-sans, monospace)",
         }}>
           Focus Areas
         </div>
@@ -158,7 +158,7 @@ export function ProfessorCard({ professor }: ProfessorCardProps) {
             textAlign: "center",
             fontSize: "0.58rem",
             fontWeight: 700,
-            letterSpacing: "0.24em",
+            letterSpacing: "0.1em",
             textTransform: "uppercase",
             color: "var(--accent)",
             fontFamily: "var(--font-sans)",

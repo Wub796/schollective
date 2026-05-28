@@ -66,7 +66,7 @@ export function AcceptingToggle({ initialValue }: AcceptingToggleProps) {
         letterSpacing: "0.22em",
         textTransform: "uppercase",
         color: accepting ? "rgba(15, 23, 42, 0.5)" : "rgba(15, 23, 42, 0.25)",
-        fontFamily: "var(--font-mono, monospace)",
+        fontFamily: "var(--font-sans, monospace)",
         transition: "color 0.3s",
       }}>
         {accepting ? "Accepting Requests" : "Requests Paused"}

@@ -89,10 +89,10 @@ function NavLink({
             display: "block",
             fontSize: "0.5rem",
             fontWeight: 700,
-            letterSpacing: "0.24em",
+            letterSpacing: "0.1em",
             textTransform: "uppercase",
             color: active ? "rgba(37, 99, 235, 0.6)" : "var(--text-tertiary)",
-            fontFamily: "var(--font-mono, monospace)",
+            fontFamily: "var(--font-sans, monospace)",
             lineHeight: 1,
             marginTop: "0.2rem",
           }}>
@@ -156,9 +156,9 @@ export function Sidebar({ onClose, role = "student" }: SidebarProps) {
           </span>
         </Link>
         <div style={{
-          fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.32em",
+          fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.15em",
           textTransform: "uppercase", color: "var(--accent)",
-          fontFamily: "var(--font-mono, monospace)", marginTop: "0.3rem",
+          fontFamily: "var(--font-sans, monospace)", marginTop: "0.3rem",
         }}>
           {role === "professor" ? "Faculty Portal" : "Scholar Portal"}
         </div>
@@ -167,10 +167,10 @@ export function Sidebar({ onClose, role = "student" }: SidebarProps) {
       {/* ── Main nav ── */}
       <div style={{ padding: "0.5rem 0.85rem", flex: 1 }}>
         <p style={{
-          fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.36em",
+          fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.15em",
           textTransform: "uppercase", color: "var(--text-tertiary)",
           marginBottom: "0.6rem", paddingLeft: "0.85rem",
-          fontFamily: "var(--font-mono, monospace)",
+          fontFamily: "var(--font-sans, monospace)",
         }}>
           Navigate
         </p>
@@ -196,10 +196,10 @@ export function Sidebar({ onClose, role = "student" }: SidebarProps) {
 
         {/* Account section */}
         <p style={{
-          fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.36em",
+          fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.15em",
           textTransform: "uppercase", color: "var(--text-tertiary)",
           marginBottom: "0.6rem", paddingLeft: "0.85rem",
-          fontFamily: "var(--font-mono, monospace)",
+          fontFamily: "var(--font-sans, monospace)",
         }}>
           Account
         </p>
@@ -245,9 +245,9 @@ export function Sidebar({ onClose, role = "student" }: SidebarProps) {
             </span>
             <span style={{
               display: "block", fontSize: "0.5rem", fontWeight: 700,
-              letterSpacing: "0.24em", textTransform: "uppercase",
+              letterSpacing: "0.1em", textTransform: "uppercase",
               color: "rgba(220, 38, 38, 0.5)",
-              fontFamily: "var(--font-mono, monospace)", lineHeight: 1, marginTop: "0.2rem",
+              fontFamily: "var(--font-sans, monospace)", lineHeight: 1, marginTop: "0.2rem",
             }}>
               Session
             </span>

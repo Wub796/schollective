@@ -90,7 +90,7 @@ export function AdminProfessorsTable({ professors }: { professors: ProfessorReco
   function SortTh({ col, label }: { col: SortKey; label: string }) {
     const active = sortKey === col;
     return (
-      <th onClick={() => toggleSort(col)} style={{ padding: "0.85rem 1.1rem", fontSize: "0.48rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: active ? "rgba(15, 23, 42,0.55)" : "rgba(15, 23, 42,0.2)", fontFamily: "var(--font-mono, monospace)", cursor: "pointer", userSelect: "none", whiteSpace: "nowrap" }}>
+      <th onClick={() => toggleSort(col)} style={{ padding: "0.85rem 1.1rem", fontSize: "0.48rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: active ? "rgba(15, 23, 42,0.55)" : "rgba(15, 23, 42,0.2)", fontFamily: "var(--font-sans, monospace)", cursor: "pointer", userSelect: "none", whiteSpace: "nowrap" }}>
         <span style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
           {label}<ChevronDown size={9} style={{ opacity: active ? 1 : 0.3, transform: active && sortAsc ? "rotate(180deg)" : "none", transition: "transform 0.18s" }} />
         </span>
@@ -115,7 +115,7 @@ export function AdminProfessorsTable({ professors }: { professors: ProfessorReco
         </div>
       </div>
 
-      <div style={{ fontSize: "0.48rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(15, 23, 42,0.2)", fontFamily: "var(--font-mono, monospace)" }}>
+      <div style={{ fontSize: "0.48rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(15, 23, 42,0.2)", fontFamily: "var(--font-sans, monospace)" }}>
         {filtered.length} {filtered.length === 1 ? "professor" : "professors"}
       </div>
 
@@ -126,11 +126,11 @@ export function AdminProfessorsTable({ professors }: { professors: ProfessorReco
               <tr style={{ borderBottom: "1px solid rgba(15, 23, 42,0.05)" }}>
                 <SortTh col="name"   label="Professor" />
                 <SortTh col="status" label="Status" />
-                <th style={{ padding: "0.85rem 1.1rem", fontSize: "0.48rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(15, 23, 42,0.2)", fontFamily: "var(--font-mono, monospace)", whiteSpace: "nowrap" }}>Institution</th>
-                <th style={{ padding: "0.85rem 1.1rem", fontSize: "0.48rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(15, 23, 42,0.2)", fontFamily: "var(--font-mono, monospace)", whiteSpace: "nowrap" }}>Expertise</th>
+                <th style={{ padding: "0.85rem 1.1rem", fontSize: "0.48rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(15, 23, 42,0.2)", fontFamily: "var(--font-sans, monospace)", whiteSpace: "nowrap" }}>Institution</th>
+                <th style={{ padding: "0.85rem 1.1rem", fontSize: "0.48rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(15, 23, 42,0.2)", fontFamily: "var(--font-sans, monospace)", whiteSpace: "nowrap" }}>Expertise</th>
                 <SortTh col="score"  label="Score" />
                 <SortTh col="joined" label="Joined" />
-                <th style={{ padding: "0.85rem 1.1rem", fontSize: "0.48rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(15, 23, 42,0.2)", fontFamily: "var(--font-mono, monospace)", textAlign: "right", whiteSpace: "nowrap" }}>Actions</th>
+                <th style={{ padding: "0.85rem 1.1rem", fontSize: "0.48rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(15, 23, 42,0.2)", fontFamily: "var(--font-sans, monospace)", textAlign: "right", whiteSpace: "nowrap" }}>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -176,11 +176,11 @@ export function AdminProfessorsTable({ professors }: { professors: ProfessorReco
                     </td>
                     <td style={{ padding: "0.9rem 1.1rem" }}>
                       {p.ai_score != null
-                        ? <span style={{ fontSize: "0.72rem", fontWeight: 700, color: p.ai_score >= 70 ? "rgba(74,222,128,0.8)" : p.ai_score >= 40 ? "rgba(250,204,21,0.8)" : "rgba(248,113,113,0.8)", fontFamily: "var(--font-mono, monospace)" }}>{p.ai_score}</span>
+                        ? <span style={{ fontSize: "0.72rem", fontWeight: 700, color: p.ai_score >= 70 ? "rgba(74,222,128,0.8)" : p.ai_score >= 40 ? "rgba(250,204,21,0.8)" : "rgba(248,113,113,0.8)", fontFamily: "var(--font-sans, monospace)" }}>{p.ai_score}</span>
                         : <span style={{ color: "rgba(15, 23, 42,0.2)", fontSize: "0.6rem" }}>—</span>}
                     </td>
                     <td style={{ padding: "0.9rem 1.1rem" }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: "0.3rem", fontSize: "0.58rem", color: "rgba(15, 23, 42,0.3)", fontFamily: "var(--font-mono, monospace)" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.3rem", fontSize: "0.58rem", color: "rgba(15, 23, 42,0.3)", fontFamily: "var(--font-sans, monospace)" }}>
                         <Calendar size={9} />{formatDate(p.created_at)}
                       </div>
                     </td>

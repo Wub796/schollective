@@ -88,7 +88,7 @@ export function ThreadCard({ request, viewerRole }: ThreadCardProps) {
               <div style={{
                 fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.22em",
                 textTransform: "uppercase", color: "rgba(37, 99, 235, 0.45)",
-                marginTop: "0.25rem", fontFamily: "var(--font-mono, monospace)",
+                marginTop: "0.25rem", fontFamily: "var(--font-sans, monospace)",
                 overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap"
               }}>
                 {request.participant.detail}
@@ -109,7 +109,7 @@ export function ThreadCard({ request, viewerRole }: ThreadCardProps) {
             <span style={{
               fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.22em",
               textTransform: "uppercase", color: status.color,
-              fontFamily: "var(--font-mono, monospace)",
+              fontFamily: "var(--font-sans, monospace)",
             }}>
               {status.label}
             </span>
@@ -121,7 +121,7 @@ export function ThreadCard({ request, viewerRole }: ThreadCardProps) {
           <div style={{
             fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.28em",
             textTransform: "uppercase", color: "rgba(37, 99, 235, 0.35)",
-            marginBottom: "0.5rem", fontFamily: "var(--font-mono, monospace)",
+            marginBottom: "0.5rem", fontFamily: "var(--font-sans, monospace)",
           }}>
             Research Topic
           </div>
@@ -143,7 +143,7 @@ export function ThreadCard({ request, viewerRole }: ThreadCardProps) {
             marginTop: "auto",
           }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.4rem" }}>
-              <span style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(37, 99, 235, 0.35)", fontFamily: "var(--font-mono, monospace)" }}>
+              <span style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(37, 99, 235, 0.35)", fontFamily: "var(--font-sans, monospace)" }}>
                 Last activity
               </span>
               <span style={{ fontSize: "0.6rem", color: "rgba(15, 23, 42, 0.6)", fontFamily: "var(--font-sans)" }}>

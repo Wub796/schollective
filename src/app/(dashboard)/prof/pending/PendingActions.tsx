@@ -25,7 +25,7 @@ export function PendingActions() {
   };
 
   return (
-    <div className="flex flex-col gap-4 w-full">
+    <div className="flex flex-col gap-8 w-full">
       <Button 
         onClick={handleRefresh} 
         disabled={refreshing}
