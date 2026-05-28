@@ -8,6 +8,28 @@ import { Inbox, Clock } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
+function StatCard({ value, label, sub }: { value: string | number; label: string; sub: string }) {
+  return (
+    <div style={{
+      padding: "1.5rem",
+      border: "1px solid rgba(255,255,255,0.07)",
+      borderRadius: "14px",
+      background: "rgba(255,255,255,0.025)",
+      display: "flex", flexDirection: "column", gap: "0.5rem",
+    }}>
+      <span className="font-display" style={{ fontSize: "2.4rem", fontWeight: 900, color: "#fff", letterSpacing: "-0.04em", lineHeight: 1 }}>
+        {value}
+      </span>
+      <div>
+        <div style={{ fontSize: "0.78rem", fontWeight: 600, color: "rgba(255,255,255,0.7)", fontFamily: "var(--font-sans)" }}>{label}</div>
+        <div style={{ fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(255,255,255,0.25)", fontFamily: "var(--font-mono, monospace)", marginTop: "0.2rem" }}>
+          {sub}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default async function ProfessorDashboard() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -126,6 +148,13 @@ export default async function ProfessorDashboard() {
           Manage your student mentorship pipeline and active research dialogues.
         </p>
       </header>
+
+      {/* ── Stats row ──────────────────────────────────────────── */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "1rem" }}>
+        <StatCard value={allRequests?.length || 0} label="Total Requests" sub="Lifetime" />
+        <StatCard value={activeThreads.length}     label="Active Dialogues" sub="Ongoing" />
+        <StatCard value={pendingRequests.length}   label="Pending Approval" sub="In Queue" />
+      </div>
 
       {/* ── Hairline ─────────────────────────────────────────────── */}
       <div style={{ height: "1px", background: "rgba(255,255,255,0.06)" }} />
