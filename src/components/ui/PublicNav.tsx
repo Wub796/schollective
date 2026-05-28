@@ -108,7 +108,7 @@ export function PublicNav() {
     >
       <div
         data-menu-bar="true"
-        className="w-full h-[4.25rem] px-8 rounded-full border grid grid-cols-3 items-center transition-all duration-300 bg-[#fdfdfd]/85 backdrop-blur-md border-indigo-600/15 shadow-sm"
+        className="w-full h-[4.25rem] pl-8 pr-0 rounded-full border grid grid-cols-3 items-center transition-all duration-300 bg-[#fdfdfd]/85 backdrop-blur-md border-indigo-600/15 shadow-sm overflow-hidden"
       >
         {/* COLUMN 1: LEFT (Logo) */}
         <div className="flex items-center justify-start">
@@ -135,15 +135,15 @@ export function PublicNav() {
         </div>
 
         {/* COLUMN 3: RIGHT (Log In + CTA Button) */}
-        <div className="flex items-center justify-end gap-6">
+        <div className="flex items-center justify-end gap-6 h-full">
           <NavItem label="Log In" href="/login" active={pathname === "/login"} />
 
           <Button
             href="/signup"
             variant="primary"
-            size="sm"
             data-nav-item="true"
-            className="uppercase tracking-wider text-[0.65rem] shadow-sm animate-button"
+            className="h-full !py-0 px-8 rounded-l-full rounded-r-none border-none flex items-center justify-center uppercase tracking-widest text-[0.65rem] transition-colors duration-200"
+            style={{ borderRadius: "9999px 0 0 9999px" }}
           >
             Get Started →
           </Button>
