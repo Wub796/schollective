@@ -58,20 +58,21 @@ function Field({
           onBlur={() => setFocused(false)}
           style={{
             width: "100%",
-            background: "transparent",
-            border: "none",
-            borderBottom: `1px solid ${focused ? "rgba(37, 99, 235, 0.6)" : "rgba(37, 99, 235, 0.18)"}`,
-            padding: "0.85rem 0",
-            fontSize: "1rem",
+            background: "rgba(15, 23, 42, 0.02)",
+            border: `1px solid ${focused ? "rgba(79, 70, 229, 0.5)" : "rgba(15, 23, 42, 0.1)"}`,
+            borderRadius: "100px",
+            padding: "0.95rem 1.75rem",
+            fontSize: "0.95rem",
             color: "var(--text-primary)",
             outline: "none",
-            transition: "border-color 0.3s",
+            transition: "all 0.3s cubic-bezier(0.22, 1, 0.36, 1)",
             fontFamily: "var(--font-sans)",
             letterSpacing: "0.01em",
+            boxShadow: focused ? "0 0 0 3px rgba(79, 70, 229, 0.12)" : "none",
           }}
         />
         {suffix && (
-          <span style={{ position: "absolute", right: 0, bottom: "0.85rem" }}>
+          <span style={{ position: "absolute", right: "1.75rem", top: "50%", transform: "translateY(-50%)" }}>
             {suffix}
           </span>
         )}
@@ -181,7 +182,7 @@ function LoginContent() {
           display: "flex", alignItems: "center", gap: "2rem",
           background: "rgba(17, 17, 19, 0.85)",
           backdropFilter: "blur(20px)",
-          border: "1px solid rgba(37, 99, 235, 0.12)",
+          border: "1px solid rgba(79, 70, 229, 0.12)",
           borderRadius: "100px",
           padding: "0.6rem 1.5rem",
           boxShadow: "0 8px 32px rgba(0,0,0,0.4)",
@@ -218,10 +219,10 @@ function LoginContent() {
         >
           {/* Eyebrow */}
           <motion.div variants={fadeUp} style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.75rem" }}>
-            <span style={{ width: "1.5rem", height: "1px", background: "rgba(37, 99, 235, 0.4)", display: "block" }} />
+            <span style={{ width: "1.5rem", height: "1px", background: "rgba(79, 70, 229, 0.4)", display: "block" }} />
             <span style={{
               fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.38em",
-              textTransform: "uppercase", color: "rgba(37, 99, 235, 0.7)",
+              textTransform: "uppercase", color: "rgba(79, 70, 229, 0.7)",
               fontFamily: "var(--font-sans)",
             }}>
               Scholar Portal
@@ -231,15 +232,15 @@ function LoginContent() {
           {/* Headline */}
           <motion.h1 variants={fadeUp} className="font-display" style={{
             fontSize: "clamp(2.6rem, 6vw, 3.8rem)", fontWeight: 900,
-            color: "var(--text-primary)", letterSpacing: "-0.035em", lineHeight: 1.05,
-            marginBottom: "2.75rem",
+            color: "var(--text-primary)", letterSpacing: "-0.035em", lineHeight: 0.95,
+            marginBottom: "3.5rem",
           }}>
             Welcome<br />
             <em style={{ fontStyle: "italic", color: "rgba(15, 23, 42, 0.38)" }}>back.</em>
           </motion.h1>
 
           <form onSubmit={handleSubmit}>
-            <div style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "3rem" }}>
               <motion.div variants={fadeUp}>
                 <Field id="email" name="email" type="email" label="Institutional Email" placeholder="name@university.edu" required />
               </motion.div>

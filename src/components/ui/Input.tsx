@@ -8,7 +8,7 @@ const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLI
         type={type}
         className={cn(
           // Base structure
-          "flex h-12 w-full rounded-xl px-5 py-3 text-sm transition-all",
+          "flex h-13 w-full rounded-full px-8 py-3.5 text-sm transition-all",
           // Dark surface, near-invisible border
           "bg-[rgba(17,17,19,0.5)] border border-[rgba(37, 99, 235,0.07)]",
           // Text

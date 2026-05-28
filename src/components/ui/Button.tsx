@@ -32,10 +32,10 @@ const Button = React.forwardRef<HTMLElement, ButtonProps>(
 
       const enter = () => {
         const { width, height } = el.getBoundingClientRect();
-        dot.style.width = `${width + 4}px`;
-        dot.style.height = `${height + 4}px`;
+        dot.style.width = `${width + 24}px`;
+        dot.style.height = `${height + 18}px`;
         dot.style.borderRadius = "100px";
-        dot.style.borderColor = variant === 'primary' ? 'var(--text-primary)' : 'var(--accent)';
+        dot.style.borderColor = variant === 'primary' ? 'rgba(79,70,229,0.6)' : 'rgba(79,70,229,0.8)';
       };
       const leave = () => {
         dot.style.width = "10px";
@@ -53,15 +53,15 @@ const Button = React.forwardRef<HTMLElement, ButtonProps>(
     }, [resolvedRef, variant]);
 
     const variants = {
-      primary: "bg-transparent text-[var(--text-primary)] border border-slate-900 shadow-sm",
-      ghost: "bg-transparent backdrop-blur-md text-slate-900 border border-[var(--text-primary)] hover:border-[var(--accent)] hover:text-[var(--accent)]",
-      outline: "bg-transparent text-slate-900 border border-[var(--text-primary)] hover:border-[var(--accent)]",
+      primary: "bg-indigo-600 text-white border-2 border-indigo-600 hover:bg-indigo-700 hover:border-indigo-700 shadow-sm transition-all duration-200",
+      ghost: "bg-transparent backdrop-blur-md text-slate-900 border-2 border-slate-900 hover:border-indigo-600 hover:text-indigo-600 transition-all duration-200",
+      outline: "bg-transparent text-indigo-600 border-2 border-indigo-600 hover:bg-indigo-600 hover:text-white transition-all duration-200",
     };
 
     const sizes = {
-      sm: "px-5 py-2 text-xs",
-      md: "px-6 py-2.5 text-sm",
-      lg: "px-8 py-3.5 text-base",
+      sm: "px-7 py-3 text-xs",
+      md: "px-9 py-3.5 text-sm",
+      lg: "px-12 py-5 text-base",
     };
 
     // Determine rolling content.
@@ -72,10 +72,10 @@ const Button = React.forwardRef<HTMLElement, ButtonProps>(
 
     const rollContent = isString ? (
       <>
-        {/* Layer 1 — slides up and out */}
-        <span className="flex" style={{ position: "absolute", inset: 0, alignItems: "center", justifyContent: "center", gap: icon ? "0.5rem" : "0" }}>
+        {/* Layer 1 — slides up and out (IN NORMAL FLOW) */}
+        <span className="flex relative" style={{ alignItems: "center", justifyContent: "center", gap: icon ? "0.5rem" : "0" }}>
           {icon && <span className="flex-shrink-0">{icon}</span>}
-          <span className="flex" style={{ clipPath: "inset(0 -0.15em 0 0)" }}>
+          <span className="flex" style={{ overflow: "hidden", padding: "0.1em 0.1em" }}>
             {chars.map((ch, i) => (
               <span 
                 key={i} 
@@ -88,10 +88,10 @@ const Button = React.forwardRef<HTMLElement, ButtonProps>(
           </span>
         </span>
         
-        {/* Layer 2 — slides up and in */}
-        <span className="flex" style={{ position: "absolute", inset: 0, alignItems: "center", justifyContent: "center", gap: icon ? "0.5rem" : "0", color: "var(--accent)" }}>
+        {/* Layer 2 — slides up and in (ABSOLUTE) */}
+        <span className="flex" style={{ position: "absolute", inset: 0, alignItems: "center", justifyContent: "center", gap: icon ? "0.5rem" : "0", color: "#4f46e5", pointerEvents: "none" }}>
           {icon && <span className="flex-shrink-0">{icon}</span>}
-          <span className="flex" style={{ clipPath: "inset(0 -0.15em 0 0)" }}>
+          <span className="flex" style={{ overflow: "hidden", padding: "0.1em 0.1em" }}>
             {chars.map((ch, i) => (
               <span 
                 key={i} 
@@ -103,24 +103,14 @@ const Button = React.forwardRef<HTMLElement, ButtonProps>(
             ))}
           </span>
         </span>
-
-        {/* Hidden structural layer */}
-        <span aria-hidden style={{ visibility: "hidden", display: "flex", alignItems: "center", gap: icon ? "0.5rem" : "0", fontWeight: 600 }}>
-          {icon && <span className="flex-shrink-0">{icon}</span>}
-          <span>{children}</span>
-        </span>
       </>
     ) : (
       <>
-        <span className="flex transition-transform duration-[450ms] ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:-translate-y-full" style={{ position: "absolute", inset: 0, alignItems: "center", justifyContent: "center", gap: icon ? "0.5rem" : "0" }}>
+        <span className="flex transition-transform duration-[450ms] ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:-translate-y-full" style={{ alignItems: "center", justifyContent: "center", gap: icon ? "0.5rem" : "0" }}>
           {icon && <span className="flex-shrink-0">{icon}</span>}
           <span>{children}</span>
         </span>
-        <span className="flex translate-y-full group-hover:translate-y-0 transition-transform duration-[450ms] ease-[cubic-bezier(0.19,1,0.22,1)]" style={{ position: "absolute", inset: 0, alignItems: "center", justifyContent: "center", gap: icon ? "0.5rem" : "0", color: 'var(--accent)' }}>
-          {icon && <span className="flex-shrink-0">{icon}</span>}
-          <span>{children}</span>
-        </span>
-        <span aria-hidden style={{ visibility: "hidden", display: "flex", alignItems: "center", gap: icon ? "0.5rem" : "0" }}>
+        <span className="flex translate-y-full group-hover:translate-y-0 transition-transform duration-[450ms] ease-[cubic-bezier(0.19,1,0.22,1)]" style={{ position: "absolute", inset: 0, alignItems: "center", justifyContent: "center", gap: icon ? "0.5rem" : "0", color: 'var(--accent)', pointerEvents: "none" }}>
           {icon && <span className="flex-shrink-0">{icon}</span>}
           <span>{children}</span>
         </span>
@@ -149,7 +139,7 @@ const Button = React.forwardRef<HTMLElement, ButtonProps>(
             zIndex: 0,
           }}
         />
-        <span style={{ position: "relative", display: "flex", alignItems: "center", zIndex: 1, clipPath: "inset(0 -0.2em 0 -0.2em)", minHeight: "1.2em" }}>
+        <span style={{ position: "relative", display: "flex", alignItems: "center", zIndex: 1 }}>
           {rollContent}
         </span>
       </>

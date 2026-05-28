@@ -86,7 +86,7 @@ function FilterPill({
       onClick={onClick}
       className="btn-filter-pill"
       style={{
-        padding: "0.35rem 0.85rem",
+        padding: "0.5rem 1.25rem",
         borderRadius: "100px",
         border: active
           ? "1px solid rgba(15, 23, 42, 0.3)"
@@ -237,7 +237,7 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
           <Search
             size={14}
             style={{
-              position: "absolute", left: "0.9rem", top: "50%",
+              position: "absolute", left: "1.25rem", top: "50%",
               transform: "translateY(-50%)",
               color: "rgba(15, 23, 42,0.25)", pointerEvents: "none",
             }}
@@ -249,18 +249,27 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
             onChange={(e) => setQuery(e.target.value)}
             style={{
               width: "100%",
-              padding: "0.65rem 1rem 0.65rem 2.5rem",
-              background: "rgba(15, 23, 42,0.03)",
-              border: "1px solid rgba(15, 23, 42,0.08)",
-              borderRadius: "10px",
+              height: "2.5rem",
+              padding: "0.5rem 1.5rem 0.5rem 2.75rem",
+              background: "rgba(255,255,255,0.6)",
+              border: "1px solid var(--border)",
+              borderRadius: "100px",
               color: "var(--text-primary)",
               fontSize: "0.78rem",
               fontFamily: "var(--font-sans)",
               outline: "none",
-              transition: "border-color 0.18s",
+              transition: "border-color 0.25s ease, background-0.25s ease, box-shadow 0.25s ease",
             }}
-            onFocus={(e) => (e.currentTarget.style.borderColor = "rgba(15, 23, 42,0.2)")}
-            onBlur={(e)  => (e.currentTarget.style.borderColor = "rgba(15, 23, 42,0.08)")}
+            onFocus={(e) => {
+              e.currentTarget.style.borderColor = "var(--accent)";
+              e.currentTarget.style.background = "rgba(255,255,255,0.95)";
+              e.currentTarget.style.boxShadow = "0 0 0 4px rgba(37, 99, 235, 0.08)";
+            }}
+            onBlur={(e)  => {
+              e.currentTarget.style.borderColor = "var(--border)";
+              e.currentTarget.style.background = "rgba(255,255,255,0.6)";
+              e.currentTarget.style.boxShadow = "none";
+            }}
           />
         </div>
 
@@ -418,10 +427,10 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
                             value={u.role}
                             onChange={(e) => handleRoleChange(u.id, e.target.value as any)}
                             style={{
-                              padding: "0.3rem 0.6rem",
-                              borderRadius: "7px",
-                              border: "1px solid rgba(15, 23, 42,0.12)",
-                              background: "rgba(15, 23, 42,0.04)",
+                              padding: "0.45rem 1.75rem 0.45rem 1rem",
+                              borderRadius: "100px",
+                              border: "1px solid var(--border)",
+                              background: "rgba(255, 255, 255, 0.6)",
                               color: changingRole === u.id ? "rgba(15, 23, 42,0.3)" : "rgba(15, 23, 42,0.75)",
                               fontSize: "0.6rem",
                               fontWeight: 700,
@@ -431,10 +440,9 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
                               cursor: changingRole === u.id ? "wait" : "pointer",
                               outline: "none",
                               appearance: "none",
-                              paddingRight: "1.5rem",
                               backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='rgba(15, 23, 42,0.3)' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E")`,
                               backgroundRepeat: "no-repeat",
-                              backgroundPosition: "right 0.4rem center",
+                              backgroundPosition: "right 0.6rem center",
                             }}
                           >
                             <option value="student">Student</option>
@@ -451,8 +459,8 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
                             className={isSuspended ? "btn-action-success" : "btn-action-danger"}
                             style={{
                               display: "inline-flex", alignItems: "center", gap: "0.35rem",
-                              padding: "0.35rem 0.8rem",
-                              borderRadius: "8px",
+                              padding: "0.45rem 1.25rem",
+                              borderRadius: "100px",
                               border: isSuspended
                                 ? "1px solid rgba(100,220,120,0.25)"
                                 : "1px solid rgba(255,80,80,0.2)",
@@ -567,10 +575,10 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
                   value={u.role}
                   onChange={(e) => handleRoleChange(u.id, e.target.value as any)}
                   style={{
-                    padding: "0.35rem 1.5rem 0.35rem 0.7rem",
-                    borderRadius: "7px",
-                    border: "1px solid rgba(15, 23, 42,0.12)",
-                    background: "rgba(15, 23, 42,0.04)",
+                    padding: "0.45rem 1.75rem 0.45rem 1rem",
+                    borderRadius: "100px",
+                    border: "1px solid var(--border)",
+                    background: "rgba(255, 255, 255, 0.6)",
                     color: "rgba(15, 23, 42,0.75)",
                     fontSize: "0.6rem",
                     fontWeight: 700,
@@ -581,7 +589,7 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
                     appearance: "none",
                     backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='rgba(15, 23, 42,0.3)' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E")`,
                     backgroundRepeat: "no-repeat",
-                    backgroundPosition: "right 0.4rem center",
+                    backgroundPosition: "right 0.6rem center",
                   }}
                 >
                   <option value="student">Student</option>
@@ -598,8 +606,8 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
                     style={{
                       alignSelf: "flex-start",
                       display: "inline-flex", alignItems: "center", gap: "0.35rem",
-                      padding: "0.4rem 0.9rem",
-                      borderRadius: "8px",
+                      padding: "0.45rem 1.25rem",
+                      borderRadius: "100px",
                       border: isSuspended ? "1px solid rgba(100,220,120,0.25)" : "1px solid rgba(255,80,80,0.2)",
                       background: isSuspended ? "rgba(100,220,120,0.05)" : "rgba(255,80,80,0.05)",
                       color: isSuspended ? "rgba(100,220,120,0.7)" : "rgba(255,100,100,0.7)",

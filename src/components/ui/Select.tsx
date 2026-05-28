@@ -7,14 +7,14 @@ const Select = React.forwardRef<HTMLSelectElement, React.SelectHTMLAttributes<HT
       <div className="relative w-full">
         <select
           className={cn(
-            "flex h-11 w-full rounded-xl px-6 py-3 text-sm transition-all appearance-none cursor-pointer",
-            "bg-[rgba(15, 23, 42, 0.03)] border border-[rgba(15, 23, 42, 0.07)]",
-            "text-[#f2f2f0]",
-            "focus:outline-none focus:border-[rgba(232,232,230,0.4)] focus:bg-[rgba(15, 23, 42, 0.05)]",
-            "focus:ring-2 focus:ring-[rgba(232,232,230,0.08)]",
+            "flex h-12 w-full rounded-full px-8 py-3.5 text-sm transition-all appearance-none cursor-pointer",
+            "bg-[rgba(15, 23, 42, 0.02)] border border-[rgba(15, 23, 42, 0.08)]",
+            "text-slate-900",
+            "focus:outline-none focus:border-[rgba(147,51,234,0.4)] focus:bg-[rgba(15, 23, 42, 0.04)]",
+            "focus:ring-2 focus:ring-[rgba(147,51,234,0.1)]",
             "disabled:cursor-not-allowed disabled:opacity-40",
-            // Dark option background for browser compatibility
-            "[&>option]:bg-[#161616] [&>option]:text-[#f2f2f0]",
+            // Clean option styling for dropdown choices
+            "[&>option]:bg-white [&>option]:text-slate-900",
             className
           )}
           ref={ref}
@@ -22,7 +22,7 @@ const Select = React.forwardRef<HTMLSelectElement, React.SelectHTMLAttributes<HT
         >
           {children}
         </select>
-        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[rgba(15, 23, 42,0.3)]">
+        <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-[rgba(15, 23, 42,0.3)]">
           <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M1 1l4 4 4-4" />
           </svg>
