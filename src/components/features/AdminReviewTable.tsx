@@ -39,12 +39,12 @@ export function AdminReviewTable({ applicants }: AdminReviewTableProps) {
 
   if (applicants.length === 0) {
     return (
-      <div className="border border-dashed border-[rgba(255,255,255,0.06)] rounded-2xl p-24 text-center">
-        <div className="w-14 h-14 bg-[rgba(255,255,255,0.03)] rounded-xl flex items-center justify-center mx-auto mb-6 border border-[rgba(255,255,255,0.06)]">
+      <div className="border border-dashed border-[rgba(255,255,255,0.06)] rounded-2xl p-24 flex flex-col items-center gap-4">
+        <div className="w-14 h-14 bg-[rgba(255,255,255,0.03)] rounded-xl flex items-center justify-center border border-[rgba(255,255,255,0.06)]">
           <CheckCircle size={24} className="text-[#4a4a4a]" />
         </div>
         <h3 className="font-display text-2xl text-[#d4d4d2] mb-3 font-semibold">Queue Cleared</h3>
-        <p className="text-[#4a4a4a] max-w-[320px] mx-auto leading-relaxed text-sm font-light text-center">
+        <p className="text-[#4a4a4a] max-w-[320px] leading-relaxed text-sm font-light text-center">
           There are no pending professor applications currently awaiting review.
         </p>
       </div>
