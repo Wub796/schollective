@@ -18,9 +18,8 @@ const stagger = {
 
 export default function VerifyEmailPage() {
   return (
-    <div style={{ minHeight: "100vh", background: "#080c14", display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem" }}>
-      {/* Glow */}
-      <div style={{ position: "fixed", top: "30%", left: "50%", transform: "translateX(-50%)", width: "60vw", height: "60vw", maxWidth: 600, maxHeight: 600, borderRadius: "50%", background: "radial-gradient(circle, rgba(35,70,180,0.1) 0%, transparent 70%)", filter: "blur(60px)", pointerEvents: "none" }} />
+    <div style={{ minHeight: "100vh", background: "transparent", display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem" }}>
+      {/* Removed local glow */}
 
       <motion.div
         variants={stagger}

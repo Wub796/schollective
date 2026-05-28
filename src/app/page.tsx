@@ -9,11 +9,14 @@ import gsap from "gsap";
 import ScrollTrigger from "gsap/dist/ScrollTrigger";
 import dynamic from "next/dynamic";
 import { PublicNav } from "@/components/ui/PublicNav";
+import { Button } from "@/components/ui/Button";
 
 const ThreeBackground = dynamic(
   () => import("@/components/ui/ThreeBackground").then(m => m.ThreeBackground),
   { ssr: false }
 );
+
+import { AnimatedBackground } from "@/components/ui/AnimatedBackground";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -95,176 +98,7 @@ function PageLoader({ done }: { done: boolean }) {
 
 const EASE: [number, number, number, number] = [0.19, 1, 0.22, 1];
 
-/* ── CTAButton ─────────────────────────────────────────────────────────── */
-interface CTAButtonProps {
-  href: string;
-  label: string;
-  variant?: "default" | "indigo";
-  className?: string;
-  onClick?: () => void;
-}
 
-function CTAButton({ href, label, variant = "default", className = "", onClick }: CTAButtonProps) {
-  const wrapRef = useRef<HTMLAnchorElement>(null);
-  const borderRef = useRef<HTMLSpanElement>(null);
-  const chars = label.split("");
-  const isIndigo = variant === "indigo";
-
-  useEffect(() => {
-    const el = wrapRef.current;
-    const dot = borderRef.current;
-    if (!el || !dot) return;
-
-    const enter = () => {
-      const { width, height } = el.getBoundingClientRect();
-      dot.style.width = `${width + 2}px`;
-      dot.style.height = `${height + 2}px`;
-      dot.style.borderRadius = "100px";
-      dot.style.borderColor = isIndigo ? "rgba(37, 99, 235,0.85)" : "rgba(255,255,255,0.85)";
-    };
-    const leave = () => {
-      dot.style.width = "10px";
-      dot.style.height = "10px";
-      dot.style.borderRadius = "50%";
-      dot.style.borderColor = "rgba(255,255,255,0)";
-    };
-
-    el.addEventListener("mouseenter", enter);
-    el.addEventListener("mouseleave", leave);
-    return () => {
-      el.removeEventListener("mouseenter", enter);
-      el.removeEventListener("mouseleave", leave);
-    };
-  }, [isIndigo]);
-
-  return (
-    <Link
-      ref={wrapRef}
-      href={href}
-      onClick={onClick}
-      data-cursor-hide="true"
-      className={`group relative inline-flex items-center justify-center rounded-full ${className}`}
-      style={{
-        textDecoration: "none",
-        padding: isIndigo ? "1.1rem 2.5rem" : "0.8rem 2rem",
-        color: isIndigo ? "var(--accent)" : "var(--text-primary)",
-        border: isIndigo
-          ? "1px solid var(--accent)"
-          : "1px solid var(--border-focus)",
-        overflow: "visible",
-        position: "relative",
-        lineHeight: 1,
-        background: "transparent",
-      }}
-    >
-      <span
-        ref={borderRef}
-        aria-hidden
-        style={{
-          pointerEvents: "none",
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          width: "10px",
-          height: "10px",
-          borderRadius: "50%",
-          border: "1.5px solid rgba(255,255,255,0)",
-          transition:
-            "width 520ms cubic-bezier(0.19,1,0.22,1), " +
-            "height 520ms cubic-bezier(0.19,1,0.22,1), " +
-            "border-radius 520ms cubic-bezier(0.19,1,0.22,1), " +
-            "border-color 200ms ease",
-          zIndex: 2,
-        }}
-      />
-
-      {isIndigo && (
-        <span
-          className="absolute inset-0 rounded-full translate-y-[102%] group-hover:translate-y-0 transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] pointer-events-none"
-          style={{ background: "var(--accent)", zIndex: 0 }}
-        />
-      )}
-
-      <span
-        style={{
-          position: "relative",
-          display: "flex",
-          clipPath: "inset(0 -0.15em 0 0)",
-          height: "1em",
-          alignItems: "center",
-          zIndex: 3,
-        }}
-      >
-        <span
-          className="flex transition-transform duration-[430ms] ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:-translate-y-full"
-          style={{ position: "absolute", inset: 0, alignItems: "center", display: "flex" }}
-        >
-          {chars.map((ch, i) => (
-            <span
-              key={i}
-              style={{
-                fontSize: isIndigo ? "0.6rem" : "0.65rem",
-                fontWeight: 600,
-                letterSpacing: isIndigo ? "0.15em" : "0.05em",
-                textTransform: "uppercase",
-                color: isIndigo ? "var(--accent)" : "var(--text-primary)",
-              }}
-            >
-              {ch === " " ? "\u00A0" : ch}
-            </span>
-          ))}
-        </span>
-
-        <span
-          className="flex translate-y-full group-hover:translate-y-0 transition-transform duration-[430ms] ease-[cubic-bezier(0.19,1,0.22,1)]"
-          style={{ position: "absolute", inset: 0, alignItems: "center", display: "flex" }}
-        >
-          {chars.map((ch, i) => (
-            <span
-              key={i}
-              style={{
-                fontFamily: "var(--font-display)",
-                fontStyle: "italic",
-                fontWeight: 400,
-                fontSize: isIndigo ? "0.72rem" : "0.8rem",
-                letterSpacing: isIndigo ? "0.12em" : "0.01em",
-                color: isIndigo ? "var(--bg-base)" : "var(--text-primary)",
-              }}
-            >
-              {ch === " " ? "\u00A0" : ch}
-            </span>
-          ))}
-        </span>
-
-        <span
-          aria-hidden
-          style={{
-            visibility: "hidden",
-            fontSize: isIndigo ? "0.6rem" : "0.65rem",
-            fontWeight: 600,
-            letterSpacing: isIndigo ? "0.15em" : "0.05em",
-            textTransform: "uppercase",
-          }}
-        >
-          {label}
-        </span>
-      </span>
-
-      <span
-        className="ml-2 transition-transform duration-500 group-hover:translate-x-1"
-        style={{
-          position: "relative",
-          zIndex: 3,
-          fontSize: "0.75rem",
-          color: isIndigo ? "var(--accent)" : "var(--text-primary)",
-        }}
-      >
-        →
-      </span>
-    </Link>
-  );
-}
 
 /* ── SplitReveal ────────────────────────────────────────────────────────── */
 function SplitReveal({
@@ -332,142 +166,6 @@ function Label({ children }: { children: React.ReactNode }) {
   );
 }
 
-/* ── CreateAccountButton ────────────────────────────────────────────────── */
-function CreateAccountButton() {
-  const wrapRef = useRef<HTMLAnchorElement>(null);
-  const borderRef = useRef<HTMLSpanElement>(null);
-
-  useEffect(() => {
-    const el = wrapRef.current;
-    const dot = borderRef.current;
-    if (!el || !dot) return;
-
-    const enter = () => {
-      const { width, height } = el.getBoundingClientRect();
-      dot.style.width = `${width + 2}px`;
-      dot.style.height = `${height + 2}px`;
-      dot.style.borderRadius = "100px";
-      dot.style.borderColor = "rgba(255,255,255,0.85)";
-    };
-    const leave = () => {
-      dot.style.width = "10px";
-      dot.style.height = "10px";
-      dot.style.borderRadius = "50%";
-      dot.style.borderColor = "rgba(255,255,255,0)";
-    };
-
-    el.addEventListener("mouseenter", enter);
-    el.addEventListener("mouseleave", leave);
-    return () => {
-      el.removeEventListener("mouseenter", enter);
-      el.removeEventListener("mouseleave", leave);
-    };
-  }, []);
-
-  const label = "Create Account";
-  const chars = label.split("");
-
-  return (
-    <Link
-      ref={wrapRef}
-      href="/signup"
-      data-cursor-hide="true"
-      className="group relative inline-flex items-center justify-center rounded-full"
-      style={{
-        textDecoration: "none",
-        padding: "1.1rem 2.5rem",
-        color: "var(--text-primary)",
-        border: "1px solid rgba(15, 23, 42, 0.12)",
-        overflow: "visible",
-        position: "relative",
-      }}
-    >
-      <span
-        ref={borderRef}
-        aria-hidden
-        style={{
-          pointerEvents: "none",
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          width: "10px",
-          height: "10px",
-          borderRadius: "50%",
-          border: "1.5px solid rgba(255,255,255,0)",
-          transition:
-            "width 520ms cubic-bezier(0.19,1,0.22,1), " +
-            "height 520ms cubic-bezier(0.19,1,0.22,1), " +
-            "border-radius 520ms cubic-bezier(0.19,1,0.22,1), " +
-            "border-color 200ms ease",
-          zIndex: 2,
-        }}
-      />
-
-      <span
-        style={{
-          position: "relative",
-          display: "flex",
-          clipPath: "inset(0 -0.15em 0 0)",
-          height: "1em",
-          alignItems: "center",
-          zIndex: 3,
-        }}
-      >
-        <span
-          className="flex transition-transform duration-[430ms] ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:-translate-y-full"
-          style={{ position: "absolute", inset: 0, alignItems: "center", display: "flex" }}
-        >
-          {chars.map((ch, i) => (
-            <span
-              key={i}
-              style={{
-                fontSize: "0.65rem",
-                fontWeight: 600,
-                letterSpacing: "0.05em",
-                textTransform: "uppercase" as const,
-              }}
-            >
-              {ch === " " ? "\u00A0" : ch}
-            </span>
-          ))}
-        </span>
-
-        <span
-          className="flex translate-y-full group-hover:translate-y-0 transition-transform duration-[430ms] ease-[cubic-bezier(0.19,1,0.22,1)]"
-          style={{ position: "absolute", inset: 0, alignItems: "center", display: "flex" }}
-        >
-          {chars.map((ch, i) => (
-            <span
-              key={i}
-              style={{
-                fontFamily: "var(--font-display)",
-                fontStyle: "italic",
-                fontWeight: 400,
-                fontSize: "0.8rem",
-                letterSpacing: "0.01em",
-                color: "var(--text-primary)",
-              }}
-            >
-              {ch === " " ? "\u00A0" : ch}
-            </span>
-          ))}
-        </span>
-
-        <span aria-hidden style={{ visibility: "hidden", fontSize: "0.65rem", fontWeight: 600, letterSpacing: "0.05em", textTransform: "uppercase" as const }}>
-          {label}
-        </span>
-      </span>
-
-      <span
-        className="ml-2 transition-transform duration-500 group-hover:translate-x-1"
-        style={{ position: "relative", zIndex: 3, fontSize: "0.75rem" }}
-      >
-        →
-      </span>
-    </Link>
-  );
-}
 
 /* ── LandingPage ────────────────────────────────────────────────────────── */
 export default function LandingPage() {
@@ -531,16 +229,7 @@ export default function LandingPage() {
 
         {/* ══ HERO SECTION ═══════════════════════════════════════════════ */}
         <section className="relative min-h-screen overflow-hidden flex flex-col justify-center" style={{ background: "var(--bg-base)" }}>
-          <div className="absolute inset-0 z-0">
-            <ThreeBackground />
-            <div className="absolute inset-0 pointer-events-none"
-              style={{ background: "radial-gradient(ellipse 100% 75% at 50% 40%, transparent 0%, rgba(255, 255, 255,0.6) 70%, rgba(255, 255, 255,0.98) 100%)" }} />
-            <div className="absolute inset-0 pointer-events-none"
-              style={{
-                backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E\")",
-                backgroundSize: "200px 200px", opacity: 0.6, mixBlendMode: "overlay",
-              }} />
-          </div>
+          <AnimatedBackground />
 
           {/* Active status indicator */}
           <motion.div className="absolute z-10" style={{ top: "6.5rem", right: "2.5rem" }}
@@ -558,22 +247,21 @@ export default function LandingPage() {
             </div>
           </motion.div>
 
-          <div className="relative z-10 w-full max-w-[80rem] mx-auto px-6 md:px-12 lg:px-16 pt-24 pb-16 flex flex-col items-start">
-
+          <div className="relative z-10 w-full max-w-[80rem] mx-auto px-6 md:px-12 lg:px-16 pt-24 pb-16 flex flex-col items-center text-center">
 
             {/* Headline */}
             <h1 className="font-display font-black text-slate-900 mb-6 select-none"
               style={{ fontSize: "clamp(2.5rem, 6.5vw, 6.2rem)", letterSpacing: "-0.03em", lineHeight: 1.05 }}>
               Find the mentor<br />
               <span className="italic font-light text-slate-900/40">who changes your </span>
-              <em className="italic font-normal text-blue-600">life.</em>
+              <em className="italic font-normal text-purple-600">life.</em>
             </h1>
 
             {/* Subtext */}
             <motion.p
               initial={{ opacity: 0 }} animate={{ opacity: 1 }}
               transition={{ duration: 1.2, ease: EASE, delay: 1.1 }}
-              className="font-light leading-relaxed text-slate-600 mb-12 text-lg max-w-xl"
+              className="font-light leading-relaxed text-slate-600 mb-12 text-lg max-w-xl mx-auto"
             >
               Cold emails to professors go unanswered. Connect through verified, in-platform academic request threads for structured research mentorship.
             </motion.p>
@@ -662,30 +350,11 @@ export default function LandingPage() {
               ))}
             </div>
 
-            <CTAButton href="/signup" label="Send requests that get answered" variant="indigo" />
+            <Button href="/signup" variant="primary" size="lg">Send requests that get answered</Button>
           </div>
         </section>
 
-        {/* ══ PROOF STRIP ════════════════════════════════════════════════ */}
-        <div className="js-fade border-y border-slate-200 py-12 bg-white shadow-xl">
-          <div className="max-w-[80rem] mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-8 text-center">
-            {[
-              { num: "250M+", label: "papers indexed" },
-              { num: "1,000+", label: "universities" },
-              { num: "10,000+", label: "students served" },
-              { num: "< 24h", label: "first response" }
-            ].map((stat, i) => (
-              <div key={i} className="flex flex-col items-center">
-                <span className="font-display font-black text-3xl md:text-5xl text-slate-900 tracking-tight mb-2">
-                  {stat.num}
-                </span>
-                <span className="font-sans text-[0.55rem] tracking-wider uppercase text-blue-600/70">
-                  {stat.label}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
+
 
         {/* ══ VS TABLE SECTION (Traditional Databases vs Schollective) ══════════════════ */}
         <section className="js-fade py-28 relative">
@@ -935,62 +604,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* ══ SOCIAL TESTIMONIALS SECTION ════════════════════════════════ */}
-        <section className="js-fade py-28 border-t border-slate-200 relative overflow-hidden">
-          <div className="max-w-[80rem] mx-auto px-6 mb-16 text-center">
-            <Label>Student Success</Label>
-            <h2 className="font-display font-bold text-3xl md:text-5xl text-slate-900 mt-4 tracking-tight">
-              What users say
-            </h2>
-          </div>
 
-          <div className="relative w-full overflow-hidden py-4 select-none">
-            <div className="lp-quotes-track">
-              <div className="lp-quotes-group">
-                {[
-                  { initial: "JN", text: "Just wanted to say thanks, like no joke. I got like 6 research internship opportunities now for this summer😭 (IU, Purdue, UIUC, UChicago).", author: "Jedrek N., College Student" },
-                  { initial: "US", text: "I got a reply in 3 days. The structured request flow actually helped me get straight to the point.", author: "Undergraduate student" },
-                  { initial: "CR", text: "I was skeptical at first, but after signing up, I was really impressed with what Schollective has to offer. Genuinely helpful as a high schooler.", author: "Chetana R., High School Student" },
-                  { initial: "RP", text: "Endorse this format 💯. If a student request has real context and specific questions, I always answer it.", author: "Research Professor" },
-                  { initial: "SU", text: "First time I've gotten actual structured feedback on my academic outreach.", author: "Student user" }
-                ].map((item, i) => (
-                  <article key={i} className="flex-shrink-0 w-[360px] p-8 rounded-2xl border border-slate-200 bg-slate-50 flex flex-col justify-between">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center font-sans text-xs text-slate-600">
-                        {item.initial}
-                      </div>
-                      <span className="font-display text-2xl text-blue-600/20">“</span>
-                    </div>
-                    <p className="text-sm text-slate-600 leading-relaxed mb-6 font-light">{item.text}</p>
-                    <span className="font-sans text-[0.62rem] text-slate-900/50 uppercase tracking-wider">{item.author}</span>
-                  </article>
-                ))}
-              </div>
-
-              {/* Loop group for seamless scrolling */}
-              <div className="lp-quotes-group" aria-hidden="true">
-                {[
-                  { initial: "JN", text: "Just wanted to say thanks, like no joke. I got like 6 research internship opportunities now for this summer😭 (IU, Purdue, UIUC, UChicago).", author: "Jedrek N., College Student" },
-                  { initial: "US", text: "I got a reply in 3 days. The structured request flow actually helped me get straight to the point.", author: "Undergraduate student" },
-                  { initial: "CR", text: "I was skeptical at first, but after signing up, I was really impressed with what Schollective has to offer. Genuinely helpful as a high schooler.", author: "Chetana R., High School Student" },
-                  { initial: "RP", text: "Endorse this format 💯. If a student request has real context and specific questions, I always answer it.", author: "Research Professor" },
-                  { initial: "SU", text: "First time I've gotten actual structured feedback on my academic outreach.", author: "Student user" }
-                ].map((item, i) => (
-                  <article key={`dup-${i}`} className="flex-shrink-0 w-[360px] p-8 rounded-2xl border border-slate-200 bg-slate-50 flex flex-col justify-between">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center font-sans text-xs text-slate-600">
-                        {item.initial}
-                      </div>
-                      <span className="font-display text-2xl text-blue-600/20">“</span>
-                    </div>
-                    <p className="text-sm text-slate-600 leading-relaxed mb-6 font-light">{item.text}</p>
-                    <span className="font-sans text-[0.62rem] text-slate-900/50 uppercase tracking-wider">{item.author}</span>
-                  </article>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
 
         {/* ══ FINAL CALL TO ACTION ═══════════════════════════════════════ */}
         <section className="js-fade relative overflow-hidden"
@@ -1017,7 +631,7 @@ export default function LandingPage() {
               </p>
             </FadeIn>
             <FadeIn delay={0.5}>
-              <CreateAccountButton />
+              <Button href="/signup" variant="ghost" size="lg" className="uppercase tracking-widest text-[0.65rem]">Create Account</Button>
             </FadeIn>
           </div>
         </section>
