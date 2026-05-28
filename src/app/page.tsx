@@ -269,12 +269,12 @@ export default function LandingPage() {
             <div className="border border-slate-200/70 rounded-3xl p-6 md:p-10 bg-[#fdfdfd]">
               {/* Desktop view header */}
               <div className="hidden md:grid grid-cols-2 border-b border-slate-200 pb-6 mb-6">
-                <div className="pr-8">
+                <div className="text-center">
                   <span className="font-sans text-[0.68rem] font-bold tracking-widest text-slate-400 uppercase">
                     ChatGPT
                   </span>
                 </div>
-                <div className="pl-8 border-l border-slate-200">
+                <div className="text-center border-l border-slate-200">
                   <span className="font-sans text-[0.68rem] font-bold tracking-widest text-indigo-600 uppercase">
                     Schollective
                   </span>
@@ -302,14 +302,18 @@ export default function LandingPage() {
                     className="grid grid-cols-1 md:grid-cols-2 md:py-6 md:border-b md:border-slate-200 md:last:border-none md:last:pb-0"
                   >
                     {/* Left Column (ChatGPT) */}
-                    <div className="pr-0 md:pr-8 flex gap-4 items-start pb-4 md:pb-0 border-b border-slate-100 md:border-none">
-                      <span className="text-red-500 font-bold font-sans text-sm select-none flex-shrink-0 pt-0.5">✕</span>
-                      <p className="text-slate-600 text-sm leading-[1.7] font-sans">{row.bad}</p>
+                    <div className="pr-0 md:pr-8 flex flex-col items-center text-center pb-6 md:pb-0 border-b border-slate-100 md:border-none gap-3 w-full">
+                      <span className="w-6 h-6 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500 text-xs font-bold font-sans select-none">
+                        ✕
+                      </span>
+                      <p className="text-slate-600 text-sm leading-[1.7] font-sans max-w-sm">{row.bad}</p>
                     </div>
                     {/* Right Column (Schollective) */}
-                    <div className="pl-0 md:pl-8 mt-4 md:mt-0 md:border-l md:border-slate-200 flex gap-4 items-start">
-                      <span className="text-indigo-600 font-bold font-sans text-sm select-none flex-shrink-0 pt-0.5">✓</span>
-                      <p className="text-slate-900 text-sm leading-[1.7] font-sans font-medium">{row.good}</p>
+                    <div className="pl-0 md:pl-8 mt-6 md:mt-0 md:border-l md:border-slate-200 flex flex-col items-center text-center gap-3 w-full">
+                      <span className="w-6 h-6 rounded-full bg-indigo-600/10 border border-indigo-600/20 flex items-center justify-center text-indigo-600 text-xs font-bold font-sans select-none">
+                        ✓
+                      </span>
+                      <p className="text-slate-900 text-sm leading-[1.7] font-sans font-medium max-w-sm">{row.good}</p>
                     </div>
                   </div>
                 ))}
