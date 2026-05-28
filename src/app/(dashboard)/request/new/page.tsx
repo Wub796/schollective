@@ -46,10 +46,10 @@ export default async function RequestNewPage({ searchParams }: RequestNewPagePro
           textDecoration: "none", width: "fit-content",
         }}
       >
-        <ArrowLeft size={12} style={{ color: "rgba(129, 140, 248, 0.4)" }} />
+        <ArrowLeft size={12} style={{ color: "rgba(37, 99, 235, 0.4)" }} />
         <span style={{
           fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.3em",
-          textTransform: "uppercase", color: "rgba(129, 140, 248, 0.4)",
+          textTransform: "uppercase", color: "rgba(37, 99, 235, 0.4)",
           fontFamily: "var(--font-mono, monospace)",
         }}>
           Back to Directory
@@ -59,11 +59,11 @@ export default async function RequestNewPage({ searchParams }: RequestNewPagePro
       {/* Header */}
       <header style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <span style={{ width: "1.5rem", height: "1px", background: "rgba(250, 250, 249, 0.2)", display: "block" }} />
+          <span style={{ width: "1.5rem", height: "1px", background: "rgba(15, 23, 42, 0.2)", display: "block" }} />
           <div style={{
             display: "inline-flex", alignItems: "center", gap: "0.5rem",
             fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.42em",
-            textTransform: "uppercase", color: "rgba(129, 140, 248, 0.5)",
+            textTransform: "uppercase", color: "rgba(37, 99, 235, 0.5)",
             fontFamily: "var(--font-mono, monospace)",
           }}>
             <GraduationCap size={11} />
@@ -73,16 +73,16 @@ export default async function RequestNewPage({ searchParams }: RequestNewPagePro
 
         <h1 className="font-display" style={{
           fontSize: "clamp(2.6rem, 5vw, 4rem)", fontWeight: 900,
-          color: "#fafaf9", letterSpacing: "-0.035em", lineHeight: 1.05,
+          color: "var(--text-primary)", letterSpacing: "-0.035em", lineHeight: 1.05,
         }}>
           Initiate your{" "}
-          <em style={{ fontStyle: "italic", color: "rgba(250, 250, 249, 0.3)" }}>
+          <em style={{ fontStyle: "italic", color: "rgba(15, 23, 42, 0.3)" }}>
             intellectual dialogue
           </em>
         </h1>
 
         <p style={{
-          fontSize: "0.95rem", color: "rgba(168, 179, 207, 0.5)",
+          fontSize: "0.95rem", color: "rgba(15, 23, 42, 0.5)",
           fontWeight: 300, maxWidth: "44rem", lineHeight: 1.8,
           fontFamily: "var(--font-sans)",
         }}>
@@ -92,7 +92,7 @@ export default async function RequestNewPage({ searchParams }: RequestNewPagePro
       </header>
 
       {/* Hairline */}
-      <div style={{ height: "1px", background: "rgba(129, 140, 248, 0.07)" }} />
+      <div style={{ height: "1px", background: "rgba(37, 99, 235, 0.07)" }} />
 
       {/* Form */}
       <RequestForm professor={professor as any} />
@@ -100,7 +100,7 @@ export default async function RequestNewPage({ searchParams }: RequestNewPagePro
       {/* Footer */}
       <p style={{
         textAlign: "center",
-        color: "rgba(250, 250, 249, 0.12)",
+        color: "rgba(15, 23, 42, 0.12)",
         fontSize: "0.52rem",
         textTransform: "uppercase",
         letterSpacing: "0.35em",

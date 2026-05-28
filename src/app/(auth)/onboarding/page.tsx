@@ -32,7 +32,7 @@ function Field({
       <label htmlFor={id} style={{
         display: "block", fontSize: "0.6rem", fontWeight: 600,
         letterSpacing: "0.22em", textTransform: "uppercase",
-        color: focused ? "rgba(250, 250, 249, 0.65)" : "rgba(250, 250, 249, 0.3)",
+        color: focused ? "rgba(15, 23, 42, 0.65)" : "rgba(15, 23, 42, 0.3)",
         marginBottom: "0.55rem", transition: "color 0.25s",
         fontFamily: "var(--font-sans)",
       }}>
@@ -46,8 +46,8 @@ function Field({
         onBlur={() => setFocused(false)}
         style={{
           width: "100%", background: "transparent", border: "none",
-          borderBottom: `1px solid ${focused ? "rgba(129, 140, 248, 0.6)" : "rgba(129, 140, 248, 0.15)"}`,
-          padding: "0.85rem 0", fontSize: "0.95rem", color: "#fafaf9",
+          borderBottom: `1px solid ${focused ? "rgba(37, 99, 235, 0.6)" : "rgba(37, 99, 235, 0.15)"}`,
+          padding: "0.85rem 0", fontSize: "0.95rem", color: "var(--text-primary)",
           outline: "none", transition: "border-color 0.3s",
           fontFamily: "var(--font-sans)",
         }}
@@ -168,8 +168,8 @@ function OnboardingContent() {
     return (
       <div style={{ minHeight: "100vh", background: "var(--bg-base)", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <div style={{ width: "1.5rem", height: "1px", background: "rgba(250, 250, 249, 0.2)" }} />
-          <span style={{ fontSize: "0.55rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.3)", fontFamily: "var(--font-sans)" }}>
+          <div style={{ width: "1.5rem", height: "1px", background: "rgba(15, 23, 42, 0.2)" }} />
+          <span style={{ fontSize: "0.55rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.3)", fontFamily: "var(--font-sans)" }}>
             Loading…
           </span>
         </div>
@@ -204,30 +204,30 @@ function OnboardingContent() {
       >
         {/* Wordmark */}
         <motion.div variants={fadeUp} style={{ marginBottom: "3rem" }}>
-          <span className="font-display" style={{ fontSize: "1.1rem", fontWeight: 800, color: "#fafaf9", letterSpacing: "-0.02em" }}>
+          <span className="font-display" style={{ fontSize: "1.1rem", fontWeight: 800, color: "var(--text-primary)", letterSpacing: "-0.02em" }}>
             Schollective
           </span>
         </motion.div>
 
         {/* Eyebrow */}
         <motion.div variants={fadeUp} style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.5rem" }}>
-          <span style={{ width: "1.5rem", height: "1px", background: "rgba(250, 250, 249, 0.2)", display: "block" }} />
-          <span style={{ fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.38em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.32)", fontFamily: "var(--font-sans)" }}>
+          <span style={{ width: "1.5rem", height: "1px", background: "rgba(15, 23, 42, 0.2)", display: "block" }} />
+          <span style={{ fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.38em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.32)", fontFamily: "var(--font-sans)" }}>
             One last step
           </span>
         </motion.div>
 
         {/* Headline */}
         <motion.h1 variants={fadeUp} className="font-display" style={{
-          fontSize: "clamp(2.4rem, 5vw, 3.5rem)", fontWeight: 900, color: "#fafaf9",
+          fontSize: "clamp(2.4rem, 5vw, 3.5rem)", fontWeight: 900, color: "var(--text-primary)",
           letterSpacing: "-0.035em", lineHeight: 1.05, marginBottom: "0.75rem",
         }}>
           Complete your<br />
-          <em style={{ fontStyle: "italic", color: "rgba(250, 250, 249, 0.35)" }}>profile.</em>
+          <em style={{ fontStyle: "italic", color: "rgba(15, 23, 42, 0.35)" }}>profile.</em>
         </motion.h1>
 
         <motion.p variants={fadeUp} style={{
-          fontSize: "0.88rem", color: "rgba(168, 179, 207, 0.55)",
+          fontSize: "0.88rem", color: "rgba(15, 23, 42, 0.55)",
           marginBottom: "2.5rem", lineHeight: 1.7,
         }}>
           Tell us a bit about yourself so we can connect you with the right people.
@@ -236,8 +236,8 @@ function OnboardingContent() {
         {/* Role selector */}
         <motion.div variants={fadeUp} style={{
           display: "flex", gap: "0.5rem", marginBottom: "2.5rem",
-          padding: "0.3rem", background: "rgba(250, 250, 249, 0.04)",
-          borderRadius: "100px", border: "1px solid rgba(250, 250, 249, 0.07)",
+          padding: "0.3rem", background: "rgba(15, 23, 42, 0.04)",
+          borderRadius: "100px", border: "1px solid rgba(15, 23, 42, 0.07)",
         }}>
           {(["student", "professor"] as Role[]).map((r) => (
             <button
@@ -246,7 +246,7 @@ function OnboardingContent() {
                 flex: 1, padding: "0.65rem 1rem", borderRadius: "100px",
                 border: "none",
                 background: role === r ? "#818cf8" : "transparent",
-                color: role === r ? "#09090b" : "rgba(168, 179, 207, 0.5)",
+                color: role === r ? "var(--bg-base)" : "rgba(168, 179, 207, 0.5)",
                 fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.2em",
                 textTransform: "uppercase", cursor: "pointer",
                 transition: "all 0.25s", fontFamily: "var(--font-sans)",
@@ -274,11 +274,11 @@ function OnboardingContent() {
                 <motion.div key="student" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.25 }}>
                   <div style={{ display: "flex", flexDirection: "column", gap: "2.25rem" }}>
                     <div>
-                      <label htmlFor="education_level" style={{ display: "block", fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.3)", marginBottom: "0.55rem", fontFamily: "var(--font-sans)" }}>
+                      <label htmlFor="education_level" style={{ display: "block", fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.3)", marginBottom: "0.55rem", fontFamily: "var(--font-sans)" }}>
                         Education Level
                       </label>
                       <select id="education_level" name="education_level" required
-                        style={{ width: "100%", background: "#111113", border: "none", borderBottom: "1px solid rgba(129, 140, 248, 0.15)", padding: "0.7rem 0", fontSize: "0.95rem", color: "#fafaf9", outline: "none", fontFamily: "var(--font-sans)", cursor: "pointer" }}>
+                        style={{ width: "100%", background: "#111113", border: "none", borderBottom: "1px solid rgba(37, 99, 235, 0.15)", padding: "0.7rem 0", fontSize: "0.95rem", color: "var(--text-primary)", outline: "none", fontFamily: "var(--font-sans)", cursor: "pointer" }}>
                         <option value="high-school">High School</option>
                         <option value="college">College / Undergraduate</option>
                         <option value="graduate">Graduate (Masters / PhD)</option>
@@ -298,7 +298,7 @@ function OnboardingContent() {
                       <label htmlFor="institution" style={{
                         display: "block", fontSize: "0.6rem", fontWeight: 600,
                         letterSpacing: "0.18em", textTransform: "uppercase",
-                        color: "rgba(250, 250, 249, 0.3)", marginBottom: "0.55rem",
+                        color: "rgba(15, 23, 42, 0.3)", marginBottom: "0.55rem",
                         fontFamily: "var(--font-sans)",
                       }}>
                         Institution
@@ -327,7 +327,7 @@ function OnboardingContent() {
               whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }}
               style={{
                 width: "100%", padding: "1.15rem 2.5rem",
-                background: "#818cf8", color: "#09090b",
+                background: "#818cf8", color: "var(--bg-base)",
                 border: "none", borderRadius: "100px",
                 fontSize: "0.6rem", fontWeight: 700,
                 letterSpacing: "0.28em", textTransform: "uppercase",
@@ -350,8 +350,8 @@ export default function OnboardingPage() {
     <Suspense fallback={
       <div style={{ minHeight: "100vh", background: "var(--bg-base)", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <div style={{ width: "1.5rem", height: "1px", background: "rgba(250, 250, 249, 0.2)" }} />
-          <span style={{ fontSize: "0.55rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.3)", fontFamily: "var(--font-sans)" }}>
+          <div style={{ width: "1.5rem", height: "1px", background: "rgba(15, 23, 42, 0.2)" }} />
+          <span style={{ fontSize: "0.55rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.3)", fontFamily: "var(--font-sans)" }}>
             Loading…
           </span>
         </div>

@@ -40,9 +40,9 @@ function NavLink({
         padding: "0.55rem 0.85rem",
         borderRadius: "9px",
         textDecoration: "none",
-        background: active ? "rgba(129,140,248,0.1)" : "transparent",
-        border: active ? "1px solid rgba(129,140,248,0.2)" : "1px solid transparent",
-        color: active ? "#818cf8" : "rgba(250,250,249,0.45)",
+        background: active ? "rgba(37, 99, 235,0.1)" : "transparent",
+        border: active ? "1px solid rgba(37, 99, 235,0.2)" : "1px solid transparent",
+        color: active ? "#818cf8" : "rgba(15, 23, 42,0.45)",
         fontSize: "0.7rem",
         fontWeight: 600,
         letterSpacing: "0.03em",
@@ -51,13 +51,13 @@ function NavLink({
       }}
       onMouseEnter={(e) => {
         if (!active) {
-          e.currentTarget.style.color = "rgba(250,250,249,0.75)";
-          e.currentTarget.style.background = "rgba(250,250,249,0.04)";
+          e.currentTarget.style.color = "rgba(15, 23, 42,0.75)";
+          e.currentTarget.style.background = "rgba(15, 23, 42,0.04)";
         }
       }}
       onMouseLeave={(e) => {
         if (!active) {
-          e.currentTarget.style.color = "rgba(250,250,249,0.45)";
+          e.currentTarget.style.color = "rgba(15, 23, 42,0.45)";
           e.currentTarget.style.background = "transparent";
         }
       }}
@@ -81,7 +81,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
       style={{
         width: "220px",
         flexShrink: 0,
-        borderRight: "1px solid rgba(250,250,249,0.05)",
+        borderRight: "1px solid rgba(15, 23, 42,0.05)",
         display: "flex",
         flexDirection: "column",
         padding: "1.5rem 1rem",
@@ -95,7 +95,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         <Link href="/" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "0.5rem" }}>
           <span
             className="font-display"
-            style={{ fontSize: "0.95rem", fontWeight: 800, color: "#fafaf9", letterSpacing: "-0.02em" }}
+            style={{ fontSize: "0.95rem", fontWeight: 800, color: "var(--text-primary)", letterSpacing: "-0.02em" }}
           >
             Schollective
           </span>
@@ -109,7 +109,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           <span
             style={{
               fontSize: "0.42rem", fontWeight: 700, letterSpacing: "0.38em", textTransform: "uppercase",
-              color: "rgba(250,250,249,0.3)", fontFamily: "var(--font-mono, monospace)",
+              color: "rgba(15, 23, 42,0.3)", fontFamily: "var(--font-mono, monospace)",
             }}
           >
             Admin Environment
@@ -121,7 +121,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
       <div
         style={{
           fontSize: "0.42rem", fontWeight: 700, letterSpacing: "0.35em", textTransform: "uppercase",
-          color: "rgba(250,250,249,0.2)", fontFamily: "var(--font-mono, monospace)",
+          color: "rgba(15, 23, 42,0.2)", fontFamily: "var(--font-mono, monospace)",
           padding: "0 0.5rem", marginBottom: "0.35rem",
         }}
       >
@@ -146,7 +146,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
       {/* Bottom links */}
       <div
         style={{
-          borderTop: "1px solid rgba(250,250,249,0.05)",
+          borderTop: "1px solid rgba(15, 23, 42,0.05)",
           paddingTop: "1rem",
           display: "flex",
           flexDirection: "column",
@@ -194,25 +194,25 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           style={{
             display: "flex", alignItems: "center", justifyContent: "space-between",
             padding: "1rem 1.25rem",
-            borderBottom: "1px solid rgba(250,250,249,0.05)",
+            borderBottom: "1px solid rgba(15, 23, 42,0.05)",
             background: "rgba(8,12,20,0.95)",
             position: "sticky", top: 0, zIndex: 100,
           }}
         >
           <Link href="/" style={{ textDecoration: "none" }}>
-            <span className="font-display" style={{ fontSize: "0.95rem", fontWeight: 800, color: "#fafaf9" }}>
+            <span className="font-display" style={{ fontSize: "0.95rem", fontWeight: 800, color: "var(--text-primary)" }}>
               Schollective
             </span>
           </Link>
           <button
             onClick={() => setMobileOpen((v) => !v)}
             style={{
-              background: "rgba(129,140,248,0.08)",
-              border: "1px solid rgba(129,140,248,0.18)",
+              background: "rgba(37, 99, 235,0.08)",
+              border: "1px solid rgba(37, 99, 235,0.18)",
               borderRadius: "8px",
               width: "2.2rem", height: "2.2rem",
               display: "flex", alignItems: "center", justifyContent: "center",
-              cursor: "pointer", color: "rgba(250,250,249,0.7)",
+              cursor: "pointer", color: "rgba(15, 23, 42,0.7)",
             }}
           >
             {mobileOpen ? <X size={15} /> : <Menu size={15} />}
@@ -227,11 +227,11 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         {/* ── Footer ── */}
         <footer
           style={{
-            borderTop: "1px solid rgba(250,250,249,0.04)",
+            borderTop: "1px solid rgba(15, 23, 42,0.04)",
             padding: "1.25rem 3vw",
             display: "flex", justifyContent: "space-between", alignItems: "center",
             fontSize: "0.42rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase",
-            color: "rgba(250,250,249,0.15)", fontFamily: "var(--font-mono, monospace)",
+            color: "rgba(15, 23, 42,0.15)", fontFamily: "var(--font-mono, monospace)",
           }}
         >
           <span>Schollective Admin Engine v1.0</span>

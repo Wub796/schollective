@@ -47,16 +47,16 @@ function NavLink({
         padding: "0.8rem 1rem",
         borderRadius: "10px",
         textDecoration: "none",
-        background: active ? "rgba(129, 140, 248, 0.09)" : "transparent",
+        background: active ? "var(--accent-dim)" : "transparent",
         border: active
-          ? "1px solid rgba(129, 140, 248, 0.2)"
+          ? "1px solid rgba(37, 99, 235, 0.15)"
           : "1px solid transparent",
         transition: "all 0.2s cubic-bezier(0.22, 1, 0.36, 1)",
         position: "relative",
         overflow: "hidden",
       }}
       onMouseEnter={(e) => {
-        if (!active) (e.currentTarget as HTMLElement).style.background = "rgba(129, 140, 248, 0.04)";
+        if (!active) (e.currentTarget as HTMLElement).style.background = "var(--bg-surface-3)";
       }}
       onMouseLeave={(e) => {
         if (!active) (e.currentTarget as HTMLElement).style.background = "transparent";
@@ -68,7 +68,7 @@ function NavLink({
         <span style={{
           position: "absolute", left: 0, top: "50%", transform: "translateY(-50%)",
           width: "2px", height: "60%", minHeight: "16px", maxHeight: "28px",
-          background: "#818cf8", borderRadius: "0 2px 2px 0",
+          background: "var(--accent)", borderRadius: "0 2px 2px 0",
         }} />
       )}
 
@@ -76,8 +76,8 @@ function NavLink({
         <span style={{
           display: "block",
           fontSize: "0.82rem",
-          fontWeight: active ? 600 : 400,
-          color: active ? "rgba(250, 250, 249, 0.95)" : "rgba(168, 179, 207, 0.65)",
+          fontWeight: active ? 600 : 500,
+          color: active ? "var(--accent)" : "var(--text-secondary)",
           letterSpacing: "0.005em",
           transition: "color 0.2s",
           lineHeight: 1.3,
@@ -91,7 +91,7 @@ function NavLink({
             fontWeight: 700,
             letterSpacing: "0.24em",
             textTransform: "uppercase",
-            color: active ? "rgba(129, 140, 248, 0.55)" : "rgba(129, 140, 248, 0.22)",
+            color: active ? "rgba(37, 99, 235, 0.6)" : "var(--text-tertiary)",
             fontFamily: "var(--font-mono, monospace)",
             lineHeight: 1,
             marginTop: "0.2rem",
@@ -144,20 +144,20 @@ export function Sidebar({ onClose, role = "student" }: SidebarProps) {
       {/* ── Wordmark header ── */}
       <div style={{
         padding: "2rem 1.5rem 1.75rem",
-        borderBottom: "1px solid rgba(129, 140, 248, 0.07)",
+        borderBottom: "1px solid var(--border)",
         marginBottom: "0.5rem",
       }}>
         <Link href="/" style={{ textDecoration: "none" }}>
           <span className="font-display" style={{
             fontSize: "1.1rem", fontWeight: 800,
-            color: "#fafaf9", letterSpacing: "-0.025em",
+            color: "var(--text-primary)", letterSpacing: "-0.025em",
           }}>
             Schollective
           </span>
         </Link>
         <div style={{
           fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.32em",
-          textTransform: "uppercase", color: "rgba(129, 140, 248, 0.35)",
+          textTransform: "uppercase", color: "var(--accent)",
           fontFamily: "var(--font-mono, monospace)", marginTop: "0.3rem",
         }}>
           {role === "professor" ? "Faculty Portal" : "Scholar Portal"}
@@ -168,7 +168,7 @@ export function Sidebar({ onClose, role = "student" }: SidebarProps) {
       <div style={{ padding: "0.5rem 0.85rem", flex: 1 }}>
         <p style={{
           fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.36em",
-          textTransform: "uppercase", color: "rgba(129, 140, 248, 0.3)",
+          textTransform: "uppercase", color: "var(--text-tertiary)",
           marginBottom: "0.6rem", paddingLeft: "0.85rem",
           fontFamily: "var(--font-mono, monospace)",
         }}>
@@ -192,12 +192,12 @@ export function Sidebar({ onClose, role = "student" }: SidebarProps) {
         </motion.ul>
 
         {/* Divider */}
-        <div style={{ height: "1px", background: "rgba(129, 140, 248, 0.07)", marginBottom: "1.5rem", marginLeft: "0.85rem", marginRight: "0.85rem" }} />
+        <div style={{ height: "1px", background: "var(--border)", marginBottom: "1.5rem", marginLeft: "0.85rem", marginRight: "0.85rem" }} />
 
         {/* Account section */}
         <p style={{
           fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.36em",
-          textTransform: "uppercase", color: "rgba(129, 140, 248, 0.3)",
+          textTransform: "uppercase", color: "var(--text-tertiary)",
           marginBottom: "0.6rem", paddingLeft: "0.85rem",
           fontFamily: "var(--font-mono, monospace)",
         }}>
@@ -221,7 +221,7 @@ export function Sidebar({ onClose, role = "student" }: SidebarProps) {
       {/* ── Sign out — pinned to bottom ── */}
       <div style={{
         padding: "1.25rem 1rem 2rem",
-        borderTop: "1px solid rgba(129, 140, 248, 0.07)",
+        borderTop: "1px solid var(--border)",
       }}>
         <button
           onClick={handleSignOut}
@@ -232,13 +232,13 @@ export function Sidebar({ onClose, role = "student" }: SidebarProps) {
             border: "1px solid transparent", cursor: "pointer",
             textAlign: "left", transition: "all 0.2s",
           }}
-          onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(250, 90, 90, 0.05)")}
+          onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(220, 38, 38, 0.05)")}
           onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
         >
           <div>
             <span style={{
-              display: "block", fontSize: "0.82rem", fontWeight: 400,
-              color: "rgba(168, 179, 207, 0.45)", fontFamily: "var(--font-sans)",
+              display: "block", fontSize: "0.82rem", fontWeight: 500,
+              color: "var(--text-secondary)", fontFamily: "var(--font-sans)",
               transition: "color 0.2s", lineHeight: 1.3,
             }}>
               Sign Out
@@ -246,7 +246,7 @@ export function Sidebar({ onClose, role = "student" }: SidebarProps) {
             <span style={{
               display: "block", fontSize: "0.5rem", fontWeight: 700,
               letterSpacing: "0.24em", textTransform: "uppercase",
-              color: "rgba(129, 140, 248, 0.18)",
+              color: "rgba(220, 38, 38, 0.5)",
               fontFamily: "var(--font-mono, monospace)", lineHeight: 1, marginTop: "0.2rem",
             }}>
               Session

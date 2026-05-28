@@ -52,13 +52,13 @@ export default async function MessagePage({ params }: MessagePageProps) {
 
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100vh", background: "#09090b", overflow: "hidden" }}>
+    <div style={{ display: "flex", flexDirection: "column", height: "100vh", background: "var(--bg-base)", overflow: "hidden" }}>
       {/* Header */}
       <header style={{
         display: "flex", alignItems: "center", justifyContent: "space-between",
         padding: "0 1.75rem", height: "60px",
-        background: "rgba(9, 9, 11, 0.96)",
-        borderBottom: "1px solid rgba(129, 140, 248, 0.08)",
+        background: "rgba(255, 255, 255, 0.96)",
+        borderBottom: "1px solid rgba(37, 99, 235, 0.08)",
         backdropFilter: "blur(24px)",
         flexShrink: 0, gap: "1rem",
       }}>
@@ -69,9 +69,9 @@ export default async function MessagePage({ params }: MessagePageProps) {
             style={{
               display: "flex", alignItems: "center", justifyContent: "center",
               width: "2rem", height: "2rem", borderRadius: "8px", flexShrink: 0,
-              border: "1px solid rgba(129, 140, 248, 0.1)",
-              background: "rgba(129, 140, 248, 0.04)",
-              color: "rgba(250, 250, 249, 0.4)",
+              border: "1px solid rgba(37, 99, 235, 0.1)",
+              background: "rgba(37, 99, 235, 0.04)",
+              color: "rgba(15, 23, 42, 0.4)",
               textDecoration: "none", transition: "all 0.2s",
             }}
           >
@@ -80,22 +80,22 @@ export default async function MessagePage({ params }: MessagePageProps) {
           <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", minWidth: 0 }}>
             <div style={{
               width: "2rem", height: "2rem", borderRadius: "8px", flexShrink: 0,
-              background: "rgba(129, 140, 248, 0.08)",
-              border: "1px solid rgba(129, 140, 248, 0.18)",
+              background: "rgba(37, 99, 235, 0.08)",
+              border: "1px solid rgba(37, 99, 235, 0.18)",
               display: "flex", alignItems: "center", justifyContent: "center",
-              fontSize: "0.72rem", fontWeight: 700, color: "rgba(129, 140, 248, 0.9)",
+              fontSize: "0.72rem", fontWeight: 700, color: "rgba(37, 99, 235, 0.9)",
               fontFamily: "var(--font-sans)",
             }}>
               {participant.first_name?.[0] ?? "?"}{participant.last_name?.[0] ?? ""}
             </div>
             <div style={{ minWidth: 0 }}>
               <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
-                <span className="font-display" style={{ fontSize: "0.9rem", fontWeight: 700, color: "rgba(250, 250, 249, 0.9)", letterSpacing: "-0.015em", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                <span className="font-display" style={{ fontSize: "0.9rem", fontWeight: 700, color: "var(--text-primary)", letterSpacing: "-0.015em", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                   {participantTitle}
                 </span>
-                {participant.role === "professor" && <ShieldCheck size={10} style={{ color: "rgba(129, 140, 248, 0.5)", flexShrink: 0 }} />}
+                {participant.role === "professor" && <ShieldCheck size={10} style={{ color: "rgba(37, 99, 235, 0.5)", flexShrink: 0 }} />}
               </div>
-              <div style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(129, 140, 248, 0.4)", fontFamily: "var(--font-mono, monospace)" }}>
+              <div style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(37, 99, 235, 0.4)", fontFamily: "var(--font-mono, monospace)" }}>
                 {participant.role === "professor" ? (participant as any).expertise : "Student"}
               </div>
             </div>
@@ -105,17 +105,17 @@ export default async function MessagePage({ params }: MessagePageProps) {
         {/* Right: topic + status + close */}
         <div style={{ display: "flex", alignItems: "center", gap: "0.875rem", flexShrink: 0 }}>
           <div className="hidden md:block" style={{ textAlign: "right" }}>
-            <div style={{ fontSize: "0.48rem", color: "rgba(129, 140, 248, 0.3)", textTransform: "uppercase", letterSpacing: "0.2em", fontWeight: 700, fontFamily: "var(--font-mono, monospace)", marginBottom: "0.15rem" }}>Thread</div>
-            <div className="font-display" style={{ fontSize: "0.78rem", color: "rgba(168, 179, 207, 0.55)", fontStyle: "italic", maxWidth: "240px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+            <div style={{ fontSize: "0.48rem", color: "rgba(37, 99, 235, 0.3)", textTransform: "uppercase", letterSpacing: "0.2em", fontWeight: 700, fontFamily: "var(--font-mono, monospace)", marginBottom: "0.15rem" }}>Thread</div>
+            <div className="font-display" style={{ fontSize: "0.78rem", color: "rgba(15, 23, 42, 0.55)", fontStyle: "italic", maxWidth: "240px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
               &ldquo;{request.topic}&rdquo;
             </div>
           </div>
           <div style={{
             padding: "0.2rem 0.65rem", borderRadius: "100px",
-            border: `1px solid ${request.status === "active" ? "rgba(129,140,248,0.2)" : "rgba(250,250,249,0.07)"}`,
-            background: request.status === "active" ? "rgba(129,140,248,0.06)" : "transparent",
+            border: `1px solid ${request.status === "active" ? "rgba(37, 99, 235,0.2)" : "rgba(15, 23, 42,0.07)"}`,
+            background: request.status === "active" ? "rgba(37, 99, 235,0.06)" : "transparent",
             fontSize: "0.48rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase" as const,
-            color: request.status === "active" ? "rgba(129,140,248,0.7)" : "rgba(250,250,249,0.25)",
+            color: request.status === "active" ? "rgba(37, 99, 235,0.7)" : "rgba(15, 23, 42,0.25)",
             fontFamily: "var(--font-mono, monospace)",
           }}>
             {request.status}

@@ -37,11 +37,11 @@ function FormField({
   const baseInputStyle: React.CSSProperties = {
     width: "100%",
     background: focused ? "rgba(17, 17, 22, 0.9)" : "rgba(17, 17, 22, 0.6)",
-    border: `1px solid ${focused ? "rgba(129, 140, 248, 0.35)" : "rgba(129, 140, 248, 0.1)"}`,
+    border: `1px solid ${focused ? "rgba(37, 99, 235, 0.35)" : "rgba(37, 99, 235, 0.1)"}`,
     borderRadius: "12px",
     padding: "0.875rem 1.1rem",
     fontSize: "0.875rem",
-    color: "rgba(250, 250, 249, 0.9)",
+    color: "var(--text-primary)",
     outline: "none",
     transition: "border-color 0.2s, background 0.2s",
     fontFamily: "var(--font-sans)",
@@ -55,7 +55,7 @@ function FormField({
         style={{
           fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.22em",
           textTransform: "uppercase",
-          color: focused ? "rgba(129, 140, 248, 0.6)" : "rgba(250, 250, 249, 0.3)",
+          color: focused ? "rgba(37, 99, 235, 0.6)" : "rgba(15, 23, 42, 0.3)",
           fontFamily: "var(--font-mono, monospace)",
           transition: "color 0.2s",
         }}
@@ -125,16 +125,16 @@ export function RequestForm({ professor }: RequestFormProps) {
       <div style={{
         display: "flex", alignItems: "center", gap: "1.25rem",
         padding: "1.25rem 1.5rem",
-        background: "rgba(129, 140, 248, 0.04)",
-        border: "1px solid rgba(129, 140, 248, 0.1)",
+        background: "rgba(37, 99, 235, 0.04)",
+        border: "1px solid rgba(37, 99, 235, 0.1)",
         borderRadius: "14px",
       }}>
         <div style={{
           width: "2.75rem", height: "2.75rem", borderRadius: "10px", flexShrink: 0,
-          background: "rgba(129, 140, 248, 0.08)",
-          border: "1px solid rgba(129, 140, 248, 0.18)",
+          background: "rgba(37, 99, 235, 0.08)",
+          border: "1px solid rgba(37, 99, 235, 0.18)",
           display: "flex", alignItems: "center", justifyContent: "center",
-          fontSize: "0.85rem", fontWeight: 700, color: "rgba(129, 140, 248, 0.9)",
+          fontSize: "0.85rem", fontWeight: 700, color: "rgba(37, 99, 235, 0.9)",
           fontFamily: "var(--font-sans)",
         }}>
           {professor.first_name[0]}{professor.last_name[0]}
@@ -142,21 +142,21 @@ export function RequestForm({ professor }: RequestFormProps) {
         <div style={{ minWidth: 0 }}>
           <div style={{
             fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.22em",
-            textTransform: "uppercase", color: "rgba(129, 140, 248, 0.4)",
+            textTransform: "uppercase", color: "rgba(37, 99, 235, 0.4)",
             fontFamily: "var(--font-mono, monospace)", marginBottom: "0.3rem",
           }}>
             Receiving Professor
           </div>
           <div className="font-display" style={{
             fontSize: "1.05rem", fontWeight: 700,
-            color: "rgba(250, 250, 249, 0.88)", letterSpacing: "-0.015em",
+            color: "rgba(15, 23, 42, 0.88)", letterSpacing: "-0.015em",
             overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
           }}>
             Dr. {profDisplayName} {professor.last_name}
           </div>
           {professor.institution && (
             <div style={{
-              fontSize: "0.72rem", color: "rgba(168, 179, 207, 0.4)",
+              fontSize: "0.72rem", color: "rgba(15, 23, 42, 0.4)",
               fontFamily: "var(--font-sans)", marginTop: "0.15rem",
             }}>
               {professor.institution}
