@@ -169,7 +169,7 @@ export default function ForProfessorsPage() {
 
         {/* ── QUOTE ─────────────────────────────────────── */}
         <FadeIn>
-          <div style={{ padding: "4rem 0 4rem 3rem", borderLeft: "3px solid var(--accent)", marginBottom: "7.5rem", textAlign: "left" }}>
+          <div style={{ padding: "4rem 3rem", borderLeft: "3px solid var(--accent)", marginBottom: "7.5rem", textAlign: "center" }}>
             <p className="font-display" style={{ fontSize: "clamp(1.4rem, 2.5vw, 2.2rem)", fontWeight: 700, color: "var(--text-primary)", letterSpacing: "-0.02em", lineHeight: 1.4, marginBottom: "2rem" }}>
               &ldquo;The students who reach out through Schollective are genuinely curious and well-prepared. It's the kind of mentorship interaction I wish was available when I was an undergrad.&rdquo;
             </p>
@@ -181,7 +181,7 @@ export default function ForProfessorsPage() {
 
         {/* ── CTA ─────────────────────────────────────── */}
         <FadeIn>
-          <div style={{ padding: "4.5rem 3rem", border: "1px solid var(--border)", borderRadius: "20px", background: "rgba(99, 102, 241, 0.04)", display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", gap: "3rem", textAlign: "left" }}>
+          <div style={{ padding: "4.5rem 3rem", border: "1px solid var(--border)", borderRadius: "20px", background: "rgba(99, 102, 241, 0.04)", display: "flex", flexWrap: "wrap", justifyContent: "center", alignItems: "center", gap: "3rem", textAlign: "center" }}>
             <div style={{ flex: "1 1 350px" }}>
               <h2 className="font-display" style={{ fontSize: "clamp(2rem, 3vw, 2.6rem)", fontWeight: 900, letterSpacing: "-0.04em", lineHeight: 0.95, color: "var(--text-primary)", marginBottom: "1.5rem" }}>
                 Ready to make an impact?

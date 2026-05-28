@@ -68,7 +68,7 @@ export default function AboutPage() {
         {/* ── THE PROBLEM ─────────────────────────────── */}
         <FadeIn>
           <Eyebrow>The Problem</Eyebrow>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "5rem", marginBottom: "7rem" }} className="prose-two-col text-left">
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "5rem", marginBottom: "7rem" }} className="prose-two-col">
             <div>
               <h2 className="font-display" style={{ fontSize: "clamp(1.8rem, 2.8vw, 2.4rem)", fontWeight: 800, letterSpacing: "-0.03em", lineHeight: 0.95, color: "var(--text-primary)", marginBottom: "1.5rem" }}>
                 Mentorship is gated by proximity.
@@ -146,7 +146,7 @@ export default function AboutPage() {
 
         {/* ── CTA ─────────────────────────────────────── */}
         <FadeIn>
-          <div style={{ padding: "4.5rem 3rem", border: "1px solid var(--border)", borderRadius: "20px", background: "rgba(99, 102, 241, 0.04)", display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", gap: "3rem", textAlign: "left" }}>
+          <div style={{ padding: "4.5rem 3rem", border: "1px solid var(--border)", borderRadius: "20px", background: "rgba(99, 102, 241, 0.04)", display: "flex", flexWrap: "wrap", justifyContent: "center", alignItems: "center", gap: "3rem", textAlign: "center" }}>
             <div style={{ flex: "1 1 350px" }}>
               <h2 className="font-display" style={{ fontSize: "clamp(2rem, 3vw, 2.6rem)", fontWeight: 900, letterSpacing: "-0.04em", lineHeight: 0.95, color: "var(--text-primary)", marginBottom: "1.5rem" }}>
                 Ready to connect?

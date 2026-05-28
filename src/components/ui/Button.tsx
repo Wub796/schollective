@@ -32,8 +32,8 @@ const Button = React.forwardRef<HTMLElement, ButtonProps>(
 
       const enter = () => {
         const { width, height } = el.getBoundingClientRect();
-        dot.style.width = `${width + 16}px`;
-        dot.style.height = `${height + 12}px`;
+        dot.style.width = `${width + 24}px`;
+        dot.style.height = `${height + 18}px`;
         dot.style.borderRadius = "100px";
         dot.style.borderColor = variant === 'primary' ? 'var(--text-primary)' : 'var(--accent)';
       };
@@ -53,15 +53,15 @@ const Button = React.forwardRef<HTMLElement, ButtonProps>(
     }, [resolvedRef, variant]);
 
     const variants = {
-      primary: "bg-transparent text-[var(--text-primary)] border border-slate-900 shadow-sm",
-      ghost: "bg-transparent backdrop-blur-md text-slate-900 border border-[var(--text-primary)] hover:border-[var(--accent)] hover:text-[var(--accent)]",
-      outline: "bg-transparent text-slate-900 border border-[var(--text-primary)] hover:border-[var(--accent)]",
+      primary: "bg-transparent text-[var(--text-primary)] border-2 border-slate-900 shadow-sm",
+      ghost: "bg-transparent backdrop-blur-md text-slate-900 border-2 border-[var(--text-primary)] hover:border-[var(--accent)] hover:text-[var(--accent)]",
+      outline: "bg-transparent text-slate-900 border-2 border-[var(--text-primary)] hover:border-[var(--accent)]",
     };
 
     const sizes = {
-      sm: "px-5 py-2 text-xs",
-      md: "px-6 py-2.5 text-sm",
-      lg: "px-8 py-3.5 text-base",
+      sm: "px-7 py-3 text-xs",
+      md: "px-9 py-3.5 text-sm",
+      lg: "px-12 py-5 text-base",
     };
 
     // Determine rolling content.
