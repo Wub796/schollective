@@ -59,10 +59,10 @@ export default function PrivacyPage() {
           <span style={{ fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.38em", textTransform: "uppercase", color: "var(--accent)", fontFamily: "var(--font-sans)" }}>Legal</span>
         </div>
 
-        <h1 className="font-display" style={{ fontSize: "clamp(2.4rem, 5vw, 3.8rem)", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.04em", lineHeight: 1.05, marginBottom: "0.75rem" }}>
+        <h1 className="font-display" style={{ fontSize: "clamp(2.4rem, 5vw, 3.8rem)", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.04em", lineHeight: 0.95, marginBottom: "2rem" }}>
           Privacy <em style={{ fontStyle: "italic", color: "var(--accent)" }}>Policy</em>
         </h1>
-        <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)", fontFamily: "var(--font-sans)", marginBottom: "4rem" }}>
+        <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)", fontFamily: "var(--font-sans)", marginBottom: "4.5rem" }}>
           Last updated: May 2025
         </p>
 

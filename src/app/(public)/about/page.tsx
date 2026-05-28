@@ -4,6 +4,7 @@ import React, { useRef } from "react";
 import Link from "next/link";
 import { motion, useInView } from "framer-motion";
 import { PublicNav } from "@/components/ui/PublicNav";
+import { Button } from "@/components/ui/Button";
 
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
@@ -38,7 +39,9 @@ const TEAM = [
   { initials: "AS", name: "Ayaan Siddiqui", role: "Founder", desc: "Driven by the belief that every student deserves a mentor, regardless of background or institution." },
   { initials: "BW", name: "Benjamin Wu", role: "Builder", desc: "Built Schollective to democratize the academic connections that shaped his own path." },
   { initials: "JH", name: "Joseph Hu", role: "Builder", desc: "Dedicated to engineering systems that connect students with the guidance they need to grow academically and professionally." },
-];export default function AboutPage() {
+];
+
+export default function AboutPage() {
   return (
     <div style={{ background: "transparent", color: "var(--text-primary)", minHeight: "100vh" }}>
       <PublicNav />
@@ -48,7 +51,7 @@ const TEAM = [
         {/* ── HERO ─────────────────────────────────────── */}
         <FadeIn>
           <Eyebrow>Our Story</Eyebrow>
-          <h1 className="font-display" style={{ fontSize: "clamp(3rem, 7.5vw, 5.5rem)", fontWeight: 900, letterSpacing: "-0.04em", lineHeight: 1.0, marginBottom: "3rem", color: "var(--text-primary)" }}>
+          <h1 className="font-display" style={{ fontSize: "clamp(3rem, 7.5vw, 5.5rem)", fontWeight: 900, letterSpacing: "-0.04em", lineHeight: 0.95, marginBottom: "3.5rem", color: "var(--text-primary)" }}>
             Democratizing<br />
             <em style={{ fontStyle: "italic", color: "var(--accent)" }}>academic mentorship.</em>
           </h1>
@@ -62,14 +65,12 @@ const TEAM = [
           </p>
         </FadeIn>
 
-
-
         {/* ── THE PROBLEM ─────────────────────────────── */}
         <FadeIn>
           <Eyebrow>The Problem</Eyebrow>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "5rem", marginBottom: "7rem" }} className="prose-two-col">
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "5rem", marginBottom: "7rem" }} className="prose-two-col text-left">
             <div>
-              <h2 className="font-display" style={{ fontSize: "clamp(1.8rem, 2.8vw, 2.4rem)", fontWeight: 800, letterSpacing: "-0.03em", lineHeight: 1.2, color: "var(--text-primary)", marginBottom: "1.5rem" }}>
+              <h2 className="font-display" style={{ fontSize: "clamp(1.8rem, 2.8vw, 2.4rem)", fontWeight: 800, letterSpacing: "-0.03em", lineHeight: 0.95, color: "var(--text-primary)", marginBottom: "1.5rem" }}>
                 Mentorship is gated by proximity.
               </h2>
               <p style={{ fontSize: "0.95rem", color: "var(--text-secondary)", lineHeight: 1.85 }}>
@@ -77,7 +78,7 @@ const TEAM = [
               </p>
             </div>
             <div>
-              <h2 className="font-display" style={{ fontSize: "clamp(1.8rem, 2.8vw, 2.4rem)", fontWeight: 800, letterSpacing: "-0.03em", lineHeight: 1.2, color: "var(--text-primary)", marginBottom: "1.5rem" }}>
+              <h2 className="font-display" style={{ fontSize: "clamp(1.8rem, 2.8vw, 2.4rem)", fontWeight: 800, letterSpacing: "-0.03em", lineHeight: 0.95, color: "var(--text-primary)", marginBottom: "1.5rem" }}>
                 Cold emails don't scale.
               </h2>
               <p style={{ fontSize: "0.95rem", color: "var(--text-secondary)", lineHeight: 1.85 }}>
@@ -90,7 +91,7 @@ const TEAM = [
         {/* ── VALUES ─────────────────────────────────────── */}
         <FadeIn>
           <Eyebrow>What We Stand For</Eyebrow>
-          <h2 className="font-display" style={{ fontSize: "clamp(2.2rem, 4vw, 3.5rem)", fontWeight: 900, letterSpacing: "-0.04em", lineHeight: 1.0, marginBottom: "4rem", color: "var(--text-primary)" }}>
+          <h2 className="font-display" style={{ fontSize: "clamp(2.2rem, 4vw, 3.5rem)", fontWeight: 900, letterSpacing: "-0.04em", lineHeight: 0.95, marginBottom: "4.5rem", color: "var(--text-primary)" }}>
             Four principles.<br /><em style={{ fontStyle: "italic", color: "var(--accent)" }}>One direction.</em>
           </h2>
         </FadeIn>
@@ -106,6 +107,7 @@ const TEAM = [
                   padding: "3rem 0",
                   borderTop: "1px solid var(--border)",
                   alignItems: "start",
+                  textAlign: "left"
                 }}
               >
                 <span style={{ fontFamily: "monospace", fontSize: "0.55rem", letterSpacing: "0.18em", color: "var(--text-tertiary)", paddingTop: "0.35rem" }}>{v.n}</span>
@@ -122,7 +124,7 @@ const TEAM = [
         {/* ── TEAM ─────────────────────────────────────── */}
         <FadeIn>
           <Eyebrow>The Builders</Eyebrow>
-          <h2 className="font-display" style={{ fontSize: "clamp(2.2rem, 3.5vw, 3rem)", fontWeight: 900, letterSpacing: "-0.04em", marginBottom: "4rem", color: "var(--text-primary)" }}>
+          <h2 className="font-display" style={{ fontSize: "clamp(2.2rem, 3.5vw, 3rem)", fontWeight: 900, letterSpacing: "-0.04em", lineHeight: 0.95, marginBottom: "4.5rem", color: "var(--text-primary)" }}>
             Built by someone who<br /><em style={{ fontStyle: "italic", color: "var(--accent)" }}>lived the problem.</em>
           </h2>
         </FadeIn>
@@ -130,7 +132,7 @@ const TEAM = [
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "2rem", marginBottom: "7rem" }}>
           {TEAM.map((m) => (
             <FadeIn key={m.name}>
-              <div style={{ padding: "2.25rem", border: "1px solid var(--border)", borderRadius: "16px", background: "var(--bg-surface-1)", height: "100%", display: "flex", flexDirection: "column" }}>
+              <div style={{ padding: "2.25rem", border: "1px solid var(--border)", borderRadius: "16px", background: "var(--bg-surface-1)", height: "100%", display: "flex", flexDirection: "column", textAlign: "left" }}>
                 <div style={{ width: "48px", height: "48px", borderRadius: "12px", background: "linear-gradient(135deg, var(--accent-blue), var(--accent))", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "1.5rem" }}>
                   <span className="font-display" style={{ fontWeight: 900, fontSize: "1.1rem", color: "var(--text-primary)" }}>{m.initials}</span>
                 </div>
@@ -144,22 +146,22 @@ const TEAM = [
 
         {/* ── CTA ─────────────────────────────────────── */}
         <FadeIn>
-          <div style={{ padding: "4.5rem 3rem", border: "1px solid var(--border)", borderRadius: "20px", background: "rgba(99, 102, 241, 0.04)", display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", gap: "3rem" }}>
-            <div>
-              <h2 className="font-display" style={{ fontSize: "clamp(2rem, 3vw, 2.6rem)", fontWeight: 900, letterSpacing: "-0.04em", color: "var(--text-primary)", marginBottom: "1rem" }}>
+          <div style={{ padding: "4.5rem 3rem", border: "1px solid var(--border)", borderRadius: "20px", background: "rgba(99, 102, 241, 0.04)", display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", gap: "3rem", textAlign: "left" }}>
+            <div style={{ flex: "1 1 350px" }}>
+              <h2 className="font-display" style={{ fontSize: "clamp(2rem, 3vw, 2.6rem)", fontWeight: 900, letterSpacing: "-0.04em", lineHeight: 0.95, color: "var(--text-primary)", marginBottom: "1.5rem" }}>
                 Ready to connect?
               </h2>
               <p style={{ fontSize: "0.95rem", color: "var(--text-secondary)", maxWidth: "420px", lineHeight: 1.8 }}>
                 Join the platform where serious students meet verified professors.
               </p>
             </div>
-            <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
-              <Link href="/signup" className="group relative inline-flex items-center justify-center rounded-full" style={{ textDecoration: "none", padding: "1rem 2.25rem", background: "var(--accent)", color: "var(--bg-base)", fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", transition: "background 0.3s" }}>
+            <div style={{ display: "flex", gap: "1.5rem", flexWrap: "wrap", flexShrink: 0 }}>
+              <Button href="/signup" size="lg">
                 Create Account
-              </Link>
-              <Link href="/" className="group relative inline-flex items-center justify-center rounded-full" style={{ textDecoration: "none", padding: "1rem 2.25rem", border: "1px solid var(--border)", color: "var(--text-secondary)", fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", transition: "border-color 0.3s, color 0.3s" }}>
+              </Button>
+              <Button href="/" variant="ghost" size="lg">
                 Back to Home
-              </Link>
+              </Button>
             </div>
           </div>
         </FadeIn>

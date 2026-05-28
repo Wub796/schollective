@@ -47,11 +47,17 @@ function Field({
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
         style={{
-          width: "100%", background: "transparent", border: "none",
-          borderBottom: `1px solid ${focused ? "rgba(37, 99, 235, 0.6)" : "rgba(37, 99, 235, 0.15)"}`,
-          padding: "0.85rem 0", fontSize: "0.95rem", color: "var(--text-primary)",
-          outline: "none", transition: "border-color 0.3s",
+          width: "100%",
+          background: "rgba(15, 23, 42, 0.02)",
+          border: `1px solid ${focused ? "rgba(147, 51, 234, 0.4)" : "rgba(15, 23, 42, 0.08)"}`,
+          borderRadius: "100px",
+          padding: "0.95rem 1.75rem",
+          fontSize: "0.95rem",
+          color: "var(--text-primary)",
+          outline: "none",
+          transition: "all 0.3s cubic-bezier(0.22, 1, 0.36, 1)",
           fontFamily: "var(--font-sans)",
+          boxShadow: focused ? "0 0 0 3px rgba(147, 51, 234, 0.1)" : "none",
         }}
       />
     </div>
@@ -222,7 +228,7 @@ function OnboardingContent() {
         {/* Headline */}
         <motion.h1 variants={fadeUp} className="font-display" style={{
           fontSize: "clamp(2.4rem, 5vw, 3.5rem)", fontWeight: 900, color: "var(--text-primary)",
-          letterSpacing: "-0.035em", lineHeight: 1.05, marginBottom: "0.75rem",
+          letterSpacing: "-0.035em", lineHeight: 0.95, marginBottom: "2rem",
         }}>
           Complete your<br />
           <em style={{ fontStyle: "italic", color: "rgba(15, 23, 42, 0.35)" }}>profile.</em>
@@ -254,7 +260,7 @@ function OnboardingContent() {
         </motion.div>
 
         <form onSubmit={handleSubmit}>
-          <motion.div variants={fadeUp} style={{ display: "flex", flexDirection: "column", gap: "2.25rem" }}>
+          <motion.div variants={fadeUp} style={{ display: "flex", flexDirection: "column", gap: "3rem" }}>
 
             {/* Name row */}
             <div className="grid-2" style={{ gap: "1.5rem" }}>
@@ -274,7 +280,23 @@ function OnboardingContent() {
                         Education Level
                       </label>
                       <select id="education_level" name="education_level" required
-                        style={{ width: "100%", background: "#111113", border: "none", borderBottom: "1px solid rgba(37, 99, 235, 0.15)", padding: "0.7rem 0", fontSize: "0.95rem", color: "var(--text-primary)", outline: "none", fontFamily: "var(--font-sans)", cursor: "pointer" }}>
+                        style={{
+                          width: "100%",
+                          background: "rgba(15, 23, 42, 0.02)",
+                          border: "1px solid rgba(15, 23, 42, 0.08)",
+                          borderRadius: "100px",
+                          padding: "0.95rem 2.5rem 0.95rem 1.75rem",
+                          fontSize: "0.95rem",
+                          color: "var(--text-primary)",
+                          outline: "none",
+                          fontFamily: "var(--font-sans)",
+                          cursor: "pointer",
+                          transition: "all 0.3s cubic-bezier(0.22, 1, 0.36, 1)",
+                          appearance: "none",
+                          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='rgba(15, 23, 42,0.3)' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E")`,
+                          backgroundRepeat: "no-repeat",
+                          backgroundPosition: "right 1.5rem center",
+                        }}>
                         <option value="high-school">High School</option>
                         <option value="college">College / Undergraduate</option>
                         <option value="graduate">Graduate (Masters / PhD)</option>

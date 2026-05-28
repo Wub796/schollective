@@ -7,6 +7,8 @@ import { motion } from "framer-motion";
 import { createClient } from "@/utils/supabase/client";
 import { toast } from "sonner";
 import { Camera, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/Button";
+import { Select } from "@/components/ui/Select";
 
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
@@ -31,7 +33,7 @@ function Field({
       <label htmlFor={id} style={{
         display: "block", fontSize: "0.58rem", fontWeight: 700,
         letterSpacing: "0.22em", textTransform: "uppercase",
-        color: disabled ? "rgba(15, 23, 42, 0.18)" : focused ? "rgba(15, 23, 42, 0.65)" : "rgba(15, 23, 42, 0.3)",
+        color: disabled ? "rgba(15, 23, 42, 0.18)" : focused ? "var(--accent)" : "rgba(15, 23, 42, 0.3)",
         marginBottom: "0.55rem", transition: "color 0.25s",
         fontFamily: "var(--font-sans)",
       }}>
@@ -44,12 +46,18 @@ function Field({
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
         style={{
-          width: "100%", background: "transparent", border: "none",
-          borderBottom: `1px solid ${disabled ? "rgba(15, 23, 42, 0.06)" : focused ? "rgba(15, 23, 42, 0.5)" : "rgba(15, 23, 42, 0.12)"}`,
-          padding: "0.85rem 0", fontSize: "0.95rem",
-          color: disabled ? "rgba(15, 23, 42, 0.3)" : "var(--text-primary)",
-          outline: "none", transition: "border-color 0.3s",
-          fontFamily: "var(--font-sans)", cursor: disabled ? "not-allowed" : "text",
+          width: "100%",
+          background: disabled ? "rgba(15, 23, 42, 0.02)" : focused ? "rgba(255, 255, 255, 0.95)" : "rgba(255, 255, 255, 0.6)",
+          border: `1px solid ${disabled ? "rgba(15, 23, 42, 0.06)" : focused ? "var(--accent)" : "var(--border)"}`,
+          borderRadius: "100px",
+          padding: "0.95rem 1.75rem",
+          fontSize: "0.875rem",
+          color: disabled ? "rgba(15, 23, 42, 0.4)" : "var(--text-primary)",
+          outline: "none",
+          transition: "border-color 0.25s ease, background-0.25s ease, box-shadow 0.25s ease",
+          boxShadow: focused ? "0 0 0 4px rgba(37, 99, 235, 0.08)" : "none",
+          fontFamily: "var(--font-sans)",
+          cursor: disabled ? "not-allowed" : "text",
         }}
       />
     </div>
@@ -96,22 +104,22 @@ export default function ProfilePage() {
       const filePath = `${profile.id}/avatar.${ext}`;
 
       const { error: uploadError } = await supabase.storage
-        .from("avatars")
-        .upload(filePath, file, { upsert: true, contentType: file.type });
+         .from("avatars")
+         .upload(filePath, file, { upsert: true, contentType: file.type });
 
       if (uploadError) throw uploadError;
 
       const { data: { publicUrl } } = supabase.storage
-        .from("avatars")
-        .getPublicUrl(filePath);
+         .from("avatars")
+         .getPublicUrl(filePath);
 
       // Append cache-buster so the browser refreshes the image
       const avatarUrl = `${publicUrl}?t=${Date.now()}`;
 
       const { error: updateError } = await supabase
-        .from("profiles")
-        .update({ avatar_url: avatarUrl })
-        .eq("id", profile.id);
+         .from("profiles")
+         .update({ avatar_url: avatarUrl })
+         .eq("id", profile.id);
 
       if (updateError) throw updateError;
 
@@ -342,20 +350,19 @@ export default function ProfilePage() {
               <label htmlFor="education_level" style={{ display: "block", fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.3)", marginBottom: "0.55rem", fontFamily: "var(--font-sans)" }}>
                 Education Level
               </label>
-              <select
+              <Select
                 id="education_level"
                 name="education_level"
                 defaultValue={profile?.education_level ?? ""}
-                style={{ width: "100%", background: "transparent", border: "none", borderBottom: "1px solid rgba(15, 23, 42, 0.12)", padding: "0.7rem 0", fontSize: "0.95rem", color: profile?.education_level ? "var(--text-primary)" : "rgba(15, 23, 42, 0.3)", outline: "none", fontFamily: "var(--font-sans)", cursor: "pointer", appearance: "none" }}
               >
-                <option value="" style={{ background: "#080c14" }}>Select level…</option>
-                <option value="high-school"  style={{ background: "#080c14" }}>High School</option>
-                <option value="undergraduate" style={{ background: "#080c14" }}>Undergraduate</option>
-                <option value="graduate"     style={{ background: "#080c14" }}>Graduate (Master's)</option>
-                <option value="doctoral"     style={{ background: "#080c14" }}>Doctoral (PhD)</option>
-                <option value="postdoctoral" style={{ background: "#080c14" }}>Postdoctoral</option>
-                <option value="other"        style={{ background: "#080c14" }}>Other</option>
-              </select>
+                <option value="" style={{ background: "#white" }}>Select level…</option>
+                <option value="high-school"  style={{ background: "#white" }}>High School</option>
+                <option value="undergraduate" style={{ background: "#white" }}>Undergraduate</option>
+                <option value="graduate"     style={{ background: "#white" }}>Graduate (Master's)</option>
+                <option value="doctoral"     style={{ background: "#white" }}>Doctoral (PhD)</option>
+                <option value="postdoctoral" style={{ background: "#white" }}>Postdoctoral</option>
+                <option value="other"        style={{ background: "#white" }}>Other</option>
+              </Select>
             </div>
           )}
 
@@ -374,25 +381,13 @@ export default function ProfilePage() {
             <span style={{ fontSize: "0.6rem", color: "rgba(15, 23, 42, 0.22)", fontFamily: "var(--font-sans)", letterSpacing: "0.05em" }}>
               Role: <strong style={{ color: "rgba(15, 23, 42, 0.4)" }}>{roleLabel}</strong> · cannot be changed here
             </span>
-            <motion.button
+            <Button
               type="submit"
               disabled={loading}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.97 }}
-              style={{
-                padding: "1rem 2.5rem",
-                background: "var(--text-primary)", color: "#080c14",
-                border: "none", borderRadius: "100px",
-                fontSize: "0.58rem", fontWeight: 700,
-                letterSpacing: "0.1em", textTransform: "uppercase",
-                cursor: loading ? "not-allowed" : "pointer",
-                opacity: loading ? 0.6 : 1,
-                fontFamily: "var(--font-sans)",
-                transition: "opacity 0.2s",
-              }}
+              size="lg"
             >
               {loading ? "Saving…" : "Save Changes"}
-            </motion.button>
+            </Button>
           </div>
         </form>
       </motion.div>
@@ -409,25 +404,13 @@ export default function ProfilePage() {
           </span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "1.5rem" }}>
-          <Link
+          <Button
             href="/reset-password"
-            style={{
-              textDecoration: "none",
-              padding: "0.75rem 1.75rem",
-              background: "transparent",
-              border: "1px solid rgba(15, 23, 42, 0.1)",
-              borderRadius: "100px",
-              fontSize: "0.58rem", fontWeight: 700,
-              letterSpacing: "0.22em", textTransform: "uppercase",
-              color: "rgba(15, 23, 42, 0.8)",
-              fontFamily: "var(--font-sans)",
-              transition: "border-color 0.2s, background 0.2s",
-            }}
-            onMouseEnter={e => { (e.currentTarget).style.borderColor = "rgba(15, 23, 42, 0.3)"; (e.currentTarget).style.background = "rgba(15, 23, 42, 0.05)"; }}
-            onMouseLeave={e => { (e.currentTarget).style.borderColor = "rgba(15, 23, 42, 0.1)"; (e.currentTarget).style.background = "transparent"; }}
+            variant="ghost"
+            size="lg"
           >
             Change Password
-          </Link>
+          </Button>
         </div>
       </div>
 
@@ -442,26 +425,14 @@ export default function ProfilePage() {
             Session
           </span>
         </div>
-        <button
+        <Button
           onClick={handleSignOut}
-          style={{
-            alignSelf: "flex-start",
-            padding: "0.75rem 1.75rem",
-            background: "transparent",
-            border: "1px solid rgba(15, 23, 42, 0.1)",
-            borderRadius: "100px",
-            fontSize: "0.58rem", fontWeight: 700,
-            letterSpacing: "0.22em", textTransform: "uppercase",
-            color: "rgba(15, 23, 42, 0.45)",
-            fontFamily: "var(--font-sans)",
-            cursor: "pointer",
-            transition: "border-color 0.2s, color 0.2s",
-          }}
-          onMouseEnter={e => { (e.currentTarget).style.borderColor = "rgba(255,100,100,0.4)"; (e.currentTarget).style.color = "rgba(255,120,120,0.8)"; }}
-          onMouseLeave={e => { (e.currentTarget).style.borderColor = "rgba(15, 23, 42, 0.1)"; (e.currentTarget).style.color = "rgba(15, 23, 42, 0.45)"; }}
+          variant="ghost"
+          size="lg"
+          className="hover:border-[rgba(255,80,80,0.4)] hover:text-[#ff6b6b]"
         >
           Sign Out
-        </button>
+        </Button>
       </div>
     </motion.div>
   );

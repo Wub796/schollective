@@ -36,26 +36,27 @@ function FormField({
 
   const baseInputStyle: React.CSSProperties = {
     width: "100%",
-    background: focused ? "rgba(17, 17, 22, 0.9)" : "rgba(17, 17, 22, 0.6)",
-    border: `1px solid ${focused ? "rgba(37, 99, 235, 0.35)" : "rgba(37, 99, 235, 0.1)"}`,
-    borderRadius: "12px",
-    padding: "0.875rem 1.1rem",
+    background: focused ? "rgba(255, 255, 255, 0.95)" : "rgba(255, 255, 255, 0.6)",
+    border: `1px solid ${focused ? "var(--accent)" : "var(--border)"}`,
+    borderRadius: type === "textarea" ? "28px" : "100px",
+    padding: type === "textarea" ? "1.25rem 1.75rem" : "0.95rem 1.75rem",
     fontSize: "0.875rem",
     color: "var(--text-primary)",
     outline: "none",
-    transition: "border-color 0.2s, background 0.2s",
+    transition: "border-color 0.25s ease, background-0.25s ease, box-shadow 0.25s ease",
+    boxShadow: focused ? "0 0 0 4px rgba(37, 99, 235, 0.08)" : "none",
     fontFamily: "var(--font-sans)",
     lineHeight: 1.6,
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "0.8rem" }}>
       <label
         htmlFor={id}
         style={{
           fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.22em",
           textTransform: "uppercase",
-          color: focused ? "rgba(37, 99, 235, 0.6)" : "rgba(15, 23, 42, 0.3)",
+          color: focused ? "var(--accent)" : "var(--text-tertiary)",
           fontFamily: "var(--font-sans, monospace)",
           transition: "color 0.2s",
         }}
@@ -124,13 +125,13 @@ export function RequestForm({ professor }: RequestFormProps) {
       {/* Professor preview strip */}
       <div style={{
         display: "flex", alignItems: "center", gap: "1.25rem",
-        padding: "1.25rem 1.5rem",
+        padding: "1.25rem 1.75rem",
         background: "rgba(37, 99, 235, 0.04)",
         border: "1px solid rgba(37, 99, 235, 0.1)",
-        borderRadius: "14px",
+        borderRadius: "20px",
       }}>
         <div style={{
-          width: "2.75rem", height: "2.75rem", borderRadius: "10px", flexShrink: 0,
+          width: "2.75rem", height: "2.75rem", borderRadius: "100px", flexShrink: 0,
           background: "rgba(37, 99, 235, 0.08)",
           border: "1px solid rgba(37, 99, 235, 0.18)",
           display: "flex", alignItems: "center", justifyContent: "center",
@@ -196,7 +197,8 @@ export function RequestForm({ professor }: RequestFormProps) {
       <Button
         type="submit"
         disabled={loading}
-        style={{ width: "100%", padding: "1rem", fontSize: "0.78rem", gap: "0.75rem" }}
+        size="lg"
+        className="w-full"
       >
         {loading ? (
           <>
@@ -206,7 +208,7 @@ export function RequestForm({ professor }: RequestFormProps) {
         ) : (
           <>
             Send Mentorship Request
-            <ArrowRight size={15} />
+            <ArrowRight size={15} style={{ marginLeft: "0.5rem" }} />
           </>
         )}
       </Button>
