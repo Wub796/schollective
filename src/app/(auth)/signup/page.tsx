@@ -60,7 +60,7 @@ function Field({
         style={{
           width: "100%",
           background: "rgba(15, 23, 42, 0.02)",
-          border: `1px solid ${focused ? "rgba(147, 51, 234, 0.4)" : "rgba(15, 23, 42, 0.08)"}`,
+          border: `1px solid ${focused ? "rgba(79, 70, 229, 0.4)" : "rgba(15, 23, 42, 0.08)"}`,
           borderRadius: "100px",
           padding: "0.95rem 1.75rem",
           fontSize: "0.95rem",
@@ -68,7 +68,7 @@ function Field({
           outline: "none",
           transition: "all 0.3s cubic-bezier(0.22, 1, 0.36, 1)",
           fontFamily: "var(--font-sans)",
-          boxShadow: focused ? "0 0 0 3px rgba(147, 51, 234, 0.1)" : "none",
+          boxShadow: focused ? "0 0 0 3px rgba(79, 70, 229, 0.1)" : "none",
         }}
       />
     </div>
@@ -91,7 +91,7 @@ function FieldSelect({ id, name, label, children, required }: {
         style={{
           width: "100%",
           background: "rgba(15, 23, 42, 0.02)",
-          border: `1px solid ${focused ? "rgba(147, 51, 234, 0.4)" : "rgba(15, 23, 42, 0.08)"}`,
+          border: `1px solid ${focused ? "rgba(79, 70, 229, 0.4)" : "rgba(15, 23, 42, 0.08)"}`,
           borderRadius: "100px",
           padding: "0.95rem 2.5rem 0.95rem 1.75rem",
           fontSize: "0.95rem",
@@ -100,7 +100,7 @@ function FieldSelect({ id, name, label, children, required }: {
           fontFamily: "var(--font-sans)",
           transition: "all 0.3s cubic-bezier(0.22, 1, 0.36, 1)",
           cursor: "pointer",
-          boxShadow: focused ? "0 0 0 3px rgba(147, 51, 234, 0.1)" : "none",
+          boxShadow: focused ? "0 0 0 3px rgba(79, 70, 229, 0.1)" : "none",
           appearance: "none",
           backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='rgba(15, 23, 42,0.3)' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E")`,
           backgroundRepeat: "no-repeat",
@@ -248,7 +248,7 @@ function SignupContent() {
           display: "flex", alignItems: "center", gap: "2rem",
           background: "rgba(17, 17, 19, 0.85)",
           backdropFilter: "blur(20px)",
-          border: "1px solid rgba(37, 99, 235, 0.12)",
+          border: "1px solid rgba(79, 70, 229, 0.12)",
           borderRadius: "100px",
           padding: "0.6rem 1.5rem",
           boxShadow: "0 8px 32px rgba(0,0,0,0.4)",
@@ -285,10 +285,10 @@ function SignupContent() {
         >
           {/* Eyebrow */}
           <motion.div variants={fadeUp} style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.75rem" }}>
-            <span style={{ width: "1.5rem", height: "1px", background: "rgba(37, 99, 235, 0.4)", display: "block" }} />
+            <span style={{ width: "1.5rem", height: "1px", background: "rgba(79, 70, 229, 0.4)", display: "block" }} />
             <span style={{
               fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.38em",
-              textTransform: "uppercase", color: "rgba(37, 99, 235, 0.7)",
+              textTransform: "uppercase", color: "rgba(79, 70, 229, 0.7)",
               fontFamily: "var(--font-sans)",
             }}>
               Join the Collective
