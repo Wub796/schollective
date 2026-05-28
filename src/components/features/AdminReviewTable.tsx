@@ -141,7 +141,7 @@ export function AdminReviewTable({ applicants }: AdminReviewTableProps) {
 
   if (applicants.length === 0) {
     return (
-      <div className="border border-dashed border-[rgba(15, 23, 42, 0.06)] rounded-2xl p-24 flex flex-col items-center gap-4">
+      <div className="border border-dashed border-[rgba(15, 23, 42, 0.06)] rounded-2xl p-24 flex flex-col items-center gap-8">
         <div className="w-14 h-14 bg-[rgba(15, 23, 42, 0.03)] rounded-xl flex items-center justify-center border border-[rgba(15, 23, 42, 0.06)]">
           <CheckCircle size={24} className="text-[#4a4a4a]" />
         </div>
@@ -192,7 +192,7 @@ export function AdminReviewTable({ applicants }: AdminReviewTableProps) {
                       </div>
                     </td>
                     <td className="px-7 py-5">
-                      <div className="flex items-center gap-1.5 text-xs text-[#8a8a8a] bg-[rgba(15, 23, 42, 0.03)] border border-[rgba(15, 23, 42, 0.06)] px-3 py-1.5 rounded-lg w-fit">
+                      <div className="flex items-center gap-1.5 text-xs text-[#8a8a8a] bg-[rgba(15, 23, 42, 0.03)] border border-[rgba(15, 23, 42, 0.06)] px-5 py-2.5 rounded-lg w-fit">
                         <GraduationCap size={13} />
                         {prof.institution || "Not specified"}
                       </div>
@@ -235,7 +235,7 @@ export function AdminReviewTable({ applicants }: AdminReviewTableProps) {
           const displayName = prof.preferred_name || prof.first_name;
           const isProcessing = processingId === prof.id;
           return (
-            <div key={prof.id} className="bg-[#111111] border border-[rgba(15, 23, 42, 0.06)] rounded-2xl p-6">
+            <div key={prof.id} className="bg-[#111111] border border-[rgba(15, 23, 42, 0.06)] rounded-2xl p-8">
               <div className="flex items-center gap-3 mb-5">
                 <div className="w-10 h-10 rounded-xl bg-[rgba(15, 23, 42, 0.04)] border border-[rgba(15, 23, 42, 0.07)] flex items-center justify-center text-sm font-semibold text-[#6a6a6a]">
                   {prof.first_name[0]}{prof.last_name[0]}

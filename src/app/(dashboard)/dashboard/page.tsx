@@ -29,7 +29,7 @@ function StatCard({ value, label, sub }: { value: string | number; label: string
         <div style={{ fontSize: "0.78rem", fontWeight: 600, color: "rgba(15, 23, 42, 0.6)", fontFamily: "var(--font-sans)" }}>
           {label}
         </div>
-        <div style={{ fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(37, 99, 235, 0.3)", fontFamily: "var(--font-mono, monospace)", marginTop: "0.2rem" }}>
+        <div style={{ fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(37, 99, 235, 0.3)", fontFamily: "var(--font-sans, monospace)", marginTop: "0.2rem" }}>
           {sub}
         </div>
       </div>
@@ -79,7 +79,7 @@ function StepItem({ n, title, desc }: { n: number; title: string; desc: string }
         border: "1px solid rgba(37, 99, 235, 0.15)",
         display: "flex", alignItems: "center", justifyContent: "center",
         fontSize: "0.58rem", fontWeight: 700, color: "rgba(15, 23, 42, 0.45)",
-        fontFamily: "var(--font-mono, monospace)", marginTop: "0.1rem",
+        fontFamily: "var(--font-sans, monospace)", marginTop: "0.1rem",
       }}>
         {n}
       </div>
@@ -162,7 +162,7 @@ export default async function StudentDashboard() {
       <header style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
           <span style={{ width: "1.5rem", height: "1px", background: "rgba(15, 23, 42, 0.2)", display: "block" }} />
-          <span style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.42em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.3)", fontFamily: "var(--font-mono, monospace)" }}>
+          <span style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.3)", fontFamily: "var(--font-sans, monospace)" }}>
             Student Portal
           </span>
         </div>
@@ -246,7 +246,7 @@ export default async function StudentDashboard() {
               </h2>
             </div>
             {!isEmpty && (
-              <span style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.28em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.25)", fontFamily: "var(--font-mono, monospace)" }}>
+              <span style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.28em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.25)", fontFamily: "var(--font-sans, monospace)" }}>
                 {totalRequests} total
               </span>
             )}

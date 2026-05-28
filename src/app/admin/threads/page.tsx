@@ -41,7 +41,7 @@ export default async function AdminThreadsPage() {
       <div style={{ marginBottom: "2.5rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", marginBottom: "0.75rem" }}>
           <span style={{ width: "1.25rem", height: "1px", background: "rgba(15, 23, 42,0.2)", display: "block" }} />
-          <span style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.42em", textTransform: "uppercase", color: "rgba(15, 23, 42,0.3)", fontFamily: "var(--font-mono, monospace)" }}>
+          <span style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(15, 23, 42,0.3)", fontFamily: "var(--font-sans, monospace)" }}>
             Activity Monitor
           </span>
         </div>
@@ -72,7 +72,7 @@ export default async function AdminThreadsPage() {
             }}
           >
             <span className="font-display" style={{ fontSize: "2.4rem", fontWeight: 900, color, letterSpacing: "-0.04em", lineHeight: 1 }}>{value}</span>
-            <span style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(15, 23, 42,0.3)", fontFamily: "var(--font-mono, monospace)" }}>{label}</span>
+            <span style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(15, 23, 42,0.3)", fontFamily: "var(--font-sans, monospace)" }}>{label}</span>
           </div>
         ))}
       </div>

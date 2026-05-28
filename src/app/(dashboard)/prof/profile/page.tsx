@@ -35,7 +35,7 @@ export default async function ProfPublicProfilePage() {
       <header style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
           <span style={{ width: "1.5rem", height: "1px", background: "rgba(15, 23, 42, 0.2)", display: "block" }} />
-          <span style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.42em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.3)", fontFamily: "var(--font-mono, monospace)" }}>
+          <span style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.3)", fontFamily: "var(--font-sans, monospace)" }}>
             Faculty Portal
           </span>
         </div>
@@ -58,7 +58,7 @@ export default async function ProfPublicProfilePage() {
       <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.25rem" }}>
           <span style={{ width: "1rem", height: "1px", background: "rgba(15, 23, 42, 0.2)", display: "block" }} />
-          <span style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.42em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.3)", fontFamily: "var(--font-mono, monospace)" }}>
+          <span style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.3)", fontFamily: "var(--font-sans, monospace)" }}>
             Student View
           </span>
         </div>
@@ -97,7 +97,7 @@ export default async function ProfPublicProfilePage() {
               background: "rgba(15, 23, 42, 0.03)",
             }}>
               <span style={{ width: "5px", height: "5px", borderRadius: "50%", background: "rgba(120,200,120,0.7)" }} />
-              <span style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.35)", fontFamily: "var(--font-mono, monospace)" }}>
+              <span style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.35)", fontFamily: "var(--font-sans, monospace)" }}>
                 Verified
               </span>
             </div>
@@ -119,7 +119,7 @@ export default async function ProfPublicProfilePage() {
 
           {/* Expertise tags */}
           <div style={{ marginBottom: "1.75rem" }}>
-            <div style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.28em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.2)", marginBottom: "0.75rem", fontFamily: "var(--font-mono, monospace)" }}>
+            <div style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.28em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.2)", marginBottom: "0.75rem", fontFamily: "var(--font-sans, monospace)" }}>
               Focus Areas
             </div>
             <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem" }}>
@@ -148,7 +148,7 @@ export default async function ProfPublicProfilePage() {
             borderRadius: "100px",
             textAlign: "center",
             fontSize: "0.58rem", fontWeight: 700,
-            letterSpacing: "0.24em", textTransform: "uppercase",
+            letterSpacing: "0.1em", textTransform: "uppercase",
             color: "rgba(15, 23, 42, 0.8)", fontFamily: "var(--font-sans)",
             cursor: "default",
           }}>
@@ -164,7 +164,7 @@ export default async function ProfPublicProfilePage() {
       <div style={{ display: "flex", flexDirection: "column", gap: "2.25rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
           <span style={{ width: "1rem", height: "1px", background: "rgba(15, 23, 42, 0.2)", display: "block" }} />
-          <span style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.42em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.3)", fontFamily: "var(--font-mono, monospace)" }}>
+          <span style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.3)", fontFamily: "var(--font-sans, monospace)" }}>
             Profile Details
           </span>
         </div>
@@ -178,7 +178,7 @@ export default async function ProfPublicProfilePage() {
             <div key={label}>
               <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", marginBottom: "0.5rem" }}>
                 {icon}
-                <span style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.28)", fontFamily: "var(--font-mono, monospace)" }}>
+                <span style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.28)", fontFamily: "var(--font-sans, monospace)" }}>
                   {label}
                 </span>
               </div>
@@ -190,7 +190,7 @@ export default async function ProfPublicProfilePage() {
         {/* Expertise list */}
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", marginBottom: "0.75rem" }}>
-            <span style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.28)", fontFamily: "var(--font-mono, monospace)" }}>
+            <span style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.28)", fontFamily: "var(--font-sans, monospace)" }}>
               Expertise Fields
             </span>
           </div>

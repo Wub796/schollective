@@ -79,7 +79,7 @@ export function AdminThreadsTable({ threads }: { threads: ThreadRecord[] }) {
   function SortTh({ col, label }: { col: SortKey; label: string }) {
     const active = sortKey === col;
     return (
-      <th onClick={() => toggleSort(col)} style={{ padding: "0.85rem 1.1rem", fontSize: "0.48rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: active ? "rgba(15, 23, 42,0.55)" : "rgba(15, 23, 42,0.2)", fontFamily: "var(--font-mono, monospace)", cursor: "pointer", userSelect: "none", whiteSpace: "nowrap" }}>
+      <th onClick={() => toggleSort(col)} style={{ padding: "0.85rem 1.1rem", fontSize: "0.48rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: active ? "rgba(15, 23, 42,0.55)" : "rgba(15, 23, 42,0.2)", fontFamily: "var(--font-sans, monospace)", cursor: "pointer", userSelect: "none", whiteSpace: "nowrap" }}>
         <span style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
           {label}<ChevronDown size={9} style={{ opacity: active ? 1 : 0.3, transform: active && sortAsc ? "rotate(180deg)" : "none", transition: "transform 0.18s" }} />
         </span>
@@ -105,7 +105,7 @@ export function AdminThreadsTable({ threads }: { threads: ThreadRecord[] }) {
         </div>
       </div>
 
-      <div style={{ fontSize: "0.48rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(15, 23, 42,0.2)", fontFamily: "var(--font-mono, monospace)" }}>
+      <div style={{ fontSize: "0.48rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(15, 23, 42,0.2)", fontFamily: "var(--font-sans, monospace)" }}>
         {filtered.length} {filtered.length === 1 ? "thread" : "threads"}
       </div>
 
@@ -137,7 +137,7 @@ export function AdminThreadsTable({ threads }: { threads: ThreadRecord[] }) {
                       <span style={{ fontSize: "0.78rem", fontWeight: 500, color: t.subject ? "#fafaf9" : "rgba(15, 23, 42,0.25)", fontFamily: "var(--font-sans)", display: "block", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontStyle: t.subject ? "normal" : "italic" }}>
                         {t.subject ?? "No subject"}
                       </span>
-                      <span style={{ fontSize: "0.52rem", color: "rgba(15, 23, 42,0.2)", fontFamily: "var(--font-mono, monospace)" }}>
+                      <span style={{ fontSize: "0.52rem", color: "rgba(15, 23, 42,0.2)", fontFamily: "var(--font-sans, monospace)" }}>
                         #{t.id.slice(0, 8)}
                       </span>
                     </td>
@@ -171,14 +171,14 @@ export function AdminThreadsTable({ threads }: { threads: ThreadRecord[] }) {
 
                     {/* Started */}
                     <td style={{ padding: "0.9rem 1.1rem" }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: "0.3rem", fontSize: "0.58rem", color: "rgba(15, 23, 42,0.3)", fontFamily: "var(--font-mono, monospace)" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.3rem", fontSize: "0.58rem", color: "rgba(15, 23, 42,0.3)", fontFamily: "var(--font-sans, monospace)" }}>
                         <Calendar size={9} />{formatDate(t.created_at)}
                       </div>
                     </td>
 
                     {/* Last Activity */}
                     <td style={{ padding: "0.9rem 1.1rem" }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: "0.3rem", fontSize: "0.58rem", color: "rgba(15, 23, 42,0.3)", fontFamily: "var(--font-mono, monospace)" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.3rem", fontSize: "0.58rem", color: "rgba(15, 23, 42,0.3)", fontFamily: "var(--font-sans, monospace)" }}>
                         <Calendar size={9} />{formatDate(t.updated_at)}
                       </div>
                     </td>

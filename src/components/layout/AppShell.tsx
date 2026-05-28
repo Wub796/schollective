@@ -157,7 +157,7 @@ export function AppShell({ children, role = "student" }: AppShellProps) {
                 border: "1px solid var(--border)",
                 background: "transparent",
                 fontSize: "0.52rem", fontWeight: 700,
-                letterSpacing: "0.24em", textTransform: "uppercase",
+                letterSpacing: "0.1em", textTransform: "uppercase",
                 color: "var(--text-secondary)",
                 fontFamily: "var(--font-sans)",
                 transition: "all 0.2s",

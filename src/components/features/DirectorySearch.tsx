@@ -39,7 +39,7 @@ export function DirectorySearch({ institutions, expertiseAreas }: DirectorySearc
 
   return (
     <div className="mb-10">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-5 items-end">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-7 items-end">
         {/* Query */}
         <div className="md:col-span-2 space-y-2">
           <label className="text-[0.62rem] font-bold text-[rgba(15, 23, 42,0.3)] uppercase tracking-[0.2em] pl-1">
@@ -125,11 +125,11 @@ export function DirectorySearch({ institutions, expertiseAreas }: DirectorySearc
         </div>
       </div>
 
-      <div className="mt-5 flex items-center justify-between gap-4">
+      <div className="mt-5 flex items-center justify-between gap-8">
         <div className="flex gap-3">
           <button
             onClick={() => updateSearch({ query: draftQuery })}
-            className="bg-[rgba(37, 99, 235,0.15)] text-[rgba(15, 23, 42,0.9)] px-5 py-2 rounded-lg text-[0.68rem] font-bold uppercase tracking-widest hover:bg-[rgba(37, 99, 235,0.25)] transition-colors"
+            className="bg-[rgba(37, 99, 235,0.15)] text-[rgba(15, 23, 42,0.9)] px-5 py-2 rounded-lg text-[0.68rem] font-bold uppercase tracking-wider hover:bg-[rgba(37, 99, 235,0.25)] transition-colors"
           >
             Apply Filters
           </button>

@@ -21,7 +21,7 @@ function Eyebrow({ children }: { children: string }) {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.5rem" }}>
       <span style={{ width: "1.5rem", height: "1px", background: "rgba(37, 99, 235, 0.4)", display: "block", flexShrink: 0 }} />
-      <span style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.42em", textTransform: "uppercase", color: "rgba(37, 99, 235, 0.6)", fontFamily: "var(--font-sans)" }}>{children}</span>
+      <span style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(37, 99, 235, 0.6)", fontFamily: "var(--font-sans)" }}>{children}</span>
     </div>
   );
 }

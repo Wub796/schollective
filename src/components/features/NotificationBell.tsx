@@ -207,7 +207,7 @@ export function NotificationBell() {
                       {n.body}
                     </span>
                   )}
-                  <span style={{ fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.15em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.18)", fontFamily: "var(--font-mono, monospace)", marginTop: "0.1rem" }}>
+                  <span style={{ fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.15em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.18)", fontFamily: "var(--font-sans, monospace)", marginTop: "0.1rem" }}>
                     {formatTime(n.created_at)}
                   </span>
                 </Link>

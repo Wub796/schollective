@@ -24,7 +24,7 @@ export default async function ProfessorPendingPage() {
   const displayName = profile.preferred_name || profile.first_name || "Professor";
 
   return (
-    <div className="page-bg flex items-center justify-center p-6" style={{ minHeight: "100vh" }}>
+    <div className="page-bg flex items-center justify-center p-8" style={{ minHeight: "100vh" }}>
       <main className="relative z-10 w-full max-w-[480px] text-center">
         <div style={{
           background: "rgba(17, 17, 22, 0.7)",
@@ -45,7 +45,7 @@ export default async function ProfessorPendingPage() {
               fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.22em",
               textTransform: "uppercase" as const,
               color: "rgba(37, 99, 235, 0.7)",
-              fontFamily: "var(--font-mono, monospace)",
+              fontFamily: "var(--font-sans, monospace)",
               marginBottom: "1.5rem",
             }}>
               <ShieldCheck size={11} />
@@ -80,7 +80,7 @@ export default async function ProfessorPendingPage() {
                 <h3 style={{
                   fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.2em",
                   textTransform: "uppercase" as const, color: "rgba(37, 99, 235, 0.5)",
-                  fontFamily: "var(--font-mono, monospace)", marginBottom: "0.5rem",
+                  fontFamily: "var(--font-sans, monospace)", marginBottom: "0.5rem",
                 }}>
                   Our Verification Process
                 </h3>
