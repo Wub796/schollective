@@ -2,6 +2,7 @@
 
 import React, { useRef, useLayoutEffect, useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { SchollectiveLogo } from "@/components/ui/SchollectiveLogo";
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import gsap from "gsap";
@@ -18,7 +19,7 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-/* ── Unseen Studio Loader ──────────────────────────────────────────────── */
+/* ── Page Loader (rotating cube loader) ────────────────────────────────── */
 function PageLoader({ done }: { done: boolean }) {
   const LETTERS = ["S", "C", "H", "O", "L", "L"];
   return (
@@ -93,14 +94,8 @@ function PageLoader({ done }: { done: boolean }) {
 }
 
 const EASE: [number, number, number, number] = [0.19, 1, 0.22, 1];
-const EASE_OUT: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
-/* ══════════════════════════════════════════════════════════════════════════
-   CTAButton — reusable pill button with:
-   1. Overflow-clipped text stack: normal layer slides UP out, italic slides UP in
-   2. Cursor-morphing border: tiny dot expands via JS ref to wrap the button
-   Pass `variant="indigo"` for the indigo-fill style (Final CTA section).
-══════════════════════════════════════════════════════════════════════════ */
+/* ── CTAButton ─────────────────────────────────────────────────────────── */
 interface CTAButtonProps {
   href: string;
   label: string;
@@ -151,7 +146,7 @@ function CTAButton({ href, label, variant = "default", className = "", onClick }
       className={`group relative inline-flex items-center justify-center rounded-full ${className}`}
       style={{
         textDecoration: "none",
-        padding: isIndigo ? "1rem 2.5rem" : "0.8rem 2rem",
+        padding: isIndigo ? "1.1rem 2.5rem" : "0.8rem 2rem",
         color: isIndigo ? "#818cf8" : "#fafaf9",
         border: isIndigo
           ? "1px solid rgba(129,140,248,0.5)"
@@ -162,7 +157,6 @@ function CTAButton({ href, label, variant = "default", className = "", onClick }
         background: "transparent",
       }}
     >
-      {/* Cursor-morphing border span */}
       <span
         ref={borderRef}
         aria-hidden
@@ -185,7 +179,6 @@ function CTAButton({ href, label, variant = "default", className = "", onClick }
         }}
       />
 
-      {/* ── Indigo fill wipe (variant=indigo only) ─────────────────── */}
       {isIndigo && (
         <span
           className="absolute inset-0 rounded-full translate-y-[102%] group-hover:translate-y-0 transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] pointer-events-none"
@@ -193,7 +186,6 @@ function CTAButton({ href, label, variant = "default", className = "", onClick }
         />
       )}
 
-      {/* ── Text stack (overflow-hidden clips the vertical slide) ───── */}
       <span
         style={{
           position: "relative",
@@ -204,7 +196,6 @@ function CTAButton({ href, label, variant = "default", className = "", onClick }
           zIndex: 3,
         }}
       >
-        {/* Layer 1: normal — slides UP out on hover */}
         <span
           className="flex transition-transform duration-[430ms] ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:-translate-y-full"
           style={{ position: "absolute", inset: 0, alignItems: "center", display: "flex" }}
@@ -225,7 +216,6 @@ function CTAButton({ href, label, variant = "default", className = "", onClick }
           ))}
         </span>
 
-        {/* Layer 2: italic serif — slides UP in from below on hover */}
         <span
           className="flex translate-y-full group-hover:translate-y-0 transition-transform duration-[430ms] ease-[cubic-bezier(0.19,1,0.22,1)]"
           style={{ position: "absolute", inset: 0, alignItems: "center", display: "flex" }}
@@ -247,7 +237,6 @@ function CTAButton({ href, label, variant = "default", className = "", onClick }
           ))}
         </span>
 
-        {/* Invisible spacer keeps button width stable */}
         <span
           aria-hidden
           style={{
@@ -262,7 +251,6 @@ function CTAButton({ href, label, variant = "default", className = "", onClick }
         </span>
       </span>
 
-      {/* Arrow */}
       <span
         className="ml-2 transition-transform duration-500 group-hover:translate-x-1"
         style={{
@@ -335,181 +323,16 @@ function FadeIn({ children, delay = 0, className = "" }: {
 /* ── Label ──────────────────────────────────────────────────────────────── */
 function Label({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex items-center gap-3 mb-14">
-      <span className="block w-5 h-px flex-shrink-0" style={{ background: "rgba(250, 250, 249, 0.3)" }} />
-      <span className="font-mono uppercase" style={{ fontSize: "0.52rem", letterSpacing: "0.48em", color: "rgba(250, 250, 249, 0.5)" }}>
+    <div className="flex items-center gap-3 mb-6">
+      <span className="block w-5 h-px flex-shrink-0" style={{ background: "rgba(129, 140, 248, 0.35)" }} />
+      <span className="font-mono uppercase text-[#818cf8]" style={{ fontSize: "0.55rem", letterSpacing: "0.48em" }}>
         {children}
       </span>
     </div>
   );
 }
 
-/* ── Steps data ─────────────────────────────────────────────────────────── */
-const STEPS = [
-  { num: "01", title: "Create Profile", body: "Join as a student instantly. Professors undergo rigorous manual institutional verification." },
-  { num: "02", title: "Find Mentor", body: "Search our vetted database by academic field, research interest, and real‑time availability." },
-  { num: "03", title: "Submit Request", body: "Craft a focused mentorship request using our structured academic templates." },
-  { num: "04", title: "Guided Dialogue", body: "Communicate securely through organized, one-on-one threads — no personal email required." },
-  { num: "05", title: "Collaborate & Publish", body: "Build your academic portfolio, co-author research, and present at top-tier conferences." },
-];
-
-/* ── ProcessCard ────────────────────────────────────────────────────────── */
-function ProcessCard({ step, index, railInView, isSpacer, innerRef }: { step: typeof STEPS[number]; index: number; railInView: boolean; isSpacer?: boolean; innerRef?: React.Ref<HTMLDivElement> }) {
-  return (
-    <motion.div
-      ref={innerRef}
-      initial={{ opacity: 0, x: 60 }}
-      animate={railInView ? { opacity: 1, x: 0 } : {}}
-      transition={{ duration: 0.7, ease: EASE, delay: 0.15 + index * 0.12 }}
-      className="group relative flex flex-col justify-between flex-shrink-0 cursor-default overflow-hidden"
-      style={{
-        scrollSnapAlign: "start",
-        background: isSpacer ? "transparent" : "var(--bg-base)",
-        width: isSpacer ? undefined : "clamp(280px, 38vw, 520px)",
-        minWidth: isSpacer ? "clamp(280px, 38vw, 520px)" : undefined,
-        minHeight: "26rem",
-        padding: "2.5rem",
-        borderRight: isSpacer ? "none" : "1px solid rgba(129,140,248,0.08)",
-        willChange: "transform, opacity",
-      }}
-    >
-      <div aria-hidden className="absolute top-4 right-5 select-none pointer-events-none font-mono font-black"
-        style={{ fontSize: "clamp(6rem, 12vw, 10rem)", lineHeight: 1, color: "rgba(129,140,248,0.045)", letterSpacing: "-0.05em" }}>
-        {step.num}
-      </div>
-      <span className="font-mono relative z-10"
-        style={{ fontSize: "0.48rem", letterSpacing: "0.42em", color: "rgba(129,140,248,0.35)", textTransform: "uppercase" }}>
-        {step.num}
-      </span>
-      <div className="relative z-10 mt-auto">
-        <h3 className="font-display font-bold tracking-tighter text-[#fafaf9] mb-3"
-          style={{ fontSize: "clamp(1.6rem, 3vw, 2.6rem)", lineHeight: 1.0 }}>
-          {step.title}
-        </h3>
-        <p className="font-light leading-relaxed"
-          style={{ fontSize: "0.88rem", color: "rgba(168,179,207,0.5)" }}>
-          {step.body}
-        </p>
-        <span style={{ display: "inline-block", marginTop: "1.25rem", fontSize: "1rem", color: "#818cf8", opacity: 0, transform: "translateX(0px)", transition: "opacity 0.35s cubic-bezier(0.19,1,0.22,1), transform 0.35s cubic-bezier(0.19,1,0.22,1)" }}
-          className="group-hover:[opacity:0.65] group-hover:[transform:translateX(7px)]">
-          →
-        </span>
-      </div>
-      <span aria-hidden style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "1px", background: "#818cf8", opacity: 0.3, transform: "scaleX(0)", transformOrigin: "left center", transition: "transform 0.6s cubic-bezier(0.19,1,0.22,1)" }}
-        className="group-hover:[transform:scaleX(1)]" />
-      <span aria-hidden style={{ position: "absolute", inset: 0, background: "rgba(129,140,248,0.02)", opacity: 0, transition: "opacity 0.45s cubic-bezier(0.19,1,0.22,1)", pointerEvents: "none" }}
-        className="group-hover:[opacity:1]" />
-    </motion.div>
-  );
-}
-
-/* ── HorizontalProcessRail ──────────────────────────────────────────────── */
-function HorizontalProcessRail() {
-  const railRef = useRef<HTMLDivElement>(null);
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const spacerRef = useRef<HTMLDivElement>(null);
-  const cardWidthRef = useRef(0);
-  const isInView = useInView(sectionRef, { once: true, margin: "-10%" });
-  const [activeIdx, setActiveIdx] = useState(0);
-
-  useEffect(() => {
-    const rail = railRef.current;
-    const spacer = spacerRef.current;
-    if (!rail || !spacer) return;
-    const measure = () => {
-      const firstCard = rail.children[0] as HTMLElement | undefined;
-      if (!firstCard) return;
-      const cw = firstCard.getBoundingClientRect().width;
-      cardWidthRef.current = cw;
-      spacer.style.width = Math.max(0, rail.clientWidth - cw) + "px";
-    };
-    measure();
-    const ro = new ResizeObserver(measure);
-    ro.observe(rail);
-    return () => ro.disconnect();
-  }, []);
-
-  const dragState = useRef({ dragging: false, startX: 0, scrollLeft: 0 });
-  const onPointerDown = (e: React.PointerEvent) => {
-    const el = railRef.current; if (!el) return;
-    dragState.current = { dragging: true, startX: e.clientX, scrollLeft: el.scrollLeft };
-    el.setPointerCapture(e.pointerId); el.style.cursor = "grabbing"; el.style.userSelect = "none";
-  };
-  const onPointerMove = (e: React.PointerEvent) => {
-    if (!dragState.current.dragging || !railRef.current) return;
-    railRef.current.scrollLeft = dragState.current.scrollLeft - (e.clientX - dragState.current.startX);
-  };
-  const onPointerUp = (e: React.PointerEvent) => {
-    dragState.current.dragging = false;
-    if (!railRef.current) return;
-    railRef.current.releasePointerCapture(e.pointerId); railRef.current.style.cursor = "grab"; railRef.current.style.userSelect = "";
-  };
-
-  useEffect(() => {
-    const el = railRef.current; if (!el) return;
-    const onScroll = () => {
-      const cw = cardWidthRef.current;
-      if (cw > 0) setActiveIdx(Math.min(STEPS.length - 1, Math.round(el.scrollLeft / cw)));
-    };
-    el.addEventListener("scroll", onScroll, { passive: true });
-    return () => el.removeEventListener("scroll", onScroll);
-  }, []);
-
-  const scrollTo = (i: number) => {
-    const el = railRef.current;
-    if (!el || cardWidthRef.current === 0) return;
-    el.scrollTo({ left: i * cardWidthRef.current, behavior: "smooth" });
-  };
-
-  return (
-    <div ref={sectionRef}>
-      <div
-        ref={railRef}
-        onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
-        onPointerUp={onPointerUp}
-        onPointerLeave={onPointerUp}
-        style={{
-          display: "flex", overflowX: "auto", overflowY: "hidden",
-          scrollSnapType: "x mandatory", WebkitOverflowScrolling: "touch",
-          cursor: "grab", scrollbarWidth: "none", msOverflowStyle: "none",
-          borderTop: "1px solid rgba(129,140,248,0.08)",
-          borderBottom: "1px solid rgba(129,140,248,0.08)",
-        }}
-        className="[&::-webkit-scrollbar]:hidden"
-      >
-        {STEPS.slice(0, 4).map((step, i) => (
-          <ProcessCard key={step.num} step={step} index={i} railInView={isInView} />
-        ))}
-        <ProcessCard
-          key={STEPS[4].num}
-          step={STEPS[4]}
-          index={4}
-          railInView={isInView}
-          isSpacer={true}
-          innerRef={spacerRef}
-        />
-      </div>
-      <div style={{ display: "flex", alignItems: "center", gap: "1.5rem", marginTop: "2rem", paddingLeft: "0.25rem" }}>
-        <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
-          {STEPS.slice(0, 4).map((_, i) => (
-            <button key={i} onClick={() => scrollTo(i)} aria-label={`Go to step ${i + 1}`}
-              style={{
-                width: i === activeIdx ? "1.8rem" : "0.4rem", height: "0.4rem", borderRadius: "100px",
-                background: i === activeIdx ? "#818cf8" : "rgba(129,140,248,0.25)",
-                border: "none", cursor: "pointer", padding: 0,
-                transition: "width 0.45s cubic-bezier(0.19,1,0.22,1), background 0.3s ease",
-              }} />
-          ))}
-        </div>
-        <span className="font-mono" style={{ fontSize: "0.48rem", letterSpacing: "0.32em", textTransform: "uppercase", color: "rgba(129,140,248,0.3)" }}>
-          Drag or scroll →
-        </span>
-      </div>
-    </div>
-  );
-}
-
+/* ── CreateAccountButton ────────────────────────────────────────────────── */
 function CreateAccountButton() {
   const wrapRef = useRef<HTMLAnchorElement>(null);
   const borderRef = useRef<HTMLSpanElement>(null);
@@ -552,14 +375,13 @@ function CreateAccountButton() {
       className="group relative inline-flex items-center justify-center rounded-full"
       style={{
         textDecoration: "none",
-        padding: "1rem 2.5rem",
+        padding: "1.1rem 2.5rem",
         color: "#fafaf9",
         border: "1px solid rgba(255,255,255,0.12)",
         overflow: "visible",
         position: "relative",
       }}
     >
-      {/* Cursor-morphing border span */}
       <span
         ref={borderRef}
         aria-hidden
@@ -582,7 +404,6 @@ function CreateAccountButton() {
         }}
       />
 
-      {/* Text stack */}
       <span
         style={{
           position: "relative",
@@ -593,7 +414,6 @@ function CreateAccountButton() {
           zIndex: 3,
         }}
       >
-        {/* Layer 1: normal, slides UP out */}
         <span
           className="flex transition-transform duration-[430ms] ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:-translate-y-full"
           style={{ position: "absolute", inset: 0, alignItems: "center", display: "flex" }}
@@ -613,7 +433,6 @@ function CreateAccountButton() {
           ))}
         </span>
 
-        {/* Layer 2: italic serif, slides UP in from below */}
         <span
           className="flex translate-y-full group-hover:translate-y-0 transition-transform duration-[430ms] ease-[cubic-bezier(0.19,1,0.22,1)]"
           style={{ position: "absolute", inset: 0, alignItems: "center", display: "flex" }}
@@ -635,13 +454,11 @@ function CreateAccountButton() {
           ))}
         </span>
 
-        {/* Spacer */}
         <span aria-hidden style={{ visibility: "hidden", fontSize: "0.65rem", fontWeight: 600, letterSpacing: "0.05em", textTransform: "uppercase" as const }}>
           {label}
         </span>
       </span>
 
-      {/* Arrow */}
       <span
         className="ml-2 transition-transform duration-500 group-hover:translate-x-1"
         style={{ position: "relative", zIndex: 3, fontSize: "0.75rem" }}
@@ -652,12 +469,18 @@ function CreateAccountButton() {
   );
 }
 
-/* ══════════════════════════════════════════════════════════════════
-    MAIN PAGE
-══════════════════════════════════════════════════════════════════ */
+/* ── LandingPage ────────────────────────────────────────────────────────── */
 export default function LandingPage() {
+  const router = useRouter();
   const pageRef = useRef<HTMLDivElement>(null);
   const [loaderDone, setLoaderDone] = useState(false);
+
+  // Search state
+  const [interest, setInterest] = useState("");
+  const [university, setUniversity] = useState("");
+
+  // Pricing State
+  const [pricingIndex, setPricingIndex] = useState(0);
 
   useEffect(() => {
     const t = setTimeout(() => setLoaderDone(true), 1400);
@@ -673,22 +496,100 @@ export default function LandingPage() {
             scrollTrigger: { trigger: el, start: "top 90%", toggleActions: "play none none none" },
           });
         });
-        gsap.utils.toArray<HTMLElement>(".js-stagger-grid").forEach((grid) => {
-          const cards = grid.querySelectorAll<HTMLElement>(".js-card");
-          gsap.fromTo(cards, { opacity: 0, y: 40 }, {
-            opacity: 1, y: 0, duration: 0.9, ease: "power3.out", stagger: 0.1,
-            scrollTrigger: { trigger: grid, start: "top 85%", toggleActions: "play none none none" },
-          });
-        });
       }, pageRef);
       return () => ctx.revert();
     }, 120);
     return () => clearTimeout(timer);
   }, []);
 
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!interest && !university) return;
+    router.push(`/signup?interest=${encodeURIComponent(interest)}&university=${encodeURIComponent(university)}`);
+  };
+
   return (
     <>
       <PageLoader done={loaderDone} />
+
+      <style dangerouslySetInnerHTML={{ __html: `
+        /* ── Local style overrides to support the premium responsive sliding ── */
+        .lp-pricing-slider-viewport {
+          width: 100% !important;
+          position: relative !important;
+        }
+        .lp-pricing-slider-track {
+          display: flex !important;
+          flex-direction: row !important;
+          flex-wrap: nowrap !important;
+          width: 100% !important;
+          transition: transform 0.55s cubic-bezier(0.19, 1, 0.22, 1) !important;
+          will-change: transform !important;
+          align-items: stretch !important;
+        }
+        .lp-pricing-slider-slide {
+          flex: 0 0 100% !important;
+          width: 100% !important;
+          padding: 0 24px !important;
+          box-sizing: border-box !important;
+        }
+        .lp-price-card {
+          width: 100% !important;
+          box-sizing: border-box !important;
+        }
+        
+        .lp-quotes-track {
+          display: flex;
+          width: max-content;
+          animation: marquee 35s linear infinite;
+        }
+        .lp-quotes-group {
+          display: flex;
+          gap: 1.5rem;
+          padding-right: 1.5rem;
+        }
+
+        /* ── Mobile Layout (<= 900px) ── */
+        @media (max-width: 900px) {
+          .lp-pricing-slider-viewport {
+            max-width: 500px !important;
+            margin: 0 auto !important;
+            overflow: hidden !important;
+            padding-top: 12px !important;
+            padding-bottom: 20px !important;
+          }
+          .lp-desktop-grid {
+            display: none !important;
+          }
+        }
+
+        /* ── Desktop Layout (> 900px) ── */
+        @media (min-width: 901px) {
+          .lp-pricing-slider-viewport {
+            max-width: none !important;
+            overflow: visible !important;
+          }
+          .lp-pricing-slider-track {
+            display: grid !important;
+            grid-template-columns: repeat(4, 1fr) !important;
+            gap: 20px !important;
+            transform: none !important;
+            width: auto !important;
+          }
+          .lp-pricing-slider-slide {
+            flex: none !important;
+            width: auto !important;
+            padding: 0 !important;
+          }
+          .lp-mobile-pricing-tabs {
+            display: none !important;
+          }
+          .lp-mobile-pricing-dots {
+            display: none !important;
+          }
+        }
+      `}} />
+
       <div
         ref={pageRef}
         className="relative text-[#fafaf9] font-sans overflow-x-hidden"
@@ -696,12 +597,12 @@ export default function LandingPage() {
       >
         <PublicNav />
 
-        {/* ══ HERO ═══════════════════════════════════════════════════════ */}
-        <section className="relative h-screen overflow-hidden" style={{ background: "var(--bg-base)" }}>
+        {/* ══ HERO SECTION ═══════════════════════════════════════════════ */}
+        <section className="relative min-h-screen overflow-hidden flex flex-col justify-center" style={{ background: "var(--bg-base)" }}>
           <div className="absolute inset-0 z-0">
             <ThreeBackground />
             <div className="absolute inset-0 pointer-events-none"
-              style={{ background: "radial-gradient(ellipse 100% 75% at 50% 40%, transparent 0%, rgba(9,9,11,0.7) 70%, rgba(9,9,11,0.97) 100%)" }} />
+              style={{ background: "radial-gradient(ellipse 100% 75% at 50% 40%, transparent 0%, rgba(9,9,11,0.6) 70%, rgba(9,9,11,0.98) 100%)" }} />
             <div className="absolute inset-0 pointer-events-none"
               style={{
                 backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E\")",
@@ -709,8 +610,8 @@ export default function LandingPage() {
               }} />
           </div>
 
-          {/* Status badge */}
-          <motion.div className="absolute z-10" style={{ top: "5.5rem", right: "2.5rem" }}
+          {/* Active status indicator */}
+          <motion.div className="absolute z-10" style={{ top: "6.5rem", right: "2.5rem" }}
             initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.2, ease: EASE, delay: 1.0 }}>
             <div className="flex items-center gap-2">
@@ -725,225 +626,597 @@ export default function LandingPage() {
             </div>
           </motion.div>
 
-          {/* Eyebrow */}
-          <motion.div className="absolute left-0 z-10" style={{ top: "5.5rem", paddingLeft: "2.5rem" }}
-            initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 1.3, ease: EASE, delay: 0.8 }}>
-            <div className="flex items-center gap-3">
-              <span className="block w-5 h-px" style={{ background: "rgba(129,140,248,0.35)" }} />
-              <span className="font-mono uppercase" style={{ fontSize: "0.44rem", letterSpacing: "0.52em", color: "rgba(129,140,248,0.45)" }}>
-                Direct Academic Mentorship
-              </span>
-            </div>
-          </motion.div>
-
-          {/* Headline */}
-          <div className="absolute left-0 z-10" style={{ bottom: "7rem", paddingLeft: "2.5rem", paddingRight: "2.5rem" }}>
-            <h1 className="font-display font-black"
-              style={{ fontSize: "clamp(3rem, 9vw, 11rem)", color: "#fafaf9", letterSpacing: "-0.03em", lineHeight: 0.9 }}>
-              <span className="block overflow-hidden">
-                <motion.span className="block"
-                  initial={{ y: "110%" }} animate={loaderDone ? { y: 0 } : {}}
-                  transition={{ duration: 1.1, ease: EASE, delay: 0.1 }}>
-                  Scholar
-                </motion.span>
-              </span>
-              <span className="block overflow-hidden">
-                <motion.span className="block italic" style={{ color: "rgba(168,179,207,0.6)" }}
-                  initial={{ y: "110%" }} animate={loaderDone ? { y: 0 } : {}}
-                  transition={{ duration: 1.1, ease: EASE, delay: 0.22 }}>
-                  Collective.
-                </motion.span>
-              </span>
-            </h1>
-          </div>
-
-          {/* Bottom bar */}
-          <div className="absolute left-0 right-0 z-10 flex items-end justify-between"
-            style={{ bottom: "2rem", paddingLeft: "2.5rem", paddingRight: "2.5rem" }}>
-            {/* Scroll indicator */}
-            <motion.div className="flex items-end gap-2"
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.2, duration: 0.9 }}>
-              <div className="flex flex-col items-center gap-[3px]">
-                {[16, 10, 6, 3].map((h, i) => (
-                  <div key={i} className="w-px rounded-full" style={{ height: h, background: "#818cf8", opacity: 0.22 - i * 0.04 }} />
-                ))}
-              </div>
-              <span style={{ writingMode: "vertical-rl", transform: "rotate(180deg)", fontSize: "0.36rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(129,140,248,0.28)", fontFamily: "monospace" }}>
-                Scroll
+          <div className="relative z-10 w-full max-w-[80rem] mx-auto px-6 md:px-12 lg:px-16 pt-24 pb-16 flex flex-col items-start">
+            {/* Eyebrow */}
+            <motion.div
+              initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 1.3, ease: EASE, delay: 0.8 }}
+              className="flex items-center gap-2 mb-8"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-[#818cf8]" />
+              <span className="font-mono uppercase tracking-widest text-xs text-[#fafaf9]/60">
+                Used by 1,000+ students at Stanford, MIT, and beyond.
               </span>
             </motion.div>
 
-            {/* Sub-copy + CTA */}
-            <div className="flex flex-col items-end gap-4 text-right" style={{ maxWidth: "20rem" }}>
-              <motion.p
-                initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                transition={{ duration: 1.2, ease: EASE, delay: 1.5 }}
-                className="font-light leading-relaxed"
-                style={{ fontSize: "0.82rem", color: "rgba(168,179,207,0.5)" }}>
-                Connecting ambitious students with verified professors for structured academic guidance.
-              </motion.p>
+            {/* Headline */}
+            <h1 className="font-display font-black text-[#fafaf9] mb-6 select-none"
+              style={{ fontSize: "clamp(2.5rem, 6.5vw, 6.2rem)", letterSpacing: "-0.03em", lineHeight: 1.05 }}>
+              Find the mentor<br />
+              <span className="italic font-light text-[#fafaf9]/40">who changes your </span>
+              <em className="italic font-normal text-[#818cf8]">life.</em>
+            </h1>
 
-              {/* ── "Begin Journey" CTA — now uses CTAButton ── */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={loaderDone ? { opacity: 1 } : {}}
-                transition={{ duration: 0.9, ease: EASE, delay: 0.5 }}
-                style={{ pointerEvents: "auto", zIndex: 50, position: "relative" }}
-              >
-                <CTAButton href="/signup" label="Begin Journey" />
-              </motion.div>
-            </div>
-          </div>
-        </section>
+            {/* Subtext */}
+            <motion.p
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+              transition={{ duration: 1.2, ease: EASE, delay: 1.1 }}
+              className="font-light leading-relaxed text-[#a8b3cf] mb-12 text-lg max-w-xl"
+            >
+              Cold emails to professors get ignored. Yours won't. Connect with verified academic advisors for structured research mentorship.
+            </motion.p>
 
-        {/* ══ ABOUT ═══════════════════════════════════════════════════════ */}
-        <section className="js-fade" style={{ borderTop: "1px solid rgba(129,140,248,0.08)", padding: "5rem 2.5rem", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4rem", alignItems: "start" }}>
-          <div>
-            <FadeIn><Label>What We Do</Label></FadeIn>
-            <SplitReveal as="h2" delay={0.08} className="font-display font-black tracking-tighter text-[#fafaf9]"
-              style={{ fontSize: "clamp(2.5rem, 6vw, 7rem)", lineHeight: 0.88 }}>
-              Academic mentorship, reimagined.
-            </SplitReveal>
-          </div>
-          <div style={{ paddingTop: "4rem" }}>
-            <FadeIn delay={0.15}>
-              <p className="font-light leading-relaxed mb-8" style={{ fontSize: "1.05rem", color: "rgba(168,179,207,0.65)", maxWidth: "32rem" }}>
-                Schollective bridges the gap between students seeking guidance and professors willing to share expertise. Every connection is verified, structured, and free from the noise of cold outreach.
-              </p>
-            </FadeIn>
-            <FadeIn delay={0.25}>
-              <p className="font-light leading-relaxed" style={{ fontSize: "0.9rem", color: "rgba(129,140,248,0.55)", borderLeft: "2px solid rgba(129,140,248,0.2)", paddingLeft: "1rem" }}>
-                Students apply. Professors respond. Knowledge flows freely — across every discipline, every institution, every timezone.
-              </p>
-            </FadeIn>
-            <FadeIn delay={0.35}>
-              <div style={{ marginTop: "2.5rem" }}>
-                <Link href="/about" className="group relative inline-flex overflow-hidden"
-                  style={{ fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(168,179,207,0.6)", textDecoration: "none", paddingBottom: "2px", borderBottom: "1px solid rgba(129,140,248,0.25)", display: "inline-flex", alignItems: "center", gap: "0.5rem" }}>
-                  <span style={{ transition: "transform 0.45s cubic-bezier(0.19,1,0.22,1)" }} className="group-hover:[transform:translateX(4px)]">Learn more about us</span>
-                  <span className="group-hover:[transform:translateX(6px)]" style={{ transition: "transform 0.45s cubic-bezier(0.19,1,0.22,1)" }}>→</span>
-                </Link>
+            {/* Search Bar Block */}
+            <motion.form
+              onSubmit={handleSearch}
+              initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.9, ease: EASE, delay: 1.3 }}
+              className="w-full max-w-3xl flex flex-col md:flex-row items-stretch p-2.5 rounded-[24px] border border-white/10 gap-2 md:gap-0"
+              style={{
+                background: "rgba(17, 17, 19, 0.55)",
+                backdropFilter: "blur(24px)",
+                boxShadow: "0 24px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05)",
+              }}
+            >
+              <div className="flex-1 flex flex-col justify-center px-4 py-2 text-left">
+                <label className="font-mono uppercase text-[0.52rem] tracking-wider text-[#a8b3cf]/60 mb-1">
+                  Research Interest
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. machine learning"
+                  value={interest}
+                  onChange={(e) => setInterest(e.target.value)}
+                  className="bg-transparent border-none outline-none font-sans text-sm text-[#fafaf9] placeholder-[#fafaf9]/25 w-full"
+                />
               </div>
-            </FadeIn>
+
+              <div className="hidden md:block w-px bg-white/10 my-3" />
+
+              <div className="flex-1 flex flex-col justify-center px-4 py-2 text-left">
+                <label className="font-mono uppercase text-[0.52rem] tracking-wider text-[#a8b3cf]/60 mb-1">
+                  University
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. MIT, Stanford..."
+                  value={university}
+                  onChange={(e) => setUniversity(e.target.value)}
+                  className="bg-transparent border-none outline-none font-sans text-sm text-[#fafaf9] placeholder-[#fafaf9]/25 w-full"
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="group relative flex items-center justify-center rounded-full bg-[#818cf8] text-[#09090b] font-bold text-xs uppercase tracking-widest px-8 py-4 transition-transform duration-300 hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+                style={{ fontFamily: "var(--font-sans)", border: "none" }}
+              >
+                <span>Search collective</span>
+              </button>
+            </motion.form>
+          </div>
+
+          {/* Scroll cue */}
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5 opacity-40 animate-pulse">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 9l6 6 6-6" stroke="#818cf8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
           </div>
         </section>
 
-        {/* ══ PHILOSOPHY ══════════════════════════════════════════════════ */}
-        <section className="js-fade relative min-h-screen flex items-center overflow-hidden" style={{ padding: "8rem 5rem 7rem 5rem" }}>
-          <div aria-hidden className="absolute pointer-events-none select-none"
-            style={{ right: "-2vw", top: "50%", transform: "translateY(-50%)", fontSize: "clamp(12rem, 28vw, 36rem)", lineHeight: 0.85, color: "rgba(129, 140, 248, 0.03)", letterSpacing: "-0.06em", fontFamily: "var(--font-display)", fontWeight: 900 }}>
-            S
-          </div>
-          <div className="relative z-10 max-w-3xl">
-            <FadeIn delay={0}><Label>Our Philosophy</Label></FadeIn>
-            <SplitReveal as="h2" delay={0.1} className="font-display font-bold tracking-tighter text-[#fafaf9] mb-10"
-              style={{ fontSize: "clamp(2rem, 4.5vw, 5rem)", lineHeight: 0.94 }}>
-              Academic research shouldn't be locked behind opaque institutional barriers.
-            </SplitReveal>
-            <FadeIn delay={0.3}>
-              <p className="font-light leading-relaxed mb-20"
-                style={{ fontSize: "clamp(1rem, 1.4vw, 1.2rem)", color: "rgba(129, 140, 248, 0.7)", borderLeft: "2px solid rgba(129, 140, 248, 0.3)", paddingLeft: "1.5rem", maxWidth: "36rem" }}>
-                Schollective replaces cold&#8209;emailing anxiety with a transparent, role&#8209;verified platform. Students and professors connect over shared academic interests — no spam, no guesswork, just structured intellectual growth.
-              </p>
-            </FadeIn>
-            <div className="grid grid-cols-3 gap-10" style={{ maxWidth: "32rem" }}>
+        {/* ══ THE TRUTH ABOUT COLD EMAILS (DARK CALLOUT) ══════════════════ */}
+        <section className="js-fade relative py-28 border-t border-white/5" style={{ background: "rgba(17, 17, 19, 0.4)" }}>
+          <div className="max-w-4xl mx-auto px-6 text-center flex flex-col items-center">
+            <Label>The truth about cold emails</Label>
+            
+            <h2 className="font-display font-bold text-[#fafaf9] mt-6 mb-12 select-none tracking-tight leading-[1.12]"
+              style={{ fontSize: "clamp(2rem, 4.5vw, 3.6rem)" }}>
+              Professors delete 90% of student emails<br />
+              <span className="italic font-light text-[#fafaf9]/35">before finishing the first line.</span>
+            </h2>
+
+            <div className="flex flex-col gap-5 text-left max-w-xl w-full mb-12">
               {[
-                { num: "100%", label: "Free for students" },
-                { num: "48h", label: "Avg. response time" },
-                { num: "0", label: "Cold emails sent" },
-              ].map((s, i) => (
-                <FadeIn key={i} delay={0.5 + i * 0.1}>
-                  <div className="flex flex-col gap-3">
-                    <span className="font-display font-black text-[#fafaf9] tracking-tighter" style={{ fontSize: "clamp(2rem, 4vw, 3.5rem)", lineHeight: 1 }}>
-                      {s.num}
-                    </span>
-                    <span className="font-mono uppercase" style={{ fontSize: "0.52rem", letterSpacing: "0.38em", color: "rgba(129, 140, 248, 0.4)" }}>
-                      {s.label}
-                    </span>
+                "Professors can spot AI-written emails instantly.",
+                "Generic emails that could be sent to anyone get ignored.",
+                "Name-dropping papers without understanding them backfires."
+              ].map((reason, i) => (
+                <div key={i} className="flex items-start gap-4 p-4 rounded-xl border border-white/5 bg-white/[0.02]">
+                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-400 text-xs font-bold font-mono">
+                    ✕
+                  </span>
+                  <span className="text-[#a8b3cf] text-sm leading-relaxed">{reason}</span>
+                </div>
+              ))}
+            </div>
+
+            <CTAButton href="/signup" label="Write one that gets read" variant="indigo" />
+          </div>
+        </section>
+
+        {/* ══ PROOF STRIP ════════════════════════════════════════════════ */}
+        <div className="js-fade border-y border-white/5 py-12 bg-black/40">
+          <div className="max-w-[80rem] mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4 text-center">
+            {[
+              { num: "250M+", label: "papers indexed" },
+              { num: "1,000+", label: "universities" },
+              { num: "10,000+", label: "students served" },
+              { num: "< 24h", label: "first response" }
+            ].map((stat, i) => (
+              <div key={i} className="flex flex-col items-center">
+                <span className="font-display font-black text-3xl md:text-5xl text-[#fafaf9] tracking-tight mb-2">
+                  {stat.num}
+                </span>
+                <span className="font-mono text-[0.55rem] tracking-widest uppercase text-[#818cf8]/70">
+                  {stat.label}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ══ VS TABLE SECTION (ChatGPT vs Schollective) ══════════════════ */}
+        <section className="js-fade py-28 relative">
+          <div className="max-w-[64rem] mx-auto px-6">
+            <div className="text-center mb-16">
+              <Label>Comparing Outreach</Label>
+              <h2 className="font-display font-bold text-3xl md:text-5xl text-[#fafaf9] mt-4 tracking-tight">
+                Why not just use ChatGPT?
+              </h2>
+            </div>
+
+            <div className="glass-refraction" style={{ padding: "40px" }}>
+              <div className="grid grid-cols-2 border-b border-white/10 pb-6 mb-6">
+                <div className="pr-6">
+                  <span className="font-mono text-[0.68rem] font-bold tracking-widest text-[#fafaf9]/30 uppercase">
+                    ChatGPT / LLMs
+                  </span>
+                </div>
+                <div className="pl-6 border-l border-white/10">
+                  <span className="font-mono text-[0.68rem] font-bold tracking-widest text-[#818cf8] uppercase">
+                    Schollective
+                  </span>
+                </div>
+              </div>
+
+              {[
+                {
+                  bad: "Hallucinates professors, fake papers, and wrong citation counts.",
+                  good: "Every professor and paper is pulled from 250M+ verified academic records. 100% real."
+                },
+                {
+                  bad: "Writes generic AI-sounding emails that get immediately deleted.",
+                  good: "Surfaces findings and summaries so you write an authentic, high-reply email yourself."
+                },
+                {
+                  bad: "Requires 20 back-and-forth prompts to analyze a professor's lab.",
+                  good: "One single search. Vetted matches, paper insights, and email validation all in one view."
+                }
+              ].map((row, i) => (
+                <div key={i} className="grid grid-cols-2 py-6 border-b border-white/5 last:border-none">
+                  <div className="pr-6 flex gap-4 items-start">
+                    <span className="text-red-500 font-bold font-mono text-xs pt-1 select-none">✕</span>
+                    <p className="text-[#a8b3cf] text-sm leading-relaxed">{row.bad}</p>
                   </div>
-                </FadeIn>
+                  <div className="pl-6 border-l border-white/5 flex gap-4 items-start">
+                    <span className="text-[#818cf8] font-bold font-mono text-xs pt-1 select-none">✓</span>
+                    <p className="text-[#fafaf9] text-sm leading-relaxed font-medium">{row.good}</p>
+                  </div>
+                </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* ══ MARQUEE ══════════════════════════════════════════════════════ */}
-        <div className="relative overflow-hidden select-none"
-          style={{ borderTop: "1px solid rgba(129, 140, 248, 0.07)", borderBottom: "1px solid rgba(129, 140, 248, 0.07)", padding: "0.75rem 0" }}>
-          <div className="flex whitespace-nowrap" style={{ animation: "marquee 40s linear infinite" }}>
-            {Array.from({ length: 10 }).map((_, i) => (
-              <span key={i} className="flex-shrink-0 font-mono uppercase px-12"
-                style={{ fontSize: "0.42rem", letterSpacing: "0.52em", color: "rgba(129, 140, 248, 0.3)" }}>
-                Mentorship_Network_v1 &nbsp;/&nbsp; No_Cold_Emails &nbsp;/&nbsp; Role_Verified &nbsp;/&nbsp; Structured_Growth &nbsp;/&nbsp; Free_Always &nbsp;/&nbsp;
-              </span>
-            ))}
+        {/* ══ FEATURES BLOCK (With Custom High-Fidelity UI Mockups) ═══════ */}
+        <section className="py-28 flex flex-col gap-32">
+          <div className="max-w-[80rem] mx-auto px-6 w-full">
+            <Label>The Platform</Label>
           </div>
-        </div>
 
-        {/* ══ PROCESS ══════════════════════════════════════════════════════ */}
-        <section className="relative" style={{ padding: "7rem 0" }}>
-          <div style={{ paddingLeft: "2.5rem", paddingRight: "2.5rem", marginBottom: "3.5rem" }}>
-            <FadeIn><Label>The Process</Label></FadeIn>
-            <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: "2rem", flexWrap: "wrap" }}>
-              <SplitReveal as="h2" className="font-display font-black tracking-tighter text-[#fafaf9]"
-                style={{ fontSize: "clamp(3rem, 8vw, 9rem)", lineHeight: 0.85 }}>
-                How it works.
-              </SplitReveal>
-              <FadeIn delay={0.2}>
-                <span className="font-mono" style={{ fontSize: "0.5rem", letterSpacing: "0.35em", textTransform: "uppercase", color: "rgba(129,140,248,0.3)", paddingBottom: "0.5rem" }}>
-                  {STEPS.length} steps
+          {/* Feature 01 */}
+          <div className="js-fade max-w-[80rem] mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <div className="flex flex-col items-start">
+              <span className="font-mono text-2xl text-[#818cf8]/45 mb-4">01</span>
+              <h3 className="font-display font-bold text-3xl md:text-4xl text-[#fafaf9] tracking-tight mb-6">
+                Search any research interest.
+              </h3>
+              <p className="text-[#a8b3cf] leading-relaxed text-base mb-8 max-w-md">
+                Type what you care about: quantum computing, cognitive neuroscience, or climate policy. We surface top professors publishing in that exact space, ranked by impact.
+              </p>
+              <Link href="/signup" className="font-mono text-xs uppercase tracking-widest text-[#818cf8] border-b border-[#818cf8]/20 pb-1 hover:border-[#818cf8]/80 transition-colors">
+                Try a search →
+              </Link>
+            </div>
+
+            {/* Visual Mockup 01 */}
+            <div className="relative p-6 rounded-3xl border border-white/10 bg-black/40 shadow-2xl flex flex-col gap-4">
+              <div className="flex items-center justify-between border-b border-white/5 pb-4">
+                <div className="flex items-center gap-1.5">
+                  <div className="w-2.5 h-2.5 rounded-full bg-red-500/40" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/40" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-green-500/40" />
+                </div>
+                <span className="font-mono text-[0.55rem] text-[#fafaf9]/20">schollective.org/app</span>
+              </div>
+
+              {/* Mock Input */}
+              <div className="flex gap-2 p-2 rounded-xl bg-white/[0.03] border border-white/5 items-center">
+                <span className="px-3 py-1.5 rounded-lg bg-[#818cf8]/15 border border-[#818cf8]/25 text-xs text-[#818cf8] font-medium">
+                  neuroscience
                 </span>
-              </FadeIn>
+                <span className="px-3 py-1.5 rounded-lg bg-white/[0.04] text-xs text-[#a8b3cf]/60">
+                  Harvard
+                </span>
+              </div>
+
+              {/* Mock Professor Cards */}
+              {[
+                { name: "Dr. Emily Nakamura", uni: "Harvard Medical School", tag1: "Memory", tag2: "fMRI" },
+                { name: "Prof. James Miller", uni: "MIT Brain & Cognitive", tag1: "Neural Circuits", tag2: "AI" },
+                { name: "Dr. Aisha Patel", uni: "Stanford Neuroscience", tag1: "BCI", tag2: "Computation" }
+              ].map((prof, i) => (
+                <div key={i} className="flex flex-col items-start p-4 rounded-xl border border-white/5 bg-white/[0.01] hover:bg-white/[0.03] transition-colors">
+                  <div className="flex items-center justify-between w-full mb-1">
+                    <span className="font-display font-medium text-sm text-[#fafaf9]">{prof.name}</span>
+                    <span className="font-mono text-[0.62rem] text-[#a8b3cf]/45">{prof.uni}</span>
+                  </div>
+                  <div className="flex gap-1.5">
+                    <span className="px-2 py-0.5 rounded-md bg-white/[0.04] text-[0.6rem] text-[#a8b3cf]/60">{prof.tag1}</span>
+                    <span className="px-2 py-0.5 rounded-md bg-[#818cf8]/5 text-[0.6rem] text-[#818cf8]/60 border border-[#818cf8]/10">{prof.tag2}</span>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
-          <div style={{ paddingLeft: "2.5rem" }}>
-            <HorizontalProcessRail />
-          </div>
-        </section>
 
-        {/* ══ INFRASTRUCTURE ══════════════════════════════════════════════ */}
-        <section className="js-fade relative overflow-hidden" style={{ padding: "7rem 5rem" }}>
-          <FadeIn><Label>Infrastructure</Label></FadeIn>
-          <SplitReveal as="h2" className="font-display font-black tracking-tighter text-[#fafaf9] mb-20"
-            style={{ fontSize: "clamp(3rem, 8.5vw, 10rem)", lineHeight: 0.82 }}>
-            Total Control.
-          </SplitReveal>
-          <div style={{ maxWidth: "56rem" }}>
-            {[
-              { num: "01", title: "Role‑Locked Security", body: "Roles are permanently assigned. Professors undergo manual administrative review to guarantee authenticity." },
-              { num: "02", title: "Structured Threads", body: "Every conversation is tied to a specific mentorship request, keeping discussions focused and actionable." },
-              { num: "03", title: "Institutional Verification", body: "We cross‑reference global university databases to ensure the authenticity of our academic network." },
-              { num: "04", title: "Unified Dashboard", body: "Track open requests, manage threads, and review approvals from a single, beautiful interface." },
-            ].map((item, i) => (
-              <FadeIn key={i} delay={i * 0.08}>
-                <div className="group grid items-start py-9 transition-all duration-500 hover:pl-2 cursor-default"
-                  style={{ borderTop: "1px solid rgba(129, 140, 248, 0.1)", gridTemplateColumns: "3rem 1fr auto", gap: "2rem" }}>
-                  <span className="font-mono pt-1 transition-colors duration-500 group-hover:text-[#818cf8]"
-                    style={{ fontSize: "0.52rem", letterSpacing: "0.18em", color: "rgba(82, 82, 91, 0.55)" }}>
-                    {item.num}
-                  </span>
-                  <div className="flex flex-col gap-3">
-                    <h3 className="font-display font-bold tracking-tight text-[#fafaf9] transition-transform duration-500 group-hover:translate-x-1"
-                      style={{ fontSize: "clamp(1.4rem, 2.5vw, 2.2rem)", lineHeight: 1.05 }}>
-                      {item.title}
-                    </h3>
-                    <p className="font-light leading-relaxed" style={{ fontSize: "0.9rem", color: "rgba(168, 179, 207, 0.6)", maxWidth: "36rem" }}>
-                      {item.body}
+          {/* Feature 02 */}
+          <div className="js-fade max-w-[80rem] mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            {/* Visual Mockup 02 (Left side for desktop layout) */}
+            <div className="order-2 lg:order-1 relative p-6 rounded-3xl border border-white/10 bg-black/40 shadow-2xl flex flex-col gap-4">
+              <div className="flex items-center justify-between border-b border-white/5 pb-4">
+                <div className="flex items-center gap-1.5">
+                  <div className="w-2.5 h-2.5 rounded-full bg-red-500/40" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/40" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-green-500/40" />
+                </div>
+                <span className="font-mono text-[0.55rem] text-[#fafaf9]/20">schollective.org/app</span>
+              </div>
+
+              {/* Research summary UI */}
+              <div className="p-5 rounded-2xl border border-[#818cf8]/15 bg-[#818cf8]/[0.01]">
+                <div className="flex items-center justify-between mb-3 border-b border-white/5 pb-2">
+                  <span className="font-display font-bold text-base text-[#fafaf9]">Dr. Emily Nakamura</span>
+                  <span className="px-2 py-0.5 rounded bg-[#818cf8]/10 text-[0.58rem] text-[#818cf8] font-mono">2024 PAPER</span>
+                </div>
+                <p className="text-[#a8b3cf] text-xs leading-relaxed mb-4">
+                  Studies how memories form and consolidate during sleep using fMRI. Recent work shows neural oscillation patterns predict next-day recall accuracy in elderly patients with early cognitive decline.
+                </p>
+                <div className="p-3 rounded-lg bg-[#818cf8]/5 border border-[#818cf8]/10">
+                  <span className="font-mono text-[0.52rem] uppercase text-[#818cf8] tracking-widest font-bold block mb-1">Key Finding</span>
+                  <p className="text-white text-xs leading-relaxed">
+                    Theta oscillations during REM sleep increased memory consolidation by 34%. Published 2024, first-author.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="order-1 lg:order-2 flex flex-col items-start">
+              <span className="font-mono text-2xl text-[#818cf8]/45 mb-4">02</span>
+              <h3 className="font-display font-bold text-3xl md:text-4xl text-[#fafaf9] tracking-tight mb-6">
+                Understand their research in plain English.
+              </h3>
+              <p className="text-[#a8b3cf] leading-relaxed text-base mb-8 max-w-md">
+                Every professor gets an AI summary of their key findings, written so a high schooler or undergrad can understand it and use it in their email outreach. No more pretending to read 40-page papers.
+              </p>
+              <Link href="/signup" className="font-mono text-xs uppercase tracking-widest text-[#818cf8] border-b border-[#818cf8]/20 pb-1 hover:border-[#818cf8]/80 transition-colors">
+                See an example →
+              </Link>
+            </div>
+          </div>
+
+          {/* Feature 03 */}
+          <div className="js-fade max-w-[80rem] mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <div className="flex flex-col items-start">
+              <span className="font-mono text-2xl text-[#818cf8]/45 mb-4">03</span>
+              <h3 className="font-display font-bold text-3xl md:text-4xl text-[#fafaf9] tracking-tight mb-6">
+                Write emails that get read.
+              </h3>
+              <p className="text-[#a8b3cf] leading-relaxed text-base mb-8 max-w-md">
+                Our email checker, built on feedback from actual research professors, catches common outreach mistakes before you hit send. We identify generic tone, AI phrases, and weak ask blocks.
+              </p>
+              <Link href="/signup" className="font-mono text-xs uppercase tracking-widest text-[#818cf8] border-b border-[#818cf8]/20 pb-1 hover:border-[#818cf8]/80 transition-colors">
+                Check your email →
+              </Link>
+            </div>
+
+            {/* Visual Mockup 03 */}
+            <div className="relative p-6 rounded-3xl border border-white/10 bg-black/40 shadow-2xl flex flex-col gap-5">
+              <div className="flex items-center justify-between border-b border-white/5 pb-4">
+                <div className="flex items-center gap-1.5">
+                  <div className="w-2.5 h-2.5 rounded-full bg-red-500/40" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/40" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-green-500/40" />
+                </div>
+                <span className="font-mono text-[0.55rem] text-[#fafaf9]/20">schollective.org/editor</span>
+              </div>
+
+              <div className="flex flex-col md:flex-row gap-6">
+                {/* Mock email draft */}
+                <div className="flex-1 p-4 rounded-xl border border-white/5 bg-white/[0.01] flex flex-col gap-3">
+                  <span className="font-mono text-[0.5rem] text-[#a8b3cf]/30 uppercase tracking-widest">DRAFT OUTREACH</span>
+                  <div className="text-xs leading-relaxed text-[#a8b3cf]/60">
+                    <p className="mb-2 line-through text-red-400/80 decoration-[#ea580c] decoration-2">
+                      I found your work fascinating and extremely groundbreaking.
+                    </p>
+                    <p className="text-white border-l-2 border-[#818cf8] pl-2 bg-[#818cf8]/5 py-1">
+                      I read your 2024 paper on sleep theta oscillations. The 34% memory improvement in memory consolidation surprised me...
                     </p>
                   </div>
-                  <span className="text-sm pt-1 transition-all duration-500 translate-x-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-60"
-                    style={{ color: "rgba(129, 140, 248, 0.8)" }}>
-                    →
-                  </span>
                 </div>
-              </FadeIn>
-            ))}
-            <div style={{ borderTop: "1px solid rgba(129, 140, 248, 0.07)" }} />
+
+                {/* Validation list */}
+                <div className="w-full md:w-56 flex flex-col gap-2">
+                  <div className="p-2.5 rounded-lg border border-red-500/10 bg-red-500/[0.02] flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="text-red-400 text-xs">✕</span>
+                      <span className="font-mono text-[0.62rem] text-red-400 tracking-wider">SYCOPHANTIC TONE</span>
+                    </div>
+                    <span className="text-[0.55rem] text-red-400/70">Remove</span>
+                  </div>
+
+                  <div className="p-2.5 rounded-lg border border-green-500/10 bg-green-500/[0.02] flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="text-green-400 text-xs">✓</span>
+                      <span className="font-mono text-[0.62rem] text-green-400 tracking-wider">REAL CITATION</span>
+                    </div>
+                  </div>
+
+                  <div className="p-2.5 rounded-lg border border-green-500/10 bg-green-500/[0.02] flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="text-green-400 text-xs">✓</span>
+                      <span className="font-mono text-[0.62rem] text-green-400 tracking-wider">HUMAN WRITTEN</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
-        {/* ══ FINAL CTA ════════════════════════════════════════════════════ */}
+        {/* ══ FOUNDER QUOTE SECTION ══════════════════════════════════════ */}
+        <section className="js-fade py-24 relative border-t border-white/5 bg-white/[0.01]">
+          <div className="max-w-4xl mx-auto px-6 text-center flex flex-col items-center">
+            <span className="font-display text-7xl text-[#818cf8]/20 select-none leading-none -mb-6">“</span>
+            <blockquote className="font-display text-xl md:text-3xl font-light text-[#fafaf9]/90 leading-relaxed mb-8 max-w-2xl italic select-none">
+              When I was a high school freshman, I used this approach to cold email 5 professors. A Princeton astrophysics professor responded within 24 hours and said I was 'way ahead of the curve.' That's why I built Schollective.
+            </blockquote>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-[#818cf8]/15 border border-[#818cf8]/30 flex items-center justify-center font-display font-bold text-[#818cf8]">
+                J
+              </div>
+              <div className="text-left">
+                <div className="text-sm font-bold text-[#fafaf9]">Jace</div>
+                <div className="text-xs text-[#a8b3cf]/60">Founder, Schollective</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ══ SOCIAL TESTIMONIALS SECTION ════════════════════════════════ */}
+        <section className="js-fade py-28 border-t border-white/5 relative overflow-hidden">
+          <div className="max-w-[80rem] mx-auto px-6 mb-16 text-center">
+            <Label>Student Success</Label>
+            <h2 className="font-display font-bold text-3xl md:text-5xl text-[#fafaf9] mt-4 tracking-tight">
+              What users say
+            </h2>
+          </div>
+
+          <div className="relative w-full overflow-hidden py-4 select-none">
+            <div className="lp-quotes-track">
+              <div className="lp-quotes-group">
+                {[
+                  { initial: "JN", text: "Just wanted to say thanks, like no joke. I got like 6 research internship opportunities now for this summer😭 (IU, Purdue, UIUC, UChicago).", author: "Jedrek N., College Student" },
+                  { initial: "US", text: "I got a reply in 3 days. Never happened before with cold email databases.", author: "Undergraduate student" },
+                  { initial: "CR", text: "I was skeptical at first, but after signing up, I was really impressed with what Schollective has to offer. Genuinely helpful as a high schooler.", author: "Chetana R., High School Student" },
+                  { initial: "RP", text: "Endorse this advice 💯. If an email smells of generic template AI I will not answer it.", author: "Research Professor" },
+                  { initial: "SU", text: "First time I've gotten actual structured feedback on my academic outreach.", author: "Student user" }
+                ].map((item, i) => (
+                  <article key={i} className="flex-shrink-0 w-[360px] p-6 rounded-2xl border border-white/5 bg-white/[0.02] flex flex-col justify-between">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="w-8 h-8 rounded-full bg-white/[0.04] flex items-center justify-center font-mono text-xs text-[#a8b3cf]">
+                        {item.initial}
+                      </div>
+                      <span className="font-display text-2xl text-[#818cf8]/20">“</span>
+                    </div>
+                    <p className="text-sm text-[#a8b3cf] leading-relaxed mb-6 font-light">{item.text}</p>
+                    <span className="font-mono text-[0.62rem] text-[#fafaf9]/50 uppercase tracking-wider">{item.author}</span>
+                  </article>
+                ))}
+              </div>
+
+              {/* Loop group for seamless scrolling */}
+              <div className="lp-quotes-group" aria-hidden="true">
+                {[
+                  { initial: "JN", text: "Just wanted to say thanks, like no joke. I got like 6 research internship opportunities now for this summer😭 (IU, Purdue, UIUC, UChicago).", author: "Jedrek N., College Student" },
+                  { initial: "US", text: "I got a reply in 3 days. Never happened before with cold email databases.", author: "Undergraduate student" },
+                  { initial: "CR", text: "I was skeptical at first, but after signing up, I was really impressed with what Schollective has to offer. Genuinely helpful as a high schooler.", author: "Chetana R., High School Student" },
+                  { initial: "RP", text: "Endorse this advice 💯. If an email smells of generic template AI I will not answer it.", author: "Research Professor" },
+                  { initial: "SU", text: "First time I've gotten actual structured feedback on my academic outreach.", author: "Student user" }
+                ].map((item, i) => (
+                  <article key={`dup-${i}`} className="flex-shrink-0 w-[360px] p-6 rounded-2xl border border-white/5 bg-white/[0.02] flex flex-col justify-between">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="w-8 h-8 rounded-full bg-white/[0.04] flex items-center justify-center font-mono text-xs text-[#a8b3cf]">
+                        {item.initial}
+                      </div>
+                      <span className="font-display text-2xl text-[#818cf8]/20">“</span>
+                    </div>
+                    <p className="text-sm text-[#a8b3cf] leading-relaxed mb-6 font-light">{item.text}</p>
+                    <span className="font-mono text-[0.62rem] text-[#fafaf9]/50 uppercase tracking-wider">{item.author}</span>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ══ SIMPLE HONEST PRICING (Sleek dark tabs & slider) ══════════════ */}
+        <section id="pricing" className="js-fade py-28 border-t border-white/5 relative">
+          <div className="max-w-[80rem] mx-auto px-6 mb-16 text-center">
+            <p className="font-mono text-[0.62rem] tracking-widest text-[#818cf8] uppercase mb-4">
+              Try it risk-free. 100% money back guarantee.
+            </p>
+            <h2 className="font-display font-bold text-3xl md:text-5xl text-[#fafaf9] tracking-tight mb-4">
+              Simple, honest pricing.
+            </h2>
+            <p className="text-[#a8b3cf]/60 text-sm max-w-md mx-auto leading-relaxed">
+              One research position can change your entire academic career. One semester is all it takes.
+            </p>
+          </div>
+
+          {/* Pricing Tabs for Mobile Slider */}
+          <div className="lp-mobile-pricing-tabs flex relative justify-center items-center bg-white/[0.03] border border-white/5 rounded-full p-1.5 mb-8 mx-auto max-w-[380px] w-[calc(100%-32px)] overflow-hidden h-12">
+            {["Free", "Weekly", "Semester", "Lifetime"].map((tab, i) => (
+              <button
+                key={tab}
+                onClick={() => setPricingIndex(i)}
+                className={`flex-1 relative z-10 h-full flex items-center justify-center border-none text-xs font-bold uppercase tracking-wider transition-all duration-300 ${
+                  pricingIndex === i ? "text-[#09090b] bg-[#fafaf9] rounded-full shadow-md" : "text-[#a8b3cf]/50 bg-transparent"
+                }`}
+                style={{ cursor: "pointer", fontFamily: "var(--font-sans)" }}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
+
+          {/* Slider track / Desktop Columns container */}
+          <div className="lp-pricing-slider-viewport max-w-[80rem] mx-auto">
+            <div
+              className="lp-pricing-slider-track"
+              style={{ transform: `translateX(-${pricingIndex * 100}%)` }}
+            >
+              {/* Card 1: Free */}
+              <div className="lp-pricing-slider-slide">
+                <div className="lp-price-card rounded-2xl border border-white/5 bg-white/[0.01] p-8 flex flex-col justify-between min-h-[460px]">
+                  <div>
+                    <span className="font-mono text-[0.6rem] tracking-wider text-[#a8b3cf]/50 uppercase block mb-2">Free Scholar</span>
+                    <span className="font-display font-black text-4xl text-white block mb-1">$0</span>
+                    <span className="font-mono text-[0.55rem] text-[#a8b3cf]/40 uppercase block mb-6">Forever free</span>
+                    <ul className="flex flex-col gap-3.5 text-xs text-[#a8b3cf]/70">
+                      <li><span className="text-[#818cf8] font-bold mr-2">✓</span>Unlimited professor searches</li>
+                      <li><span className="text-[#818cf8] font-bold mr-2">✓</span>1 full paper summary after signup</li>
+                      <li><span className="text-[#818cf8] font-bold mr-2">✓</span>Save professors & papers</li>
+                      <li><span className="text-[#818cf8] font-bold mr-2">✓</span>Basic structural templates</li>
+                    </ul>
+                  </div>
+                  <Link href="/signup" className="w-full text-center py-3.5 rounded-full border border-white/10 hover:bg-white/[0.03] text-xs font-bold uppercase tracking-widest text-white transition-all mt-8 select-none" style={{ fontFamily: "var(--font-sans)" }}>
+                    Start free
+                  </Link>
+                </div>
+              </div>
+
+              {/* Card 2: Weekly Sprint */}
+              <div className="lp-pricing-slider-slide">
+                <div className="lp-price-card rounded-2xl border border-[#818cf8]/20 bg-[#818cf8]/[0.01] p-8 flex flex-col justify-between min-h-[460px]">
+                  <div>
+                    <span className="font-mono text-[0.6rem] tracking-wider text-[#818cf8] uppercase block mb-2">Weekly Sprint</span>
+                    <span className="font-display font-black text-4xl text-[#818cf8] block mb-1">$7</span>
+                    <span className="font-mono text-[0.55rem] text-[#a8b3cf]/40 uppercase block mb-6">1 week access</span>
+                    <ul className="flex flex-col gap-3.5 text-xs text-[#a8b3cf]">
+                      <li><span className="text-[#818cf8] font-bold mr-2">✓</span>Unlimited research summaries</li>
+                      <li><span className="text-[#818cf8] font-bold mr-2">✓</span>Outreach email checker</li>
+                      <li><span className="text-[#818cf8] font-bold mr-2">✓</span>Professor contact details finder</li>
+                      <li><span className="text-[#818cf8] font-bold mr-2">✓</span>Outreach responsiveness indicator</li>
+                    </ul>
+                  </div>
+                  <Link href="/signup" className="w-full text-center py-3.5 rounded-full bg-[#818cf8]/10 hover:bg-[#818cf8]/20 border border-[#818cf8]/35 text-xs font-bold uppercase tracking-widest text-[#818cf8] transition-all mt-8 select-none" style={{ fontFamily: "var(--font-sans)" }}>
+                    Get 1-Week Sprint — $7
+                  </Link>
+                </div>
+              </div>
+
+              {/* Card 3: Semester */}
+              <div className="lp-pricing-slider-slide">
+                <div className="lp-price-card rounded-2xl border border-white/5 bg-white/[0.01] p-8 flex flex-col justify-between min-h-[460px]">
+                  <div>
+                    <span className="font-mono text-[0.6rem] tracking-wider text-[#a8b3cf]/50 uppercase block mb-2">Semester Pass</span>
+                    <span className="font-display font-black text-4xl text-white block mb-1">$29</span>
+                    <span className="font-mono text-[0.55rem] text-[#a8b3cf]/40 uppercase block mb-6">4 months access</span>
+                    <ul className="flex flex-col gap-3.5 text-xs text-[#a8b3cf]/70">
+                      <li className="font-bold text-white"><span className="text-[#818cf8] mr-2">✓</span>Everything in Free, plus:</li>
+                      <li><span className="text-[#818cf8] font-bold mr-2">✓</span>Unlimited research summaries</li>
+                      <li><span className="text-[#818cf8] font-bold mr-2">✓</span>Outreach email checker</li>
+                      <li><span className="text-[#818cf8] font-bold mr-2">✓</span>Professor contact details finder</li>
+                      <li><span className="text-[#818cf8] font-bold mr-2">✓</span>Cold Email Playbook included</li>
+                    </ul>
+                  </div>
+                  <Link href="/signup" className="w-full text-center py-3.5 rounded-full border border-white/10 hover:bg-white/[0.03] text-xs font-bold uppercase tracking-widest text-white transition-all mt-8 select-none" style={{ fontFamily: "var(--font-sans)" }}>
+                    Get Semester Access — $29
+                  </Link>
+                </div>
+              </div>
+
+              {/* Card 4: Lifetime */}
+              <div className="lp-pricing-slider-slide">
+                <div className="lp-price-card rounded-2xl border border-[#818cf8]/50 bg-[#818cf8]/5 p-8 flex flex-col justify-between min-h-[460px] relative overflow-hidden">
+                  <div className="absolute top-3 right-3 bg-[#818cf8] text-[#09090b] font-mono text-[0.5rem] font-bold uppercase px-2.5 py-1 rounded-full select-none">
+                    BEST VALUE
+                  </div>
+                  <div>
+                    <span className="font-mono text-[0.6rem] tracking-wider text-[#818cf8] uppercase block mb-2">Lifetime Access</span>
+                    <span className="font-display font-black text-4xl text-[#818cf8] block mb-1">$59</span>
+                    <span className="font-mono text-[0.55rem] text-[#a8b3cf]/40 uppercase block mb-6">Yours forever</span>
+                    <ul className="flex flex-col gap-3.5 text-xs text-[#a8b3cf]">
+                      <li className="font-bold text-white"><span className="text-[#818cf8] mr-2">✓</span>Everything in Semester, plus:</li>
+                      <li><span className="text-[#818cf8] font-bold mr-2">✓</span>Never pay another subscription</li>
+                      <li><span className="text-[#818cf8] font-bold mr-2">✓</span>Priority AI summary credits</li>
+                      <li><span className="text-[#818cf8] font-bold mr-2">✓</span>Map-based nearby professor search</li>
+                      <li><span className="text-[#818cf8] font-bold mr-2">✓</span>All future feature releases free</li>
+                    </ul>
+                  </div>
+                  <Link href="/signup" className="w-full text-center py-3.5 rounded-full bg-[#818cf8] text-[#09090b] hover:opacity-90 text-xs font-bold uppercase tracking-widest transition-all mt-8 select-none" style={{ fontFamily: "var(--font-sans)" }}>
+                    Claim Lifetime — $59
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Dots Indicator for Mobile */}
+          <div className="lp-mobile-pricing-dots flex justify-center items-center gap-3 mt-8">
+            {[0, 1, 2, 3].map((i) => (
+              <button
+                key={i}
+                onClick={() => setPricingIndex(i)}
+                className={`w-2.5 h-2.5 rounded-full border-none transition-all duration-300 ${
+                  pricingIndex === i ? "bg-[#818cf8] scale-[1.3]" : "bg-white/10"
+                }`}
+                style={{ cursor: "pointer", padding: 0 }}
+              />
+            ))}
+          </div>
+
+          {/* Cold Email Playbook banner */}
+          <div className="max-w-[42rem] mx-auto mt-16 px-6 py-5 rounded-2xl border border-white/5 bg-white/[0.01] text-center">
+            <span className="font-mono text-[0.68rem] tracking-wider text-[#818cf8] uppercase block mb-1">🎁 Included with Paid Plans</span>
+            <p className="text-white text-sm font-medium leading-relaxed">
+              The <strong>Cold Email Playbook</strong>: 12 annotated winning emails, a proven paragraph template, and the perfect follow-up schedule.
+            </p>
+          </div>
+        </section>
+
+        {/* ══ FINAL CALL TO ACTION ═══════════════════════════════════════ */}
         <section className="js-fade relative overflow-hidden"
           style={{ minHeight: "100vh", padding: "5rem 5rem 4rem 5rem", display: "flex", flexDirection: "column" }}>
           <div className="flex items-start justify-between mb-auto">
@@ -957,8 +1230,8 @@ export default function LandingPage() {
           </div>
           <div className="flex-1 flex items-center py-8">
             <SplitReveal as="h2" className="font-display font-black tracking-tighter text-[#fafaf9]"
-              style={{ fontSize: "clamp(5rem, 17vw, 20rem)", lineHeight: 0.82 }}>
-              Start Here.
+              style={{ fontSize: "clamp(3.2rem, 14vw, 15rem)", lineHeight: 0.82 }}>
+              Start Outreach.
             </SplitReveal>
           </div>
           <div className="flex items-end justify-between pt-8" style={{ borderTop: "1px solid rgba(129, 140, 248, 0.1)" }}>
@@ -968,7 +1241,6 @@ export default function LandingPage() {
               </p>
             </FadeIn>
             <FadeIn delay={0.5}>
-              {/* ── "Create Account" CTA ── */}
               <CreateAccountButton />
             </FadeIn>
           </div>
@@ -1029,7 +1301,7 @@ export default function LandingPage() {
                   ].map((item, i) => {
                     const inner = (
                       <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-                        <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: "rgba(99, 102, 241, 0.12)", border: "1px solid rgba(129, 140, 248, 0.15)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                        <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: "rgba(99, 102, 241, 0.12)", border: "1px solid rgba(129, 140, 248, 0.15)", display: "flex", alignItems: "center", justifyItems: "center", flexShrink: 0, justifyContent: "center" }}>
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             {item.icon}{item.extra}
                           </svg>
@@ -1048,7 +1320,7 @@ export default function LandingPage() {
 
           <div style={{ maxWidth: "80rem", margin: "0 auto", height: "1px", background: "rgba(129, 140, 248, 0.09)", marginLeft: "2.5rem", marginRight: "2.5rem" }} />
 
-          <div style={{ maxWidth: "80rem", margin: "0 auto", padding: "1.5rem 2.5rem", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "0.75rem" }}>
+          <div style={{ maxWidth: "80rem", margin: "0 auto", padding: "1.5rem 2.5rem", display: "flex", alignItems: "center", justifyItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "0.75rem" }}>
             <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
               <span className="font-mono" style={{ fontSize: "0.72rem", color: "rgba(82, 82, 91, 0.7)", letterSpacing: "0.02em" }}>
                 © 2026 Schollective, Inc. All rights reserved.
