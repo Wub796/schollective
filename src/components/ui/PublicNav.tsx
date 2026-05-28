@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { motion } from "framer-motion";
 import { SchollectiveLogo } from "@/components/ui/SchollectiveLogo";
 import { Button } from "@/components/ui/Button";
 
@@ -22,29 +21,32 @@ function NavItem({ label, href, active }: {
   return (
     <Link
       href={href}
-      data-cursor-engulf="true"
-      className="group relative inline-flex"
+      data-nav-item="true"
+      className="group relative inline-flex items-center justify-center overflow-hidden"
       style={{
         textDecoration: "none",
-        padding: "0.4rem 0.85rem",
-        lineHeight: 1.1,
-        overflow: "hidden",
+        height: "2.6rem",
+        minWidth: "7.2rem",
+        borderRadius: "9999px",
       }}
     >
       {/* Layer 1 — sans-serif, slides UP out on hover */}
-      <span style={{ display: "flex", gap: 0, clipPath: "inset(0 -0.15em 0 0)" }} aria-label={label}>
+      <span
+        className="flex items-center justify-center transition-transform duration-[450ms] ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:-translate-y-full"
+        style={{ gap: 0 }}
+        aria-label={label}
+      >
         {chars.map((ch, i) => (
           <span
             key={i}
-            className="inline-block transition-transform duration-[450ms] ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:-translate-y-[110%]"
+            className="inline-block"
             style={{
-              fontSize: "0.68rem",
-              fontWeight: 600,
-              letterSpacing: "0.05em",
+              fontSize: "0.82rem",
+              fontWeight: 700,
+              letterSpacing: "0.06em",
               textTransform: "uppercase",
-              color: active ? "var(--text-primary)" : "rgba(15, 23, 42, 0.55)",
-              transitionDelay: `${i * 12}ms`,
-              willChange: "transform",
+              color: active ? "var(--accent)" : "rgba(15, 23, 42, 0.6)",
+              transition: "color 0.2s ease",
             }}
           >
             {ch === " " ? "\u00A0" : ch}
@@ -52,31 +54,23 @@ function NavItem({ label, href, active }: {
         ))}
       </span>
 
-      {/* Layer 2 — serif italic, slides UP in from 110% on hover */}
+      {/* Layer 2 — serif italic, slides UP in from 100% on hover */}
       <span
+        className="absolute inset-0 flex items-center justify-center translate-y-full group-hover:translate-y-0 transition-transform duration-[450ms] ease-[cubic-bezier(0.19,1,0.22,1)]"
         aria-hidden
-        style={{
-          position: "absolute",
-          left: "0.85rem",
-          top: "0.4rem",
-          display: "flex",
-          gap: 0,
-          clipPath: "inset(0 -0.15em 0 0)",
-        }}
+        style={{ gap: 0 }}
       >
         {chars.map((ch, i) => (
           <span
             key={i}
-            className="inline-block translate-y-[110%] group-hover:translate-y-0 transition-transform duration-[450ms] ease-[cubic-bezier(0.19,1,0.22,1)]"
+            className="inline-block"
             style={{
-              fontSize: "0.78rem",
+              fontSize: "0.95rem",
               fontFamily: "var(--font-display)",
-              fontWeight: 400,
+              fontWeight: 500,
               fontStyle: "italic",
               letterSpacing: "-0.01em",
               color: "var(--accent)",
-              transitionDelay: `${i * 12}ms`,
-              willChange: "transform",
             }}
           >
             {ch === " " ? "\u00A0" : ch}
@@ -91,39 +85,29 @@ function NavItem({ label, href, active }: {
 export function PublicNav() {
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     setMounted(true);
-    const handleScroll = () => {
-      if (window.scrollY > 20) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   if (!mounted) return null;
 
   return (
     <header
-      className={`sticky top-0 z-[999] w-full transition-all duration-300 ${
-        scrolled
-          ? "bg-[#fdfdfd]/85 backdrop-blur-md border-b border-slate-200/40 py-3"
-          : "bg-transparent py-5"
-      }`}
+      className="fixed top-5 left-1/2 -translate-x-1/2 z-[999] w-[calc(100%-2.5rem)] max-w-[76rem] transition-all duration-300"
     >
-      <div className="max-w-[80rem] mx-auto px-6 md:px-12 lg:px-16 flex items-center justify-between">
+      <div
+        data-menu-bar="true"
+        className="w-full h-[4.25rem] px-8 rounded-full border flex items-center justify-between transition-all duration-300 bg-[#fdfdfd]/85 backdrop-blur-md border-indigo-600/15 shadow-sm"
+      >
         {/* LEFT: Logo */}
         <Link
           href="/"
+          data-nav-item="true"
           style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "0.6rem" }}
           className="group select-none"
         >
-          <SchollectiveLogo size={32} />
+          <SchollectiveLogo size={30} />
           <span className="font-display font-bold text-slate-900 tracking-tight transition-colors group-hover:text-indigo-600" style={{ fontSize: "1.1rem" }}>
             Schollective
           </span>
@@ -131,13 +115,19 @@ export function PublicNav() {
 
         {/* RIGHT: Sparse Nav links + Primary CTA */}
         <div className="flex items-center gap-6">
-          <nav className="hidden lg:flex items-center gap-1">
+          <nav className="hidden lg:flex items-center gap-2">
             {NAV_LINKS.map(({ label, href }) => (
               <NavItem key={href} label={label} href={href} active={pathname === href} />
             ))}
           </nav>
 
-          <Button href="/signup" variant="primary" size="sm" className="uppercase tracking-wider text-[0.65rem] shadow-sm">
+          <Button
+            href="/signup"
+            variant="primary"
+            size="sm"
+            data-nav-item="true"
+            className="uppercase tracking-wider text-[0.65rem] shadow-sm"
+          >
             Get Started →
           </Button>
         </div>
