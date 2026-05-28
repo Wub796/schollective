@@ -173,9 +173,7 @@ export default function LandingPage() {
   const pageRef = useRef<HTMLDivElement>(null);
   const [loaderDone, setLoaderDone] = useState(false);
 
-  // Search state
-  const [interest, setInterest] = useState("");
-  const [university, setUniversity] = useState("");
+
 
   useEffect(() => {
     const t = setTimeout(() => setLoaderDone(true), 1400);
@@ -197,11 +195,7 @@ export default function LandingPage() {
     return () => clearTimeout(timer);
   }, []);
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!interest && !university) return;
-    router.push(`/signup?interest=${encodeURIComponent(interest)}&university=${encodeURIComponent(university)}`);
-  };
+
 
   return (
     <>
@@ -266,54 +260,16 @@ export default function LandingPage() {
               Cold emails to professors go unanswered. Connect through verified, in-platform academic request threads for structured research mentorship.
             </motion.p>
 
-            {/* Search Bar Block */}
-            <motion.form
-              onSubmit={handleSearch}
+            {/* CTA */}
+            <motion.div
               initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.9, ease: EASE, delay: 1.3 }}
-              className="w-full max-w-3xl flex flex-col md:flex-row items-stretch p-2.5 rounded-[24px] border border-slate-200 gap-2 md:gap-0"
-              style={{
-                background: "rgba(255, 255, 255, 0.55)",
-                backdropFilter: "blur(24px)",
-                boxShadow: "0 24px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(15, 23, 42, 0.05)",
-              }}
+              className="flex items-center justify-center"
             >
-              <div className="flex-1 flex flex-col justify-center px-6 py-3 text-left">
-                <label className="font-sans uppercase text-[0.52rem] tracking-wider text-slate-600/60 mb-1">
-                  Research Interest
-                </label>
-                <input
-                  type="text"
-                  placeholder="e.g. machine learning"
-                  value={interest}
-                  onChange={(e) => setInterest(e.target.value)}
-                  className="bg-transparent border-none outline-none font-sans text-sm text-slate-900 placeholder-slate-400 w-full"
-                />
-              </div>
+              <Button href="/signup" variant="primary" size="lg">Get Started</Button>
+            </motion.div>
 
-              <div className="hidden md:block w-px bg-slate-100 my-3" />
 
-              <div className="flex-1 flex flex-col justify-center px-6 py-3 text-left">
-                <label className="font-sans uppercase text-[0.52rem] tracking-wider text-slate-600/60 mb-1">
-                  University
-                </label>
-                <input
-                  type="text"
-                  placeholder="e.g. MIT, Stanford..."
-                  value={university}
-                  onChange={(e) => setUniversity(e.target.value)}
-                  className="bg-transparent border-none outline-none font-sans text-sm text-slate-900 placeholder-slate-400 w-full"
-                />
-              </div>
-
-              <button
-                type="submit"
-                className="group relative flex items-center justify-center rounded-full bg-blue-600 text-[var(--bg-base)] font-bold text-xs uppercase tracking-wider px-8 py-4 transition-transform duration-300 hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
-                style={{ fontFamily: "var(--font-sans)", border: "none" }}
-              >
-                <span>Search collective</span>
-              </button>
-            </motion.form>
           </div>
 
           {/* Scroll cue */}
@@ -335,13 +291,13 @@ export default function LandingPage() {
               <span className="italic font-light text-slate-900/35">before finishing the first line.</span>
             </h2>
 
-            <div className="flex flex-col gap-7 text-left max-w-xl w-full mb-12">
+            <div className="flex flex-col items-center gap-7 text-center max-w-xl w-full mb-12">
               {[
                 "Professors ignore generic, template-driven outreach.",
                 "Traditional cold emails lack structured academic context.",
                 "Unverified databases lead to wrong contacts and lost time."
               ].map((reason, i) => (
-                <div key={i} className="flex items-start gap-8 p-8 rounded-xl border border-slate-200 bg-slate-50">
+                <div key={i} className="flex flex-col items-center gap-4 p-8 rounded-xl border border-slate-200 bg-slate-50 w-full">
                   <span className="flex-shrink-0 w-6 h-6 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-400 text-xs font-bold font-sans">
                     ✕
                   </span>
@@ -417,7 +373,7 @@ export default function LandingPage() {
 
           {/* Feature 01 */}
           <div className="js-fade max-w-[80rem] mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <div className="flex flex-col items-start">
+            <div className="flex flex-col items-start text-left">
               <span className="font-sans text-2xl text-blue-600/45 mb-4">01</span>
               <h3 className="font-display font-bold text-3xl md:text-4xl text-slate-900 tracking-tight mb-6">
                 Search any research interest.
@@ -431,7 +387,7 @@ export default function LandingPage() {
             </div>
 
             {/* Visual Mockup 01 */}
-            <div className="relative p-8 rounded-3xl border border-slate-200 bg-white shadow-xl shadow-2xl flex flex-col gap-8">
+            <div className="relative p-8 rounded-3xl border border-slate-200 bg-white shadow-xl shadow-2xl flex flex-col gap-8 w-full text-left">
               <div className="flex items-center justify-between border-b border-slate-200 pb-4">
                 <div className="flex items-center gap-1.5">
                   <div className="w-2.5 h-2.5 rounded-full bg-red-500/40" />
@@ -474,7 +430,7 @@ export default function LandingPage() {
           {/* Feature 02 */}
           <div className="js-fade max-w-[80rem] mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             {/* Visual Mockup 02 (Left side for desktop layout) */}
-            <div className="order-2 lg:order-1 relative p-8 rounded-3xl border border-slate-200 bg-white shadow-xl shadow-2xl flex flex-col gap-8">
+            <div className="order-2 lg:order-1 relative p-8 rounded-3xl border border-slate-200 bg-white shadow-xl shadow-2xl flex flex-col gap-8 w-full text-left">
               <div className="flex items-center justify-between border-b border-slate-200 pb-4">
                 <div className="flex items-center gap-1.5">
                   <div className="w-2.5 h-2.5 rounded-full bg-red-500/40" />
@@ -502,7 +458,7 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <div className="order-1 lg:order-2 flex flex-col items-start">
+            <div className="order-1 lg:order-2 flex flex-col items-start text-left">
               <span className="font-sans text-2xl text-blue-600/45 mb-4">02</span>
               <h3 className="font-display font-bold text-3xl md:text-4xl text-slate-900 tracking-tight mb-6">
                 Understand their research in plain English.
@@ -518,7 +474,7 @@ export default function LandingPage() {
 
           {/* Feature 03 */}
           <div className="js-fade max-w-[80rem] mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <div className="flex flex-col items-start">
+            <div className="flex flex-col items-start text-left">
               <span className="font-sans text-2xl text-blue-600/45 mb-4">03</span>
               <h3 className="font-display font-bold text-3xl md:text-4xl text-slate-900 tracking-tight mb-6">
                 Draft structured requests that get answered.
@@ -532,7 +488,7 @@ export default function LandingPage() {
             </div>
 
             {/* Visual Mockup 03 */}
-            <div className="relative p-8 rounded-3xl border border-slate-200 bg-white shadow-xl shadow-2xl flex flex-col gap-7">
+            <div className="relative p-8 rounded-3xl border border-slate-200 bg-white shadow-xl shadow-2xl flex flex-col gap-7 w-full text-left">
               <div className="flex items-center justify-between border-b border-slate-200 pb-4">
                 <div className="flex items-center gap-1.5">
                   <div className="w-2.5 h-2.5 rounded-full bg-red-500/40" />
@@ -607,40 +563,33 @@ export default function LandingPage() {
 
 
         {/* ══ FINAL CALL TO ACTION ═══════════════════════════════════════ */}
-        <section className="js-fade relative overflow-hidden"
-          style={{ minHeight: "100vh", padding: "5rem 5rem 4rem 5rem", display: "flex", flexDirection: "column" }}>
-          <div className="flex items-start justify-between mb-auto">
-            <FadeIn><Label>Ready?</Label></FadeIn>
-            <FadeIn delay={0.1}>
-              <span className="font-sans uppercase"
-                style={{ fontSize: "0.48rem", letterSpacing: "0.38em", color: "rgba(15, 23, 42, 0.45)", marginTop: "0.1rem" }}>
-                Schollective, Inc. © 2026
-              </span>
-            </FadeIn>
-          </div>
-          <div className="flex-1 flex items-center py-8">
+        <section className="js-fade relative overflow-hidden flex flex-col items-center justify-center text-center"
+          style={{ minHeight: "80vh", padding: "5rem 5rem 4rem 5rem" }}>
+          <FadeIn><Label>Ready?</Label></FadeIn>
+          
+          <div className="py-8">
             <SplitReveal as="h2" className="font-display font-black tracking-tighter text-slate-900"
               style={{ fontSize: "clamp(3.2rem, 14vw, 15rem)", lineHeight: 0.82 }}>
               Begin Mentorship.
             </SplitReveal>
           </div>
-          <div className="flex items-end justify-between pt-8" style={{ borderTop: "1px solid rgba(37, 99, 235, 0.1)" }}>
-            <FadeIn delay={0.3}>
-              <p className="font-light leading-relaxed" style={{ fontSize: "0.9rem", color: "rgba(15, 23, 42, 0.6)", maxWidth: "24rem" }}>
-                Join thousands of students already connecting with verified academic mentors — at no cost.
-              </p>
-            </FadeIn>
-            <FadeIn delay={0.5}>
-              <Button href="/signup" variant="ghost" size="lg" className="uppercase tracking-widest text-[0.65rem]">Create Account</Button>
-            </FadeIn>
-          </div>
+          
+          <FadeIn delay={0.3}>
+            <p className="font-light leading-relaxed mt-4 mx-auto" style={{ fontSize: "0.9rem", color: "rgba(15, 23, 42, 0.6)", maxWidth: "24rem" }}>
+              Join thousands of students already connecting with verified academic mentors — at no cost.
+            </p>
+          </FadeIn>
+          
+          <FadeIn delay={0.5} className="mt-8">
+            <Button href="/signup" variant="ghost" size="lg" className="uppercase tracking-widest text-[0.65rem]">Create Account</Button>
+          </FadeIn>
         </section>
 
         {/* ══ FOOTER ═══════════════════════════════════════════════════════ */}
         <footer style={{ background: "var(--bg-surface-1)", borderTop: "1px solid rgba(37, 99, 235, 0.1)" }}>
-          <div style={{ maxWidth: "80rem", margin: "0 auto", padding: "4.5rem 2.5rem 3rem", display: "grid", gridTemplateColumns: "2fr 1fr 1.5fr", gap: "3rem" }} className="footer-grid">
+          <div style={{ maxWidth: "80rem", margin: "0 auto", padding: "4.5rem 2.5rem 3rem", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: "3rem" }}>
             <FadeIn delay={0}>
-              <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "1.25rem" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
                   <SchollectiveLogo size={44} />
                   <span className="font-display font-bold" style={{ fontSize: "1.15rem", letterSpacing: "-0.02em", color: "var(--text-primary)" }}>
@@ -654,11 +603,11 @@ export default function LandingPage() {
             </FadeIn>
 
             <FadeIn delay={0.1}>
-              <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "1.5rem" }}>
                 <span className="font-sans uppercase" style={{ fontSize: "0.55rem", letterSpacing: "0.35em", color: "rgba(37, 99, 235, 0.6)" }}>
                   Quick Links
                 </span>
-                <nav style={{ display: "flex", flexDirection: "column", gap: "0.85rem" }}>
+                <nav style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "1.5rem" }}>
                   {[
                     { label: "Home", href: "/" },
                     { label: "About", href: "/about" },
@@ -679,11 +628,11 @@ export default function LandingPage() {
             </FadeIn>
 
             <FadeIn delay={0.2}>
-              <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "1.5rem" }}>
                 <span className="font-sans uppercase" style={{ fontSize: "0.55rem", letterSpacing: "0.35em", color: "rgba(37, 99, 235, 0.6)" }}>
                   Contact Us
                 </span>
-                <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "2rem" }}>
                   {[
                     { icon: <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />, extra: <polyline points="22,6 12,13 2,6" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />, text: "schollective.corp@gmail.com", href: "mailto:schollective.corp@gmail.com" },
                     { icon: <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />, extra: <polyline points="9,22 9,12 15,12 15,22" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />, text: "Serving schools worldwide" },
@@ -710,8 +659,8 @@ export default function LandingPage() {
 
           <div style={{ maxWidth: "80rem", margin: "0 auto", height: "1px", background: "rgba(37, 99, 235, 0.09)", marginLeft: "2.5rem", marginRight: "2.5rem" }} />
 
-          <div style={{ maxWidth: "80rem", margin: "0 auto", padding: "1.5rem 2.5rem", display: "flex", alignItems: "center", justifyItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "0.75rem" }}>
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+          <div style={{ maxWidth: "80rem", margin: "0 auto", padding: "1.5rem 2.5rem", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: "1rem" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem", alignItems: "center" }}>
               <span className="font-sans" style={{ fontSize: "0.72rem", color: "rgba(15, 23, 42, 0.7)", letterSpacing: "0.02em" }}>
                 © 2026 Schollective, Inc. All rights reserved.
               </span>
@@ -719,7 +668,7 @@ export default function LandingPage() {
                 Not a substitute for official academic advising.
               </span>
             </div>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}>
               <span className="font-sans" style={{ fontSize: "0.68rem", color: "rgba(15, 23, 42, 0.55)", letterSpacing: "0.04em" }}>Built with</span>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ opacity: 0.55 }}>
                 <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" stroke="rgba(37, 99, 235, 0.7)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
