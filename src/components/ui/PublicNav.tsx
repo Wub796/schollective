@@ -339,7 +339,6 @@ export function PublicNav() {
             variant="ghost"
             onClick={() => setMenuOpen(v => !v)}
             aria-label="Toggle menu"
-            data-cursor-hide="true"
             style={{ width: "2.6rem", height: "2.6rem", padding: 0 }}
           >
             <AnimatePresence mode="wait">

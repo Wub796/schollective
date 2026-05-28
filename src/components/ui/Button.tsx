@@ -53,9 +53,9 @@ const Button = React.forwardRef<HTMLElement, ButtonProps>(
     }, [resolvedRef, variant]);
 
     const variants = {
-      primary: "bg-[var(--accent)] text-[var(--bg-base)] border border-transparent shadow-sm",
-      ghost: "bg-[rgba(15,23,42,0.04)] backdrop-blur-md text-slate-600 border border-[var(--accent-glow)] hover:bg-[rgba(15,23,42,0.08)]",
-      outline: "bg-transparent text-slate-600 border border-[var(--accent-glow)] hover:bg-[var(--accent-dim)]",
+      primary: "bg-transparent text-[var(--text-primary)] border border-slate-900 shadow-sm",
+      ghost: "bg-transparent backdrop-blur-md text-slate-900 border border-[var(--text-primary)] hover:border-[var(--accent)] hover:text-[var(--accent)]",
+      outline: "bg-transparent text-slate-900 border border-[var(--text-primary)] hover:border-[var(--accent)]",
     };
 
     const sizes = {
@@ -72,22 +72,39 @@ const Button = React.forwardRef<HTMLElement, ButtonProps>(
 
     const rollContent = isString ? (
       <>
-        <span className="flex transition-transform duration-[430ms] ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:-translate-y-full" style={{ position: "absolute", inset: 0, alignItems: "center", justifyContent: "center", gap: icon ? "0.5rem" : "0" }}>
+        {/* Layer 1 — slides up and out */}
+        <span className="flex" style={{ position: "absolute", inset: 0, alignItems: "center", justifyContent: "center", gap: icon ? "0.5rem" : "0" }}>
           {icon && <span className="flex-shrink-0">{icon}</span>}
-          <span className="flex">
+          <span className="flex" style={{ clipPath: "inset(0 -0.15em 0 0)" }}>
             {chars.map((ch, i) => (
-              <span key={i} style={{ fontWeight: 600 }}>{ch === " " ? "\u00A0" : ch}</span>
+              <span 
+                key={i} 
+                className="inline-block transition-transform duration-[450ms] ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:-translate-y-[110%]"
+                style={{ fontWeight: 600, transitionDelay: `${i * 12}ms`, willChange: "transform" }}
+              >
+                {ch === " " ? "\u00A0" : ch}
+              </span>
             ))}
           </span>
         </span>
-        <span className="flex translate-y-full group-hover:translate-y-0 transition-transform duration-[430ms] ease-[cubic-bezier(0.19,1,0.22,1)]" style={{ position: "absolute", inset: 0, alignItems: "center", justifyContent: "center", gap: icon ? "0.5rem" : "0", color: variant === 'primary' ? 'var(--bg-base)' : 'var(--text-primary)' }}>
+        
+        {/* Layer 2 — slides up and in */}
+        <span className="flex" style={{ position: "absolute", inset: 0, alignItems: "center", justifyContent: "center", gap: icon ? "0.5rem" : "0", color: "var(--accent)" }}>
           {icon && <span className="flex-shrink-0">{icon}</span>}
-          <span className="flex">
+          <span className="flex" style={{ clipPath: "inset(0 -0.15em 0 0)" }}>
             {chars.map((ch, i) => (
-              <span key={i} style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontWeight: 400 }}>{ch === " " ? "\u00A0" : ch}</span>
+              <span 
+                key={i} 
+                className="inline-block translate-y-[110%] group-hover:translate-y-0 transition-transform duration-[450ms] ease-[cubic-bezier(0.19,1,0.22,1)]"
+                style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontWeight: 400, transitionDelay: `${i * 12}ms`, willChange: "transform" }}
+              >
+                {ch === " " ? "\u00A0" : ch}
+              </span>
             ))}
           </span>
         </span>
+
+        {/* Hidden structural layer */}
         <span aria-hidden style={{ visibility: "hidden", display: "flex", alignItems: "center", gap: icon ? "0.5rem" : "0", fontWeight: 600 }}>
           {icon && <span className="flex-shrink-0">{icon}</span>}
           <span>{children}</span>
@@ -95,11 +112,11 @@ const Button = React.forwardRef<HTMLElement, ButtonProps>(
       </>
     ) : (
       <>
-        <span className="flex transition-transform duration-[430ms] ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:-translate-y-full" style={{ position: "absolute", inset: 0, alignItems: "center", justifyContent: "center", gap: icon ? "0.5rem" : "0" }}>
+        <span className="flex transition-transform duration-[450ms] ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:-translate-y-full" style={{ position: "absolute", inset: 0, alignItems: "center", justifyContent: "center", gap: icon ? "0.5rem" : "0" }}>
           {icon && <span className="flex-shrink-0">{icon}</span>}
           <span>{children}</span>
         </span>
-        <span className="flex translate-y-full group-hover:translate-y-0 transition-transform duration-[430ms] ease-[cubic-bezier(0.19,1,0.22,1)]" style={{ position: "absolute", inset: 0, alignItems: "center", justifyContent: "center", gap: icon ? "0.5rem" : "0", color: variant === 'primary' ? 'var(--bg-base)' : 'var(--text-primary)' }}>
+        <span className="flex translate-y-full group-hover:translate-y-0 transition-transform duration-[450ms] ease-[cubic-bezier(0.19,1,0.22,1)]" style={{ position: "absolute", inset: 0, alignItems: "center", justifyContent: "center", gap: icon ? "0.5rem" : "0", color: 'var(--accent)' }}>
           {icon && <span className="flex-shrink-0">{icon}</span>}
           <span>{children}</span>
         </span>
@@ -140,14 +157,14 @@ const Button = React.forwardRef<HTMLElement, ButtonProps>(
 
     if (href) {
       return (
-        <Link href={href} ref={resolvedRef as React.RefObject<HTMLAnchorElement>} className={mergedClassName} {...(props as React.AnchorHTMLAttributes<HTMLAnchorElement>)}>
+        <Link href={href} ref={resolvedRef as React.RefObject<HTMLAnchorElement>} className={mergedClassName} data-cursor-engulf="true" {...(props as React.AnchorHTMLAttributes<HTMLAnchorElement>)}>
           {content}
         </Link>
       );
     }
 
     return (
-      <button ref={resolvedRef as React.RefObject<HTMLButtonElement>} className={mergedClassName} {...(props as React.ButtonHTMLAttributes<HTMLButtonElement>)}>
+      <button ref={resolvedRef as React.RefObject<HTMLButtonElement>} className={mergedClassName} data-cursor-engulf="true" {...(props as React.ButtonHTMLAttributes<HTMLButtonElement>)}>
         {content}
       </button>
     );
