@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Search, X } from "lucide-react";
 import { Select } from "@/components/ui/Select";
-
+import { Button } from "@/components/ui/Button";
 
 interface DirectorySearchProps {
   institutions: string[];
@@ -42,7 +42,7 @@ export function DirectorySearch({ institutions, expertiseAreas }: DirectorySearc
       <div className="grid grid-cols-1 md:grid-cols-4 gap-7 items-end">
         {/* Query */}
         <div className="md:col-span-2 space-y-2">
-          <label className="text-[0.62rem] font-bold text-[rgba(15, 23, 42,0.3)] uppercase tracking-[0.2em] pl-1">
+          <label className="text-[0.62rem] font-bold text-[rgba(15, 23, 42,0.3)] uppercase tracking-[0.2em] pl-4">
             Search Experts
           </label>
           <div style={{ position: "relative" }}>
@@ -50,7 +50,7 @@ export function DirectorySearch({ institutions, expertiseAreas }: DirectorySearc
               size={15}
               style={{
                 position: "absolute",
-                left: "0.875rem",
+                left: "1.5rem",
                 top: "50%",
                 transform: "translateY(-50%)",
                 color: "rgba(15, 23, 42, 0.3)",
@@ -65,36 +65,37 @@ export function DirectorySearch({ institutions, expertiseAreas }: DirectorySearc
               placeholder="Search by name, topic, or field…"
               style={{
                 width: "100%",
-                height: "2.75rem",
-                paddingLeft: "2.5rem",
-                paddingRight: "1rem",
+                height: "3rem",
+                paddingLeft: "3.25rem",
+                paddingRight: "1.75rem",
                 paddingTop: "0.5rem",
                 paddingBottom: "0.5rem",
-                background: "rgba(17, 17, 19, 0.6)",
-                border: "1px solid rgba(37, 99, 235, 0.12)",
-                borderRadius: "0.75rem",
+                background: "rgba(255, 255, 255, 0.6)",
+                border: "1px solid var(--border)",
+                borderRadius: "100px",
                 color: "var(--text-primary)",
                 fontSize: "0.875rem",
                 outline: "none",
-                transition: "border-color 0.2s, background 0.2s",
+                transition: "border-color 0.25s ease, background-0.25s ease, box-shadow 0.25s ease",
                 fontFamily: "var(--font-sans)",
               }}
               onFocus={(e) => {
-                e.currentTarget.style.borderColor = "rgba(37, 99, 235, 0.5)";
-                e.currentTarget.style.background = "rgba(17, 17, 19, 0.85)";
+                e.currentTarget.style.borderColor = "var(--accent)";
+                e.currentTarget.style.background = "rgba(255, 255, 255, 0.95)";
+                e.currentTarget.style.boxShadow = "0 0 0 4px rgba(37, 99, 235, 0.08)";
               }}
               onBlur={(e) => {
-                e.currentTarget.style.borderColor = "rgba(37, 99, 235, 0.12)";
-                e.currentTarget.style.background = "rgba(17, 17, 19, 0.6)";
+                e.currentTarget.style.borderColor = "var(--border)";
+                e.currentTarget.style.background = "rgba(255, 255, 255, 0.6)";
+                e.currentTarget.style.boxShadow = "none";
               }}
             />
           </div>
         </div>
 
-
         {/* Institution */}
         <div className="space-y-2">
-          <label className="text-[0.62rem] font-bold text-[rgba(15, 23, 42,0.3)] uppercase tracking-[0.2em] pl-1">
+          <label className="text-[0.62rem] font-bold text-[rgba(15, 23, 42,0.3)] uppercase tracking-[0.2em] pl-4">
             Institution
           </label>
           <Select
@@ -110,7 +111,7 @@ export function DirectorySearch({ institutions, expertiseAreas }: DirectorySearc
 
         {/* Expertise */}
         <div className="space-y-2">
-          <label className="text-[0.62rem] font-bold text-[rgba(15, 23, 42,0.3)] uppercase tracking-[0.2em] pl-1">
+          <label className="text-[0.62rem] font-bold text-[rgba(15, 23, 42,0.3)] uppercase tracking-[0.2em] pl-4">
             Expertise Area
           </label>
           <Select
@@ -126,21 +127,23 @@ export function DirectorySearch({ institutions, expertiseAreas }: DirectorySearc
       </div>
 
       <div className="mt-5 flex items-center justify-between gap-8">
-        <div className="flex gap-3">
-          <button
+        <div className="flex gap-4">
+          <Button
             onClick={() => updateSearch({ query: draftQuery })}
-            className="bg-[rgba(37, 99, 235,0.15)] text-[rgba(15, 23, 42,0.9)] px-5 py-2 rounded-lg text-[0.68rem] font-bold uppercase tracking-wider hover:bg-[rgba(37, 99, 235,0.25)] transition-colors"
+            size="sm"
           >
             Apply Filters
-          </button>
+          </Button>
           {(draftQuery || currentInstitution !== "all" || currentExpertise !== "all") && (
-            <button
+            <Button
               onClick={handleClear}
-              className="flex items-center gap-1.5 text-[rgba(15, 23, 42,0.35)] text-[0.68rem] hover:text-[rgba(15, 23, 42,0.65)] transition-colors"
+              variant="ghost"
+              size="sm"
+              className="gap-1.5"
             >
               <X size={12} />
               Clear All
-            </button>
+            </Button>
           )}
         </div>
         <div className="text-[0.62rem] text-[rgba(15, 23, 42,0.25)] font-medium hidden sm:block">

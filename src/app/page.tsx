@@ -157,11 +157,12 @@ function FadeIn({ children, delay = 0, className = "" }: {
 /* ── Label ──────────────────────────────────────────────────────────────── */
 function Label({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex items-center gap-3 mb-6">
+    <div className="flex items-center justify-center gap-3 mb-6 w-full">
       <span className="block w-5 h-px flex-shrink-0" style={{ background: "rgba(37, 99, 235, 0.35)" }} />
       <span className="font-sans uppercase text-blue-600" style={{ fontSize: "0.55rem", letterSpacing: "0.2em" }}>
         {children}
       </span>
+      <span className="block w-5 h-px flex-shrink-0" style={{ background: "rgba(37, 99, 235, 0.35)" }} />
     </div>
   );
 }
@@ -244,8 +245,8 @@ export default function LandingPage() {
           <div className="relative z-10 w-full max-w-[80rem] mx-auto px-6 md:px-12 lg:px-16 pt-24 pb-16 flex flex-col items-center text-center">
 
             {/* Headline */}
-            <h1 className="font-display font-black text-slate-900 mb-6 select-none"
-              style={{ fontSize: "clamp(2.5rem, 6.5vw, 6.2rem)", letterSpacing: "-0.03em", lineHeight: 1.05 }}>
+            <h1 className="font-display font-black text-slate-900 mb-10 select-none"
+              style={{ fontSize: "clamp(2.5rem, 6.5vw, 6.2rem)", letterSpacing: "-0.03em", lineHeight: 0.95 }}>
               Find the mentor<br />
               <span className="italic font-light text-slate-900/40">who changes your </span>
               <em className="italic font-normal text-purple-600">life.</em>
@@ -367,7 +368,7 @@ export default function LandingPage() {
 
         {/* ══ FEATURES BLOCK (With Custom High-Fidelity UI Mockups) ═══════ */}
         <section className="py-28 flex flex-col gap-32">
-          <div className="max-w-[80rem] mx-auto px-6 w-full">
+          <div className="max-w-[80rem] mx-auto px-6 w-full flex flex-col items-center">
             <Label>The Platform</Label>
           </div>
 
@@ -548,11 +549,11 @@ export default function LandingPage() {
             <blockquote className="font-display text-xl md:text-3xl font-light text-slate-900/90 leading-relaxed mb-8 max-w-2xl italic select-none">
               When we were students, we realized how difficult it was to reach out to the right professors. Cold emails went unanswered, and credentials were hard to verify. We built Schollective to establish genuine, verified mentorship.
             </blockquote>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-blue-600/15 border border-blue-600/30 flex items-center justify-center font-display font-bold text-blue-600">
+            <div className="flex flex-col items-center gap-4 mt-4">
+              <div className="w-12 h-12 rounded-full bg-blue-600/15 border border-blue-600/30 flex items-center justify-center font-display font-bold text-blue-600 text-lg">
                 A
               </div>
-              <div className="text-left">
+              <div className="text-center">
                 <div className="text-sm font-bold text-slate-900">Aiden & Ayaan</div>
                 <div className="text-xs text-slate-600/60">Founders, Schollective</div>
               </div>

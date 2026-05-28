@@ -25,7 +25,7 @@ export default function VerifyEmailPage() {
         variants={stagger}
         initial="hidden"
         animate="show"
-        style={{ position: "relative", zIndex: 1, maxWidth: 480, width: "100%", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: "2.5rem" }}
+        style={{ position: "relative", zIndex: 1, maxWidth: 480, width: "100%", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: "3.5rem" }}
       >
         {/* Wordmark */}
         <motion.div variants={fadeUp}>
@@ -56,7 +56,7 @@ export default function VerifyEmailPage() {
         </motion.div>
 
         {/* Headline */}
-        <motion.h1 variants={fadeUp} className="font-display" style={{ fontSize: "clamp(2.4rem, 5vw, 3.5rem)", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.035em", lineHeight: 1.1 }}>
+        <motion.h1 variants={fadeUp} className="font-display" style={{ fontSize: "clamp(2.4rem, 5vw, 3.5rem)", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.035em", lineHeight: 0.95 }}>
           Check your<br />
           <em style={{ fontStyle: "italic", color: "rgba(15, 23, 42, 0.35)" }}>inbox.</em>
         </motion.h1>
@@ -67,7 +67,7 @@ export default function VerifyEmailPage() {
         </motion.p>
 
         {/* Steps */}
-        <motion.div variants={fadeUp} style={{ width: "100%", display: "flex", flexDirection: "column", gap: "0.85rem", textAlign: "left" }}>
+        <motion.div variants={fadeUp} style={{ width: "100%", display: "flex", flexDirection: "column", gap: "1.25rem", textAlign: "left" }}>
           {[
             ["01", "Open the email from Schollective"],
             ["02", "Click the confirmation link"],

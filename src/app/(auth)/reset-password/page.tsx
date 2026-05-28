@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/Button";
 
 export const dynamic = "force-dynamic";
 
@@ -25,18 +26,25 @@ function Field({ id, name, type = "text", label, placeholder, required = false }
   const [focused, setFocused] = useState(false);
   return (
     <div style={{ position: "relative" }}>
-      <label htmlFor={id} style={{ display: "block", fontSize: "0.62rem", fontWeight: 600, letterSpacing: "0.22em", textTransform: "uppercase", color: focused ? "rgba(15, 23, 42, 0.7)" : "rgba(15, 23, 42, 0.3)", marginBottom: "0.6rem", transition: "color 0.25s", fontFamily: "var(--font-sans)" }}>
+      <label htmlFor={id} style={{ display: "block", fontSize: "0.62rem", fontWeight: 600, letterSpacing: "0.22em", textTransform: "uppercase", color: focused ? "rgba(147, 51, 234, 0.7)" : "rgba(15, 23, 42, 0.3)", marginBottom: "0.6rem", transition: "color 0.25s", fontFamily: "var(--font-sans)" }}>
         {label}
       </label>
       <input id={id} name={name} type={type} placeholder={placeholder} required={required}
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
-        style={{ width: "100%", background: "transparent", border: "none", borderBottom: `1px solid ${focused ? "rgba(15, 23, 42, 0.55)" : "rgba(15, 23, 42, 0.12)"}`, padding: "0.85rem 0", fontSize: "1rem", color: "var(--text-primary)", outline: "none", transition: "border-color 0.3s", fontFamily: "var(--font-sans)" }}
-      />
-      <motion.div
-        animate={{ scaleX: focused ? 1 : 0, opacity: focused ? 1 : 0 }}
-        transition={{ duration: 0.35, ease: EASE }}
-        style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "1px", background: "linear-gradient(90deg, transparent, rgba(15, 23, 42, 0.8), transparent)", transformOrigin: "center" }}
+        style={{
+          width: "100%",
+          background: "rgba(15, 23, 42, 0.02)",
+          border: `1px solid ${focused ? "rgba(147, 51, 234, 0.4)" : "rgba(15, 23, 42, 0.08)"}`,
+          borderRadius: "12px",
+          padding: "0.85rem 1.25rem",
+          fontSize: "0.95rem",
+          color: "var(--text-primary)",
+          outline: "none",
+          transition: "all 0.3s cubic-bezier(0.22, 1, 0.36, 1)",
+          fontFamily: "var(--font-sans)",
+          boxShadow: focused ? "0 0 0 3px rgba(147, 51, 234, 0.1)" : "none",
+        }}
       />
     </div>
   );
@@ -112,7 +120,7 @@ function ResetPasswordContent() {
       {/* Removed local glow */}
 
       <motion.div variants={stagger} initial="hidden" animate="show"
-        style={{ position: "relative", zIndex: 1, maxWidth: 480, width: "100%", display: "flex", flexDirection: "column", gap: "2.5rem" }}
+        style={{ position: "relative", zIndex: 1, maxWidth: 480, width: "100%", display: "flex", flexDirection: "column", gap: "3.5rem" }}
       >
         {/* Wordmark */}
         <motion.div variants={fadeUp}>
@@ -130,7 +138,7 @@ function ResetPasswordContent() {
         </motion.div>
 
         {/* Headline */}
-        <motion.h1 variants={fadeUp} className="font-display" style={{ fontSize: "clamp(2.4rem, 5vw, 3.5rem)", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.035em", lineHeight: 1.05 }}>
+        <motion.h1 variants={fadeUp} className="font-display" style={{ fontSize: "clamp(2.4rem, 5vw, 3.5rem)", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.035em", lineHeight: 0.95 }}>
           {step === "request" ? <>Recover your<br /><em style={{ fontStyle: "italic", color: "rgba(15, 23, 42, 0.35)" }}>access.</em></> : <>Set a new<br /><em style={{ fontStyle: "italic", color: "rgba(15, 23, 42, 0.35)" }}>password.</em></>}
         </motion.h1>
 
@@ -139,18 +147,22 @@ function ResetPasswordContent() {
           {step === "request" && !sent && (
             <motion.form key="request" onSubmit={handleRequest}
               initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
-              style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }}
+              style={{ display: "flex", flexDirection: "column", gap: "3rem" }}
             >
               <p style={{ fontSize: "0.85rem", color: "rgba(15, 23, 42, 0.4)", lineHeight: 1.8, fontFamily: "var(--font-sans)" }}>
                 Enter the email address on your account and we&apos;ll send a reset link.
               </p>
               <Field id="email" name="email" type="email" label="Institutional Email" placeholder="name@university.edu" required />
               {error && <p style={{ fontSize: "0.78rem", color: "#ff7070", fontFamily: "var(--font-sans)" }}>{error}</p>}
-              <motion.button type="submit" disabled={loading} whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }}
-                style={{ width: "100%", padding: "1.15rem 2.5rem", background: "var(--text-primary)", color: "#080c14", border: "none", borderRadius: "100px", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.28em", textTransform: "uppercase", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.6 : 1, fontFamily: "var(--font-sans)" }}
+              <Button
+                type="submit"
+                disabled={loading}
+                variant="primary"
+                size="lg"
+                className="w-full uppercase tracking-widest text-[0.6rem]"
               >
                 {loading ? "Sending…" : "Send Reset Link"}
-              </motion.button>
+              </Button>
             </motion.form>
           )}
 
@@ -173,7 +185,7 @@ function ResetPasswordContent() {
           {step === "update" && (
             <motion.form key="update" onSubmit={handleUpdate}
               initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
-              style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }}
+              style={{ display: "flex", flexDirection: "column", gap: "3rem" }}
             >
               <p style={{ fontSize: "0.85rem", color: "rgba(15, 23, 42, 0.4)", lineHeight: 1.8, fontFamily: "var(--font-sans)" }}>
                 Choose a new password. Minimum 8 characters.
@@ -181,11 +193,15 @@ function ResetPasswordContent() {
               <Field id="password"  name="password"  type="password" label="New Password"     placeholder="Min. 8 characters" required />
               <Field id="password2" name="password2" type="password" label="Confirm Password"  placeholder="Repeat password"   required />
               {error && <p style={{ fontSize: "0.78rem", color: "#ff7070", fontFamily: "var(--font-sans)" }}>{error}</p>}
-              <motion.button type="submit" disabled={loading} whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }}
-                style={{ width: "100%", padding: "1.15rem 2.5rem", background: "var(--text-primary)", color: "#080c14", border: "none", borderRadius: "100px", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.28em", textTransform: "uppercase", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.6 : 1, fontFamily: "var(--font-sans)" }}
+              <Button
+                type="submit"
+                disabled={loading}
+                variant="primary"
+                size="lg"
+                className="w-full uppercase tracking-widest text-[0.6rem]"
               >
                 {loading ? "Updating…" : "Set New Password"}
-              </motion.button>
+              </Button>
             </motion.form>
           )}
         </AnimatePresence>
@@ -205,7 +221,16 @@ function ResetPasswordContent() {
 
 export default function ResetPasswordPage() {
   return (
-    <Suspense fallback={<div style={{ minHeight: "100vh", background: "#080c14" }} />}>
+    <Suspense fallback={
+      <div style={{ minHeight: "100vh", background: "var(--bg-base)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <div style={{ width: "1.5rem", height: "1px", background: "rgba(15, 23, 42, 0.2)" }} />
+          <span style={{ fontSize: "0.55rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.3)", fontFamily: "var(--font-sans)" }}>
+            Loading…
+          </span>
+        </div>
+      </div>
+    }>
       <ResetPasswordContent />
     </Suspense>
   );

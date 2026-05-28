@@ -28,6 +28,7 @@ export function InstitutionInput({
   const [open, setOpen] = useState(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [highlighted, setHighlighted] = useState(0);
+  const [focused, setFocused] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -96,26 +97,28 @@ export function InstitutionInput({
         onChange={handleInput}
         onKeyDown={handleKeyDown}
         onFocus={() => {
+          setFocused(true);
           if (suggestions.length > 0) setOpen(true);
         }}
         placeholder={placeholder}
         autoComplete="off"
         style={{
           width: "100%",
-          background: "transparent",
-          border: "none",
-          borderBottom: "1px solid rgba(15, 23, 42, 0.1)",
-          padding: "0.7rem 0",
+          background: "rgba(15, 23, 42, 0.02)",
+          border: `1px solid ${focused ? "rgba(147, 51, 234, 0.4)" : "rgba(15, 23, 42, 0.08)"}`,
+          borderRadius: "12px",
+          padding: "0.85rem 1.25rem",
           fontSize: "0.95rem",
           color: "var(--text-primary)",
           outline: "none",
           fontFamily: "var(--font-sans)",
-          transition: "border-color 0.3s",
+          transition: "all 0.3s cubic-bezier(0.22, 1, 0.36, 1)",
+          boxShadow: focused ? "0 0 0 3px rgba(147, 51, 234, 0.1)" : "none",
         }}
-        onBlur={(e) => {
+        onBlur={() => {
+          setFocused(false);
           // Delay so dropdown click fires first
           setTimeout(() => setOpen(false), 150);
-          (e.target as HTMLInputElement).style.borderBottomColor = "rgba(15, 23, 42, 0.1)";
         }}
       />
 
@@ -123,15 +126,16 @@ export function InstitutionInput({
         <div
           style={{
             position: "absolute",
-            top: "calc(100% + 4px)",
+            top: "calc(100% + 6px)",
             left: 0,
             right: 0,
             zIndex: 50,
-            background: "#13161f",
+            background: "rgba(255, 255, 255, 0.98)",
             border: "1px solid rgba(15, 23, 42, 0.08)",
-            borderRadius: "10px",
+            borderRadius: "12px",
             overflow: "hidden",
-            boxShadow: "0 8px 32px rgba(0,0,0,0.5)",
+            boxShadow: "0 10px 40px rgba(0, 0, 0, 0.06)",
+            backdropFilter: "blur(20px)",
           }}
         >
           {suggestions.map((s, i) => {
@@ -146,15 +150,15 @@ export function InstitutionInput({
                   display: "block",
                   width: "100%",
                   textAlign: "left",
-                  padding: "0.6rem 1rem",
+                  padding: "0.75rem 1.25rem",
                   fontSize: "0.78rem",
                   fontFamily: "var(--font-sans)",
-                  color: isActive ? "#e8e8e6" : "#8a8a8a",
-                  background: isActive ? "rgba(15, 23, 42, 0.05)" : "transparent",
+                  color: isActive ? "var(--accent)" : "var(--text-secondary)",
+                  background: isActive ? "var(--accent-dim)" : "transparent",
                   border: "none",
                   borderBottom: i < suggestions.length - 1 ? "1px solid rgba(15, 23, 42, 0.04)" : "none",
                   cursor: "pointer",
-                  transition: "background 0.1s, color 0.1s",
+                  transition: "background 0.15s, color 0.15s",
                 }}
               >
                 {/* Highlight the matched portion */}
@@ -163,9 +167,9 @@ export function InstitutionInput({
             );
           })}
           <div style={{
-            padding: "0.35rem 1rem",
+            padding: "0.5rem 1.25rem",
             fontSize: "0.56rem",
-            color: "rgba(15, 23, 42, 0.15)",
+            color: "rgba(15, 23, 42, 0.3)",
             borderTop: "1px solid rgba(15, 23, 42, 0.04)",
             fontFamily: "var(--font-sans)",
             letterSpacing: "0.08em",
@@ -211,7 +215,7 @@ function HighlightMatch({ text, query }: { text: string; query: string }) {
   for (const [s, e] of merged) {
     if (cursor < s) parts.push(text.slice(cursor, s));
     parts.push(
-      <strong key={s} style={{ color: "#e8e8e6", fontWeight: 700 }}>
+      <strong key={s} style={{ color: "var(--text-primary)", fontWeight: 700 }}>
         {text.slice(s, e)}
       </strong>
     );

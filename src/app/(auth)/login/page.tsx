@@ -58,20 +58,21 @@ function Field({
           onBlur={() => setFocused(false)}
           style={{
             width: "100%",
-            background: "transparent",
-            border: "none",
-            borderBottom: `1px solid ${focused ? "rgba(37, 99, 235, 0.6)" : "rgba(37, 99, 235, 0.18)"}`,
-            padding: "0.85rem 0",
-            fontSize: "1rem",
+            background: "rgba(15, 23, 42, 0.02)",
+            border: `1px solid ${focused ? "rgba(147, 51, 234, 0.4)" : "rgba(15, 23, 42, 0.08)"}`,
+            borderRadius: "100px",
+            padding: "0.95rem 1.75rem",
+            fontSize: "0.95rem",
             color: "var(--text-primary)",
             outline: "none",
-            transition: "border-color 0.3s",
+            transition: "all 0.3s cubic-bezier(0.22, 1, 0.36, 1)",
             fontFamily: "var(--font-sans)",
             letterSpacing: "0.01em",
+            boxShadow: focused ? "0 0 0 3px rgba(147, 51, 234, 0.1)" : "none",
           }}
         />
         {suffix && (
-          <span style={{ position: "absolute", right: 0, bottom: "0.85rem" }}>
+          <span style={{ position: "absolute", right: "1.75rem", top: "50%", transform: "translateY(-50%)" }}>
             {suffix}
           </span>
         )}
@@ -231,15 +232,15 @@ function LoginContent() {
           {/* Headline */}
           <motion.h1 variants={fadeUp} className="font-display" style={{
             fontSize: "clamp(2.6rem, 6vw, 3.8rem)", fontWeight: 900,
-            color: "var(--text-primary)", letterSpacing: "-0.035em", lineHeight: 1.05,
-            marginBottom: "2.75rem",
+            color: "var(--text-primary)", letterSpacing: "-0.035em", lineHeight: 0.95,
+            marginBottom: "3.5rem",
           }}>
             Welcome<br />
             <em style={{ fontStyle: "italic", color: "rgba(15, 23, 42, 0.38)" }}>back.</em>
           </motion.h1>
 
           <form onSubmit={handleSubmit}>
-            <div style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "3rem" }}>
               <motion.div variants={fadeUp}>
                 <Field id="email" name="email" type="email" label="Institutional Email" placeholder="name@university.edu" required />
               </motion.div>

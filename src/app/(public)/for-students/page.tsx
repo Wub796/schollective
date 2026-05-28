@@ -4,6 +4,7 @@ import React, { useRef } from "react";
 import Link from "next/link";
 import { motion, useInView } from "framer-motion";
 import { PublicNav } from "@/components/ui/PublicNav";
+import { Button } from "@/components/ui/Button";
 
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
@@ -52,7 +53,7 @@ export default function ForStudentsPage() {
         {/* ── HERO ─────────────────────────────────────── */}
         <FadeIn>
           <Eyebrow>For Students</Eyebrow>
-          <h1 className="font-display" style={{ fontSize: "clamp(3rem, 7.5vw, 5.5rem)", fontWeight: 900, letterSpacing: "-0.04em", lineHeight: 1.0, marginBottom: "2.5rem", color: "var(--text-primary)" }}>
+          <h1 className="font-display" style={{ fontSize: "clamp(3rem, 7.5vw, 5.5rem)", fontWeight: 900, letterSpacing: "-0.04em", lineHeight: 0.95, marginBottom: "3.5rem", color: "var(--text-primary)" }}>
             Your questions<br />
             <em style={{ fontStyle: "italic", color: "var(--accent)" }}>deserve real answers.</em>
           </h1>
@@ -66,13 +67,13 @@ export default function ForStudentsPage() {
         </FadeIn>
 
         <FadeIn delay={0.2}>
-          <div style={{ display: "flex", justifyContent: "center", gap: "1rem", flexWrap: "wrap", marginBottom: "7.5rem" }}>
-            <Link href="/signup" className="group relative inline-flex items-center justify-center rounded-full" style={{ textDecoration: "none", padding: "1.1rem 2.5rem", background: "var(--accent)", color: "var(--bg-base)", fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", transition: "background 0.3s" }}>
-              Join Free →
-            </Link>
-            <Link href="/about" className="group relative inline-flex items-center justify-center rounded-full" style={{ textDecoration: "none", padding: "1.1rem 2.5rem", border: "1px solid var(--border)", color: "var(--text-secondary)", fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", transition: "border-color 0.3s, color 0.3s" }}>
+          <div style={{ display: "flex", justifyContent: "center", gap: "1.5rem", flexWrap: "wrap", marginBottom: "7.5rem" }}>
+            <Button href="/signup" variant="primary" size="lg" className="uppercase tracking-widest text-[0.6rem]">
+              Join Free
+            </Button>
+            <Button href="/about" variant="ghost" size="lg" className="uppercase tracking-widest text-[0.6rem]">
               Learn More
-            </Link>
+            </Button>
           </div>
         </FadeIn>
 
@@ -142,9 +143,9 @@ export default function ForStudentsPage() {
                 No credit card. No waitlist. Just create an account and start connecting with the academics who can change your trajectory.
               </p>
             </div>
-            <Link href="/signup" className="group relative inline-flex items-center justify-center rounded-full" style={{ textDecoration: "none", padding: "1.1rem 2.5rem", background: "var(--accent)", color: "var(--bg-base)", fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", transition: "background 0.3s", flexShrink: 0 }}>
-              Create Student Account →
-            </Link>
+            <Button href="/signup" variant="primary" size="lg" className="uppercase tracking-widest text-[0.6rem] flex-shrink-0">
+              Create Student Account
+            </Button>
           </div>
         </FadeIn>
 
