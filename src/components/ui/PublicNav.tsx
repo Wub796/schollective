@@ -253,32 +253,7 @@ export function PublicNav() {
     return () => { document.body.style.overflow = ""; };
   }, [menuOpen]);
 
-  useEffect(() => {
-    const el = menuWrapRef.current;
-    const dot = menuBorderRef.current;
-    if (!el || !dot) return;
 
-    const enter = () => {
-      const { width, height } = el.getBoundingClientRect();
-      dot.style.width = `${width + 2}px`;
-      dot.style.height = `${height + 2}px`;
-      dot.style.borderRadius = "100px";
-      dot.style.borderColor = "var(--text-primary)";
-    };
-    const leave = () => {
-      dot.style.width = "10px";
-      dot.style.height = "10px";
-      dot.style.borderRadius = "50%";
-      dot.style.borderColor = "rgba(255,255,255,0)";
-    };
-
-    el.addEventListener("mouseenter", enter);
-    el.addEventListener("mouseleave", leave);
-    return () => {
-      el.removeEventListener("mouseenter", enter);
-      el.removeEventListener("mouseleave", leave);
-    };
-  }, []);
 
   const EASE: [number, number, number, number] = [0.19, 1, 0.22, 1];
   const baseDelay = 0.5;
