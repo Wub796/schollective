@@ -565,13 +565,13 @@ export default function LandingPage() {
                   Schollective
                 </span>
               </div>
-              <p className="font-light leading-relaxed font-sans text-sm text-slate-500 max-w-sm">
+              <p className="font-light leading-relaxed font-sans text-sm text-slate-600 max-w-sm">
                 Connecting ambitious students with verified professors for structured, transparent academic mentorship. Every question deserves a real answer.
               </p>
             </FadeIn>
 
             <FadeIn delay={0.1} className="col-span-1 flex flex-col items-start gap-4">
-              <span className="font-sans uppercase text-[0.62rem] tracking-widest text-indigo-600/70 font-bold">
+              <span className="font-sans uppercase text-[0.62rem] tracking-widest text-indigo-600 font-bold">
                 Quick Links
               </span>
               <nav className="flex flex-col gap-3 items-start">
@@ -584,7 +584,7 @@ export default function LandingPage() {
                   { label: "Log In", href: "/login" },
                 ].map((link) => (
                   <Link key={link.label} href={link.href}
-                    className="font-sans text-sm text-slate-500 hover:text-indigo-600 transition-colors">
+                    className="font-sans text-sm text-slate-600 hover:text-indigo-600 transition-colors">
                     {link.label}
                   </Link>
                 ))}
@@ -592,7 +592,7 @@ export default function LandingPage() {
             </FadeIn>
 
             <FadeIn delay={0.2} className="md:col-span-2 lg:col-span-2 flex flex-col items-start gap-4">
-              <span className="font-sans uppercase text-[0.62rem] tracking-widest text-indigo-600/70 font-bold">
+              <span className="font-sans uppercase text-[0.62rem] tracking-widest text-indigo-600 font-bold">
                 Contact Us
               </span>
               <div className="flex flex-col gap-4 items-start w-full">
@@ -603,12 +603,12 @@ export default function LandingPage() {
                 ].map((item, i) => {
                   const inner = (
                     <div className="flex items-center gap-3 text-left">
-                      <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: "rgba(99, 102, 241, 0.12)", border: "1px solid rgba(79, 70, 229, 0.15)", display: "flex", alignItems: "center", justifyItems: "center", flexShrink: 0, justifyContent: "center" }}>
+                      <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: "rgba(79, 70, 229, 0.05)", border: "1px solid rgba(79, 70, 229, 0.1)", display: "flex", alignItems: "center", justifyItems: "center", flexShrink: 0, justifyContent: "center" }}>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                           {item.icon}{item.extra}
                         </svg>
                       </div>
-                      <span className="font-sans text-sm text-slate-500">{item.text}</span>
+                      <span className="font-sans text-sm text-slate-600">{item.text}</span>
                     </div>
                   );
                   return item.href
@@ -626,16 +626,16 @@ export default function LandingPage() {
               <span className="font-sans text-xs text-slate-500">
                 © 2026 Schollective, Inc. All rights reserved.
               </span>
-              <span className="font-sans text-[0.68rem] text-slate-400">
+              <span className="font-sans text-[0.68rem] text-slate-500">
                 Not a substitute for official academic advising.
               </span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="font-sans text-[0.68rem] text-slate-400">Built with</span>
+              <span className="font-sans text-[0.68rem] text-slate-500">Built with</span>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ opacity: 0.55 }}>
                 <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" stroke="rgba(79, 70, 229, 0.7)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-              <span className="font-sans text-[0.68rem] text-slate-400">for students seeking knowledge</span>
+              <span className="font-sans text-[0.68rem] text-slate-500">for students seeking knowledge</span>
             </div>
           </div>
         </footer>
