@@ -28,36 +28,40 @@ function PageLoader({ done }: { done: boolean }) {
           {/* Gyroscopic Orbits & Central Core */}
           <div className="relative w-48 h-48 flex items-center justify-center mb-8">
             {/* Outer Orbit 1 */}
-            <motion.div
+            <motion.svg
               animate={{ rotate: 360 }}
               transition={{ duration: 6, ease: "linear", repeat: Infinity }}
-              className="absolute inset-0 rounded-full border border-dashed border-indigo-600/10"
-              style={{ padding: "2px" }}
+              className="absolute w-48 h-48 pointer-events-none"
+              viewBox="0 0 200 200"
             >
+              <circle cx="100" cy="100" r="96" stroke="rgba(79, 70, 229, 0.1)" strokeWidth="1" fill="none" strokeDasharray="4 4" />
               {/* Particle node */}
-              <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 absolute -top-0.5 left-1/2 -translate-x-1/2 shadow-[0_0_8px_rgba(79,70,229,0.8)]" />
-            </motion.div>
+              <circle cx="100" cy="4" r="3.5" fill="#4f46e5" />
+            </motion.svg>
 
             {/* Middle Orbit 2 */}
-            <motion.div
+            <motion.svg
               animate={{ rotate: -360 }}
               transition={{ duration: 4.5, ease: "linear", repeat: Infinity }}
-              className="absolute w-36 h-36 rounded-full border border-indigo-600/15"
-              style={{ borderStyle: "solid", borderDasharray: "4 12" }}
+              className="absolute w-36 h-36 pointer-events-none"
+              viewBox="0 0 160 160"
             >
+              <circle cx="80" cy="80" r="76" stroke="rgba(79, 70, 229, 0.15)" strokeWidth="1.2" fill="none" strokeDasharray="4 12" />
               {/* Particle node */}
-              <div className="w-2 h-2 rounded-full bg-indigo-500 absolute -top-1 left-1/3 shadow-[0_0_8px_rgba(79,70,229,0.6)]" />
-            </motion.div>
+              <circle cx="80" cy="4" r="4.5" fill="#4338ca" />
+            </motion.svg>
 
             {/* Inner Orbit 3 */}
-            <motion.div
+            <motion.svg
               animate={{ rotate: 360 }}
               transition={{ duration: 3, ease: "linear", repeat: Infinity }}
-              className="absolute w-24 h-24 rounded-full border border-indigo-600/20"
-              style={{ borderStyle: "solid", borderDasharray: "15 8" }}
+              className="absolute w-24 h-24 pointer-events-none"
+              viewBox="0 0 100 100"
             >
-              <div className="w-1 h-1 rounded-full bg-indigo-400 absolute top-2 right-2 shadow-[0_0_6px_rgba(79,70,229,0.5)]" />
-            </motion.div>
+              <circle cx="50" cy="50" r="46" stroke="rgba(79, 70, 229, 0.2)" strokeWidth="1.5" fill="none" strokeDasharray="15 8" />
+              {/* Particle node */}
+              <circle cx="82.5" cy="17.5" r="2.5" fill="#818cf8" />
+            </motion.svg>
 
             {/* Pulsing Central Core Shield & Scholastic SVG */}
             <motion.div
