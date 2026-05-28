@@ -18,6 +18,7 @@ type TargetRect = {
   width: number;
   height: number;
   radius: number;
+  isNav?: boolean;
 };
 
 function getMode(target: HTMLElement): CursorMode {
@@ -35,6 +36,25 @@ function getMode(target: HTMLElement): CursorMode {
 }
 
 function getTargetRect(el: Element): TargetRect {
+  const navItem = el.closest("[data-nav-item]");
+  if (navItem) {
+    const menuBar = navItem.closest("[data-menu-bar]");
+    if (menuBar) {
+      const itemRect = navItem.getBoundingClientRect();
+      const menuRect = menuBar.getBoundingClientRect();
+      const height = menuRect.height;
+      const radius = height / 2;
+      return {
+        x: itemRect.left + itemRect.width / 2,
+        y: menuRect.top + menuRect.height / 2,
+        width: itemRect.width + 12,
+        height: height,
+        radius,
+        isNav: true,
+      };
+    }
+  }
+
   const rect = el.getBoundingClientRect();
   const computedStyle = window.getComputedStyle(el);
   const radiusStr = computedStyle.borderRadius;
@@ -192,6 +212,8 @@ function CursorRing({
     borderRadius = isText ? 2 : sizeX / 2;
   }
 
+  const isNav = targetRect?.isNav || false;
+
   // --- Colors ---
   // Purple for button hover, neutral for everything else
   const borderColor = isButton
@@ -200,12 +222,12 @@ function CursorRing({
     ? "rgba(15, 23, 42, 0.4)"
     : "rgba(15, 23, 42, 0.5)";
 
-  const boxShadow = isButton
+  const boxShadow = isButton && isNav
     ? `0 0 0 1.5px rgba(79, 70, 229, 0.9), 0 0 18px rgba(79, 70, 229, 0.35), inset 0 0 12px rgba(79, 70, 229, 0.08)`
     : "none";
 
   const borderWidth = isButton ? "1.5px" : "1px";
-  const border = isText ? "none" : `${borderWidth} solid ${borderColor}`;
+  const border = isText || (isButton && !isNav) ? "none" : `${borderWidth} solid ${borderColor}`;
 
   return (
     <>
@@ -308,6 +330,15 @@ export function CustomCursor() {
 
     const onOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
+
+      const navEl = target.closest("[data-nav-item]");
+      if (navEl) {
+        setMode("hover-button");
+        hoveredEl.current = navEl;
+        setTargetRect(getTargetRect(navEl));
+        return;
+      }
+
       const newMode = getMode(target);
       setMode(newMode);
 
