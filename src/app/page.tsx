@@ -479,9 +479,6 @@ export default function LandingPage() {
   const [interest, setInterest] = useState("");
   const [university, setUniversity] = useState("");
 
-  // Pricing State
-  const [pricingIndex, setPricingIndex] = useState(0);
-
   useEffect(() => {
     const t = setTimeout(() => setLoaderDone(true), 1400);
     return () => clearTimeout(t);
@@ -513,31 +510,6 @@ export default function LandingPage() {
       <PageLoader done={loaderDone} />
 
       <style dangerouslySetInnerHTML={{ __html: `
-        /* ── Local style overrides to support the premium responsive sliding ── */
-        .lp-pricing-slider-viewport {
-          width: 100% !important;
-          position: relative !important;
-        }
-        .lp-pricing-slider-track {
-          display: flex !important;
-          flex-direction: row !important;
-          flex-wrap: nowrap !important;
-          width: 100% !important;
-          transition: transform 0.55s cubic-bezier(0.19, 1, 0.22, 1) !important;
-          will-change: transform !important;
-          align-items: stretch !important;
-        }
-        .lp-pricing-slider-slide {
-          flex: 0 0 100% !important;
-          width: 100% !important;
-          padding: 0 24px !important;
-          box-sizing: border-box !important;
-        }
-        .lp-price-card {
-          width: 100% !important;
-          box-sizing: border-box !important;
-        }
-        
         .lp-quotes-track {
           display: flex;
           width: max-content;
@@ -547,46 +519,6 @@ export default function LandingPage() {
           display: flex;
           gap: 1.5rem;
           padding-right: 1.5rem;
-        }
-
-        /* ── Mobile Layout (<= 900px) ── */
-        @media (max-width: 900px) {
-          .lp-pricing-slider-viewport {
-            max-width: 500px !important;
-            margin: 0 auto !important;
-            overflow: hidden !important;
-            padding-top: 12px !important;
-            padding-bottom: 20px !important;
-          }
-          .lp-desktop-grid {
-            display: none !important;
-          }
-        }
-
-        /* ── Desktop Layout (> 900px) ── */
-        @media (min-width: 901px) {
-          .lp-pricing-slider-viewport {
-            max-width: none !important;
-            overflow: visible !important;
-          }
-          .lp-pricing-slider-track {
-            display: grid !important;
-            grid-template-columns: repeat(4, 1fr) !important;
-            gap: 20px !important;
-            transform: none !important;
-            width: auto !important;
-          }
-          .lp-pricing-slider-slide {
-            flex: none !important;
-            width: auto !important;
-            padding: 0 !important;
-          }
-          .lp-mobile-pricing-tabs {
-            display: none !important;
-          }
-          .lp-mobile-pricing-dots {
-            display: none !important;
-          }
         }
       `}} />
 
@@ -653,7 +585,7 @@ export default function LandingPage() {
               transition={{ duration: 1.2, ease: EASE, delay: 1.1 }}
               className="font-light leading-relaxed text-[#a8b3cf] mb-12 text-lg max-w-xl"
             >
-              Cold emails to professors get ignored. Yours won't. Connect with verified academic advisors for structured research mentorship.
+              Cold emails to professors go unanswered. Connect through verified, in-platform academic request threads for structured research mentorship.
             </motion.p>
 
             {/* Search Bar Block */}
@@ -717,19 +649,19 @@ export default function LandingPage() {
         {/* ══ THE TRUTH ABOUT COLD EMAILS (DARK CALLOUT) ══════════════════ */}
         <section className="js-fade relative py-28 border-t border-white/5" style={{ background: "rgba(17, 17, 19, 0.4)" }}>
           <div className="max-w-4xl mx-auto px-6 text-center flex flex-col items-center">
-            <Label>The truth about cold emails</Label>
+            <Label>The truth about academic cold-outreach</Label>
             
             <h2 className="font-display font-bold text-[#fafaf9] mt-6 mb-12 select-none tracking-tight leading-[1.12]"
               style={{ fontSize: "clamp(2rem, 4.5vw, 3.6rem)" }}>
-              Professors delete 90% of student emails<br />
+              Professors delete 90% of student outreach emails<br />
               <span className="italic font-light text-[#fafaf9]/35">before finishing the first line.</span>
             </h2>
 
             <div className="flex flex-col gap-5 text-left max-w-xl w-full mb-12">
               {[
-                "Professors can spot AI-written emails instantly.",
-                "Generic emails that could be sent to anyone get ignored.",
-                "Name-dropping papers without understanding them backfires."
+                "Professors ignore generic, template-driven outreach.",
+                "Traditional cold emails lack structured academic context.",
+                "Unverified databases lead to wrong contacts and lost time."
               ].map((reason, i) => (
                 <div key={i} className="flex items-start gap-4 p-4 rounded-xl border border-white/5 bg-white/[0.02]">
                   <span className="flex-shrink-0 w-6 h-6 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-400 text-xs font-bold font-mono">
@@ -740,7 +672,7 @@ export default function LandingPage() {
               ))}
             </div>
 
-            <CTAButton href="/signup" label="Write one that gets read" variant="indigo" />
+            <CTAButton href="/signup" label="Send requests that get answered" variant="indigo" />
           </div>
         </section>
 
@@ -765,13 +697,13 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* ══ VS TABLE SECTION (ChatGPT vs Schollective) ══════════════════ */}
+        {/* ══ VS TABLE SECTION (Traditional Databases vs Schollective) ══════════════════ */}
         <section className="js-fade py-28 relative">
           <div className="max-w-[64rem] mx-auto px-6">
             <div className="text-center mb-16">
-              <Label>Comparing Outreach</Label>
+              <Label>Comparing Platforms</Label>
               <h2 className="font-display font-bold text-3xl md:text-5xl text-[#fafaf9] mt-4 tracking-tight">
-                Why not just use ChatGPT?
+                Why not just use traditional databases?
               </h2>
             </div>
 
@@ -779,7 +711,7 @@ export default function LandingPage() {
               <div className="grid grid-cols-2 border-b border-white/10 pb-6 mb-6">
                 <div className="pr-6">
                   <span className="font-mono text-[0.68rem] font-bold tracking-widest text-[#fafaf9]/30 uppercase">
-                    ChatGPT / LLMs
+                    Traditional Cold Databases
                   </span>
                 </div>
                 <div className="pl-6 border-l border-white/10">
@@ -791,16 +723,16 @@ export default function LandingPage() {
 
               {[
                 {
-                  bad: "Hallucinates professors, fake papers, and wrong citation counts.",
-                  good: "Every professor and paper is pulled from 250M+ verified academic records. 100% real."
+                  bad: "Scrape lists that contain outdated emails and dead research links.",
+                  good: "Every professor profile and institution is manually verified and active. 100% real."
                 },
                 {
-                  bad: "Writes generic AI-sounding emails that get immediately deleted.",
-                  good: "Surfaces findings and summaries so you write an authentic, high-reply email yourself."
+                  bad: "Encourages spamming generic email templates that professors immediately ignore.",
+                  good: "Requires structured in-platform request forms so you only send focused, high-context queries."
                 },
                 {
-                  bad: "Requires 20 back-and-forth prompts to analyze a professor's lab.",
-                  good: "One single search. Vetted matches, paper insights, and email validation all in one view."
+                  bad: "Lacks a secure, central system to manage threads and follow-ups.",
+                  good: "Provides a unified, real-time messaging hub to track requests, acceptances, and discussions."
                 }
               ].map((row, i) => (
                 <div key={i} className="grid grid-cols-2 py-6 border-b border-white/5 last:border-none">
@@ -917,7 +849,7 @@ export default function LandingPage() {
                 Understand their research in plain English.
               </h3>
               <p className="text-[#a8b3cf] leading-relaxed text-base mb-8 max-w-md">
-                Every professor gets an AI summary of their key findings, written so a high schooler or undergrad can understand it and use it in their email outreach. No more pretending to read 40-page papers.
+                Every professor profile has an AI-synthesized summary of their key findings, written so a high schooler or undergrad can understand it and reference it with precision. No more pretending to read 40-page papers.
               </p>
               <Link href="/signup" className="font-mono text-xs uppercase tracking-widest text-[#818cf8] border-b border-[#818cf8]/20 pb-1 hover:border-[#818cf8]/80 transition-colors">
                 See an example →
@@ -930,13 +862,13 @@ export default function LandingPage() {
             <div className="flex flex-col items-start">
               <span className="font-mono text-2xl text-[#818cf8]/45 mb-4">03</span>
               <h3 className="font-display font-bold text-3xl md:text-4xl text-[#fafaf9] tracking-tight mb-6">
-                Write emails that get read.
+                Draft structured requests that get answered.
               </h3>
               <p className="text-[#a8b3cf] leading-relaxed text-base mb-8 max-w-md">
-                Our email checker, built on feedback from actual research professors, catches common outreach mistakes before you hit send. We identify generic tone, AI phrases, and weak ask blocks.
+                Our structured request model, co-designed with research faculty, guides you through describing your understanding, interests, and availability. No more guessing what professors want to hear.
               </p>
               <Link href="/signup" className="font-mono text-xs uppercase tracking-widest text-[#818cf8] border-b border-[#818cf8]/20 pb-1 hover:border-[#818cf8]/80 transition-colors">
-                Check your email →
+                Try request flow →
               </Link>
             </div>
 
@@ -954,13 +886,13 @@ export default function LandingPage() {
               <div className="flex flex-col md:flex-row gap-6">
                 {/* Mock email draft */}
                 <div className="flex-1 p-4 rounded-xl border border-white/5 bg-white/[0.01] flex flex-col gap-3">
-                  <span className="font-mono text-[0.5rem] text-[#a8b3cf]/30 uppercase tracking-widest">DRAFT OUTREACH</span>
+                  <span className="font-mono text-[0.5rem] text-[#a8b3cf]/30 uppercase tracking-widest">STRUCTURED REQUEST FLOW</span>
                   <div className="text-xs leading-relaxed text-[#a8b3cf]/60">
                     <p className="mb-2 line-through text-red-400/80 decoration-[#ea580c] decoration-2">
-                      I found your work fascinating and extremely groundbreaking.
+                      I would love to join your lab next semester.
                     </p>
                     <p className="text-white border-l-2 border-[#818cf8] pl-2 bg-[#818cf8]/5 py-1">
-                      I read your 2024 paper on sleep theta oscillations. The 34% memory improvement in memory consolidation surprised me...
+                      I have been analyzing memory consolidation in sleep. Your 2024 theta oscillation findings motivated my question...
                     </p>
                   </div>
                 </div>
@@ -970,22 +902,22 @@ export default function LandingPage() {
                   <div className="p-2.5 rounded-lg border border-red-500/10 bg-red-500/[0.02] flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <span className="text-red-400 text-xs">✕</span>
-                      <span className="font-mono text-[0.62rem] text-red-400 tracking-wider">SYCOPHANTIC TONE</span>
+                      <span className="font-mono text-[0.62rem] text-red-400 tracking-wider">GENERIC REQUEST</span>
                     </div>
-                    <span className="text-[0.55rem] text-red-400/70">Remove</span>
+                    <span className="text-[0.55rem] text-red-400/70">Refine</span>
                   </div>
 
                   <div className="p-2.5 rounded-lg border border-green-500/10 bg-green-500/[0.02] flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <span className="text-green-400 text-xs">✓</span>
-                      <span className="font-mono text-[0.62rem] text-green-400 tracking-wider">REAL CITATION</span>
+                      <span className="font-mono text-[0.62rem] text-green-400 tracking-wider">CITES WORK DIRECTLY</span>
                     </div>
                   </div>
 
                   <div className="p-2.5 rounded-lg border border-green-500/10 bg-green-500/[0.02] flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <span className="text-green-400 text-xs">✓</span>
-                      <span className="font-mono text-[0.62rem] text-green-400 tracking-wider">HUMAN WRITTEN</span>
+                      <span className="font-mono text-[0.62rem] text-green-400 tracking-wider">STRUCTURED CONTEXT</span>
                     </div>
                   </div>
                 </div>
@@ -999,15 +931,15 @@ export default function LandingPage() {
           <div className="max-w-4xl mx-auto px-6 text-center flex flex-col items-center">
             <span className="font-display text-7xl text-[#818cf8]/20 select-none leading-none -mb-6">“</span>
             <blockquote className="font-display text-xl md:text-3xl font-light text-[#fafaf9]/90 leading-relaxed mb-8 max-w-2xl italic select-none">
-              When I was a high school freshman, I used this approach to cold email 5 professors. A Princeton astrophysics professor responded within 24 hours and said I was 'way ahead of the curve.' That's why I built Schollective.
+              When we were students, we realized how difficult it was to reach out to the right professors. Cold emails went unanswered, and credentials were hard to verify. We built Schollective to establish genuine, verified mentorship.
             </blockquote>
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-[#818cf8]/15 border border-[#818cf8]/30 flex items-center justify-center font-display font-bold text-[#818cf8]">
-                J
+                A
               </div>
               <div className="text-left">
-                <div className="text-sm font-bold text-[#fafaf9]">Jace</div>
-                <div className="text-xs text-[#a8b3cf]/60">Founder, Schollective</div>
+                <div className="text-sm font-bold text-[#fafaf9]">Aiden & Ayaan</div>
+                <div className="text-xs text-[#a8b3cf]/60">Founders, Schollective</div>
               </div>
             </div>
           </div>
@@ -1027,9 +959,9 @@ export default function LandingPage() {
               <div className="lp-quotes-group">
                 {[
                   { initial: "JN", text: "Just wanted to say thanks, like no joke. I got like 6 research internship opportunities now for this summer😭 (IU, Purdue, UIUC, UChicago).", author: "Jedrek N., College Student" },
-                  { initial: "US", text: "I got a reply in 3 days. Never happened before with cold email databases.", author: "Undergraduate student" },
+                  { initial: "US", text: "I got a reply in 3 days. The structured request flow actually helped me get straight to the point.", author: "Undergraduate student" },
                   { initial: "CR", text: "I was skeptical at first, but after signing up, I was really impressed with what Schollective has to offer. Genuinely helpful as a high schooler.", author: "Chetana R., High School Student" },
-                  { initial: "RP", text: "Endorse this advice 💯. If an email smells of generic template AI I will not answer it.", author: "Research Professor" },
+                  { initial: "RP", text: "Endorse this format 💯. If a student request has real context and specific questions, I always answer it.", author: "Research Professor" },
                   { initial: "SU", text: "First time I've gotten actual structured feedback on my academic outreach.", author: "Student user" }
                 ].map((item, i) => (
                   <article key={i} className="flex-shrink-0 w-[360px] p-6 rounded-2xl border border-white/5 bg-white/[0.02] flex flex-col justify-between">
@@ -1049,9 +981,9 @@ export default function LandingPage() {
               <div className="lp-quotes-group" aria-hidden="true">
                 {[
                   { initial: "JN", text: "Just wanted to say thanks, like no joke. I got like 6 research internship opportunities now for this summer😭 (IU, Purdue, UIUC, UChicago).", author: "Jedrek N., College Student" },
-                  { initial: "US", text: "I got a reply in 3 days. Never happened before with cold email databases.", author: "Undergraduate student" },
+                  { initial: "US", text: "I got a reply in 3 days. The structured request flow actually helped me get straight to the point.", author: "Undergraduate student" },
                   { initial: "CR", text: "I was skeptical at first, but after signing up, I was really impressed with what Schollective has to offer. Genuinely helpful as a high schooler.", author: "Chetana R., High School Student" },
-                  { initial: "RP", text: "Endorse this advice 💯. If an email smells of generic template AI I will not answer it.", author: "Research Professor" },
+                  { initial: "RP", text: "Endorse this format 💯. If a student request has real context and specific questions, I always answer it.", author: "Research Professor" },
                   { initial: "SU", text: "First time I've gotten actual structured feedback on my academic outreach.", author: "Student user" }
                 ].map((item, i) => (
                   <article key={`dup-${i}`} className="flex-shrink-0 w-[360px] p-6 rounded-2xl border border-white/5 bg-white/[0.02] flex flex-col justify-between">
@@ -1070,152 +1002,6 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* ══ SIMPLE HONEST PRICING (Sleek dark tabs & slider) ══════════════ */}
-        <section id="pricing" className="js-fade py-28 border-t border-white/5 relative">
-          <div className="max-w-[80rem] mx-auto px-6 mb-16 text-center">
-            <p className="font-mono text-[0.62rem] tracking-widest text-[#818cf8] uppercase mb-4">
-              Try it risk-free. 100% money back guarantee.
-            </p>
-            <h2 className="font-display font-bold text-3xl md:text-5xl text-[#fafaf9] tracking-tight mb-4">
-              Simple, honest pricing.
-            </h2>
-            <p className="text-[#a8b3cf]/60 text-sm max-w-md mx-auto leading-relaxed">
-              One research position can change your entire academic career. One semester is all it takes.
-            </p>
-          </div>
-
-          {/* Pricing Tabs for Mobile Slider */}
-          <div className="lp-mobile-pricing-tabs flex relative justify-center items-center bg-white/[0.03] border border-white/5 rounded-full p-1.5 mb-8 mx-auto max-w-[380px] w-[calc(100%-32px)] overflow-hidden h-12">
-            {["Free", "Weekly", "Semester", "Lifetime"].map((tab, i) => (
-              <button
-                key={tab}
-                onClick={() => setPricingIndex(i)}
-                className={`flex-1 relative z-10 h-full flex items-center justify-center border-none text-xs font-bold uppercase tracking-wider transition-all duration-300 ${
-                  pricingIndex === i ? "text-[#09090b] bg-[#fafaf9] rounded-full shadow-md" : "text-[#a8b3cf]/50 bg-transparent"
-                }`}
-                style={{ cursor: "pointer", fontFamily: "var(--font-sans)" }}
-              >
-                {tab}
-              </button>
-            ))}
-          </div>
-
-          {/* Slider track / Desktop Columns container */}
-          <div className="lp-pricing-slider-viewport max-w-[80rem] mx-auto">
-            <div
-              className="lp-pricing-slider-track"
-              style={{ transform: `translateX(-${pricingIndex * 100}%)` }}
-            >
-              {/* Card 1: Free */}
-              <div className="lp-pricing-slider-slide">
-                <div className="lp-price-card rounded-2xl border border-white/5 bg-white/[0.01] p-8 flex flex-col justify-between min-h-[460px]">
-                  <div>
-                    <span className="font-mono text-[0.6rem] tracking-wider text-[#a8b3cf]/50 uppercase block mb-2">Free Scholar</span>
-                    <span className="font-display font-black text-4xl text-white block mb-1">$0</span>
-                    <span className="font-mono text-[0.55rem] text-[#a8b3cf]/40 uppercase block mb-6">Forever free</span>
-                    <ul className="flex flex-col gap-3.5 text-xs text-[#a8b3cf]/70">
-                      <li><span className="text-[#818cf8] font-bold mr-2">✓</span>Unlimited professor searches</li>
-                      <li><span className="text-[#818cf8] font-bold mr-2">✓</span>1 full paper summary after signup</li>
-                      <li><span className="text-[#818cf8] font-bold mr-2">✓</span>Save professors & papers</li>
-                      <li><span className="text-[#818cf8] font-bold mr-2">✓</span>Basic structural templates</li>
-                    </ul>
-                  </div>
-                  <Link href="/signup" className="w-full text-center py-3.5 rounded-full border border-white/10 hover:bg-white/[0.03] text-xs font-bold uppercase tracking-widest text-white transition-all mt-8 select-none" style={{ fontFamily: "var(--font-sans)" }}>
-                    Start free
-                  </Link>
-                </div>
-              </div>
-
-              {/* Card 2: Weekly Sprint */}
-              <div className="lp-pricing-slider-slide">
-                <div className="lp-price-card rounded-2xl border border-[#818cf8]/20 bg-[#818cf8]/[0.01] p-8 flex flex-col justify-between min-h-[460px]">
-                  <div>
-                    <span className="font-mono text-[0.6rem] tracking-wider text-[#818cf8] uppercase block mb-2">Weekly Sprint</span>
-                    <span className="font-display font-black text-4xl text-[#818cf8] block mb-1">$7</span>
-                    <span className="font-mono text-[0.55rem] text-[#a8b3cf]/40 uppercase block mb-6">1 week access</span>
-                    <ul className="flex flex-col gap-3.5 text-xs text-[#a8b3cf]">
-                      <li><span className="text-[#818cf8] font-bold mr-2">✓</span>Unlimited research summaries</li>
-                      <li><span className="text-[#818cf8] font-bold mr-2">✓</span>Outreach email checker</li>
-                      <li><span className="text-[#818cf8] font-bold mr-2">✓</span>Professor contact details finder</li>
-                      <li><span className="text-[#818cf8] font-bold mr-2">✓</span>Outreach responsiveness indicator</li>
-                    </ul>
-                  </div>
-                  <Link href="/signup" className="w-full text-center py-3.5 rounded-full bg-[#818cf8]/10 hover:bg-[#818cf8]/20 border border-[#818cf8]/35 text-xs font-bold uppercase tracking-widest text-[#818cf8] transition-all mt-8 select-none" style={{ fontFamily: "var(--font-sans)" }}>
-                    Get 1-Week Sprint — $7
-                  </Link>
-                </div>
-              </div>
-
-              {/* Card 3: Semester */}
-              <div className="lp-pricing-slider-slide">
-                <div className="lp-price-card rounded-2xl border border-white/5 bg-white/[0.01] p-8 flex flex-col justify-between min-h-[460px]">
-                  <div>
-                    <span className="font-mono text-[0.6rem] tracking-wider text-[#a8b3cf]/50 uppercase block mb-2">Semester Pass</span>
-                    <span className="font-display font-black text-4xl text-white block mb-1">$29</span>
-                    <span className="font-mono text-[0.55rem] text-[#a8b3cf]/40 uppercase block mb-6">4 months access</span>
-                    <ul className="flex flex-col gap-3.5 text-xs text-[#a8b3cf]/70">
-                      <li className="font-bold text-white"><span className="text-[#818cf8] mr-2">✓</span>Everything in Free, plus:</li>
-                      <li><span className="text-[#818cf8] font-bold mr-2">✓</span>Unlimited research summaries</li>
-                      <li><span className="text-[#818cf8] font-bold mr-2">✓</span>Outreach email checker</li>
-                      <li><span className="text-[#818cf8] font-bold mr-2">✓</span>Professor contact details finder</li>
-                      <li><span className="text-[#818cf8] font-bold mr-2">✓</span>Cold Email Playbook included</li>
-                    </ul>
-                  </div>
-                  <Link href="/signup" className="w-full text-center py-3.5 rounded-full border border-white/10 hover:bg-white/[0.03] text-xs font-bold uppercase tracking-widest text-white transition-all mt-8 select-none" style={{ fontFamily: "var(--font-sans)" }}>
-                    Get Semester Access — $29
-                  </Link>
-                </div>
-              </div>
-
-              {/* Card 4: Lifetime */}
-              <div className="lp-pricing-slider-slide">
-                <div className="lp-price-card rounded-2xl border border-[#818cf8]/50 bg-[#818cf8]/5 p-8 flex flex-col justify-between min-h-[460px] relative overflow-hidden">
-                  <div className="absolute top-3 right-3 bg-[#818cf8] text-[#09090b] font-mono text-[0.5rem] font-bold uppercase px-2.5 py-1 rounded-full select-none">
-                    BEST VALUE
-                  </div>
-                  <div>
-                    <span className="font-mono text-[0.6rem] tracking-wider text-[#818cf8] uppercase block mb-2">Lifetime Access</span>
-                    <span className="font-display font-black text-4xl text-[#818cf8] block mb-1">$59</span>
-                    <span className="font-mono text-[0.55rem] text-[#a8b3cf]/40 uppercase block mb-6">Yours forever</span>
-                    <ul className="flex flex-col gap-3.5 text-xs text-[#a8b3cf]">
-                      <li className="font-bold text-white"><span className="text-[#818cf8] mr-2">✓</span>Everything in Semester, plus:</li>
-                      <li><span className="text-[#818cf8] font-bold mr-2">✓</span>Never pay another subscription</li>
-                      <li><span className="text-[#818cf8] font-bold mr-2">✓</span>Priority AI summary credits</li>
-                      <li><span className="text-[#818cf8] font-bold mr-2">✓</span>Map-based nearby professor search</li>
-                      <li><span className="text-[#818cf8] font-bold mr-2">✓</span>All future feature releases free</li>
-                    </ul>
-                  </div>
-                  <Link href="/signup" className="w-full text-center py-3.5 rounded-full bg-[#818cf8] text-[#09090b] hover:opacity-90 text-xs font-bold uppercase tracking-widest transition-all mt-8 select-none" style={{ fontFamily: "var(--font-sans)" }}>
-                    Claim Lifetime — $59
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Dots Indicator for Mobile */}
-          <div className="lp-mobile-pricing-dots flex justify-center items-center gap-3 mt-8">
-            {[0, 1, 2, 3].map((i) => (
-              <button
-                key={i}
-                onClick={() => setPricingIndex(i)}
-                className={`w-2.5 h-2.5 rounded-full border-none transition-all duration-300 ${
-                  pricingIndex === i ? "bg-[#818cf8] scale-[1.3]" : "bg-white/10"
-                }`}
-                style={{ cursor: "pointer", padding: 0 }}
-              />
-            ))}
-          </div>
-
-          {/* Cold Email Playbook banner */}
-          <div className="max-w-[42rem] mx-auto mt-16 px-6 py-5 rounded-2xl border border-white/5 bg-white/[0.01] text-center">
-            <span className="font-mono text-[0.68rem] tracking-wider text-[#818cf8] uppercase block mb-1">🎁 Included with Paid Plans</span>
-            <p className="text-white text-sm font-medium leading-relaxed">
-              The <strong>Cold Email Playbook</strong>: 12 annotated winning emails, a proven paragraph template, and the perfect follow-up schedule.
-            </p>
-          </div>
-        </section>
-
         {/* ══ FINAL CALL TO ACTION ═══════════════════════════════════════ */}
         <section className="js-fade relative overflow-hidden"
           style={{ minHeight: "100vh", padding: "5rem 5rem 4rem 5rem", display: "flex", flexDirection: "column" }}>
@@ -1231,7 +1017,7 @@ export default function LandingPage() {
           <div className="flex-1 flex items-center py-8">
             <SplitReveal as="h2" className="font-display font-black tracking-tighter text-[#fafaf9]"
               style={{ fontSize: "clamp(3.2rem, 14vw, 15rem)", lineHeight: 0.82 }}>
-              Start Outreach.
+              Begin Mentorship.
             </SplitReveal>
           </div>
           <div className="flex items-end justify-between pt-8" style={{ borderTop: "1px solid rgba(129, 140, 248, 0.1)" }}>
