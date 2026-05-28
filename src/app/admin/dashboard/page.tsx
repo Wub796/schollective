@@ -28,7 +28,7 @@ function StatCard({
     >
       <span
         className="font-display"
-        style={{ fontSize: "2.8rem", fontWeight: 900, color: accent ?? "#fafaf9", letterSpacing: "-0.04em", lineHeight: 1 }}
+        style={{ fontSize: "2.8rem", fontWeight: 900, color: accent ?? "var(--text-primary)", letterSpacing: "-0.04em", lineHeight: 1 }}
       >
         {value}
       </span>
@@ -104,7 +104,7 @@ export default async function AdminDashboard() {
       {/* ── Stats ── */}
       <div className="dash-stat-grid" style={{ marginBottom: "2.5rem" }}>
         <StatCard value={totalActive}              label="Active Accounts" sub="Students + Faculty" accent="#4ade80" />
-        <StatCard value={studentCount ?? 0}        label="Students"        sub="Registered"          accent="#818cf8" />
+        <StatCard value={studentCount ?? 0}        label="Students"        sub="Registered"          accent="var(--accent)" />
         <StatCard value={facultyCount ?? 0}        label="Faculty"         sub="Verified"            accent="#60a5fa" />
         <StatCard value={activeThreadsCount ?? 0}  label="Active Threads"  sub="System-wide"         accent="#a78bfa" />
       </div>

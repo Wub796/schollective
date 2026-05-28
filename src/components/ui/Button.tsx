@@ -18,9 +18,9 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         "hover:-translate-y-0.5",
       // Glass ghost — secondary actions
       ghost:
-        "bg-[rgba(17,17,19,0.6)] backdrop-blur-md text-slate-600 " +
+        "bg-[rgba(15,23,42,0.04)] backdrop-blur-md text-slate-600 " +
         "border border-[rgba(37, 99, 235,0.14)] " +
-        "hover:bg-[rgba(17,17,19,0.85)] hover:border-[rgba(37, 99, 235,0.3)] hover:text-slate-900 " +
+        "hover:bg-[rgba(15,23,42,0.08)] hover:border-[rgba(37, 99, 235,0.3)] hover:text-slate-900 " +
         "hover:-translate-y-0.5",
       // Hairline outline — tertiary
       outline:

@@ -36,7 +36,7 @@ function formatDate(iso: string) {
 
 function FilterPill({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
   return (
-    <button onClick={onClick} className="btn-filter-pill" style={{ padding: "0.35rem 0.85rem", borderRadius: "100px", border: active ? "1px solid rgba(15, 23, 42,0.3)" : "1px solid rgba(15, 23, 42,0.07)", background: active ? "rgba(15, 23, 42,0.08)" : "transparent", color: active ? "#fafaf9" : "rgba(15, 23, 42,0.35)", fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", fontFamily: "var(--font-sans)", cursor: "pointer", whiteSpace: "nowrap" }}>
+    <button onClick={onClick} className="btn-filter-pill" style={{ padding: "0.35rem 0.85rem", borderRadius: "100px", border: active ? "1px solid rgba(15, 23, 42,0.3)" : "1px solid rgba(15, 23, 42,0.07)", background: active ? "rgba(15, 23, 42,0.08)" : "transparent", color: active ? "var(--text-primary)" : "rgba(15, 23, 42,0.35)", fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", fontFamily: "var(--font-sans)", cursor: "pointer", whiteSpace: "nowrap" }}>
       {label}
     </button>
   );
