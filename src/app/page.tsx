@@ -9,9 +9,9 @@ import { PublicNav } from "@/components/ui/PublicNav";
 import { Button } from "@/components/ui/Button";
 import { AnimatedBackground } from "@/components/ui/AnimatedBackground";
 
-/* ── Page Loader (rotating cube loader) ────────────────────────────────── */
+/* ── Page Loader (rotating gyroscopic knowledge constellation loader) ──────────────── */
 function PageLoader({ done }: { done: boolean }) {
-  const LETTERS = ["S", "C", "H", "O", "L", "L"];
+  const letters = "SCHOLLECTIVE".split("");
   return (
     <AnimatePresence>
       {!done && (
@@ -19,58 +19,111 @@ function PageLoader({ done }: { done: boolean }) {
           key="loader"
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.55, ease: [0.19, 1, 0.22, 1], delay: 0.1 }}
-          className="fixed inset-0 z-[99999] flex flex-col items-center justify-center gap-6"
-          style={{ background: "#fdfdfd" }}
+          transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
+          className="fixed inset-0 z-[99999] flex flex-col items-center justify-center select-none"
+          style={{
+            background: "radial-gradient(circle at center, rgba(79, 70, 229, 0.04) 0%, #fcfbfa 60%, #faf9f7 100%)"
+          }}
         >
-          <div style={{ width: "5rem", height: "5rem", perspective: "20rem", position: "relative" }}>
+          {/* Gyroscopic Orbits & Central Core */}
+          <div className="relative w-48 h-48 flex items-center justify-center mb-8">
+            {/* Outer Orbit 1 */}
             <motion.div
-              animate={{ rotateY: [0, 90, 90, 180, 180, 270, 270, 360], rotateX: [0, 0, 0, 0, -90, -90, 0, 0] }}
-              transition={{ duration: 2.4, ease: "easeInOut", repeat: Infinity }}
-              style={{ width: "100%", height: "100%", position: "relative", transformStyle: "preserve-3d" }}
+              animate={{ rotate: 360 }}
+              transition={{ duration: 6, ease: "linear", repeat: Infinity }}
+              className="absolute inset-0 rounded-full border border-dashed border-indigo-600/10"
+              style={{ padding: "2px" }}
             >
-              {LETTERS.map((ch, i) => {
-                const faces = [
-                  { rotateY: 0, translateZ: "2.5rem" },
-                  { rotateY: -90, translateZ: "2.5rem" },
-                  { rotateX: -90, translateZ: "2.5rem" },
-                  { rotateX: 180, translateZ: "2.5rem" },
-                  { rotateX: 90, translateZ: "2.5rem" },
-                  { rotateY: 90, translateZ: "2.5rem" },
-                ][i];
-                return (
-                  <div
-                    key={i}
-                    className="absolute w-full h-full flex items-center justify-center border text-lg font-black"
-                    style={{
-                      background: i % 2 === 0 ? "rgba(79, 70, 229, 0.05)" : "rgba(79, 70, 229, 0.15)",
-                      borderColor: "rgba(79, 70, 229, 0.25)",
-                      color: "#4f46e5",
-                      transform: `rotate${Object.keys(faces)[0].replace("rotate", "") as string}(${Object.values(faces)[0]}) translateZ(${Object.values(faces)[1]})`,
-                      backfaceVisibility: "hidden",
-                    }}
-                  >
-                    {ch}
-                  </div>
-                );
-              })}
+              {/* Particle node */}
+              <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 absolute -top-0.5 left-1/2 -translate-x-1/2 shadow-[0_0_8px_rgba(79,70,229,0.8)]" />
+            </motion.div>
+
+            {/* Middle Orbit 2 */}
+            <motion.div
+              animate={{ rotate: -360 }}
+              transition={{ duration: 4.5, ease: "linear", repeat: Infinity }}
+              className="absolute w-36 h-36 rounded-full border border-indigo-600/15"
+              style={{ borderStyle: "solid", borderDasharray: "4 12" }}
+            >
+              {/* Particle node */}
+              <div className="w-2 h-2 rounded-full bg-indigo-500 absolute -top-1 left-1/3 shadow-[0_0_8px_rgba(79,70,229,0.6)]" />
+            </motion.div>
+
+            {/* Inner Orbit 3 */}
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 3, ease: "linear", repeat: Infinity }}
+              className="absolute w-24 h-24 rounded-full border border-indigo-600/20"
+              style={{ borderStyle: "solid", borderDasharray: "15 8" }}
+            >
+              <div className="w-1 h-1 rounded-full bg-indigo-400 absolute top-2 right-2 shadow-[0_0_6px_rgba(79,70,229,0.5)]" />
+            </motion.div>
+
+            {/* Pulsing Central Core Shield & Scholastic SVG */}
+            <motion.div
+              animate={{
+                scale: [0.96, 1.04, 0.96],
+                boxShadow: [
+                  "0 0 12px rgba(79, 70, 229, 0.05)",
+                  "0 0 28px rgba(79, 70, 229, 0.15)",
+                  "0 0 12px rgba(79, 70, 229, 0.05)"
+                ]
+              }}
+              transition={{ duration: 2, ease: "easeInOut", repeat: Infinity }}
+              className="absolute w-14 h-14 rounded-2xl bg-white border border-indigo-600/15 flex items-center justify-center"
+            >
+              {/* Floating Graduation Cap Icon */}
+              <motion.svg
+                animate={{ y: [-2, 2, -2] }}
+                transition={{ duration: 2, ease: "easeInOut", repeat: Infinity }}
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path d="M22 10v6M2 10l10-5 10 5-10 5z" stroke="#4f46e5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5" stroke="#4f46e5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </motion.svg>
             </motion.div>
           </div>
 
-          <div className="text-center select-none">
-            <p className="font-mono text-[0.7rem] uppercase tracking-[0.35em] text-indigo-600/60 font-semibold m-0">
-              Schollective
-            </p>
-            <p className="font-mono text-[0.55rem] tracking-[0.2em] text-slate-400 m-0 mt-1">
+          {/* Staggered Brand Text Reveal */}
+          <div className="text-center">
+            <div className="flex justify-center gap-0.5 overflow-hidden py-1 mb-1">
+              {letters.map((char, i) => (
+                <motion.span
+                  key={i}
+                  initial={{ y: "100%", opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{
+                    duration: 0.6,
+                    ease: [0.16, 1, 0.3, 1],
+                    delay: 0.1 + i * 0.04
+                  }}
+                  className="font-mono text-xs font-bold uppercase tracking-[0.25em] text-indigo-600"
+                >
+                  {char}
+                </motion.span>
+              ))}
+            </div>
+
+            <motion.p
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: "easeOut", delay: 0.6 }}
+              className="font-mono text-[0.52rem] uppercase tracking-[0.25em] text-slate-400/80 m-0 mt-2"
+            >
               Academic Mentorship Platform
-            </p>
+            </motion.p>
           </div>
 
-          <div className="w-32 h-[1px] bg-slate-200 relative overflow-hidden">
+          {/* Precision Horizontal Progress Bar */}
+          <div className="w-32 h-[1px] bg-slate-200/60 relative overflow-hidden mt-6 rounded-full">
             <motion.div
               initial={{ scaleX: 0, originX: 0 }}
               animate={{ scaleX: 1 }}
-              transition={{ duration: 1.1, ease: [0.19, 1, 0.22, 1] }}
+              transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
               className="absolute inset-0 bg-indigo-600"
             />
           </div>
@@ -154,7 +207,7 @@ export default function LandingPage() {
   const [loaderDone, setLoaderDone] = useState(false);
 
   useEffect(() => {
-    const t = setTimeout(() => setLoaderDone(true), 1300);
+    const t = setTimeout(() => setLoaderDone(true), 1800);
     return () => clearTimeout(t);
   }, []);
 
