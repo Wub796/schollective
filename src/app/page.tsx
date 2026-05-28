@@ -9,9 +9,9 @@ import { PublicNav } from "@/components/ui/PublicNav";
 import { Button } from "@/components/ui/Button";
 import { AnimatedBackground } from "@/components/ui/AnimatedBackground";
 
-/* ── Page Loader (rotating cube loader) ────────────────────────────────── */
+/* ── Page Loader (rotating gyroscopic knowledge constellation loader) ──────────────── */
 function PageLoader({ done }: { done: boolean }) {
-  const LETTERS = ["S", "C", "H", "O", "L", "L"];
+  const letters = "SCHOLLECTIVE".split("");
   return (
     <AnimatePresence>
       {!done && (
@@ -19,58 +19,111 @@ function PageLoader({ done }: { done: boolean }) {
           key="loader"
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.55, ease: [0.19, 1, 0.22, 1], delay: 0.1 }}
-          className="fixed inset-0 z-[99999] flex flex-col items-center justify-center gap-6"
-          style={{ background: "#fdfdfd" }}
+          transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
+          className="fixed inset-0 z-[99999] flex flex-col items-center justify-center select-none"
+          style={{
+            background: "radial-gradient(circle at center, rgba(79, 70, 229, 0.04) 0%, #fcfbfa 60%, #faf9f7 100%)"
+          }}
         >
-          <div style={{ width: "5rem", height: "5rem", perspective: "20rem", position: "relative" }}>
+          {/* Gyroscopic Orbits & Central Core */}
+          <div className="relative w-48 h-48 flex items-center justify-center mb-8">
+            {/* Outer Orbit 1 */}
             <motion.div
-              animate={{ rotateY: [0, 90, 90, 180, 180, 270, 270, 360], rotateX: [0, 0, 0, 0, -90, -90, 0, 0] }}
-              transition={{ duration: 2.4, ease: "easeInOut", repeat: Infinity }}
-              style={{ width: "100%", height: "100%", position: "relative", transformStyle: "preserve-3d" }}
+              animate={{ rotate: 360 }}
+              transition={{ duration: 6, ease: "linear", repeat: Infinity }}
+              className="absolute inset-0 rounded-full border border-dashed border-indigo-600/10"
+              style={{ padding: "2px" }}
             >
-              {LETTERS.map((ch, i) => {
-                const faces = [
-                  { rotateY: 0, translateZ: "2.5rem" },
-                  { rotateY: -90, translateZ: "2.5rem" },
-                  { rotateX: -90, translateZ: "2.5rem" },
-                  { rotateX: 180, translateZ: "2.5rem" },
-                  { rotateX: 90, translateZ: "2.5rem" },
-                  { rotateY: 90, translateZ: "2.5rem" },
-                ][i];
-                return (
-                  <div
-                    key={i}
-                    className="absolute w-full h-full flex items-center justify-center border text-lg font-black"
-                    style={{
-                      background: i % 2 === 0 ? "rgba(79, 70, 229, 0.05)" : "rgba(79, 70, 229, 0.15)",
-                      borderColor: "rgba(79, 70, 229, 0.25)",
-                      color: "#4f46e5",
-                      transform: `rotate${Object.keys(faces)[0].replace("rotate", "") as string}(${Object.values(faces)[0]}) translateZ(${Object.values(faces)[1]})`,
-                      backfaceVisibility: "hidden",
-                    }}
-                  >
-                    {ch}
-                  </div>
-                );
-              })}
+              {/* Particle node */}
+              <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 absolute -top-0.5 left-1/2 -translate-x-1/2 shadow-[0_0_8px_rgba(79,70,229,0.8)]" />
+            </motion.div>
+
+            {/* Middle Orbit 2 */}
+            <motion.div
+              animate={{ rotate: -360 }}
+              transition={{ duration: 4.5, ease: "linear", repeat: Infinity }}
+              className="absolute w-36 h-36 rounded-full border border-indigo-600/15"
+              style={{ borderStyle: "solid", borderDasharray: "4 12" }}
+            >
+              {/* Particle node */}
+              <div className="w-2 h-2 rounded-full bg-indigo-500 absolute -top-1 left-1/3 shadow-[0_0_8px_rgba(79,70,229,0.6)]" />
+            </motion.div>
+
+            {/* Inner Orbit 3 */}
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 3, ease: "linear", repeat: Infinity }}
+              className="absolute w-24 h-24 rounded-full border border-indigo-600/20"
+              style={{ borderStyle: "solid", borderDasharray: "15 8" }}
+            >
+              <div className="w-1 h-1 rounded-full bg-indigo-400 absolute top-2 right-2 shadow-[0_0_6px_rgba(79,70,229,0.5)]" />
+            </motion.div>
+
+            {/* Pulsing Central Core Shield & Scholastic SVG */}
+            <motion.div
+              animate={{
+                scale: [0.96, 1.04, 0.96],
+                boxShadow: [
+                  "0 0 12px rgba(79, 70, 229, 0.05)",
+                  "0 0 28px rgba(79, 70, 229, 0.15)",
+                  "0 0 12px rgba(79, 70, 229, 0.05)"
+                ]
+              }}
+              transition={{ duration: 2, ease: "easeInOut", repeat: Infinity }}
+              className="absolute w-14 h-14 rounded-2xl bg-white border border-indigo-600/15 flex items-center justify-center"
+            >
+              {/* Floating Graduation Cap Icon */}
+              <motion.svg
+                animate={{ y: [-2, 2, -2] }}
+                transition={{ duration: 2, ease: "easeInOut", repeat: Infinity }}
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path d="M22 10v6M2 10l10-5 10 5-10 5z" stroke="#4f46e5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5" stroke="#4f46e5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </motion.svg>
             </motion.div>
           </div>
 
-          <div className="text-center select-none">
-            <p className="font-mono text-[0.7rem] uppercase tracking-[0.35em] text-indigo-600/60 font-semibold m-0">
-              Schollective
-            </p>
-            <p className="font-mono text-[0.55rem] tracking-[0.2em] text-slate-400 m-0 mt-1">
+          {/* Staggered Brand Text Reveal */}
+          <div className="text-center">
+            <div className="flex justify-center gap-0.5 overflow-hidden py-1 mb-1">
+              {letters.map((char, i) => (
+                <motion.span
+                  key={i}
+                  initial={{ y: "100%", opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{
+                    duration: 0.6,
+                    ease: [0.16, 1, 0.3, 1],
+                    delay: 0.1 + i * 0.04
+                  }}
+                  className="font-mono text-xs font-bold uppercase tracking-[0.25em] text-indigo-600"
+                >
+                  {char}
+                </motion.span>
+              ))}
+            </div>
+
+            <motion.p
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: "easeOut", delay: 0.6 }}
+              className="font-mono text-[0.52rem] uppercase tracking-[0.25em] text-slate-400/80 m-0 mt-2"
+            >
               Academic Mentorship Platform
-            </p>
+            </motion.p>
           </div>
 
-          <div className="w-32 h-[1px] bg-slate-200 relative overflow-hidden">
+          {/* Precision Horizontal Progress Bar */}
+          <div className="w-32 h-[1px] bg-slate-200/60 relative overflow-hidden mt-6 rounded-full">
             <motion.div
               initial={{ scaleX: 0, originX: 0 }}
               animate={{ scaleX: 1 }}
-              transition={{ duration: 1.1, ease: [0.19, 1, 0.22, 1] }}
+              transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
               className="absolute inset-0 bg-indigo-600"
             />
           </div>
@@ -154,7 +207,7 @@ export default function LandingPage() {
   const [loaderDone, setLoaderDone] = useState(false);
 
   useEffect(() => {
-    const t = setTimeout(() => setLoaderDone(true), 1300);
+    const t = setTimeout(() => setLoaderDone(true), 1800);
     return () => clearTimeout(t);
   }, []);
 
@@ -173,13 +226,13 @@ export default function LandingPage() {
         <PublicNav />
 
         {/* ══ HERO SECTION ═══════════════════════════════════════════════ */}
-        <section className="relative min-h-[92vh] flex flex-col justify-center py-24 md:py-32" style={{ background: "#fdfdfd" }}>
+        <section className="relative min-h-[92vh] flex flex-col justify-center py-36 md:py-52" style={{ background: "#fdfdfd" }}>
           <AnimatedBackground />
 
           <div className="relative z-10 w-full max-w-7xl mx-auto px-4 md:px-8 lg:px-12 flex flex-col items-center text-center">
             {/* Headline */}
             <h1
-              className="font-display font-bold text-slate-900 mb-0 select-none tracking-tighter leading-[1.1]"
+              className="font-display font-bold text-slate-900 mb-0 select-none tracking-tighter leading-[1.1] text-center"
               style={{ fontSize: "clamp(3rem, 6.5vw, 5.2rem)" }}
             >
               Find the mentor<br />
@@ -211,19 +264,19 @@ export default function LandingPage() {
         </section>
 
         {/* ══ PROBLEM STATEMENT ══════════════════════════════════════════ */}
-        <section className="js-fade relative py-24 md:py-32 border-t border-slate-100" style={{ background: "#fdfdfd" }}>
+        <section className="js-fade relative py-36 md:py-52 border-t border-slate-100" style={{ background: "#fdfdfd" }}>
           <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12 text-center flex flex-col items-center">
             <Label>The truth about academic cold-outreach</Label>
 
             <h2
-              className="font-display font-bold text-slate-900 mt-8 mb-12 tracking-tighter leading-[1.1]"
+              className="font-display font-bold text-slate-900 mt-8 mb-12 tracking-tighter leading-[1.1] text-center"
               style={{ fontSize: "clamp(2rem, 4vw, 3.2rem)" }}
             >
               Professors delete 90% of student outreach emails<br />
               <span className="italic font-light text-slate-600/40">before finishing the first line.</span>
             </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full mb-14 text-center">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-5xl mx-auto mb-14 text-center">
               {[
                 "Professors can spot AI-written emails instantly.",
                 "Generic requests that could go to anyone get ignored.",
@@ -252,27 +305,25 @@ export default function LandingPage() {
         </section>
 
         {/* ══ COMPARISON TABLE ══════════════════════════════════════════ */}
-        <section className="js-fade relative py-24 md:py-32 border-t border-slate-100" style={{ background: "#fdfdfd" }}>
-          <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12">
-            <div className="text-center mb-16">
-              <Label>Comparing Outreach</Label>
-              <h2
-                className="font-display font-bold text-slate-900 mt-8 mb-12 tracking-tighter leading-[1.1]"
-                style={{ fontSize: "clamp(2rem, 3.5vw, 3rem)" }}
-              >
-                Why not just use ChatGPT?
-              </h2>
-            </div>
+        <section className="js-fade relative py-36 md:py-52 border-t border-slate-100" style={{ background: "#fdfdfd" }}>
+          <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12 flex flex-col items-center text-center">
+            <Label>Comparing Outreach</Label>
+            <h2
+              className="font-display font-bold text-slate-900 mt-8 mb-16 tracking-tighter leading-[1.1] text-center"
+              style={{ fontSize: "clamp(2rem, 3.5vw, 3rem)" }}
+            >
+              Why not just use ChatGPT?
+            </h2>
 
-            <div className="border border-slate-200/70 rounded-3xl p-6 md:p-10 bg-[#fdfdfd]">
+            <div className="border border-slate-200/70 rounded-3xl p-6 md:p-10 bg-[#fdfdfd] max-w-4xl mx-auto w-full">
               {/* Desktop view header */}
               <div className="hidden md:grid grid-cols-2 border-b border-slate-200 pb-6 mb-6">
-                <div className="text-center">
+                <div className="text-center pr-0 md:pr-8">
                   <span className="font-sans text-[0.68rem] font-bold tracking-widest text-slate-400 uppercase">
                     ChatGPT
                   </span>
                 </div>
-                <div className="text-center border-l border-slate-200">
+                <div className="text-center pl-0 md:pl-8 border-l border-slate-200">
                   <span className="font-sans text-[0.68rem] font-bold tracking-widest text-indigo-600 uppercase">
                     Schollective
                   </span>
@@ -321,16 +372,16 @@ export default function LandingPage() {
         </section>
 
         {/* ══ 3-STEP WALKTHROUGH ═══════════════════════════════════════ */}
-        <section className="py-24 md:py-32 flex flex-col gap-24 border-t border-slate-100" style={{ background: "#fdfdfd" }}>
+        <section className="py-36 md:py-52 flex flex-col gap-24 md:gap-36 border-t border-slate-100" style={{ background: "#fdfdfd" }}>
           <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12 w-full flex flex-col items-center">
             <Label>How it works</Label>
           </div>
 
           {/* Step 01 */}
-          <div className="js-fade max-w-7xl mx-auto px-4 md:px-8 lg:px-12 w-full grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
-            <div className="flex flex-col items-center text-center">
+          <div className="js-fade max-w-7xl mx-auto px-4 md:px-8 lg:px-12 w-full grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
+            <div className="flex flex-col items-center text-center lg:order-1">
               <span className="font-sans text-3xl font-light text-indigo-600/40 mb-8 font-mono select-none">01</span>
-              <h3 className="font-display font-bold text-3xl md:text-4xl text-slate-900 tracking-tighter mb-0 leading-[1.1]">
+              <h3 className="font-display font-bold text-3xl md:text-4xl text-slate-900 tracking-tighter mb-0 leading-[1.1] text-center">
                 Search any research interest.
               </h3>
               <p className="text-slate-600 leading-relaxed tracking-normal text-sm mt-8 mb-12 font-sans max-w-md mx-auto">
@@ -346,7 +397,7 @@ export default function LandingPage() {
             </div>
 
             {/* Visual Mockup 01 */}
-            <div className="relative p-6 md:p-8 rounded-3xl border border-slate-200/80 bg-white flex flex-col gap-6 w-full text-left">
+            <div className="relative p-6 md:p-8 rounded-3xl border border-slate-200/80 bg-white flex flex-col gap-6 w-full text-left max-w-xl mx-auto lg:order-2">
               <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                 <div className="flex items-center gap-1.5">
                   <div className="w-2 h-2 rounded-full bg-red-400/40" />
@@ -389,9 +440,26 @@ export default function LandingPage() {
           </div>
 
           {/* Step 02 */}
-          <div className="js-fade max-w-7xl mx-auto px-4 md:px-8 lg:px-12 w-full grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
-            {/* Visual Mockup 02 (Left side for desktop layout) */}
-            <div className="order-2 lg:order-1 relative p-6 md:p-8 rounded-3xl border border-slate-200/80 bg-white flex flex-col gap-6 w-full text-left">
+          <div className="js-fade max-w-7xl mx-auto px-4 md:px-8 lg:px-12 w-full grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
+            <div className="flex flex-col items-center text-center lg:order-2">
+              <span className="font-sans text-3xl font-light text-indigo-600/40 mb-8 font-mono select-none">02</span>
+              <h3 className="font-display font-bold text-3xl md:text-4xl text-slate-900 tracking-tighter mb-0 leading-[1.1] text-center">
+                Understand their research in plain English.
+              </h3>
+              <p className="text-slate-600 leading-relaxed tracking-normal text-sm mt-8 mb-12 font-sans max-w-md mx-auto">
+                Every professor profile has an AI-synthesized summary of their key findings, written so a high schooler or undergrad can understand it and reference it with precision. No more pretending to read 40-page papers.
+              </p>
+              <Link
+                href="/signup"
+                className="font-sans text-xs uppercase tracking-widest text-indigo-600 border-b border-indigo-600/20 pb-1.5 hover:border-indigo-600 font-bold transition-colors"
+                style={{ textDecoration: "none" }}
+              >
+                See an example →
+              </Link>
+            </div>
+
+            {/* Visual Mockup 02 */}
+            <div className="relative p-6 md:p-8 rounded-3xl border border-slate-200/80 bg-white flex flex-col gap-6 w-full text-left max-w-xl mx-auto lg:order-1">
               <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                 <div className="flex items-center gap-1.5">
                   <div className="w-2 h-2 rounded-full bg-red-400/40" />
@@ -418,30 +486,13 @@ export default function LandingPage() {
                 </div>
               </div>
             </div>
-
-            <div className="order-1 lg:order-2 flex flex-col items-center text-center">
-              <span className="font-sans text-3xl font-light text-indigo-600/40 mb-8 font-mono select-none">02</span>
-              <h3 className="font-display font-bold text-3xl md:text-4xl text-slate-900 tracking-tighter mb-0 leading-[1.1]">
-                Understand their research in plain English.
-              </h3>
-              <p className="text-slate-600 leading-relaxed tracking-normal text-sm mt-8 mb-12 font-sans max-w-md mx-auto">
-                Every professor profile has an AI-synthesized summary of their key findings, written so a high schooler or undergrad can understand it and reference it with precision. No more pretending to read 40-page papers.
-              </p>
-              <Link
-                href="/signup"
-                className="font-sans text-xs uppercase tracking-widest text-indigo-600 border-b border-indigo-600/20 pb-1.5 hover:border-indigo-600 font-bold transition-colors"
-                style={{ textDecoration: "none" }}
-              >
-                See an example →
-              </Link>
-            </div>
           </div>
 
           {/* Step 03 */}
-          <div className="js-fade max-w-7xl mx-auto px-4 md:px-8 lg:px-12 w-full grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
-            <div className="flex flex-col items-center text-center">
+          <div className="js-fade max-w-7xl mx-auto px-4 md:px-8 lg:px-12 w-full grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
+            <div className="flex flex-col items-center text-center lg:order-1">
               <span className="font-sans text-3xl font-light text-indigo-600/40 mb-8 font-mono select-none">03</span>
-              <h3 className="font-display font-bold text-3xl md:text-4xl text-slate-900 tracking-tighter mb-0 leading-[1.1]">
+              <h3 className="font-display font-bold text-3xl md:text-4xl text-slate-900 tracking-tighter mb-0 leading-[1.1] text-center">
                 Draft structured requests that get answered.
               </h3>
               <p className="text-slate-600 leading-relaxed tracking-normal text-sm mt-8 mb-12 font-sans max-w-md mx-auto">
@@ -457,7 +508,7 @@ export default function LandingPage() {
             </div>
 
             {/* Visual Mockup 03 */}
-            <div className="relative p-6 md:p-8 rounded-3xl border border-slate-200/80 bg-white flex flex-col gap-6 w-full text-left">
+            <div className="relative p-6 md:p-8 rounded-3xl border border-slate-200/80 bg-white flex flex-col gap-6 w-full text-left max-w-xl mx-auto lg:order-2">
               <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                 <div className="flex items-center gap-1.5">
                   <div className="w-2 h-2 rounded-full bg-red-400/40" />
@@ -510,7 +561,7 @@ export default function LandingPage() {
         </section>
 
         {/* ══ FOUNDER QUOTE ═══════════════════════════════════════════════ */}
-        <section className="py-24 md:py-32 relative border-t border-slate-100" style={{ background: "#fdfdfd" }}>
+        <section className="py-36 md:py-52 relative border-t border-slate-100" style={{ background: "#fdfdfd" }}>
           <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12 text-center flex flex-col items-center py-6">
             <span className="text-6xl md:text-7xl font-display font-light text-indigo-600 select-none leading-none mb-4">
               “
@@ -531,12 +582,10 @@ export default function LandingPage() {
         </section>
 
         {/* ══ FINAL CTA ═══════════════════════════════════════════════════ */}
-        <section className="js-fade relative py-24 md:py-32 border-t border-slate-100" style={{ background: "#fdfdfd" }}>
+        <section className="js-fade relative py-36 md:py-52 border-t border-slate-100" style={{ background: "#fdfdfd" }}>
           <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12 text-center flex flex-col items-center">
-            <Label>Get started</Label>
-
             <h2
-              className="font-display font-bold text-slate-900 mt-6 mb-0 tracking-tighter leading-[1.1]"
+              className="font-display font-bold text-slate-900 mt-0 mb-0 tracking-tighter leading-[1.1] text-center"
               style={{ fontSize: "clamp(2.5rem, 5vw, 4rem)" }}
             >
               Your research mentor is<br />
@@ -556,16 +605,18 @@ export default function LandingPage() {
         </section>
 
         {/* ══ FOOTER ═══════════════════════════════════════════════════════ */}
-        <footer style={{ background: "#fdfdfd", borderTop: "1px solid rgba(79, 70, 229, 0.08)" }}>
+        <footer style={{ background: "#faf9f7", borderTop: "1px solid rgba(79, 70, 229, 0.15)" }}>
           <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12 py-24 md:py-32 grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-12 text-left">
             <FadeIn delay={0} className="md:col-span-2 flex flex-col items-start gap-4">
-              <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-                <SchollectiveLogo size={44} />
-                <span className="font-display font-bold text-xl text-slate-900 tracking-tight">
+              <Link href="/" className="group select-none flex items-center gap-3" style={{ textDecoration: "none" }}>
+                <div className="transition-transform duration-300 group-hover:scale-105">
+                  <SchollectiveLogo size={44} />
+                </div>
+                <span className="font-display font-bold text-xl text-slate-900 tracking-tight transition-colors duration-300 group-hover:text-indigo-600">
                   Schollective
                 </span>
-              </div>
-              <p className="font-light leading-relaxed font-sans text-sm text-slate-600 max-w-sm">
+              </Link>
+              <p className="font-light leading-relaxed font-sans text-sm text-slate-600 max-w-sm opacity-90">
                 Connecting ambitious students with verified professors for structured, transparent academic mentorship. Every question deserves a real answer.
               </p>
             </FadeIn>
@@ -584,7 +635,7 @@ export default function LandingPage() {
                   { label: "Log In", href: "/login" },
                 ].map((link) => (
                   <Link key={link.label} href={link.href}
-                    className="font-sans text-sm text-slate-600 hover:text-indigo-600 transition-colors">
+                    className="font-sans text-sm text-slate-600 hover:text-indigo-600 transition-all duration-200 hover:translate-x-1 inline-block">
                     {link.label}
                   </Link>
                 ))}
@@ -602,24 +653,27 @@ export default function LandingPage() {
                   { icon: <circle cx="12" cy="12" r="10" stroke="rgba(79, 70, 229, 0.7)" strokeWidth="1.5" />, extra: <polyline points="12,6 12,12 16,14" stroke="rgba(79, 70, 229, 0.7)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />, text: "Free to use — always" },
                 ].map((item, i) => {
                   const inner = (
-                    <div className="flex items-center gap-3 text-left">
-                      <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: "rgba(79, 70, 229, 0.05)", border: "1px solid rgba(79, 70, 229, 0.1)", display: "flex", alignItems: "center", justifyItems: "center", flexShrink: 0, justifyContent: "center" }}>
+                    <div className="flex items-center gap-3 text-left group">
+                      <div 
+                        style={{ width: "32px", height: "32px", borderRadius: "8px", background: "rgba(79, 70, 229, 0.06)", border: "1px solid rgba(79, 70, 229, 0.12)", display: "flex", alignItems: "center", justifyItems: "center", flexShrink: 0, justifyContent: "center" }}
+                        className="transition-all duration-200 group-hover:border-indigo-600/30 group-hover:bg-indigo-600/10 group-hover:scale-105"
+                      >
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                           {item.icon}{item.extra}
                         </svg>
                       </div>
-                      <span className="font-sans text-sm text-slate-600">{item.text}</span>
+                      <span className="font-sans text-sm text-slate-600 transition-colors duration-200 group-hover:text-indigo-600">{item.text}</span>
                     </div>
                   );
                   return item.href
-                    ? <a key={i} href={item.href} style={{ textDecoration: "none" }}>{inner}</a>
+                    ? <a key={i} href={item.href} style={{ textDecoration: "none" }} className="hover:no-underline">{inner}</a>
                     : <div key={i}>{inner}</div>;
                 })}
               </div>
             </FadeIn>
           </div>
 
-          <div style={{ maxWidth: "80rem", margin: "0 auto", height: "1px", background: "rgba(79, 70, 229, 0.09)", marginLeft: "2.5rem", marginRight: "2.5rem" }} />
+          <div style={{ maxWidth: "80rem", margin: "0 auto", height: "1px", background: "rgba(79, 70, 229, 0.14)", marginLeft: "2.5rem", marginRight: "2.5rem" }} />
 
           <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12 py-8 flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="flex flex-col gap-1 items-center md:items-start text-center md:text-left">
