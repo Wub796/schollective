@@ -775,3 +775,85 @@ body {
   background: rgba(255, 255, 255, 0.055) !important;
   border-color: rgba(255, 255, 255, 0.13) !important;
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVE DASHBOARD HELPERS
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Two-col layout used in student dashboard body */
+.dash-two-col {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 3rem;
+  align-items: start;
+}
+
+/* Three-col stat cards */
+.dash-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+/* About / terms / privacy two-col split */
+.prose-two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+}
+
+/* Auth pages: two-col split (form | brand) */
+.auth-two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100vh;
+}
+
+@media (max-width: 767px) {
+  .dash-two-col {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .dash-stat-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+
+  .prose-two-col {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  /* On mobile, hide brand panel on auth pages (show only form) */
+  .auth-two-col {
+    grid-template-columns: 1fr;
+  }
+  .auth-two-col > :last-child {
+    display: none;
+  }
+
+  /* Shrink paddings on mobile */
+  .content-container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+@media (max-width: 479px) {
+  /* 3-col stats → single col on very small phones */
+  .dash-stat-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Pulse animation used for accepting-requests badge */
+@keyframes pulse {
+  0%, 100% { opacity: 1;   transform: scale(1);    }
+  50%       { opacity: 0.5; transform: scale(1.15); }
+}
+
+/* Spin animation for loading spinners */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
