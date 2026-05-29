@@ -38,7 +38,7 @@ export default function AboutPage() {
         <div style={{ height: "1px", background: "rgba(255,255,255,0.06)", marginBottom: "4rem" }} />
 
         {/* Problem / Solution grid */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "3rem", marginBottom: "5rem" }}>
+        <div className="prose-two-col" style={{ marginBottom: "5rem" }}>
           {[
             { label: "The Problem", title: "Mentorship is gated by proximity", body: "Students at underfunded schools or outside major research hubs rarely get access to the professors whose work aligns with their interests. Geography and institutional prestige create invisible walls." },
             { label: "The Solution", title: "A verified, open network", body: "Schollective verifies professor credentials algorithmically and creates a direct, zero-friction channel between scholars and students — no tuition required, no campus required." },

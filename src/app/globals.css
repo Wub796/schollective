@@ -809,6 +809,13 @@ body {
   min-height: 100vh;
 }
 
+/* Generic equal two-col grid (forms, info pairs) */
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
 @media (max-width: 767px) {
   .dash-two-col {
     grid-template-columns: 1fr;
@@ -825,11 +832,24 @@ body {
     gap: 2rem;
   }
 
-  /* On mobile, hide brand panel on auth pages (show only form) */
+  .grid-2 {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  /* On mobile, hide brand panel on auth pages */
+  /* Login: brand is :last-child; Signup: brand is :first-child */
   .auth-two-col {
     grid-template-columns: 1fr;
   }
-  .auth-two-col > :last-child {
+  .auth-two-col > .auth-brand-panel {
+    display: none;
+  }
+  /* Fallback for login where brand has no class */
+  .auth-two-col:not(.signup-layout) > :last-child {
+    display: none;
+  }
+  .auth-two-col.signup-layout > :first-child {
     display: none;
   }
 
