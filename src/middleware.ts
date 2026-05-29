@@ -21,27 +21,9 @@ export async function middleware(request: NextRequest) {
     return Response.redirect(new URL('/login', request.url))
   }
 
-  // 2. Role-Based Guard (RBAC) — only redirect when needed, never create loops
-  if (user) {
-    const role = user.user_metadata?.role
-
-    // Student attempting to access Professor-only or Admin routes
-    if (role === 'student' && (isProfessorRoute || isAdminRoute)) {
-      return Response.redirect(new URL('/dashboard', request.url))
-    }
-
-    // Professor attempting to access Student or Admin routes
-    // (but /prof/dashboard itself is fine — don't redirect there again)
-    if (role === 'professor' && (isStudentRoute || isAdminRoute)) {
-      return Response.redirect(new URL('/prof/dashboard', request.url))
-    }
-
-    // Safety check for Admin routes if role is not admin
-    if (isAdminRoute && role !== 'admin') {
-      const redirectPath = role === 'professor' ? '/prof/dashboard' : '/dashboard'
-      return Response.redirect(new URL(redirectPath, request.url))
-    }
-  }
+  // We rely on Server Components (e.g. /dashboard/page.tsx, /admin/dashboard/page.tsx)
+  // to enforce strict Role-Based Access Control (RBAC) using the `profiles` table.
+  // This prevents infinite redirect loops caused by out-of-sync `user.user_metadata.role`.
 
   return response
 }
