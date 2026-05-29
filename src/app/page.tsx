@@ -129,9 +129,9 @@ export default function LandingPage() {
         <PublicNav />
 
         {/* ══ HERO ══════════════════════════════════════════════════════ */}
-        <section className="relative min-h-screen flex flex-col items-center justify-center text-center py-40 md:py-56" style={{ background: "#fdfdfd" }}>
+        <section className="relative min-h-screen flex flex-col items-center justify-center text-center py-24 px-6" style={{ background: "#fdfdfd" }}>
           <AnimatedBackground />
-          <div className="relative z-10 w-full max-w-3xl mx-auto px-6 flex flex-col items-center text-center">
+          <div className="relative z-10 w-full max-w-3xl mx-auto flex flex-col items-center text-center">
             <h1
               className="font-display font-bold text-slate-900 tracking-tighter leading-[1.08] text-center w-full"
               style={{ fontSize: "clamp(3rem, 6.5vw, 5.2rem)" }}
@@ -159,7 +159,7 @@ export default function LandingPage() {
         </section>
 
         {/* ══ PROBLEM STATEMENT ════════════════════════════════════════ */}
-        <section className="js-fade relative border-t border-slate-100" style={{ background: "#fdfdfd", padding: "clamp(5rem, 12vw, 9rem) 1.5rem" }}>
+        <section className="js-fade relative border-t border-slate-100 min-h-screen flex flex-col items-center justify-center py-24 px-6" style={{ background: "#fdfdfd" }}>
           <div className="w-full max-w-4xl mx-auto flex flex-col items-center text-center">
             <Label>The truth about academic cold-outreach</Label>
             <h2
@@ -194,7 +194,7 @@ export default function LandingPage() {
         </section>
 
         {/* ══ COMPARISON TABLE ═════════════════════════════════════════ */}
-        <section className="js-fade relative border-t border-slate-100" style={{ background: "#fdfdfd", padding: "clamp(5rem, 12vw, 9rem) 1.5rem" }}>
+        <section className="js-fade relative border-t border-slate-100 min-h-screen flex flex-col items-center justify-center py-24 px-6" style={{ background: "#fdfdfd" }}>
           <div className="w-full max-w-4xl mx-auto flex flex-col items-center text-center">
             <Label>Comparing Outreach</Label>
             <h2
@@ -224,11 +224,11 @@ export default function LandingPage() {
                   <div key={i} className="grid grid-cols-1 md:grid-cols-2 md:py-8 md:border-b md:border-slate-100 md:last:border-none md:last:pb-0">
                     <div className="flex flex-col items-center text-center pb-8 md:pb-0 border-b border-slate-100 md:border-none gap-4 pr-0 md:pr-10">
                       <span className="w-7 h-7 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500 text-xs font-bold select-none">✕</span>
-                      <p className="text-slate-500 text-sm leading-relaxed max-w-xs mx-auto">{row.bad}</p>
+                      <p className="text-slate-500 text-sm leading-relaxed max-w-xs mx-auto text-center">{row.bad}</p>
                     </div>
                     <div className="flex flex-col items-center text-center pt-8 md:pt-0 md:border-l md:border-slate-200 gap-4 pl-0 md:pl-10">
                       <span className="w-7 h-7 rounded-full bg-indigo-600/10 border border-indigo-600/20 flex items-center justify-center text-indigo-600 text-xs font-bold select-none">✓</span>
-                      <p className="text-slate-900 text-sm leading-relaxed font-medium max-w-xs mx-auto">{row.good}</p>
+                      <p className="text-slate-900 text-sm leading-relaxed font-medium max-w-xs mx-auto text-center">{row.good}</p>
                     </div>
                   </div>
                 ))}
@@ -238,20 +238,18 @@ export default function LandingPage() {
         </section>
 
         {/* ══ 3-STEP WALKTHROUGH ══════════════════════════════════════ */}
-        <section className="border-t border-slate-100" style={{ background: "#fdfdfd", padding: "clamp(5rem, 12vw, 9rem) 1.5rem" }}>
-          {/* Label — centered */}
-          <div className="w-full max-w-4xl mx-auto flex flex-col items-center text-center mb-24 md:mb-32">
+        {/* Step 01 */}
+        <section className="js-fade relative border-t border-slate-100 min-h-screen flex flex-col items-center justify-center py-24 px-6" style={{ background: "#fdfdfd" }}>
+          <div className="w-full max-w-4xl mx-auto flex flex-col items-center text-center mb-16 md:mb-24">
             <Label>How it works</Label>
           </div>
-
-          {/* Step 01 */}
-          <div className="js-fade w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center mb-32 md:mb-48">
-            <div className="flex flex-col items-center text-center">
+          <div className="w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+            <div className="w-full max-w-xl mx-auto flex flex-col items-center text-center">
               <span className="font-mono text-4xl font-light text-indigo-600/25 mb-8 select-none">01</span>
-              <h3 className="font-display font-bold text-slate-900 tracking-tighter leading-[1.1]" style={{ fontSize: "clamp(1.8rem, 3vw, 2.6rem)" }}>
+              <h3 className="font-display font-bold text-slate-900 tracking-tighter leading-[1.1] text-center w-full" style={{ fontSize: "clamp(1.8rem, 3vw, 2.6rem)" }}>
                 Search any research interest.
               </h3>
-              <p className="text-slate-500 leading-relaxed text-sm mt-6 mb-10 max-w-sm">
+              <p className="text-slate-500 leading-relaxed text-sm mt-6 mb-10 max-w-sm mx-auto text-center">
                 Type what you care about: quantum computing, cognitive neuroscience, or climate policy. We surface top professors publishing in that exact space, ranked by impact.
               </p>
               <Link href="/signup" className="group inline-flex items-center gap-1.5 font-sans text-xs uppercase tracking-widest text-indigo-600 border-b border-indigo-600/20 pb-1.5 hover:border-indigo-600 font-bold transition-colors" style={{ textDecoration: "none" }}>
@@ -283,15 +281,17 @@ export default function LandingPage() {
               </div>
             </MockupChrome>
           </div>
+        </section>
 
-          {/* Step 02 */}
-          <div className="js-fade w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center mb-32 md:mb-48">
-            <div className="flex flex-col items-center text-center order-1 lg:order-2">
+        {/* Step 02 */}
+        <section className="js-fade relative min-h-screen flex flex-col items-center justify-center py-24 px-6" style={{ background: "#fdfdfd" }}>
+          <div className="w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+            <div className="w-full max-w-xl mx-auto flex flex-col items-center text-center order-1 lg:order-2">
               <span className="font-mono text-4xl font-light text-indigo-600/25 mb-8 select-none">02</span>
-              <h3 className="font-display font-bold text-slate-900 tracking-tighter leading-[1.1]" style={{ fontSize: "clamp(1.8rem, 3vw, 2.6rem)" }}>
+              <h3 className="font-display font-bold text-slate-900 tracking-tighter leading-[1.1] text-center w-full" style={{ fontSize: "clamp(1.8rem, 3vw, 2.6rem)" }}>
                 Understand their research in plain English.
               </h3>
-              <p className="text-slate-500 leading-relaxed text-sm mt-6 mb-10 max-w-sm">
+              <p className="text-slate-500 leading-relaxed text-sm mt-6 mb-10 max-w-sm mx-auto text-center">
                 Every professor profile has an AI-synthesized summary of their key findings, written so a high schooler or undergrad can understand it and reference it with precision. No more pretending to read 40-page papers.
               </p>
               <Link href="/signup" className="group inline-flex items-center gap-1.5 font-sans text-xs uppercase tracking-widest text-indigo-600 border-b border-indigo-600/20 pb-1.5 hover:border-indigo-600 font-bold transition-colors" style={{ textDecoration: "none" }}>
@@ -318,15 +318,17 @@ export default function LandingPage() {
               </MockupChrome>
             </div>
           </div>
+        </section>
 
-          {/* Step 03 */}
-          <div className="js-fade w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
-            <div className="flex flex-col items-center text-center">
+        {/* Step 03 */}
+        <section className="js-fade relative min-h-screen flex flex-col items-center justify-center py-24 px-6" style={{ background: "#fdfdfd" }}>
+          <div className="w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+            <div className="w-full max-w-xl mx-auto flex flex-col items-center text-center">
               <span className="font-mono text-4xl font-light text-indigo-600/25 mb-8 select-none">03</span>
-              <h3 className="font-display font-bold text-slate-900 tracking-tighter leading-[1.1]" style={{ fontSize: "clamp(1.8rem, 3vw, 2.6rem)" }}>
+              <h3 className="font-display font-bold text-slate-900 tracking-tighter leading-[1.1] text-center w-full" style={{ fontSize: "clamp(1.8rem, 3vw, 2.6rem)" }}>
                 Draft structured requests that get answered.
               </h3>
-              <p className="text-slate-500 leading-relaxed text-sm mt-6 mb-10 max-w-sm">
+              <p className="text-slate-500 leading-relaxed text-sm mt-6 mb-10 max-w-sm mx-auto text-center">
                 Our structured request model, co-designed with research faculty, guides you through describing your understanding, interests, and availability. No more guessing what professors want to hear.
               </p>
               <Link href="/signup" className="group inline-flex items-center gap-1.5 font-sans text-xs uppercase tracking-widest text-indigo-600 border-b border-indigo-600/20 pb-1.5 hover:border-indigo-600 font-bold transition-colors" style={{ textDecoration: "none" }}>
@@ -364,7 +366,7 @@ export default function LandingPage() {
         </section>
 
         {/* ══ FINAL CTA ════════════════════════════════════════════════ */}
-        <section className="js-fade relative border-t border-slate-100" style={{ background: "#fdfdfd", padding: "clamp(5rem, 12vw, 9rem) 1.5rem" }}>
+        <section className="js-fade relative border-t border-slate-100 min-h-screen flex flex-col items-center justify-center py-24 px-6" style={{ background: "#fdfdfd" }}>
           <div className="w-full max-w-2xl mx-auto flex flex-col items-center text-center">
             <h2
               className="font-display font-bold text-slate-900 tracking-tighter leading-[1.1] text-center w-full"
