@@ -141,81 +141,88 @@ export function AdminReviewTable({ applicants }: AdminReviewTableProps) {
 
   if (applicants.length === 0) {
     return (
-      <div className="border border-dashed border-[rgba(15, 23, 42, 0.06)] rounded-2xl p-24 flex flex-col items-center gap-8">
-        <div className="w-14 h-14 bg-[rgba(15, 23, 42, 0.03)] rounded-xl flex items-center justify-center border border-[rgba(15, 23, 42, 0.06)]">
-          <CheckCircle size={24} className="text-[#4a4a4a]" />
+      <div style={{ border: "1px dashed rgba(15,23,42,0.08)", borderRadius: "16px", padding: "4rem 2rem", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: "1.25rem" }}>
+        <div style={{ width: "3rem", height: "3rem", borderRadius: "50%", background: "rgba(79,70,229,0.05)", border: "1px solid rgba(79,70,229,0.12)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <CheckCircle size={18} style={{ color: "rgba(79,70,229,0.5)" }} />
         </div>
-        <h3 className="font-display text-2xl text-[#d4d4d2] font-semibold">Queue Cleared</h3>
-        <p className="text-[#4a4a4a] max-w-[320px] leading-relaxed text-sm font-light text-center">
-          There are no pending professor applications currently awaiting review.
-        </p>
+        <div>
+          <h3 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "rgba(15,23,42,0.7)", marginBottom: "0.5rem", letterSpacing: "-0.02em" }}>Queue Cleared</h3>
+          <p style={{ fontSize: "0.8rem", color: "rgba(15,23,42,0.32)", maxWidth: "24rem", lineHeight: 1.7, fontFamily: "var(--font-sans)" }}>
+            There are no pending professor applications currently awaiting review.
+          </p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-4">
+    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
       {/* Desktop Table */}
-      <div className="hidden lg:block bg-[#111111] border border-[rgba(15, 23, 42, 0.06)] rounded-2xl overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse text-left">
+      <div className="hidden lg:block" style={{ border: "1px solid rgba(15,23,42,0.06)", borderRadius: "14px", overflow: "hidden", background: "rgba(15,23,42,0.015)" }}>
+        <div style={{ overflowX: "auto" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
             <thead>
-              <tr className="border-b border-[rgba(15, 23, 42, 0.05)]">
+              <tr style={{ borderBottom: "1px solid rgba(15,23,42,0.05)" }}>
                 {["Applicant", "Institution", "Expertise", "Confidence Score", "Actions"].map((h, i) => (
                   <th
                     key={h}
-                    className={`px-7 py-4 text-[0.6rem] font-bold text-[#3a3a3a] uppercase tracking-[0.2em]${i === 4 ? " text-right" : ""}`}
+                    style={{ padding: "0.85rem 1.25rem", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(15,23,42,0.2)", fontFamily: "var(--font-sans, monospace)", whiteSpace: "nowrap", textAlign: i === 4 ? "right" : "left" }}
                   >
                     {h}
                   </th>
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-[rgba(15, 23, 42, 0.04)]">
+            <tbody>
               {applicants.map((prof) => {
                 const displayName = prof.preferred_name || prof.first_name;
                 const isProcessing = processingId === prof.id;
                 return (
-                  <tr key={prof.id} className="hover:bg-[rgba(15, 23, 42, 0.02)] transition-colors">
-                    <td className="px-7 py-5">
-                      <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-xl bg-[rgba(15, 23, 42, 0.04)] border border-[rgba(15, 23, 42, 0.07)] flex items-center justify-center text-sm font-semibold text-[#6a6a6a]">
+                  <tr
+                    key={prof.id}
+                    style={{ borderBottom: "1px solid rgba(15,23,42,0.04)", transition: "background 0.15s" }}
+                    onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(15,23,42,0.02)")}
+                    onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                  >
+                    <td style={{ padding: "1rem 1.25rem" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                        <div style={{ width: "2rem", height: "2rem", borderRadius: "8px", background: "rgba(15,23,42,0.04)", border: "1px solid rgba(15,23,42,0.07)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.65rem", fontWeight: 700, color: "rgba(15,23,42,0.4)", fontFamily: "var(--font-sans)", flexShrink: 0 }}>
                           {prof.first_name[0]}{prof.last_name[0]}
                         </div>
                         <div>
-                          <div className="text-sm font-medium text-[#d4d4d2]">Dr. {displayName} {prof.last_name}</div>
-                          <div className="flex items-center gap-1.5 text-[0.68rem] text-[#4a4a4a] mt-0.5">
-                            <Mail size={11} />
+                          <div style={{ fontSize: "0.82rem", fontWeight: 600, color: "var(--text-primary)", fontFamily: "var(--font-sans)" }}>Dr. {displayName} {prof.last_name}</div>
+                          <div style={{ display: "flex", alignItems: "center", gap: "0.3rem", fontSize: "0.6rem", color: "rgba(15,23,42,0.3)", fontFamily: "var(--font-sans)", marginTop: "0.15rem" }}>
+                            <Mail size={9} />
                             {prof.email}
                           </div>
                         </div>
                       </div>
                     </td>
-                    <td className="px-7 py-5">
-                      <div className="flex items-center gap-1.5 text-xs text-[#8a8a8a] bg-[rgba(15, 23, 42, 0.03)] border border-[rgba(15, 23, 42, 0.06)] px-5 py-2.5 rounded-lg w-fit">
-                        <GraduationCap size={13} />
-                        {prof.institution || "Not specified"}
+                    <td style={{ padding: "1rem 1.25rem" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", fontSize: "0.72rem", color: "rgba(15,23,42,0.4)", fontFamily: "var(--font-sans)" }}>
+                        <GraduationCap size={12} style={{ flexShrink: 0, color: "rgba(15,23,42,0.25)" }} />
+                        {prof.institution || <span style={{ fontStyle: "italic", color: "rgba(15,23,42,0.2)" }}>Not specified</span>}
                       </div>
                     </td>
-                    <td className="px-7 py-5">
-                      <div className="flex flex-wrap gap-1.5 max-w-[200px]">
+                    <td style={{ padding: "1rem 1.25rem" }}>
+                      <div style={{ display: "flex", flexWrap: "wrap", gap: "0.35rem", maxWidth: "200px" }}>
                         {prof.expertise_fields?.map((field, idx) => (
-                          <span key={idx} className="px-2 py-0.5 rounded-md bg-[rgba(15, 23, 42, 0.03)] text-[#5a5a5a] border border-[rgba(15, 23, 42, 0.05)] text-[0.6rem]">
+                          <span key={idx} style={{ padding: "0.2rem 0.55rem", borderRadius: "6px", background: "var(--accent-dim)", border: "1px solid rgba(79,70,229,0.12)", color: "var(--accent)", fontSize: "0.58rem", fontWeight: 600, fontFamily: "var(--font-sans)" }}>
                             {field}
                           </span>
-                        )) || <span className="text-xs italic text-[#3a3a3a]">None</span>}
+                        )) || <span style={{ fontSize: "0.72rem", fontStyle: "italic", color: "rgba(15,23,42,0.2)" }}>None</span>}
                       </div>
                     </td>
-                    <td className="px-7 py-5">
+                    <td style={{ padding: "1rem 1.25rem" }}>
                       <ScoreBadge prof={prof} />
                     </td>
-                    <td className="px-7 py-5 text-right">
-                      <div className="flex justify-end gap-2">
-                        <Button size="sm" onClick={() => handleStatusChange(prof.id, "approved")} disabled={isProcessing} className="gap-1.5 h-8 px-3 rounded-lg text-[0.65rem]">
+                    <td style={{ padding: "1rem 1.25rem", textAlign: "right" }}>
+                      <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.5rem" }}>
+                        <Button size="sm" onClick={() => handleStatusChange(prof.id, "approved")} disabled={isProcessing}>
                           {isProcessing ? <Loader2 size={12} className="animate-spin" /> : <CheckCircle size={12} />}
                           Approve
                         </Button>
-                        <Button variant="ghost" size="sm" onClick={() => handleStatusChange(prof.id, "rejected")} disabled={isProcessing} className="gap-1.5 h-8 px-3 rounded-lg text-[0.65rem] hover:bg-[rgba(255,80,80,0.08)] hover:text-[#ff6b6b]">
+                        <Button variant="ghost" size="sm" onClick={() => handleStatusChange(prof.id, "rejected")} disabled={isProcessing}>
                           {isProcessing ? <Loader2 size={12} className="animate-spin" /> : <XCircle size={12} />}
                           Reject
                         </Button>
@@ -230,41 +237,38 @@ export function AdminReviewTable({ applicants }: AdminReviewTableProps) {
       </div>
 
       {/* Mobile Cards */}
-      <div className="lg:hidden space-y-3">
+      <div className="lg:hidden" style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
         {applicants.map((prof) => {
           const displayName = prof.preferred_name || prof.first_name;
           const isProcessing = processingId === prof.id;
           return (
-            <div key={prof.id} className="bg-[#111111] border border-[rgba(15, 23, 42, 0.06)] rounded-2xl p-8">
-              <div className="flex items-center gap-3 mb-5">
-                <div className="w-10 h-10 rounded-xl bg-[rgba(15, 23, 42, 0.04)] border border-[rgba(15, 23, 42, 0.07)] flex items-center justify-center text-sm font-semibold text-[#6a6a6a]">
+            <div key={prof.id} style={{ padding: "1.25rem", border: "1px solid rgba(15,23,42,0.06)", borderRadius: "12px", background: "rgba(15,23,42,0.015)", display: "flex", flexDirection: "column", gap: "0.85rem" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                <div style={{ width: "2.2rem", height: "2.2rem", borderRadius: "8px", background: "rgba(15,23,42,0.04)", border: "1px solid rgba(15,23,42,0.07)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.65rem", fontWeight: 700, color: "rgba(15,23,42,0.4)", fontFamily: "var(--font-sans)", flexShrink: 0 }}>
                   {prof.first_name[0]}{prof.last_name[0]}
                 </div>
                 <div>
-                  <div className="text-sm font-medium text-[#d4d4d2]">Dr. {displayName} {prof.last_name}</div>
-                  <div className="text-[0.68rem] text-[#4a4a4a]">{prof.email}</div>
+                  <div style={{ fontSize: "0.82rem", fontWeight: 600, color: "var(--text-primary)", fontFamily: "var(--font-sans)" }}>Dr. {displayName} {prof.last_name}</div>
+                  <div style={{ fontSize: "0.6rem", color: "rgba(15,23,42,0.3)", fontFamily: "var(--font-sans)" }}>{prof.email}</div>
                 </div>
               </div>
-              <div className="space-y-3 mb-5">
-                <div className="flex items-center gap-1.5 text-xs text-[#6a6a6a]">
-                  <GraduationCap size={13} />{prof.institution}
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", fontSize: "0.72rem", color: "rgba(15,23,42,0.4)", fontFamily: "var(--font-sans)" }}>
+                  <GraduationCap size={12} style={{ flexShrink: 0, color: "rgba(15,23,42,0.25)" }} />{prof.institution}
                 </div>
-                <div className="flex flex-wrap gap-1.5">
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "0.35rem" }}>
                   {prof.expertise_fields?.map((field, idx) => (
-                    <span key={idx} className="px-2 py-0.5 rounded-md bg-[rgba(15, 23, 42, 0.03)] text-[#5a5a5a] border border-[rgba(15, 23, 42, 0.05)] text-[0.6rem]">{field}</span>
+                    <span key={idx} style={{ padding: "0.2rem 0.55rem", borderRadius: "6px", background: "var(--accent-dim)", border: "1px solid rgba(79,70,229,0.12)", color: "var(--accent)", fontSize: "0.58rem", fontWeight: 600, fontFamily: "var(--font-sans)" }}>{field}</span>
                   ))}
                 </div>
-                {/* Score on mobile */}
-                <div className="pt-1">
-                  <ScoreBadge prof={prof} />
-                </div>
+                <ScoreBadge prof={prof} />
               </div>
-              <div className="grid grid-cols-2 gap-3">
-                <Button size="sm" onClick={() => handleStatusChange(prof.id, "approved")} disabled={isProcessing} className="gap-2 h-10 rounded-lg text-xs">
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.6rem" }}>
+                <Button size="sm" onClick={() => handleStatusChange(prof.id, "approved")} disabled={isProcessing}>
                   {isProcessing ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle size={14} />}
                   Approve
                 </Button>
-                <Button variant="ghost" size="sm" onClick={() => handleStatusChange(prof.id, "rejected")} disabled={isProcessing} className="gap-2 h-10 rounded-lg text-xs hover:bg-[rgba(255,80,80,0.08)] hover:text-[#ff6b6b]">
+                <Button variant="ghost" size="sm" onClick={() => handleStatusChange(prof.id, "rejected")} disabled={isProcessing}>
                   {isProcessing ? <Loader2 size={14} className="animate-spin" /> : <XCircle size={14} />}
                   Reject
                 </Button>

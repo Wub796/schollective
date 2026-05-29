@@ -1,8 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { motion } from "framer-motion";
+import { createClient } from "@/utils/supabase/client";
 import {
   LayoutDashboard,
   Users,
@@ -10,24 +12,35 @@ import {
   MessageSquare,
   Home,
   Settings,
-  ChevronRight,
+  LogOut,
   Menu,
   X,
+  ChevronRight,
 } from "lucide-react";
 
 /* ─── Nav items ──────────────────────────────────────────────────────────── */
 const NAV = [
-  { href: "/admin/dashboard",  icon: LayoutDashboard, label: "Overview" },
-  { href: "/admin/users",      icon: Users,           label: "Users" },
-  { href: "/admin/professors", icon: GraduationCap,   label: "Faculty" },
-  { href: "/admin/threads",    icon: MessageSquare,   label: "Threads" },
+  { href: "/admin/dashboard",  icon: LayoutDashboard, label: "Overview",  sub: "Platform health" },
+  { href: "/admin/users",      icon: Users,           label: "Users",     sub: "All accounts"    },
+  { href: "/admin/professors", icon: GraduationCap,   label: "Faculty",   sub: "Roster"          },
+  { href: "/admin/threads",    icon: MessageSquare,   label: "Threads",   sub: "Activity"        },
 ];
 
-/* ─── Sidebar link ───────────────────────────────────────────────────────── */
+const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
+const stagger = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.06, delayChildren: 0.08 } },
+};
+const itemVariant = {
+  hidden: { opacity: 0, x: -8 },
+  show:   { opacity: 1, x: 0, transition: { duration: 0.45, ease: EASE } },
+};
+
+/* ─── Sidebar nav link ────────────────────────────────────────────────────── */
 function NavLink({
-  href, icon: Icon, label, active, onClick,
+  href, icon: Icon, label, sub, active, onClick,
 }: {
-  href: string; icon: React.ElementType; label: string; active: boolean; onClick?: () => void;
+  href: string; icon: React.ElementType; label: string; sub: string; active: boolean; onClick?: () => void;
 }) {
   return (
     <Link
@@ -36,208 +49,428 @@ function NavLink({
       style={{
         display: "flex",
         alignItems: "center",
-        gap: "0.65rem",
-        padding: "0.55rem 0.85rem",
-        borderRadius: "9px",
+        gap: "0.85rem",
+        padding: "0.8rem 1rem",
+        borderRadius: "10px",
         textDecoration: "none",
-        background: active ? "rgba(37, 99, 235,0.1)" : "transparent",
-        border: active ? "1px solid rgba(37, 99, 235,0.2)" : "1px solid transparent",
-        color: active ? "var(--accent)" : "rgba(15, 23, 42,0.45)",
-        fontSize: "0.7rem",
-        fontWeight: 600,
-        letterSpacing: "0.03em",
-        fontFamily: "var(--font-sans)",
-        transition: "all 0.18s ease",
+        background: active ? "var(--accent-dim)" : "transparent",
+        border: active
+          ? "1px solid rgba(79, 70, 229, 0.15)"
+          : "1px solid transparent",
+        transition: "all 0.2s cubic-bezier(0.22, 1, 0.36, 1)",
+        position: "relative",
+        overflow: "hidden",
       }}
       onMouseEnter={(e) => {
-        if (!active) {
-          e.currentTarget.style.color = "rgba(15, 23, 42,0.75)";
-          e.currentTarget.style.background = "rgba(15, 23, 42,0.04)";
-        }
+        if (!active) (e.currentTarget as HTMLElement).style.background = "var(--bg-surface-3)";
       }}
       onMouseLeave={(e) => {
-        if (!active) {
-          e.currentTarget.style.color = "rgba(15, 23, 42,0.45)";
-          e.currentTarget.style.background = "transparent";
-        }
+        if (!active) (e.currentTarget as HTMLElement).style.background = "transparent";
       }}
+      aria-current={active ? "page" : undefined}
     >
-      <Icon size={14} style={{ flexShrink: 0 }} />
-      {label}
+      {/* Active indicator */}
       {active && (
-        <ChevronRight size={10} style={{ marginLeft: "auto", opacity: 0.5 }} />
+        <span style={{
+          position: "absolute", left: 0, top: "50%", transform: "translateY(-50%)",
+          width: "2px", height: "60%", minHeight: "16px", maxHeight: "28px",
+          background: "var(--accent)", borderRadius: "0 2px 2px 0",
+        }} />
+      )}
+
+      <Icon
+        size={15}
+        style={{
+          flexShrink: 0,
+          color: active ? "var(--accent)" : "var(--text-tertiary)",
+          transition: "color 0.2s",
+        }}
+      />
+
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <span style={{
+          display: "block",
+          fontSize: "0.82rem",
+          fontWeight: active ? 600 : 500,
+          color: active ? "var(--accent)" : "var(--text-secondary)",
+          letterSpacing: "0.005em",
+          transition: "color 0.2s",
+          lineHeight: 1.3,
+        }}>
+          {label}
+        </span>
+        <span style={{
+          display: "block",
+          fontSize: "0.5rem",
+          fontWeight: 700,
+          letterSpacing: "0.1em",
+          textTransform: "uppercase",
+          color: active ? "rgba(79, 70, 229, 0.6)" : "var(--text-tertiary)",
+          fontFamily: "var(--font-sans, monospace)",
+          lineHeight: 1,
+          marginTop: "0.2rem",
+        }}>
+          {sub}
+        </span>
+      </div>
+
+      {active && (
+        <ChevronRight size={10} style={{ color: "var(--accent)", opacity: 0.5, flexShrink: 0 }} />
       )}
     </Link>
   );
 }
 
-/* ─── Shell ──────────────────────────────────────────────────────────────── */
-export function AdminShell({ children }: { children: React.ReactNode }) {
+/* ─── Sidebar content ────────────────────────────────────────────────────── */
+function AdminSidebarContent({ onClose }: { onClose?: () => void }) {
   const pathname = usePathname();
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const router   = useRouter();
+  const supabase = createClient();
 
-  const sidebar = (
-    <aside
+  const isActive = (href: string) => pathname === href || pathname.startsWith(href + "/");
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    router.push("/login");
+  };
+
+  return (
+    <nav
       style={{
-        width: "220px",
-        flexShrink: 0,
-        borderRight: "1px solid rgba(15, 23, 42,0.05)",
-        display: "flex",
-        flexDirection: "column",
-        padding: "1.5rem 1rem",
-        gap: "0.25rem",
-        background: "rgba(8,12,20,0.6)",
-        minHeight: "100vh",
+        display: "flex", flexDirection: "column", height: "100%",
+        fontFamily: "var(--font-sans)",
       }}
+      aria-label="Admin navigation"
     >
-      {/* Brand */}
-      <div style={{ marginBottom: "2rem", padding: "0 0.25rem" }}>
-        <Link href="/" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-          <span
-            className="font-display"
-            style={{ fontSize: "0.95rem", fontWeight: 800, color: "var(--text-primary)", letterSpacing: "-0.02em" }}
-          >
+      {/* ── Brand header ── */}
+      <div style={{
+        padding: "2rem 1.5rem 1.75rem",
+        borderBottom: "1px solid var(--border)",
+        marginBottom: "0.5rem",
+      }}>
+        <Link href="/" style={{ textDecoration: "none" }}>
+          <span className="font-display" style={{
+            fontSize: "1.1rem", fontWeight: 800,
+            color: "var(--text-primary)", letterSpacing: "-0.025em",
+          }}>
             Schollective
           </span>
         </Link>
-        <div
-          style={{
-            display: "flex", alignItems: "center", gap: "0.35rem", marginTop: "0.35rem",
-          }}
-        >
-          <span style={{ width: "5px", height: "5px", background: "#ff4a4a", borderRadius: "50%", flexShrink: 0 }} />
-          <span
-            style={{
-              fontSize: "0.42rem", fontWeight: 700, letterSpacing: "0.38em", textTransform: "uppercase",
-              color: "rgba(15, 23, 42,0.3)", fontFamily: "var(--font-sans, monospace)",
-            }}
-          >
+        <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", marginTop: "0.3rem" }}>
+          <span style={{
+            width: "5px", height: "5px",
+            background: "#ef4444",
+            borderRadius: "50%", flexShrink: 0,
+          }} />
+          <span style={{
+            fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.15em",
+            textTransform: "uppercase", color: "rgba(239, 68, 68, 0.7)",
+            fontFamily: "var(--font-sans, monospace)",
+          }}>
             Admin Environment
           </span>
         </div>
       </div>
 
-      {/* Section label */}
-      <div
-        style={{
-          fontSize: "0.42rem", fontWeight: 700, letterSpacing: "0.35em", textTransform: "uppercase",
-          color: "rgba(15, 23, 42,0.2)", fontFamily: "var(--font-sans, monospace)",
-          padding: "0 0.5rem", marginBottom: "0.35rem",
-        }}
-      >
-        Navigation
+      {/* ── Main nav ── */}
+      <div style={{ padding: "0.5rem 0.85rem", flex: 1 }}>
+        <p style={{
+          fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.15em",
+          textTransform: "uppercase", color: "var(--text-tertiary)",
+          marginBottom: "0.6rem", paddingLeft: "0.85rem",
+          fontFamily: "var(--font-sans, monospace)",
+        }}>
+          Navigate
+        </p>
+        <motion.ul
+          variants={stagger} initial="hidden" animate="show"
+          style={{
+            listStyle: "none", display: "flex", flexDirection: "column",
+            gap: "0.25rem", marginBottom: "2rem",
+          }}
+        >
+          {NAV.map(({ href, icon, label, sub }) => (
+            <motion.li key={href} variants={itemVariant}>
+              <NavLink
+                href={href} icon={icon} label={label} sub={sub}
+                active={isActive(href)} onClick={onClose}
+              />
+            </motion.li>
+          ))}
+        </motion.ul>
+
+        {/* Divider */}
+        <div style={{ height: "1px", background: "var(--border)", marginBottom: "1.5rem", marginLeft: "0.85rem", marginRight: "0.85rem" }} />
+
+        {/* Back to site */}
+        <p style={{
+          fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.15em",
+          textTransform: "uppercase", color: "var(--text-tertiary)",
+          marginBottom: "0.6rem", paddingLeft: "0.85rem",
+          fontFamily: "var(--font-sans, monospace)",
+        }}>
+          Site
+        </p>
+        <motion.ul
+          variants={stagger} initial="hidden" animate="show"
+          style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "0.25rem" }}
+        >
+          {[
+            { href: "/dashboard", icon: Home,     label: "Back to Site",  sub: "Student view" },
+            { href: "/profile",   icon: Settings,  label: "Settings",      sub: "Account"     },
+          ].map(({ href, icon, label, sub }) => (
+            <motion.li key={href} variants={itemVariant}>
+              <NavLink
+                href={href} icon={icon} label={label} sub={sub}
+                active={false} onClick={onClose}
+              />
+            </motion.li>
+          ))}
+        </motion.ul>
       </div>
 
-      {/* Nav links */}
-      {NAV.map(({ href, icon, label }) => (
-        <NavLink
-          key={href}
-          href={href}
-          icon={icon}
-          label={label}
-          active={pathname === href}
-          onClick={() => setMobileOpen(false)}
-        />
-      ))}
-
-      {/* Spacer */}
-      <div style={{ flex: 1 }} />
-
-      {/* Bottom links */}
-      <div
-        style={{
-          borderTop: "1px solid rgba(15, 23, 42,0.05)",
-          paddingTop: "1rem",
-          display: "flex",
-          flexDirection: "column",
-          gap: "0.25rem",
-        }}
-      >
-        <NavLink href="/"        icon={Home}     label="Back to Site"  active={false} />
-        <NavLink href="/profile" icon={Settings}  label="Settings"      active={false} />
+      {/* ── Sign out ── */}
+      <div style={{
+        padding: "1.25rem 1rem 2rem",
+        borderTop: "1px solid var(--border)",
+      }}>
+        <button
+          onClick={handleSignOut}
+          style={{
+            display: "flex", alignItems: "center", gap: "0.85rem",
+            width: "100%", padding: "0.8rem 1rem",
+            borderRadius: "10px", background: "transparent",
+            border: "1px solid transparent", cursor: "pointer",
+            textAlign: "left", transition: "all 0.2s",
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(220, 38, 38, 0.05)")}
+          onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+        >
+          <LogOut size={15} style={{ color: "var(--text-tertiary)", flexShrink: 0 }} />
+          <div>
+            <span style={{
+              display: "block", fontSize: "0.82rem", fontWeight: 500,
+              color: "var(--text-secondary)", fontFamily: "var(--font-sans)",
+              transition: "color 0.2s", lineHeight: 1.3,
+            }}>
+              Sign Out
+            </span>
+            <span style={{
+              display: "block", fontSize: "0.5rem", fontWeight: 700,
+              letterSpacing: "0.1em", textTransform: "uppercase",
+              color: "rgba(220, 38, 38, 0.5)",
+              fontFamily: "var(--font-sans, monospace)", lineHeight: 1, marginTop: "0.2rem",
+            }}>
+              Session
+            </span>
+          </div>
+        </button>
       </div>
-    </aside>
+    </nav>
   );
+}
+
+/* ─── Shell ──────────────────────────────────────────────────────────────── */
+export function AdminShell({ children }: { children: React.ReactNode }) {
+  const pathname    = usePathname();
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled,   setScrolled]   = useState(false);
+
+  useEffect(() => { setMobileOpen(false); }, [pathname]);
+
+  useEffect(() => {
+    const main = document.querySelector(".app-main");
+    if (!main) return;
+    const handleScroll = () => setScrolled(main.scrollTop > 12);
+    main.addEventListener("scroll", handleScroll, { passive: true });
+    return () => main.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMobileOpen(false);
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [mobileOpen]);
+
+  useEffect(() => {
+    document.body.style.overflow = mobileOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [mobileOpen]);
+
+  const openSidebar  = useCallback(() => setMobileOpen(true),  []);
+  const closeSidebar = useCallback(() => setMobileOpen(false), []);
 
   return (
-    <div style={{ minHeight: "100vh", background: "#080c14", display: "flex" }}>
-
-      {/* ── Desktop sidebar ── */}
-      <div className="hidden lg:flex" style={{ flexShrink: 0 }}>
-        {sidebar}
-      </div>
-
-      {/* ── Mobile sidebar overlay ── */}
-      {mobileOpen && (
-        <div
-          className="lg:hidden"
-          style={{ position: "fixed", inset: 0, zIndex: 200, display: "flex" }}
+    <>
+      {/* ── Top nav bar (matches AppShell) ──────────────────────────── */}
+      <header
+        className="app-nav"
+        style={{
+          background: scrolled ? "rgba(255, 255, 255, 0.97)" : "rgba(255, 255, 255, 0.92)",
+          borderBottom: scrolled
+            ? "1px solid var(--border-hover)"
+            : "1px solid var(--border)",
+          transition: "background 0.3s ease, border-color 0.3s ease",
+        }}
+      >
+        {/* Hamburger — mobile only */}
+        <button
+          className="nav-hamburger"
+          onClick={openSidebar}
+          aria-label="Open navigation"
+          aria-expanded={mobileOpen}
+          aria-controls="admin-sidebar"
         >
-          {/* Backdrop */}
-          <div
-            onClick={() => setMobileOpen(false)}
-            style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.7)", backdropFilter: "blur(4px)" }}
-          />
-          {/* Panel */}
-          <div style={{ position: "relative", zIndex: 1, width: "260px" }}>
-            {sidebar}
-          </div>
-        </div>
-      )}
+          <svg width="16" height="12" viewBox="0 0 16 12" fill="none" aria-hidden="true">
+            <path d="M1 1h14M1 6h14M1 11h14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+          </svg>
+        </button>
 
-      {/* ── Main content area ── */}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
-
-        {/* ── Mobile top bar ── */}
-        <header
-          className="lg:hidden"
-          style={{
-            display: "flex", alignItems: "center", justifyContent: "space-between",
-            padding: "1rem 1.25rem",
-            borderBottom: "1px solid rgba(15, 23, 42,0.05)",
-            background: "rgba(8,12,20,0.95)",
-            position: "sticky", top: 0, zIndex: 100,
-          }}
-        >
-          <Link href="/" style={{ textDecoration: "none" }}>
-            <span className="font-display" style={{ fontSize: "0.95rem", fontWeight: 800, color: "var(--text-primary)" }}>
-              Schollective
-            </span>
-          </Link>
-          <button
-            onClick={() => setMobileOpen((v) => !v)}
-            style={{
-              background: "rgba(37, 99, 235,0.08)",
-              border: "1px solid rgba(37, 99, 235,0.18)",
-              borderRadius: "8px",
-              width: "2.2rem", height: "2.2rem",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              cursor: "pointer", color: "rgba(15, 23, 42,0.7)",
-            }}
+        {/* Wordmark */}
+        <Link href="/admin/dashboard" style={{ textDecoration: "none", flexShrink: 0 }}>
+          <span
+            className="font-display"
+            style={{ fontSize: "1.1rem", fontWeight: 800, letterSpacing: "-0.025em", color: "var(--text-primary)" }}
           >
-            {mobileOpen ? <X size={15} /> : <Menu size={15} />}
-          </button>
-        </header>
+            Schollective
+          </span>
+        </Link>
 
-        {/* ── Page content ── */}
-        <main style={{ flex: 1, padding: "2.5rem 3vw 4rem", maxWidth: "1100px", width: "100%", margin: "0 auto" }}>
-          {children}
-        </main>
+        {/* Admin badge — desktop */}
+        <div
+          className="hidden lg:flex"
+          style={{ alignItems: "center", gap: "0.4rem" }}
+        >
+          <span style={{
+            padding: "0.25rem 0.75rem",
+            borderRadius: "100px",
+            border: "1px solid rgba(239, 68, 68, 0.2)",
+            background: "rgba(239, 68, 68, 0.05)",
+            fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.15em",
+            textTransform: "uppercase", color: "rgba(239, 68, 68, 0.7)",
+            fontFamily: "var(--font-sans, monospace)",
+          }}>
+            Admin Console
+          </span>
+        </div>
 
-        {/* ── Footer ── */}
-        <footer
+        {/* Desktop nav links — pill-style */}
+        <nav
+          className="hidden lg:flex"
           style={{
-            borderTop: "1px solid rgba(15, 23, 42,0.04)",
-            padding: "1.25rem 3vw",
-            display: "flex", justifyContent: "space-between", alignItems: "center",
-            fontSize: "0.42rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase",
-            color: "rgba(15, 23, 42,0.15)", fontFamily: "var(--font-sans, monospace)",
+            alignItems: "center", gap: "0.15rem",
+            padding: "0.3rem",
+            background: "rgba(15, 23, 42, 0.03)",
+            border: "1px solid rgba(15, 23, 42, 0.08)",
+            borderRadius: "100px",
+          }}
+          aria-label="Admin navigation"
+        >
+          {NAV.map(({ href, label }) => {
+            const active = pathname === href || pathname.startsWith(href + "/");
+            return (
+              <Link
+                key={href}
+                href={href}
+                style={{
+                  display: "block",
+                  padding: "0.4rem 1rem",
+                  borderRadius: "100px",
+                  textDecoration: "none",
+                  fontSize: "0.58rem",
+                  fontWeight: active ? 700 : 500,
+                  letterSpacing: "0.22em",
+                  textTransform: "uppercase",
+                  fontFamily: "var(--font-sans)",
+                  color: active ? "var(--accent)" : "var(--text-secondary)",
+                  background: active ? "var(--accent-dim)" : "transparent",
+                  border: active ? "1px solid rgba(79, 70, 229, 0.2)" : "1px solid transparent",
+                  transition: "all 0.2s cubic-bezier(0.22, 1, 0.36, 1)",
+                  whiteSpace: "nowrap",
+                }}
+                onMouseEnter={(e) => {
+                  if (!active) (e.currentTarget as HTMLElement).style.color = "var(--text-primary)";
+                }}
+                onMouseLeave={(e) => {
+                  if (!active) (e.currentTarget as HTMLElement).style.color = "var(--text-secondary)";
+                }}
+              >
+                {label}
+              </Link>
+            );
+          })}
+        </nav>
+
+        {/* Right: back to site */}
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexShrink: 0 }}>
+          <Link href="/dashboard" style={{ textDecoration: "none" }}>
+            <div
+              style={{
+                height: "28px", padding: "0 0.9rem",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                borderRadius: "100px",
+                border: "1px solid var(--border)",
+                background: "transparent",
+                fontSize: "0.52rem", fontWeight: 700,
+                letterSpacing: "0.1em", textTransform: "uppercase",
+                color: "var(--text-secondary)",
+                fontFamily: "var(--font-sans)",
+                transition: "all 0.2s",
+                cursor: "pointer",
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLElement).style.borderColor = "var(--border-focus)";
+                (e.currentTarget as HTMLElement).style.color = "var(--text-primary)";
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.borderColor = "var(--border)";
+                (e.currentTarget as HTMLElement).style.color = "var(--text-secondary)";
+              }}
+            >
+              Exit Admin
+            </div>
+          </Link>
+        </div>
+      </header>
+
+      {/* ── Mobile backdrop ──────────────────────────────────────────── */}
+      <div
+        className="sidebar-backdrop lg:hidden"
+        data-open={mobileOpen ? "true" : "false"}
+        onClick={closeSidebar}
+        aria-hidden="true"
+      />
+
+      {/* ── App Shell grid ───────────────────────────────────────────── */}
+      <div className="app-shell">
+        <aside
+          id="admin-sidebar"
+          className="app-sidebar"
+          data-open={mobileOpen ? "true" : "false"}
+          aria-label="Admin sidebar navigation"
+          style={{
+            background: "var(--bg-surface-2)",
+            borderRight: "1px solid var(--border)",
           }}
         >
-          <span>Schollective Admin Engine v1.0</span>
-          <span>Secure Environment · Academic Integrity First</span>
-        </footer>
+          <AdminSidebarContent onClose={closeSidebar} />
+        </aside>
+
+        <main className="app-main" style={{ background: "var(--bg-base)" }}>
+          <motion.div
+            key={pathname}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+            className="content-container py-12 sm:py-16"
+          >
+            {children}
+          </motion.div>
+        </main>
       </div>
-    </div>
+    </>
   );
 }

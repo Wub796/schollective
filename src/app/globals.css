@@ -773,10 +773,10 @@ a:not([class]):hover {
   align-items: start;
 }
 
-/* Three-col stat cards */
+/* Stat card grid — auto-fills for both 3-col (student) and 4-col (admin) */
 .dash-stat-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
   gap: 1.75rem;
 }
 
