@@ -2,9 +2,16 @@
 
 import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
+import { filterMessage } from "@/lib/validators";
 
 export async function sendMessage(requestId: string, content: string) {
   if (!content.trim()) return;
+
+  // ── Message filter ──────────────────────────────────────────
+  const filter = filterMessage(content);
+  if (!filter.allowed) {
+    return { error: filter.reason ?? "Message blocked by content filter." };
+  }
 
   try {
     const supabase = await createClient();
