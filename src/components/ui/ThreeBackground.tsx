@@ -73,7 +73,7 @@ export function ThreeBackground() {
     const hubGeo = new THREE.SphereGeometry(1.2, 32, 32);
     const hubMat = new THREE.MeshBasicMaterial({ color: 0x4ec9d4, transparent: true, opacity: 0.22, wireframe: true });
     const hub = new THREE.Mesh(hubGeo, hubMat);
-    hub.position.set(6, -1, 0);
+    hub.position.set(0, 0, 0);
     scene.add(hub);
     nodes.push({ mesh: hub, baseOpacity: 0.22, phase: 0 });
 
@@ -91,11 +91,11 @@ export function ThreeBackground() {
 
     /* Professor nodes — larger, placed at meaningful positions */
     const professorPositions: [number, number, number][] = [
-      [-8,  4, -2],
-      [ 2,  9, -4],
-      [18,  3,  0],
-      [10, -8, -3],
-      [-4, -6,  2],
+      [-14,  5, -2],
+      [-4,  10, -4],
+      [12,  4,  0],
+      [4,  -7, -3],
+      [-10, -5,  2],
     ];
     professorPositions.forEach((pos, i) => {
       const geo = new THREE.SphereGeometry(0.55 + Math.random() * 0.25, 12, 12);

@@ -72,7 +72,20 @@ export default function ProfilePage() {
   const [profile, setProfile]         = React.useState<any>(null);
   const [fetching, setFetching]       = React.useState(true);
   const [avatarHover, setAvatarHover] = useState(false);
+  const [customCursor, setCustomCursor] = useState(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  React.useEffect(() => {
+    const pref = localStorage.getItem("schollective-custom-cursor");
+    setCustomCursor(pref !== "false");
+  }, []);
+
+  const handleToggleCursor = () => {
+    const newVal = !customCursor;
+    setCustomCursor(newVal);
+    localStorage.setItem("schollective-custom-cursor", String(newVal));
+    window.dispatchEvent(new Event("storage"));
+  };
 
   React.useEffect(() => {
     (async () => {
@@ -156,9 +169,15 @@ export default function ProfilePage() {
       if (educationLevel) updates.education_level = educationLevel;
     }
     if (profile?.role === "professor") {
-      updates.expertise_fields = expertiseRaw
+      const expertise = expertiseRaw
         ? expertiseRaw.split(",").map((s: string) => s.trim()).filter(Boolean)
         : [];
+      updates.expertise_fields = expertise;
+
+      const inst = updates.institution || profile.institution || "";
+      const fName = updates.first_name || profile.first_name || "";
+      const lName = updates.last_name || profile.last_name || "";
+      updates.profile_complete = !!(fName.trim() && lName.trim() && inst.trim() && expertise.length > 0);
     }
 
     const { error } = await supabase
@@ -391,6 +410,52 @@ export default function ProfilePage() {
           </div>
         </form>
       </motion.div>
+
+      {/* ── Hairline ── */}
+      <div style={{ height: "1px", background: "rgba(15, 23, 42, 0.07)" }} />
+
+      {/* ── Preferences ── */}
+      <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <span style={{ width: "1rem", height: "1px", background: "rgba(15, 23, 42, 0.15)", display: "block" }} />
+          <span style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.25)", fontFamily: "var(--font-sans, monospace)" }}>
+            Preferences
+          </span>
+        </div>
+        <label style={{ display: "inline-flex", alignItems: "center", gap: "0.65rem", cursor: "pointer", userSelect: "none" }}>
+          <input
+            type="checkbox"
+            checked={customCursor}
+            onChange={handleToggleCursor}
+            style={{ display: "none" }}
+          />
+          <div style={{
+            width: "2.2rem",
+            height: "1.2rem",
+            borderRadius: "100px",
+            background: customCursor ? "var(--accent)" : "rgba(15, 23, 42, 0.15)",
+            position: "relative",
+            transition: "background 0.25s",
+            border: "1px solid rgba(15, 23, 42, 0.05)",
+          }}>
+            <div style={{
+              width: "0.9rem",
+              height: "0.9rem",
+              borderRadius: "50%",
+              background: "#ffffff",
+              position: "absolute",
+              top: "50%",
+              left: customCursor ? "calc(100% - 1.05rem)" : "0.15rem",
+              transform: "translateY(-50%)",
+              transition: "left 0.25s",
+              boxShadow: "0 1px 3px rgba(0,0,0,0.15)",
+            }} />
+          </div>
+          <span style={{ fontSize: "0.8rem", fontWeight: 600, color: "rgba(15, 23, 42, 0.65)", fontFamily: "var(--font-sans)" }}>
+            Use custom cursor (requires mouse pointer)
+          </span>
+        </label>
+      </div>
 
       {/* ── Hairline ── */}
       <div style={{ height: "1px", background: "rgba(15, 23, 42, 0.07)" }} />

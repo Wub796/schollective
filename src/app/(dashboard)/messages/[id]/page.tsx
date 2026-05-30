@@ -5,6 +5,7 @@ import { createClient } from "@/utils/supabase/server";
 import { ChatThread } from "@/components/features/ChatThread";
 import { CloseThreadButton } from "@/components/features/CloseThreadButton";
 import { ArrowLeft, ShieldCheck } from "lucide-react";
+import { markRead } from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -18,6 +19,9 @@ export default async function MessagePage({ params }: MessagePageProps) {
 
   const { data: { session } } = await supabase.auth.getSession();
   if (!session) redirect("/login");
+
+  // Mark incoming messages as read
+  await markRead(requestId);
 
   const { data: request, error: requestError } = await supabase
     .from("requests")

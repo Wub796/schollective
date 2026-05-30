@@ -8,6 +8,7 @@ import { motion, useInView, AnimatePresence } from "framer-motion";
 import { PublicNav } from "@/components/ui/PublicNav";
 import { Button } from "@/components/ui/Button";
 import { AnimatedBackground } from "@/components/ui/AnimatedBackground";
+import { TestimonialsSection } from "@/components/features/TestimonialsSection";
 
 /* ── Page Loader ───────────────────────────────────────────────────────── */
 function PageLoader({ done }: { done: boolean }) {
@@ -163,29 +164,29 @@ export default function LandingPage() {
           <div className="w-full max-w-4xl mx-auto flex flex-col items-center text-center">
             <Label>The truth about academic cold-outreach</Label>
             <h2
-              className="font-display font-bold text-slate-900 tracking-tighter leading-[1.1] text-center w-full mx-auto"
+              className="font-display font-bold text-slate-900 tracking-normal leading-[1.4] text-center w-full mx-auto mb-10"
               style={{ fontSize: "clamp(2rem, 4vw, 3.2rem)" }}
             >
               Professors delete most student outreach emails<br />
               <span className="italic font-light text-slate-400">before finishing the first line.</span>
             </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5 w-full mt-16 mb-16 mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5 w-full mt-8 mb-16 mx-auto">
               {[
                 "Professors can spot AI-written emails instantly.",
                 "Generic requests that could go to anyone get ignored.",
                 "Citing papers without understanding them backfires.",
               ].map((reason, i) => (
-                <div key={i} className="flex flex-col items-center justify-center text-center p-10 rounded-2xl border border-slate-200/50 bg-[#fdfdfd] mx-auto w-full">
-                  <span className="w-8 h-8 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500 text-xs font-bold font-sans mb-5 select-none mx-auto">✕</span>
-                  <p className="text-slate-500 text-sm leading-relaxed text-center mx-auto">{reason}</p>
+                <div key={i} className="flex flex-col items-center justify-center text-center p-12 rounded-2xl border border-slate-200/50 bg-[#fdfdfd] mx-auto w-full">
+                  <span className="w-8 h-8 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500 text-xs font-bold font-sans mb-6 select-none mx-auto">✕</span>
+                  <p className="text-slate-600 text-sm leading-loose tracking-wide text-center mx-auto">{reason}</p>
                 </div>
               ))}
             </div>
 
             <Link
               href="/signup"
-              className="group inline-flex items-center justify-center gap-1.5 font-sans text-xs uppercase tracking-widest text-indigo-600 border-b border-indigo-600/20 pb-1.5 hover:border-indigo-600 transition-colors font-bold mx-auto text-center"
+              className="group inline-flex items-center justify-center gap-1.5 font-sans text-xs uppercase tracking-[0.22em] text-indigo-600 border-b border-indigo-600/20 pb-2 hover:border-indigo-600 transition-colors font-bold mx-auto text-center mt-6"
               style={{ textDecoration: "none" }}
             >
               Send one that gets read <span className="transition-transform group-hover:translate-x-1">→</span>
@@ -371,6 +372,9 @@ export default function LandingPage() {
             </div>
           </div>
         </section>
+
+        {/* ══ TESTIMONIALS ══════════════════════════════════════════════ */}
+        <TestimonialsSection />
 
         {/* ══ FINAL CTA ════════════════════════════════════════════════ */}
         <section className="js-fade relative border-t border-slate-100 min-h-screen flex flex-col items-center justify-center py-24 px-6" style={{ background: "#fdfdfd" }}>

@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
 import { ThreadCard } from "@/components/features/ThreadCard";
+import { FeedbackPrompt } from "@/components/features/FeedbackPrompt";
 import { PlusCircle, BookOpen, MessageSquare, Search, ArrowRight, User } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -125,10 +126,20 @@ export default async function StudentDashboard() {
     .select(`
       id, status, topic, updated_at,
       professor:professor_id ( first_name, last_name, preferred_name, expertise ),
-      messages ( content, created_at )
+      messages ( content, created_at, read_at, sender_id )
     `)
     .eq("student_id", user.id)
     .order("updated_at", { ascending: false });
+
+  // Query 24-hour rate limit count for the dashboard indicator
+  const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+  const { count: requestsTodayCount } = await supabase
+    .from("requests")
+    .select("id", { count: "exact", head: true })
+    .eq("student_id", user.id)
+    .gt("created_at", twentyFourHoursAgo);
+
+  const requestsToday = requestsTodayCount || 0;
 
   const processedRequests = (requests || []).map((req: any) => {
     const prof = Array.isArray(req.professor) ? req.professor[0] : req.professor;
@@ -147,12 +158,13 @@ export default async function StudentDashboard() {
                 new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
             )[0]
           : undefined,
+      hasUnread: req.messages?.some((msg: any) => msg.sender_id !== user.id && !msg.read_at),
     };
   });
 
   const totalRequests = processedRequests.length;
   const activeCount   = processedRequests.filter((r: any) => r.status === "active").length;
-  const pendingCount  = processedRequests.filter((r: any) => r.status === "pending").length;
+  const pendingCount  = processedRequests.filter((r: any) => r.status === "pending" || r.status === "viewed").length;
   const isEmpty       = totalRequests === 0;
 
   return (
@@ -176,6 +188,8 @@ export default async function StudentDashboard() {
           Track your mentorship requests and active research dialogues below.
         </p>
       </header>
+
+      {activeCount > 0 && <FeedbackPrompt />}
 
       {/* ── Stats row ──────────────────────────────────────────── */}
       <div className="dash-stat-grid">
@@ -205,7 +219,7 @@ export default async function StudentDashboard() {
               <QuickAction
                 href="/professors"
                 title="Browse Mentors"
-                sub="Find a verified professor"
+                sub={requestsToday >= 5 ? "Daily limit reached (5/5)" : `${requestsToday} of 5 requests used today`}
                 icon={<Search size={14} color="rgba(15, 23, 42, 0.5)" />}
               />
               <QuickAction
@@ -259,15 +273,15 @@ export default async function StudentDashboard() {
               </div>
               <div>
                 <h3 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "rgba(15, 23, 42, 0.7)", marginBottom: "0.5rem", letterSpacing: "-0.02em" }}>
-                  No threads yet
+                  Find your first research mentor
                 </h3>
                 <p style={{ fontSize: "0.8rem", color: "rgba(15, 23, 42, 0.32)", maxWidth: "24rem", lineHeight: 1.7, fontFamily: "var(--font-sans)" }}>
-                  Your mentorship threads will appear here once a professor accepts your request.
+                  Connect with verified faculty members. Your active mentorship threads will appear here.
                 </p>
               </div>
               <Link href="/professors" style={{ textDecoration: "none", marginTop: "0.25rem" }}>
                 <div style={{ padding: "0.75rem 1.75rem", border: "1px solid rgba(37, 99, 235, 0.25)", borderRadius: "100px", fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--accent)", fontFamily: "var(--font-sans)", cursor: "pointer" }}>
-                  Browse Professors
+                  Find a Mentor &rarr;
                 </div>
               </Link>
             </div>
@@ -277,7 +291,7 @@ export default async function StudentDashboard() {
               {processedRequests.filter((r: any) => r.status !== "closed").length > 0 && (
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "1.25rem" }}>
                   {processedRequests.filter((r: any) => r.status !== "closed").map((req: any) => (
-                    <ThreadCard key={req.id} request={req} viewerRole="student" />
+                    <ThreadCard key={req.id} request={req} viewerRole="student" hasUnread={req.hasUnread} />
                   ))}
                 </div>
               )}
@@ -293,7 +307,7 @@ export default async function StudentDashboard() {
                   </div>
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "1.25rem", opacity: 0.8 }}>
                     {processedRequests.filter((r: any) => r.status === "closed").map((req: any) => (
-                      <ThreadCard key={req.id} request={req} viewerRole="student" />
+                      <ThreadCard key={req.id} request={req} viewerRole="student" hasUnread={req.hasUnread} />
                     ))}
                   </div>
                 </div>

@@ -19,6 +19,19 @@ export async function submitMentorshipRequest(formData: FormData) {
     return { error: "Missing required fields" };
   }
 
+  // 1.5. Rate Limiting Check: Max 5 requests per 24 hours
+  const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+  const { count, error: countError } = await supabase
+    .from("requests")
+    .select("id", { count: "exact", head: true })
+    .eq("student_id", session.user.id)
+    .gt("created_at", twentyFourHoursAgo);
+
+  if (countError) return { error: "Failed to check request rate limit." };
+  if (count !== null && count >= 5) {
+    return { error: "Daily request limit reached. You can send up to 5 requests per day.", limitReached: true };
+  }
+
   // 2. Transactional Insertion
   // Insert Request
   const { data: request, error: requestError } = await supabase

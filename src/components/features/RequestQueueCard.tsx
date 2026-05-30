@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Check, X, Loader2, Calendar } from "lucide-react";
-import { updateRequestStatus } from "@/app/(dashboard)/prof/dashboard/actions";
+import { updateRequestStatus, markRequestViewed } from "@/app/(dashboard)/prof/dashboard/actions";
 import { toast } from "sonner";
 
 interface RequestQueueCardProps {
@@ -27,7 +27,11 @@ export function RequestQueueCard({ request }: RequestQueueCardProps) {
   const [loading, setLoading] = useState(false);
   const studentName = request.student?.preferred_name || request.student?.first_name || "Student";
 
-  const handleAction = async (status: "active" | "closed") => {
+  React.useEffect(() => {
+    markRequestViewed(request.id);
+  }, [request.id]);
+
+  const handleAction = async (status: "active" | "declined") => {
     setLoading(true);
     try {
       const result = await updateRequestStatus(request.id, status);
@@ -47,14 +51,24 @@ export function RequestQueueCard({ request }: RequestQueueCardProps) {
   return (
     <div
       style={{
-        background: "rgba(17, 17, 19, 0.65)",
-        border: "1px solid rgba(37, 99, 235, 0.1)",
+        background: "rgba(255, 255, 255, 0.65)",
+        backdropFilter: "blur(12px)",
+        border: "1px solid rgba(37, 99, 235, 0.08)",
         borderRadius: "16px",
         padding: "1.5rem",
-        transition: "border-color 0.2s",
+        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.02)",
+        transition: "all 0.3s cubic-bezier(0.22, 1, 0.36, 1)",
       }}
-      onMouseEnter={e => (e.currentTarget.style.borderColor = "rgba(37, 99, 235, 0.22)")}
-      onMouseLeave={e => (e.currentTarget.style.borderColor = "rgba(37, 99, 235, 0.1)")}
+      onMouseEnter={e => {
+        e.currentTarget.style.borderColor = "rgba(37, 99, 235, 0.22)";
+        e.currentTarget.style.background = "rgba(255, 255, 255, 0.85)";
+        e.currentTarget.style.boxShadow = "0 8px 30px rgba(37, 99, 235, 0.06)";
+      }}
+      onMouseLeave={e => {
+        e.currentTarget.style.borderColor = "rgba(37, 99, 235, 0.08)";
+        e.currentTarget.style.background = "rgba(255, 255, 255, 0.65)";
+        e.currentTarget.style.boxShadow = "0 4px 12px rgba(0, 0, 0, 0.02)";
+      }}
     >
       {/* Student */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "1rem", marginBottom: "1.5rem" }}>
@@ -143,7 +157,7 @@ export function RequestQueueCard({ request }: RequestQueueCardProps) {
           Accept
         </Button>
         <Button
-          onClick={() => handleAction("closed")}
+          onClick={() => handleAction("declined")}
           disabled={loading}
           variant="ghost"
           className="gap-2 h-10 rounded-lg text-[0.68rem] uppercase font-bold tracking-wider hover:bg-[rgba(255,80,80,0.08)] hover:text-[#ff8080] hover:border-[rgba(255,80,80,0.18)]"
