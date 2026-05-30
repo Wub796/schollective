@@ -4,7 +4,9 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { ThreadCard } from "@/components/features/ThreadCard";
 import { RequestQueueCard } from "@/components/features/RequestQueueCard";
+import { AcceptingToggle } from "@/components/features/AcceptingToggle";
 import { Inbox, Clock } from "lucide-react";
+
 
 export const dynamic = "force-dynamic";
 
@@ -45,6 +47,8 @@ export default async function ProfessorDashboard() {
     redirect(profile?.role === "admin" ? "/admin/dashboard" : "/dashboard");
   }
   if (profile.status !== "approved") redirect("/prof/pending");
+
+  const isAccepting = profile.is_accepting_requests !== false; // default true
 
   const displayName = profile.preferred_name || profile.first_name || "Professor";
 
@@ -143,24 +147,8 @@ export default async function ProfessorDashboard() {
             Dr. <em style={{ fontStyle: "italic", color: "rgba(255,255,255,0.35)" }}>{displayName}</em>
           </h1>
 
-          {/* Accepting badge */}
-          <div style={{
-            display: "flex", alignItems: "center", gap: "0.5rem",
-            padding: "0.6rem 1.25rem",
-            border: "1px solid rgba(255,255,255,0.1)",
-            borderRadius: "100px",
-            background: "rgba(255,255,255,0.04)",
-            flexShrink: 0,
-          }}>
-            <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "rgba(120,220,120,0.8)", animation: "pulse 2s infinite" }} />
-            <span style={{
-              fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.22em",
-              textTransform: "uppercase", color: "rgba(255,255,255,0.5)",
-              fontFamily: "var(--font-mono, monospace)",
-            }}>
-              Accepting Requests
-            </span>
-          </div>
+          {/* DB-backed availability toggle */}
+          <AcceptingToggle initialValue={isAccepting} />
         </div>
 
         <p style={{
@@ -172,7 +160,7 @@ export default async function ProfessorDashboard() {
       </header>
 
       {/* ── Stats row ──────────────────────────────────────────── */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "1rem" }}>
+      <div className="dash-stat-grid">
         <StatCard value={allRequests?.length || 0} label="Total Requests" sub="Lifetime" />
         <StatCard value={activeThreads.length}     label="Active Dialogues" sub="Ongoing" />
         <StatCard value={pendingRequests.length}   label="Pending Approval" sub="In Queue" />
