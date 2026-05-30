@@ -2,8 +2,10 @@
 
 import React, { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { Search, Mail, GraduationCap, Calendar, ChevronDown, RotateCcw, Ban } from "lucide-react";
+import { Search, Mail, GraduationCap, Calendar, ChevronDown, RotateCcw, Ban, Check, X } from "lucide-react";
 import { revokeVerification, setUserSuspended } from "@/app/admin/dashboard/admin-actions";
+import { updateProfessorStatus } from "@/app/admin/dashboard/actions";
+import { toast } from "sonner";
 
 export interface ProfessorRecord {
   id: string;
@@ -58,6 +60,11 @@ export function AdminProfessorsTable({ professors }: { professors: ProfessorReco
     }
     if (statusFilter !== "all") list = list.filter((p) => p.status === statusFilter);
     list.sort((a, b) => {
+      // Prioritize pending professors at the top of the queue
+      const aPending = a.status === "pending" ? 1 : 0;
+      const bPending = b.status === "pending" ? 1 : 0;
+      if (aPending !== bPending) return bPending - aPending;
+
       let cmp = 0;
       if (sortKey === "name")   cmp = `${a.last_name}${a.first_name}`.localeCompare(`${b.last_name}${b.first_name}`);
       if (sortKey === "status") cmp = (a.status ?? "").localeCompare(b.status ?? "");
@@ -85,6 +92,29 @@ export function AdminProfessorsTable({ professors }: { professors: ProfessorReco
   }
   async function handleSuspend(id: string, suspend: boolean) {
     setBusy(id); await setUserSuspended(id, suspend); router.refresh(); setBusy(null);
+  }
+  async function handleApprove(id: string) {
+    setBusy(id);
+    const res = await updateProfessorStatus(id, "approved");
+    if (res?.error) {
+      toast.error(res.error);
+    } else {
+      toast.success("Professor approved successfully!");
+      router.refresh();
+    }
+    setBusy(null);
+  }
+  async function handleReject(id: string) {
+    if (!confirm("Are you sure you want to reject this professor's application?")) return;
+    setBusy(id);
+    const res = await updateProfessorStatus(id, "rejected");
+    if (res?.error) {
+      toast.error(res.error);
+    } else {
+      toast.success("Professor application rejected.");
+      router.refresh();
+    }
+    setBusy(null);
   }
 
   function SortTh({ col, label }: { col: SortKey; label: string }) {
@@ -199,6 +229,27 @@ export function AdminProfessorsTable({ professors }: { professors: ProfessorReco
                             className="btn-action"
                             style={{ padding: "0.45rem 1.15rem", borderRadius: "100px", border: "1px solid rgba(250,204,21,0.2)", background: "rgba(250,204,21,0.05)", color: "rgba(250,204,21,0.75)", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", fontFamily: "var(--font-sans)", cursor: isBusy ? "wait" : "pointer", opacity: isBusy ? 0.5 : 1, display: "flex", alignItems: "center", gap: "0.3rem" }}>
                             <RotateCcw size={9} />{isBusy ? "…" : "Revoke"}
+                          </button>
+                        )}
+                        {p.status === "pending" && (
+                          <>
+                            <button disabled={isBusy} onClick={() => handleApprove(p.id)}
+                              className="btn-action-success"
+                              style={{ padding: "0.45rem 1.15rem", borderRadius: "100px", border: "1px solid rgba(74,222,128,0.2)", background: "rgba(74,222,128,0.05)", color: "rgba(74,222,128,0.75)", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", fontFamily: "var(--font-sans)", cursor: isBusy ? "wait" : "pointer", opacity: isBusy ? 0.5 : 1, display: "flex", alignItems: "center", gap: "0.3rem" }}>
+                              <Check size={9} />{isBusy ? "…" : "Approve"}
+                            </button>
+                            <button disabled={isBusy} onClick={() => handleReject(p.id)}
+                              className="btn-action-danger"
+                              style={{ padding: "0.45rem 1.15rem", borderRadius: "100px", border: "1px solid rgba(248,113,113,0.2)", background: "rgba(248,113,113,0.05)", color: "rgba(248,113,113,0.75)", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", fontFamily: "var(--font-sans)", cursor: isBusy ? "wait" : "pointer", opacity: isBusy ? 0.5 : 1, display: "flex", alignItems: "center", gap: "0.3rem" }}>
+                              <X size={9} />{isBusy ? "…" : "Reject"}
+                            </button>
+                          </>
+                        )}
+                        {p.status === "rejected" && (
+                          <button disabled={isBusy} onClick={() => handleApprove(p.id)}
+                            className="btn-action-success"
+                            style={{ padding: "0.45rem 1.15rem", borderRadius: "100px", border: "1px solid rgba(74,222,128,0.2)", background: "rgba(74,222,128,0.05)", color: "rgba(74,222,128,0.75)", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", fontFamily: "var(--font-sans)", cursor: isBusy ? "wait" : "pointer", opacity: isBusy ? 0.5 : 1, display: "flex", alignItems: "center", gap: "0.3rem" }}>
+                            <Check size={9} />{isBusy ? "…" : "Approve"}
                           </button>
                         )}
                         <button disabled={isBusy} onClick={() => handleSuspend(p.id, !isSuspended)}

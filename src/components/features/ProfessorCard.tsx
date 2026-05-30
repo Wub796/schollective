@@ -12,36 +12,38 @@ interface ProfessorCardProps {
     preferred_name: string | null;
     institution: string | null;
     expertise_fields: string[] | null;
+    is_accepting_requests?: boolean | null;
   };
 }
 
 export function ProfessorCard({ professor }: ProfessorCardProps) {
   const displayName = professor.preferred_name || professor.first_name;
   const initials = `${professor.first_name[0]}${professor.last_name[0]}`;
+  const isAccepting = professor.is_accepting_requests !== false;
 
   return (
     <motion.div
-      whileHover={{ y: -5 }}
+      whileHover={{
+        y: -5,
+        borderColor: "rgba(37, 99, 235, 0.25)",
+        background: "rgba(255, 255, 255, 0.85)",
+        boxShadow: "0 8px 30px rgba(37, 99, 235, 0.06)",
+      }}
       transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
       style={{
         position: "relative",
-        background: "rgba(17, 17, 19, 0.65)",
-        border: "1px solid rgba(37, 99, 235, 0.1)",
+        background: "rgba(255, 255, 255, 0.65)",
+        backdropFilter: "blur(12px)",
+        border: "1px solid rgba(37, 99, 235, 0.08)",
         borderRadius: "16px",
         padding: "2rem",
         display: "flex",
         flexDirection: "column",
         height: "100%",
         overflow: "hidden",
-        transition: "border-color 0.3s",
-      }}
-      onHoverStart={(e: any) => {
-        const el = e.target?.closest?.("[data-prof-card]") as HTMLElement | null;
-        if (el) el.style.borderColor = "rgba(37, 99, 235, 0.28)";
-      }}
-      onHoverEnd={(e: any) => {
-        const el = e.target?.closest?.("[data-prof-card]") as HTMLElement | null;
-        if (el) el.style.borderColor = "rgba(37, 99, 235, 0.1)";
+        transition: "border-color 0.3s, background 0.3s, box-shadow 0.3s, opacity 0.3s",
+        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.02)",
+        opacity: isAccepting ? 1 : 0.65,
       }}
     >
       {/* Ambient teal shimmer — top edge */}
@@ -67,22 +69,43 @@ export function ProfessorCard({ professor }: ProfessorCardProps) {
           {initials}
         </div>
 
-        {/* Verified pill */}
-        <div style={{
-          display: "flex", alignItems: "center", gap: "0.35rem",
-          padding: "0.3rem 0.7rem", borderRadius: "100px",
-          border: "1px solid rgba(37, 99, 235, 0.15)",
-          background: "rgba(37, 99, 235, 0.05)",
-          flexShrink: 0,
-        }}>
-          <span style={{ width: "5px", height: "5px", borderRadius: "50%", background: "rgba(37, 99, 235, 0.8)", flexShrink: 0 }} />
-          <span style={{
-            fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.22em",
-            textTransform: "uppercase", color: "rgba(37, 99, 235, 0.6)",
-            fontFamily: "var(--font-sans, monospace)",
+        {/* Pills wrapper */}
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "0.4rem" }}>
+          {/* Verified pill */}
+          <div style={{
+            display: "flex", alignItems: "center", gap: "0.35rem",
+            padding: "0.3rem 0.7rem", borderRadius: "100px",
+            border: "1px solid rgba(37, 99, 235, 0.15)",
+            background: "rgba(37, 99, 235, 0.05)",
+            flexShrink: 0,
           }}>
-            Verified
-          </span>
+            <span style={{ width: "5px", height: "5px", borderRadius: "50%", background: "rgba(37, 99, 235, 0.8)", flexShrink: 0 }} />
+            <span style={{
+              fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.22em",
+              textTransform: "uppercase", color: "rgba(37, 99, 235, 0.6)",
+              fontFamily: "var(--font-sans, monospace)",
+            }}>
+              Verified
+            </span>
+          </div>
+
+          {/* Availability pill */}
+          <div style={{
+            display: "flex", alignItems: "center", gap: "0.35rem",
+            padding: "0.3rem 0.7rem", borderRadius: "100px",
+            border: isAccepting ? "1px solid rgba(120, 220, 120, 0.25)" : "1px solid rgba(248, 113, 113, 0.25)",
+            background: isAccepting ? "rgba(120, 220, 120, 0.05)" : "rgba(248, 113, 113, 0.05)",
+            flexShrink: 0,
+          }}>
+            <span style={{ width: "5px", height: "5px", borderRadius: "50%", background: isAccepting ? "rgba(120, 220, 120, 0.8)" : "rgba(248, 113, 113, 0.8)", flexShrink: 0 }} />
+            <span style={{
+              fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.22em",
+              textTransform: "uppercase", color: isAccepting ? "rgba(120, 220, 120, 0.8)" : "rgba(248, 113, 113, 0.8)",
+              fontFamily: "var(--font-sans, monospace)",
+            }}>
+              {isAccepting ? "Active" : "Busy"}
+            </span>
+          </div>
         </div>
       </div>
 

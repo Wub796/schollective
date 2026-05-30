@@ -113,9 +113,12 @@ body {
 /* Content inside .page-bg needs z-index to sit above the pseudo-layers */
 .page-bg > * { position: relative; z-index: 1; }
 
-/* Hide native cursor on desktop — replaced by CustomCursor */
+/* Hide native cursor on desktop — replaced by CustomCursor only when active */
 @media (pointer: fine) {
-  * { cursor: none !important; }
+  html.custom-cursor-active,
+  html.custom-cursor-active * {
+    cursor: none !important;
+  }
 }
 
 /* ─── Tracking tight display font ──────────────────────────── */

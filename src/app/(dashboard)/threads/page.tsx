@@ -43,7 +43,7 @@ export default async function ThreadsPage() {
     .select(`
       id, status, topic, updated_at,
       professor:professor_id ( first_name, last_name, preferred_name, expertise ),
-      messages ( content, created_at )
+      messages ( content, created_at, read_at, sender_id )
     `)
     .eq("student_id", user.id)
     .order("updated_at", { ascending: false });
@@ -65,6 +65,7 @@ export default async function ThreadsPage() {
                 new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
             )[0]
           : undefined,
+      hasUnread: req.messages?.some((msg: any) => msg.sender_id !== user.id && !msg.read_at),
     };
   });
 
@@ -181,7 +182,7 @@ export default async function ThreadsPage() {
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "1.5rem" }}>
             {ongoing.map((req: any) => (
-              <ThreadCard key={req.id} request={req} viewerRole="student" />
+              <ThreadCard key={req.id} request={req} viewerRole="student" hasUnread={req.hasUnread} />
             ))}
           </div>
         </div>
@@ -203,7 +204,7 @@ export default async function ThreadsPage() {
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "1.5rem", opacity: 0.75 }}>
             {past.map((req: any) => (
-              <ThreadCard key={req.id} request={req} viewerRole="student" />
+              <ThreadCard key={req.id} request={req} viewerRole="student" hasUnread={req.hasUnread} />
             ))}
           </div>
         </div>

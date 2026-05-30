@@ -32,9 +32,9 @@ const itemVariant = {
 };
 
 function NavLink({
-  href, label, sub, active, onClose,
+  href, label, sub, active, onClose, badge,
 }: {
-  href: string; label: string; sub?: string; active: boolean; onClose?: () => void;
+  href: string; label: string; sub?: string; active: boolean; onClose?: () => void; badge?: number;
 }) {
   return (
     <Link
@@ -72,33 +72,49 @@ function NavLink({
         }} />
       )}
 
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <span style={{
-          display: "block",
-          fontSize: "0.82rem",
-          fontWeight: active ? 600 : 500,
-          color: active ? "var(--accent)" : "var(--text-secondary)",
-          letterSpacing: "0.005em",
-          transition: "color 0.2s",
-          lineHeight: 1.3,
-        }}>
-          {label}
-        </span>
-        {sub && (
+      <div style={{ flex: 1, minWidth: 0, display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.5rem" }}>
+        <div>
           <span style={{
             display: "block",
-            fontSize: "0.5rem",
-            fontWeight: 700,
-            letterSpacing: "0.1em",
-            textTransform: "uppercase",
-            color: active ? "rgba(37, 99, 235, 0.6)" : "var(--text-tertiary)",
-            fontFamily: "var(--font-sans, monospace)",
-            lineHeight: 1,
-            marginTop: "0.2rem",
+            fontSize: "0.82rem",
+            fontWeight: active ? 600 : 500,
+            color: active ? "var(--accent)" : "var(--text-secondary)",
+            letterSpacing: "0.005em",
+            transition: "color 0.2s",
+            lineHeight: 1.3,
           }}>
-            {sub}
+            {label}
           </span>
-        )}
+          {sub && (
+            <span style={{
+              display: "block",
+              fontSize: "0.5rem",
+              fontWeight: 700,
+              letterSpacing: "0.1em",
+              textTransform: "uppercase",
+              color: active ? "rgba(37, 99, 235, 0.6)" : "var(--text-tertiary)",
+              fontFamily: "var(--font-sans, monospace)",
+              lineHeight: 1,
+              marginTop: "0.2rem",
+            }}>
+              {sub}
+            </span>
+          )}
+        </div>
+        {badge && badge > 0 ? (
+          <span style={{
+            background: "rgba(99, 102, 241, 0.15)",
+            color: "#6366f1",
+            fontSize: "0.62rem",
+            fontWeight: 700,
+            padding: "0.15rem 0.45rem",
+            borderRadius: "100px",
+            fontFamily: "var(--font-sans)",
+            flexShrink: 0,
+          }}>
+            {badge}
+          </span>
+        ) : null}
       </div>
     </Link>
   );
@@ -108,6 +124,45 @@ export function Sidebar({ onClose, role = "student" }: SidebarProps) {
   const pathname = usePathname();
   const router   = useRouter();
   const supabase = createClient();
+  const [unreadCount, setUnreadCount] = React.useState(0);
+
+  React.useEffect(() => {
+    let active = true;
+
+    async function fetchUnreadCount() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user || !active) return;
+
+      const { data: requests } = await supabase
+        .from("requests")
+        .select("id")
+        .or(`student_id.eq.${user.id},professor_id.eq.${user.id}`);
+
+      if (!requests || requests.length === 0 || !active) {
+        setUnreadCount(0);
+        return;
+      }
+
+      const requestIds = requests.map((r) => r.id);
+
+      const { count } = await supabase
+        .from("messages")
+        .select("id", { count: "exact", head: true })
+        .in("request_id", requestIds)
+        .neq("sender_id", user.id)
+        .is("read_at", null);
+
+      if (active) {
+        setUnreadCount(count || 0);
+      }
+    }
+
+    fetchUnreadCount();
+
+    return () => {
+      active = false;
+    };
+  }, [pathname]);
 
   const isActive = (href: string) => {
     const exactRoutes = ["/dashboard", "/prof/dashboard"];
@@ -181,14 +236,19 @@ export function Sidebar({ onClose, role = "student" }: SidebarProps) {
             gap: "0.25rem", marginBottom: "2rem",
           }}
         >
-          {navItems.map((navItem) => (
-            <motion.li key={navItem.href} variants={itemVariant}>
-              <NavLink
-                href={navItem.href} label={navItem.label} sub={navItem.sub}
-                active={isActive(navItem.href)} onClose={onClose}
-              />
-            </motion.li>
-          ))}
+          {navItems.map((navItem) => {
+            const isTarget = role === "professor" ? navItem.href === "/prof/dashboard" : navItem.href === "/threads";
+            const badgeValue = isTarget ? unreadCount : undefined;
+            return (
+              <motion.li key={navItem.href} variants={itemVariant}>
+                <NavLink
+                  href={navItem.href} label={navItem.label} sub={navItem.sub}
+                  active={isActive(navItem.href)} onClose={onClose}
+                  badge={badgeValue}
+                />
+              </motion.li>
+            );
+          })}
         </motion.ul>
 
         {/* Divider */}

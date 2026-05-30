@@ -14,18 +14,27 @@ interface ProfessorsPageProps {
     query?: string;
     institution?: string;
     expertise?: string;
+    accepting?: string;
+    sort?: string;
   }>;
 }
 
 export default async function ProfessorsPage({ searchParams }: ProfessorsPageProps) {
   const supabase = await createClient();
-  const { query, institution, expertise } = await searchParams;
+  const { query, institution, expertise, accepting, sort } = await searchParams;
+  const isAcceptingOnly = accepting !== "false"; // default true
+  const currentSort = sort || "relevance";
 
   let dbQuery = supabase
     .from("profiles")
-    .select("id, first_name, last_name, preferred_name, institution, expertise_fields")
+    .select("id, first_name, last_name, preferred_name, institution, expertise_fields, is_accepting_requests")
     .eq("role", "professor")
-    .eq("status", "approved");
+    .eq("status", "approved")
+    .eq("profile_complete", true);
+
+  if (isAcceptingOnly) {
+    dbQuery = dbQuery.eq("is_accepting_requests", true);
+  }
 
   if (query) {
     dbQuery = dbQuery.or(
@@ -33,15 +42,36 @@ export default async function ProfessorsPage({ searchParams }: ProfessorsPagePro
     );
   }
   if (institution && institution !== "all") dbQuery = dbQuery.eq("institution", institution);
-  if (expertise && expertise !== "all") dbQuery = dbQuery.contains("expertise_fields", [expertise]);
+  
+  if (expertise && expertise !== "all") {
+    const selectedExpertise = expertise.split(",").map(decodeURIComponent).filter(Boolean);
+    if (selectedExpertise.length > 0) {
+      dbQuery = dbQuery.overlap("expertise_fields", selectedExpertise);
+    }
+  }
 
-  const { data: professors } = await dbQuery.order("last_name", { ascending: true });
+  // Apply sorting based on sort param
+  if (currentSort === "recent") {
+    dbQuery = dbQuery.order("updated_at", { ascending: false });
+  } else {
+    // Relevance / alpha -> order by last name
+    dbQuery = dbQuery.order("last_name", { ascending: true });
+  }
 
-  const { data: filterData } = await supabase
+  const { data: professors } = await dbQuery;
+
+  let filterQuery = supabase
     .from("profiles")
     .select("institution, expertise_fields")
     .eq("role", "professor")
-    .eq("status", "approved");
+    .eq("status", "approved")
+    .eq("profile_complete", true);
+
+  if (isAcceptingOnly) {
+    filterQuery = filterQuery.eq("is_accepting_requests", true);
+  }
+
+  const { data: filterData } = await filterQuery;
 
   const distinctInstitutions = Array.from(
     new Set(filterData?.map((p) => p.institution).filter(Boolean) as string[])
@@ -97,9 +127,20 @@ export default async function ProfessorsPage({ searchParams }: ProfessorsPagePro
           <h3 className="font-display" style={{ fontSize: "1.4rem", fontWeight: 700, color: "rgba(15, 23, 42, 0.7)", letterSpacing: "-0.02em" }}>
             No mentors found
           </h3>
-          <p style={{ fontSize: "0.82rem", color: "rgba(15, 23, 42, 0.35)", maxWidth: "24rem", lineHeight: 1.7, fontFamily: "var(--font-sans)" }}>
-            Try broadening your search or resetting your filters.
+          <p style={{ fontSize: "0.82rem", color: "rgba(15, 23, 42, 0.35)", maxWidth: "24rem", lineHeight: 1.7, fontFamily: "var(--font-sans)", marginBottom: "0.5rem" }}>
+            Try broadening your search or resetting your filters. Or, explore these popular research fields:
           </p>
+          
+          <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", justifyContent: "center", marginBottom: "1rem" }}>
+            {["Machine Learning", "Bio-Ethics", "Computer Science"].map((field) => (
+              <Link key={field} href={`/professors?expertise=${encodeURIComponent(field)}`} style={{ textDecoration: "none" }}>
+                <span style={{ padding: "0.35rem 0.85rem", border: "1px solid rgba(37, 99, 235, 0.15)", background: "rgba(37, 99, 235, 0.03)", borderRadius: "100px", fontSize: "0.7rem", fontWeight: 500, color: "var(--accent)" }}>
+                  {field}
+                </span>
+              </Link>
+            ))}
+          </div>
+
           <Link href="/professors" style={{ textDecoration: "none" }}>
             <div style={{ padding: "0.75rem 1.75rem", border: "1px solid rgba(15, 23, 42, 0.15)", borderRadius: "100px", fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.7)", fontFamily: "var(--font-sans)", cursor: "pointer" }}>
               Reset Filters

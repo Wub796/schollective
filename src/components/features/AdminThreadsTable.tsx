@@ -2,6 +2,8 @@
 
 import React, { useState, useMemo } from "react";
 import { Search, Calendar, ChevronDown } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { softDeleteThread } from "@/app/admin/dashboard/admin-actions";
 
 export interface ThreadRecord {
   id: string;
@@ -36,10 +38,21 @@ function FilterPill({ label, active, onClick }: { label: string; active: boolean
 }
 
 export function AdminThreadsTable({ threads }: { threads: ThreadRecord[] }) {
+  const router = useRouter();
   const [query, setQuery]         = useState("");
   const [statusFilter, setStatus] = useState<StatusFilter>("all");
   const [sortKey, setSortKey]     = useState<SortKey>("created");
   const [sortAsc, setSortAsc]     = useState(false);
+
+  async function handleDeleteThread(threadId: string) {
+    if (!confirm("Are you sure you want to soft-delete this thread?")) return;
+    const res = await softDeleteThread(threadId);
+    if (res?.error) {
+      alert(res.error);
+    } else {
+      router.refresh();
+    }
+  }
 
   const filtered = useMemo(() => {
     let list = [...threads];
@@ -128,6 +141,7 @@ export function AdminThreadsTable({ threads }: { threads: ThreadRecord[] }) {
                 <SortTh col="professor" label="Professor" />
                 <SortTh col="created"   label="Started" />
                 <SortTh col="updated"   label="Last Activity" />
+                <th style={{ padding: "0.85rem 1.1rem", fontSize: "0.48rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(15, 23, 42,0.2)", fontFamily: "var(--font-sans, monospace)", textAlign: "right", whiteSpace: "nowrap" }}>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -189,6 +203,28 @@ export function AdminThreadsTable({ threads }: { threads: ThreadRecord[] }) {
                       <div style={{ display: "flex", alignItems: "center", gap: "0.3rem", fontSize: "0.58rem", color: "rgba(15, 23, 42,0.3)", fontFamily: "var(--font-sans, monospace)" }}>
                         <Calendar size={9} />{formatDate(t.updated_at)}
                       </div>
+                    </td>
+
+                    {/* Actions */}
+                    <td style={{ padding: "0.9rem 1.1rem", textAlign: "right" }}>
+                      {t.status !== "deleted" && (
+                        <button
+                          onClick={() => handleDeleteThread(t.id)}
+                          style={{
+                            display: "inline-flex", alignItems: "center", gap: "0.35rem",
+                            padding: "0.45rem 1.25rem",
+                            borderRadius: "100px",
+                            border: "1px solid rgba(255,80,80,0.2)",
+                            background: "rgba(255,80,80,0.05)",
+                            color: "rgba(255,100,100,0.7)",
+                            fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.1em",
+                            textTransform: "uppercase", fontFamily: "var(--font-sans)",
+                            cursor: "pointer",
+                          }}
+                        >
+                          Delete Thread
+                        </button>
+                      )}
                     </td>
                   </tr>
                 );
