@@ -97,6 +97,28 @@ export default async function ProfessorDashboard() {
       };
     });
 
+  const closedRequests = (allRequests || [])
+    .filter((r) => r.status === "closed")
+    .map((req: any) => {
+      const student = Array.isArray(req.student) ? req.student[0] : req.student;
+      return {
+        ...req,
+        participant: {
+          first_name: student.first_name,
+          last_name: student.last_name,
+          preferred_name: student.preferred_name,
+          detail: student.education_level?.replace("-", " "),
+        },
+        latest_message:
+          req.messages?.length > 0
+            ? [...req.messages].sort(
+                (a: any, b: any) =>
+                  new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+              )[0]
+            : undefined,
+      };
+    });
+
   return (
     <div style={{ padding: "3rem 0", display: "flex", flexDirection: "column", gap: "4rem" }}>
 
@@ -159,8 +181,8 @@ export default async function ProfessorDashboard() {
       {/* ── Hairline ─────────────────────────────────────────────── */}
       <div style={{ height: "1px", background: "rgba(255,255,255,0.06)" }} />
 
-      {/* ── Two-column layout ─────────────────────────────────────── */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: "4rem", alignItems: "start" }}>
+      {/* ── Stacked Layout ─────────────────────────────────────────── */}
+      <div style={{ display: "flex", flexDirection: "column", gap: "4rem" }}>
 
         {/* ── Request Queue ─────────────────────────────────────── */}
         <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
@@ -190,7 +212,7 @@ export default async function ProfessorDashboard() {
               </p>
             </div>
           ) : (
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: "1.25rem" }}>
               {pendingRequests.map((req) => (
                 <RequestQueueCard key={req.id} request={req as any} />
               ))}
@@ -232,13 +254,39 @@ export default async function ProfessorDashboard() {
               </div>
             </div>
           ) : (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "1.25rem" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: "1.25rem" }}>
               {activeThreads.map((req) => (
                 <ThreadCard key={req.id} request={req as any} viewerRole="professor" />
               ))}
             </div>
           )}
         </div>
+
+        {/* ── Past Mentorships ─────────────────────────────────── */}
+        {closedRequests.length > 0 && (
+          <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+              <span style={{ width: "1rem", height: "1px", background: "rgba(255,255,255,0.2)", display: "block" }} />
+              <h2 className="font-display" style={{ fontSize: "1.1rem", fontWeight: 700, color: "rgba(255,255,255,0.5)", letterSpacing: "-0.02em" }}>
+                Past Mentorships
+              </h2>
+              <span style={{
+                marginLeft: "auto",
+                fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.25em",
+                textTransform: "uppercase", color: "rgba(255,255,255,0.15)",
+                fontFamily: "var(--font-mono, monospace)",
+              }}>
+                {closedRequests.length} closed
+              </span>
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: "1.25rem", opacity: 0.8 }}>
+              {closedRequests.map((req) => (
+                <ThreadCard key={req.id} request={req as any} viewerRole="professor" />
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

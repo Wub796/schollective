@@ -35,3 +35,40 @@ export async function sendMessage(requestId: string, content: string) {
     return { error: err.message || "Failed to send message." };
   }
 }
+
+export async function closeRequest(requestId: string) {
+  try {
+    const supabase = await createClient();
+
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return { error: "Unauthorized" };
+
+    // Fetch request to verify user is a participant
+    const { data: request } = await supabase
+      .from("requests")
+      .select("student_id, professor_id")
+      .eq("id", requestId)
+      .single();
+
+    if (!request) return { error: "Request not found" };
+    if (request.student_id !== user.id && request.professor_id !== user.id) {
+      return { error: "Unauthorized: You are not a participant in this thread." };
+    }
+
+    // Update the request status to closed
+    const { error } = await supabase
+      .from("requests")
+      .update({ status: "closed", updated_at: new Date().toISOString() })
+      .eq("id", requestId);
+
+    if (error) throw error;
+
+    revalidatePath(`/messages/${requestId}`);
+    revalidatePath("/dashboard");
+    revalidatePath("/prof/dashboard");
+    
+    return { success: true };
+  } catch (err: any) {
+    return { error: err.message || "Failed to close request." };
+  }
+}
