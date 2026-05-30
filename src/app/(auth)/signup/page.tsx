@@ -8,7 +8,7 @@ import { createClient } from "@/utils/supabase/client";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/Button";
 import { InstitutionInput } from "@/components/ui/InstitutionInput";
-import { validateEmail, type EmailValidationResult } from "@/lib/validators";
+import { validateEmail, type EmailValidationResult } from "@/lib/validators-client";
 
 
 export const dynamic = "force-dynamic";
@@ -19,11 +19,11 @@ const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
 const fadeUp = {
   hidden: { opacity: 0, y: 22 },
-  show:   { opacity: 1, y: 0, transition: { duration: 1.1, ease: EASE } },
+  show: { opacity: 1, y: 0, transition: { duration: 1.1, ease: EASE } },
 };
 const stagger = {
   hidden: {},
-  show:   { transition: { staggerChildren: 0.1, delayChildren: 0.1 } },
+  show: { transition: { staggerChildren: 0.1, delayChildren: 0.1 } },
 };
 
 /* ── Underline field with animated focus state ── */
@@ -114,12 +114,12 @@ function FieldSelect({ id, name, label, children, required }: {
 }
 
 function SignupContent() {
-  const router   = useRouter();
+  const router = useRouter();
   const searchParams = useSearchParams();
   const supabase = createClient();
-  const [role,    setRole]    = useState<Role>("student");
+  const [role, setRole] = useState<Role>("student");
   const [loading, setLoading] = useState(false);
-  const [error,   setError]   = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   // If there's an error in the URL (e.g. from OAuth callback), show it
   useEffect(() => {
@@ -175,26 +175,26 @@ function SignupContent() {
 
     try {
       const { data, error: signUpError } = await supabase.auth.signUp({
-        email:    fd.get("email")    as string,
+        email: fd.get("email") as string,
         password: fd.get("password") as string,
         options: {
           data: {
             role,
-            first_name:      fd.get("first_name")      as string,
-            preferred_name:  fd.get("preferred_name")  as string,
-            last_name:       fd.get("last_name")        as string,
+            first_name: fd.get("first_name") as string,
+            preferred_name: fd.get("preferred_name") as string,
+            last_name: fd.get("last_name") as string,
             education_level: fd.get("education_level") as string,
-            institution:     institution || fd.get("institution") as string,
+            institution: institution || fd.get("institution") as string,
 
-            expertise:       fd.get("expertise")       as string,
+            expertise: fd.get("expertise") as string,
           },
         },
       });
       if (signUpError) throw signUpError;
 
-      toast.success("Account created! Welcome to Schollective.");
+      toast.success("Account created! Please check your email to verify your address.");
       router.refresh();
-      router.push(role === "professor" ? "/prof/pending" : "/dashboard");
+      router.push("/verify-email");
     } catch (err: any) {
       const msg = err instanceof Error ? err.message : "An error occurred during signup.";
       setError(msg);
@@ -323,7 +323,7 @@ function SignupContent() {
               {/* Name row */}
               <motion.div variants={fadeUp} className="grid-2" style={{ gap: "1.5rem" }}>
                 <Field id="first_name" name="first_name" label="First Name" placeholder="Jane" required />
-                <Field id="last_name"  name="last_name"  label="Last Name"  placeholder="Doe"  required={role === "professor"} />
+                <Field id="last_name" name="last_name" label="Last Name" placeholder="Doe" required={role === "professor"} />
               </motion.div>
 
               <motion.div variants={fadeUp}>
@@ -339,9 +339,9 @@ function SignupContent() {
                       display: "block", fontSize: "0.6rem", fontWeight: 600,
                       letterSpacing: "0.22em", textTransform: "uppercase",
                       color: emailVal?.state === "error" ? "rgba(255,100,100,0.8)"
-                           : emailVal?.state === "warn"  ? "rgba(255,190,80,0.8)"
-                           : emailVal?.state === "valid" ? "rgba(120,220,120,0.8)"
-                           : "rgba(15, 23, 42, 0.3)",
+                        : emailVal?.state === "warn" ? "rgba(255,190,80,0.8)"
+                          : emailVal?.state === "valid" ? "rgba(120,220,120,0.8)"
+                            : "rgba(15, 23, 42, 0.3)",
                       marginBottom: "0.55rem", transition: "color 0.25s",
                       fontFamily: "var(--font-sans)",
                     }}
@@ -356,12 +356,11 @@ function SignupContent() {
                     style={{
                       width: "100%",
                       background: "rgba(15, 23, 42, 0.02)",
-                      border: `1px solid ${
-                        emailVal?.state === "error" ? "rgba(255,100,100,0.6)"
-                      : emailVal?.state === "warn"  ? "rgba(255,190,80,0.6)"
-                      : emailVal?.state === "valid" ? "rgba(120,220,120,0.5)"
-                      : "rgba(15, 23, 42, 0.08)"
-                      }`,
+                      border: `1px solid ${emailVal?.state === "error" ? "rgba(255,100,100,0.6)"
+                          : emailVal?.state === "warn" ? "rgba(255,190,80,0.6)"
+                            : emailVal?.state === "valid" ? "rgba(120,220,120,0.5)"
+                              : "rgba(15, 23, 42, 0.08)"
+                        }`,
                       borderRadius: "100px",
                       padding: "0.95rem 1.75rem",
                       fontSize: "0.95rem",
@@ -387,22 +386,21 @@ function SignupContent() {
                           fontSize: "0.55rem", fontWeight: 600, letterSpacing: "0.12em",
                           fontFamily: "var(--font-sans)",
                           background: emailVal.state === "error" ? "rgba(255,80,80,0.1)"
-                                    : emailVal.state === "warn"  ? "rgba(255,190,80,0.1)"
-                                    : "rgba(80,220,120,0.1)",
+                            : emailVal.state === "warn" ? "rgba(255,190,80,0.1)"
+                              : "rgba(80,220,120,0.1)",
                           color: emailVal.state === "error" ? "rgba(255,110,110,0.9)"
-                               : emailVal.state === "warn"  ? "rgba(255,200,90,0.9)"
-                               : "rgba(100,220,130,0.9)",
-                          border: `1px solid ${
-                            emailVal.state === "error" ? "rgba(255,80,80,0.25)"
-                          : emailVal.state === "warn"  ? "rgba(255,190,80,0.25)"
-                          : "rgba(80,220,120,0.25)"
-                          }`,
+                            : emailVal.state === "warn" ? "rgba(255,200,90,0.9)"
+                              : "rgba(100,220,130,0.9)",
+                          border: `1px solid ${emailVal.state === "error" ? "rgba(255,80,80,0.25)"
+                              : emailVal.state === "warn" ? "rgba(255,190,80,0.25)"
+                                : "rgba(80,220,120,0.25)"
+                            }`,
                         }}
                       >
                         <span style={{ fontSize: "0.7rem" }}>
                           {emailVal.state === "error" ? "✕"
-                           : emailVal.state === "warn" ? "⚠"
-                           : "✓"}
+                            : emailVal.state === "warn" ? "⚠"
+                              : "✓"}
                         </span>
                         {emailVal.message}
                       </motion.div>
@@ -439,7 +437,7 @@ function SignupContent() {
                       >
                         Institution
                       </label>
-      <InstitutionInput
+                      <InstitutionInput
                         id="institution"
                         name="institution"
                         value={institution}
@@ -452,7 +450,7 @@ function SignupContent() {
                       <input type="hidden" name="institution" value={institution} />
                     </div>
 
-                    <Field id="expertise"   name="expertise"   label="Expertise Fields" placeholder="e.g. Machine Learning, Bio-Ethics" required />
+                    <Field id="expertise" name="expertise" label="Expertise Fields" placeholder="e.g. Machine Learning, Bio-Ethics" required />
                   </motion.div>
                 )}
               </AnimatePresence>

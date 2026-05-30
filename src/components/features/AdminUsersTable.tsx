@@ -12,7 +12,7 @@ import {
   Ban,
   RotateCcw,
 } from "lucide-react";
-import { setUserSuspended, changeUserRole } from "@/app/admin/dashboard/admin-actions";
+import { setUserSuspended, changeUserRole, suspendUser, unsuspendUser, warnUser } from "@/app/admin/dashboard/admin-actions";
 import { useRouter } from "next/navigation";
 
 /* ─── Types ─────────────────────────────────────────────────────────────── */
@@ -157,9 +157,29 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
   /* ── Suspend / reactivate ── */
   async function handleSuspend(userId: string, suspend: boolean) {
     setSuspending(userId);
-    await setUserSuspended(userId, suspend);
+    if (suspend) {
+      const reason = prompt("Enter the reason for suspension:");
+      if (reason === null) {
+        setSuspending(null);
+        return;
+      }
+      await suspendUser(userId, reason || "Violated community guidelines");
+    } else {
+      await unsuspendUser(userId);
+    }
     router.refresh();
     setSuspending(null);
+  }
+
+  async function handleWarn(userId: string) {
+    const message = prompt("Enter warning message:");
+    if (!message) return;
+    const res = await warnUser(userId, message);
+    if (res?.error) {
+      alert(res.error);
+    } else {
+      alert("Warning sent successfully!");
+    }
   }
 
   /* ── Change role ── */
@@ -451,6 +471,26 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
                           </select>
                         ) : null}
 
+                        {/* Warn Button */}
+                        {u.role !== "admin" && (
+                          <button
+                            onClick={() => handleWarn(u.id)}
+                            style={{
+                              display: "inline-flex", alignItems: "center", gap: "0.35rem",
+                              padding: "0.45rem 1.25rem",
+                              borderRadius: "100px",
+                              border: "1px solid rgba(245, 158, 11, 0.2)",
+                              background: "rgba(245, 158, 11, 0.05)",
+                              color: "rgba(217, 119, 6, 0.85)",
+                              fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.1em",
+                              textTransform: "uppercase", fontFamily: "var(--font-sans)",
+                              cursor: "pointer",
+                            }}
+                          >
+                            Warn
+                          </button>
+                        )}
+
                         {/* Ban / Reactivate */}
                         {u.role !== "admin" && (
                           <button
@@ -596,6 +636,26 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
                   <option value="professor">Professor</option>
                   <option value="admin">Admin</option>
                 </select>
+
+                {/* Warn Button */}
+                {u.role !== "admin" && (
+                  <button
+                    onClick={() => handleWarn(u.id)}
+                    style={{
+                      display: "inline-flex", alignItems: "center", gap: "0.35rem",
+                      padding: "0.45rem 1.25rem",
+                      borderRadius: "100px",
+                      border: "1px solid rgba(245, 158, 11, 0.2)",
+                      background: "rgba(245, 158, 11, 0.05)",
+                      color: "rgba(217, 119, 6, 0.85)",
+                      fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.1em",
+                      textTransform: "uppercase", fontFamily: "var(--font-sans)",
+                      cursor: "pointer",
+                    }}
+                  >
+                    Warn
+                  </button>
+                )}
 
                 {/* Ban / Reactivate */}
                 {u.role !== "admin" && (

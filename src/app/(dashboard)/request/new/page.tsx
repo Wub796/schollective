@@ -35,6 +35,16 @@ export default async function RequestNewPage({ searchParams }: RequestNewPagePro
     redirect("/professors");
   }
 
+  // Fetch requests count in last 24h
+  const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+  const { count: requestCount } = await supabase
+    .from("requests")
+    .select("id", { count: "exact", head: true })
+    .eq("student_id", session.user.id)
+    .gt("created_at", twentyFourHoursAgo);
+
+  const requestsToday = requestCount || 0;
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "5rem", maxWidth: "720px" }}>
 
@@ -95,7 +105,7 @@ export default async function RequestNewPage({ searchParams }: RequestNewPagePro
       <div style={{ height: "1px", background: "rgba(37, 99, 235, 0.07)" }} />
 
       {/* Form */}
-      <RequestForm professor={professor as any} />
+      <RequestForm professor={professor as any} requestsToday={requestsToday} />
 
       {/* Footer */}
       <p style={{

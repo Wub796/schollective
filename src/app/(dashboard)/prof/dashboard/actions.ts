@@ -3,15 +3,26 @@
 import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 
-export async function updateRequestStatus(requestId: string, status: "active" | "closed") {
+export async function updateRequestStatus(requestId: string, status: "active" | "declined") {
   try {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return { error: "Unauthorized" };
 
+    const updates: Record<string, any> = {
+      status,
+      updated_at: new Date().toISOString(),
+    };
+
+    if (status === "active") {
+      updates.accepted_at = new Date().toISOString();
+    } else if (status === "declined") {
+      updates.declined_at = new Date().toISOString();
+    }
+
     const { error } = await supabase
       .from("requests")
-      .update({ status, updated_at: new Date().toISOString() })
+      .update(updates)
       .eq("id", requestId)
       .eq("professor_id", user.id);
 
@@ -20,6 +31,45 @@ export async function updateRequestStatus(requestId: string, status: "active" | 
     return { success: true };
   } catch (err: any) {
     return { error: err.message || "Failed to update request status." };
+  }
+}
+
+export async function markRequestViewed(requestId: string) {
+  try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return { error: "Unauthorized" };
+
+    const { data: request } = await supabase
+      .from("requests")
+      .select("status, created_at")
+      .eq("id", requestId)
+      .single();
+
+    if (request && request.status === "pending") {
+      // Delay reveal: check if created_at is older than 1 hour (optional or always mark viewed when professor expands / loads it)
+      // The plan says: "Only update if current status is pending AND created_at is > 1 hour ago (delay reveal)".
+      // But actually, to make it simple and robust, let's mark it viewed if it's pending.
+      // Let's implement the > 1 hour check:
+      const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+      if (new Date(request.created_at) < oneHourAgo) {
+        const { error } = await supabase
+          .from("requests")
+          .update({
+            status: "viewed",
+            viewed_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          })
+          .eq("id", requestId)
+          .eq("professor_id", user.id);
+
+        if (error) throw error;
+        revalidatePath("/prof/dashboard");
+      }
+    }
+    return { success: true };
+  } catch (err: any) {
+    return { error: err.message || "Failed to mark request as viewed." };
   }
 }
 

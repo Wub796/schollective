@@ -94,3 +94,29 @@ export async function closeRequest(requestId: string) {
     return { error: err.message || "Failed to close request." };
   }
 }
+
+export async function markRead(requestId: string) {
+  try {
+    const supabase = await createClient();
+
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return { error: "Unauthorized" };
+
+    const { error } = await supabase
+      .from("messages")
+      .update({ read_at: new Date().toISOString() })
+      .eq("request_id", requestId)
+      .neq("sender_id", user.id)
+      .is("read_at", null);
+
+    if (error) throw error;
+
+    revalidatePath(`/messages/${requestId}`);
+    revalidatePath("/dashboard");
+    revalidatePath("/prof/dashboard");
+
+    return { success: true };
+  } catch (err: any) {
+    return { error: err.message || "Failed to mark messages as read." };
+  }
+}

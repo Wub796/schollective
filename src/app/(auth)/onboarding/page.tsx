@@ -79,6 +79,21 @@ function OnboardingContent() {
   const [userName, setUserName]       = useState("");
   const [institution, setInstitution] = useState("");
   const [error, setError]             = useState<string | null>(null);
+  const [isDirty, setIsDirty]         = useState(false);
+
+  // Warning when leaving page with unsaved changes
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (isDirty) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [isDirty]);
 
   // Verify the user is logged in; if profile is already complete, skip onboarding
   useEffect(() => {
@@ -92,7 +107,7 @@ function OnboardingContent() {
 
     (async () => {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) { router.push("/login"); return; }
+      if (!user) { router.replace("/login"); return; }
 
       // Pre-fill name from Google account metadata
       const meta = user.user_metadata;
@@ -107,8 +122,8 @@ function OnboardingContent() {
 
       // Already onboarded — redirect to the right dashboard
       if (profile?.first_name) {
-        if (profile.role === "professor") router.push("/prof/dashboard");
-        else router.push("/dashboard");
+        if (profile.role === "professor") router.replace("/prof/dashboard");
+        else router.replace("/dashboard");
         return;
       }
 
@@ -124,7 +139,7 @@ function OnboardingContent() {
     const fd = new FormData(e.currentTarget);
 
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) { router.push("/login"); return; }
+    if (!user) { router.replace("/login"); return; }
 
     // Build the profile upsert payload
     const payload: Record<string, any> = {
@@ -145,10 +160,16 @@ function OnboardingContent() {
     }
     if (role === "professor") {
       const raw = fd.get("expertise") as string;
-      payload.expertise_fields = raw
+      const expertise = raw
         ? raw.split(",").map((s) => s.trim()).filter(Boolean)
         : [];
-      payload.status = "approved"; // auto-approved — admin can ban if needed
+      payload.expertise_fields = expertise;
+      payload.status = "pending";
+
+      const fName = payload.first_name || "";
+      const lName = payload.last_name || "";
+      const inst = payload.institution || "";
+      payload.profile_complete = !!(fName.trim() && lName.trim() && inst.trim() && expertise.length > 0);
     }
 
     const { error: upsertError } = await supabase
@@ -162,13 +183,16 @@ function OnboardingContent() {
       return;
     }
 
+    // Clear dirty state to allow normal navigation
+    setIsDirty(false);
+
     toast.success("Welcome to Schollective!");
     
     const next = searchParams.get("next");
     if (next && next !== "/dashboard") {
-      router.push(next);
+      router.replace(next);
     } else {
-      router.push(role === "professor" ? "/prof/dashboard" : "/dashboard");
+      router.replace(role === "professor" ? "/prof/pending" : "/dashboard");
     }
   };
 
@@ -249,7 +273,7 @@ function OnboardingContent() {
         }}>
           {(["student", "professor"] as Role[]).map((r) => (
             <Button
-              key={r} type="button" onClick={() => setRole(r)}
+              key={r} type="button" onClick={() => { setRole(r); setIsDirty(true); }}
               variant={role === r ? "primary" : "ghost"}
               size="md"
               className={`flex-1 ${role !== r && 'border-transparent text-slate-400'}`}
@@ -259,7 +283,7 @@ function OnboardingContent() {
           ))}
         </motion.div>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} onChange={() => setIsDirty(true)}>
           <motion.div variants={fadeUp} style={{ display: "flex", flexDirection: "column", gap: "3rem" }}>
 
             {/* Name row */}

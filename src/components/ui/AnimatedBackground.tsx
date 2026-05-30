@@ -12,15 +12,18 @@ export function AnimatedBackground() {
   return (
     <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
       <ThreeBackground />
+
       {/* Animated Orb Background */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] rounded-full bg-purple-500/20 blur-[120px] animate-pulse" />
         <div className="absolute top-[30%] -right-[10%] w-[40%] h-[60%] rounded-full bg-purple-400/20 blur-[120px] animate-pulse" style={{ animationDelay: "2s" }} />
         <div className="absolute -bottom-[20%] left-[20%] w-[60%] h-[50%] rounded-full bg-fuchsia-500/15 blur-[120px] animate-pulse" style={{ animationDelay: "4s" }} />
       </div>
+
       {/* Soft gradient overlay */}
       <div className="absolute inset-0 pointer-events-none"
         style={{ background: "radial-gradient(ellipse 100% 75% at 50% 40%, transparent 0%, rgba(253, 253, 253, 0.7) 70%, var(--bg-base) 100%)" }} />
+
       {/* Noise texture overlay */}
       <div className="absolute inset-0 pointer-events-none"
         style={{
