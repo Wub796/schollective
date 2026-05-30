@@ -95,20 +95,32 @@ function NavItem({ label, href, active }: {
 export function PublicNav() {
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     setMounted(true);
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 15);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   if (!mounted) return null;
 
   return (
     <header
-      className="fixed top-5 left-1/2 -translate-x-1/2 z-[999] w-[calc(100%-2.5rem)] max-w-[76rem] transition-all duration-300"
+      className={`fixed left-1/2 -translate-x-1/2 z-[999] w-[calc(100%-2.5rem)] max-w-[76rem] transition-all duration-500 ease-out ${
+        scrolled ? "top-3" : "top-5"
+      }`}
     >
       <div
         data-menu-bar="true"
-        className="w-full h-[4.25rem] pl-8 pr-0 rounded-full border grid grid-cols-3 items-center transition-all duration-300 bg-[#fdfdfd]/85 backdrop-blur-md border-indigo-600/15 shadow-sm overflow-hidden"
+        className={`w-full rounded-full border grid grid-cols-3 items-center transition-all duration-500 ease-out overflow-hidden hover:bg-white/70 ${
+          scrolled
+            ? "h-[3.8rem] bg-white/60 backdrop-blur-2xl backdrop-saturate-[190%] border-white/50 shadow-[0_12px_40px_rgba(15,23,42,0.08),_inset_0_1px_1px_rgba(255,255,255,0.9),_0_1px_3px_rgba(99,102,241,0.08)]"
+            : "h-[4.4rem] bg-white/40 backdrop-blur-xl backdrop-saturate-[180%] border-white/30 shadow-[0_8px_32px_rgba(15,23,42,0.04),_inset_0_1px_1px_rgba(255,255,255,0.7),_0_1px_2px_rgba(99,102,241,0.03)]"
+        }`}
       >
         {/* COLUMN 1: LEFT (Logo) */}
         <div className="flex items-center justify-start">
