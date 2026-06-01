@@ -93,10 +93,10 @@ function FadeIn({
 function Label({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex items-center gap-3 mb-14">
-      <span className="block w-5 h-px flex-shrink-0" style={{ background: "rgba(255,255,255,0.3)" }} />
+      <span className="block w-5 h-px flex-shrink-0" style={{ background: "rgba(250, 250, 249, 0.3)" }} />
       <span
         className="font-mono uppercase"
-        style={{ fontSize: "0.52rem", letterSpacing: "0.48em", color: "rgba(255,255,255,0.5)" }}
+        style={{ fontSize: "0.52rem", letterSpacing: "0.48em", color: "rgba(250, 250, 249, 0.5)" }}
       >
         {children}
       </span>
@@ -185,32 +185,32 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <div ref={pageRef} className="relative text-white font-sans overflow-x-hidden" style={{ background: "#050505" }}>
+    <div ref={pageRef} className="relative text-[#fafaf9] font-sans overflow-x-hidden" style={{ background: "var(--bg-base)" }}>
 
       {/* ══ NAV ══════════════════════════════════════════════════════════ */}
       <nav
         className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between"
         style={{
           padding: "1.4rem 2.5rem",
-          background: "linear-gradient(to bottom, rgba(5,5,5,0.92) 0%, transparent 100%)",
+          background: "linear-gradient(to bottom, rgba(9, 9, 11, 0.95) 0%, transparent 100%)",
           backdropFilter: "blur(0px)",
         }}
       >
-        <span className="font-display text-base font-bold tracking-tight text-white">
+        <span className="font-display text-base font-bold tracking-tight text-[#fafaf9]">
           Schollective
         </span>
         <div className="flex gap-2">
           <Link
             href="/login"
-            className="px-4 py-2 rounded-full border text-white font-bold uppercase hover:bg-white hover:text-black transition-all duration-500"
-            style={{ fontSize: "0.58rem", letterSpacing: "0.15em", borderColor: "rgba(255,255,255,0.3)" }}
+            className="px-4 py-2 rounded-full border font-bold uppercase transition-all duration-500"
+            style={{ fontSize: "0.58rem", letterSpacing: "0.15em", borderColor: "rgba(129, 140, 248, 0.45)", color: "#818cf8" }}
           >
             Log In
           </Link>
           <Link
             href="/signup"
-            className="px-4 py-2 rounded-full bg-white text-black font-bold uppercase hover:bg-transparent hover:text-white border border-white transition-all duration-500"
-            style={{ fontSize: "0.58rem", letterSpacing: "0.15em" }}
+            className="px-4 py-2 rounded-full font-bold uppercase border transition-all duration-500"
+            style={{ fontSize: "0.58rem", letterSpacing: "0.15em", background: "#818cf8", color: "#09090b", borderColor: "#818cf8" }}
           >
             Sign Up
           </Link>
@@ -218,14 +218,14 @@ export default function LandingPage() {
       </nav>
 
       {/* ══ HERO — Full viewport, text bottom-left, CTA bottom-right ═════ */}
-      <section className="relative h-screen overflow-hidden">
+      <section className="relative h-screen overflow-hidden" style={{ background: "var(--bg-base)" }}>
 
         {/* Three.js + radial vignette */}
         <div className="absolute inset-0 z-0">
           <ThreeBackground />
           <div
             className="absolute inset-0 pointer-events-none"
-            style={{ background: "radial-gradient(ellipse 110% 80% at 50% 45%, transparent 5%, rgba(5,5,5,0.8) 75%)" }}
+            style={{ background: "radial-gradient(ellipse 110% 80% at 50% 45%, transparent 5%, rgba(9, 9, 11, 0.82) 75%)" }}
           />
         </div>
 
@@ -237,10 +237,10 @@ export default function LandingPage() {
             transition={{ duration: 1.3, ease: EASE, delay: 0.5 }}
             className="flex items-center gap-3"
           >
-            <span className="block w-4 h-px" style={{ background: "rgba(255,255,255,0.35)" }} />
+            <span className="block w-4 h-px" style={{ background: "rgba(129, 140, 248, 0.4)" }} />
             <span
               className="font-mono uppercase"
-              style={{ fontSize: "0.48rem", letterSpacing: "0.48em", color: "rgba(255,255,255,0.5)" }}
+              style={{ fontSize: "0.48rem", letterSpacing: "0.48em", color: "rgba(129, 140, 248, 0.55)" }}
             >
               Direct Academic Mentorship
             </span>
@@ -250,7 +250,7 @@ export default function LandingPage() {
         {/* Massive headline — bottom-left anchored */}
         <div className="absolute left-0 z-10 px-10 md:px-16" style={{ bottom: "3.5rem" }}>
           <h1
-            className="font-display font-black tracking-tighter leading-[0.86] text-white"
+            className="font-display font-black tracking-tighter leading-[0.86] text-[#fafaf9]"
             style={{ fontSize: "clamp(3.5rem, 12.5vw, 14rem)" }}
           >
             <span className="block overflow-hidden">
@@ -266,7 +266,7 @@ export default function LandingPage() {
             <span className="block overflow-hidden">
               <motion.span
                 className="block italic"
-                style={{ color: "rgba(255,255,255,0.85)" }}
+                style={{ color: "rgba(168, 179, 207, 0.75)" }}
                 initial={{ y: "110%" }}
                 animate={{ y: 0 }}
                 transition={{ duration: 1.5, ease: EASE, delay: 0.75 }}
@@ -289,7 +289,7 @@ export default function LandingPage() {
               {[18, 11, 6, 3].map((h, i) => (
                 <motion.div
                   key={i}
-                  className="w-px rounded-full bg-white"
+                  className="w-px rounded-full bg-[#818cf8]"
                   initial={{ scaleY: 0, opacity: 0 }}
                   animate={{ scaleY: 1, opacity: 0.25 - i * 0.04 }}
                   transition={{ delay: 2.0 + i * 0.08, duration: 0.4 }}
@@ -307,7 +307,7 @@ export default function LandingPage() {
                 fontSize: "0.38rem",
                 letterSpacing: "0.28em",
                 textTransform: "uppercase",
-                color: "rgba(255,255,255,0.18)",
+                color: "rgba(129, 140, 248, 0.3)",
                 fontFamily: "monospace",
               }}
             >
@@ -322,7 +322,7 @@ export default function LandingPage() {
               animate={{ opacity: 1 }}
               transition={{ duration: 1.2, ease: EASE, delay: 1.4 }}
               className="font-light leading-relaxed"
-              style={{ fontSize: "0.85rem", color: "rgba(255,255,255,0.5)" }}
+              style={{ fontSize: "0.85rem", color: "rgba(168, 179, 207, 0.6)" }}
             >
               Connecting ambitious students with verified professors for structured academic guidance.
             </motion.p>
@@ -333,10 +333,10 @@ export default function LandingPage() {
             >
               <Link
                 href="/signup"
-                className="group relative px-6 py-2.5 rounded-full bg-white text-black font-bold uppercase overflow-hidden transition-colors duration-700 hover:text-white inline-flex items-center gap-2"
-                style={{ fontSize: "0.58rem", letterSpacing: "0.15em" }}
+                className="group relative px-6 py-2.5 rounded-full font-bold uppercase overflow-hidden transition-colors duration-700 inline-flex items-center gap-2"
+                style={{ background: "#818cf8", color: "#09090b", border: "1px solid #818cf8", fontSize: "0.6rem", letterSpacing: "0.2em" }}
               >
-                <span className="absolute inset-0 bg-black translate-x-[-102%] group-hover:translate-x-0 transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]" />
+                <span className="absolute inset-0 bg-[#111113] translate-x-[-102%] group-hover:translate-x-0 transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]" />
                 <span className="relative">Begin Journey</span>
                 <span className="relative transition-transform duration-500 group-hover:translate-x-1">→</span>
               </Link>
@@ -362,7 +362,7 @@ export default function LandingPage() {
             transform: "translateY(-50%)",
             fontSize: "clamp(12rem, 28vw, 36rem)",
             lineHeight: 0.85,
-            color: "rgba(255,255,255,0.022)",
+            color: "rgba(129, 140, 248, 0.03)",
             letterSpacing: "-0.06em",
             fontFamily: "var(--font-display)",
             fontWeight: 900,
@@ -379,7 +379,7 @@ export default function LandingPage() {
           <SplitReveal
             as="h2"
             delay={0.1}
-            className="font-display font-bold tracking-tighter text-white mb-10"
+            className="font-display font-bold tracking-tighter text-[#fafaf9] mb-10"
             style={{ fontSize: "clamp(2rem, 4.5vw, 5rem)", lineHeight: 0.94 }}
           >
             Academic research shouldn't be locked behind opaque institutional barriers.
@@ -390,8 +390,8 @@ export default function LandingPage() {
               className="font-light leading-relaxed mb-20"
               style={{
                 fontSize: "clamp(1rem, 1.4vw, 1.2rem)",
-                color: "rgba(255,255,255,0.6)",
-                borderLeft: "2px solid rgba(255,255,255,0.18)",
+                color: "rgba(129, 140, 248, 0.7)",
+                borderLeft: "2px solid rgba(129, 140, 248, 0.3)",
                 paddingLeft: "1.5rem",
                 maxWidth: "36rem",
               }}
@@ -412,14 +412,14 @@ export default function LandingPage() {
               <FadeIn key={i} delay={0.5 + i * 0.1}>
                 <div className="flex flex-col gap-3">
                   <span
-                    className="font-display font-black text-white tracking-tighter"
+                    className="font-display font-black text-[#fafaf9] tracking-tighter"
                     style={{ fontSize: "clamp(2rem, 4vw, 3.5rem)", lineHeight: 1 }}
                   >
                     {s.num}
                   </span>
                   <span
                     className="font-mono uppercase"
-                    style={{ fontSize: "0.52rem", letterSpacing: "0.38em", color: "rgba(255,255,255,0.45)" }}
+                    style={{ fontSize: "0.52rem", letterSpacing: "0.38em", color: "rgba(129, 140, 248, 0.4)" }}
                   >
                     {s.label}
                   </span>
@@ -434,8 +434,8 @@ export default function LandingPage() {
       <div
         className="relative overflow-hidden select-none"
         style={{
-          borderTop: "1px solid rgba(255,255,255,0.06)",
-          borderBottom: "1px solid rgba(255,255,255,0.06)",
+          borderTop: "1px solid rgba(129, 140, 248, 0.08)",
+          borderBottom: "1px solid rgba(129, 140, 248, 0.08)",
           padding: "0.9rem 0",
         }}
       >
@@ -447,7 +447,7 @@ export default function LandingPage() {
             <span
               key={i}
               className="flex-shrink-0 font-mono uppercase px-14"
-              style={{ fontSize: "0.46rem", letterSpacing: "0.48em", color: "rgba(255,255,255,0.2)" }}
+              style={{ fontSize: "0.46rem", letterSpacing: "0.48em", color: "rgba(129, 140, 248, 0.4)" }}
             >
               Academic Mentorship &nbsp;—&nbsp; No Cold Emails &nbsp;—&nbsp; Structured Growth &nbsp;—&nbsp; Verified Professors &nbsp;—&nbsp;
             </span>
@@ -468,7 +468,7 @@ export default function LandingPage() {
                 transform: "rotate(180deg)",
                 fontSize: "0.42rem",
                 letterSpacing: "0.44em",
-                color: "rgba(255,255,255,0.2)",
+                color: "rgba(129, 140, 248, 0.35)",
               }}
             >
               The Process
@@ -480,10 +480,10 @@ export default function LandingPage() {
             className="absolute left-1/2 z-10 flex items-center gap-3"
             style={{ bottom: "2rem", transform: "translateX(-50%)" }}
           >
-            <span className="block w-3 h-px" style={{ background: "rgba(255,255,255,0.15)" }} />
+            <span className="block w-3 h-px" style={{ background: "rgba(129, 140, 248, 0.25)" }} />
             <span
               className="font-mono uppercase"
-              style={{ fontSize: "0.38rem", letterSpacing: "0.45em", color: "rgba(255,255,255,0.2)" }}
+              style={{ fontSize: "0.38rem", letterSpacing: "0.45em", color: "rgba(129, 140, 248, 0.35)" }}
             >
               01 — 04
             </span>
@@ -510,7 +510,7 @@ export default function LandingPage() {
                       className="font-mono font-bold leading-none select-none"
                       style={{
                         fontSize: "clamp(5rem, 12vw, 13rem)",
-                        color: "rgba(255,255,255,0.04)",
+                        color: "rgba(129, 140, 248, 0.06)",
                         letterSpacing: "-0.04em",
                         marginBottom: "-0.35em",
                         pointerEvents: "none",
@@ -519,17 +519,17 @@ export default function LandingPage() {
                       {step.num}
                     </div>
                     <h3
-                      className="font-display font-bold tracking-tighter text-white leading-none mb-5"
+                      className="font-display font-bold tracking-tighter text-[#fafaf9] leading-none mb-5"
                       style={{ fontSize: "clamp(2.5rem, 5.5vw, 5.5rem)" }}
                     >
                       {step.title}
                     </h3>
-                    <span className="block w-7 h-px mb-7" style={{ background: "rgba(255,255,255,0.2)" }} />
+                    <span className="block w-7 h-px mb-7" style={{ background: "rgba(129, 140, 248, 0.25)" }} />
                     <p
                       className="font-light leading-relaxed"
                       style={{
                         fontSize: "clamp(0.95rem, 1.2vw, 1.1rem)",
-                        color: "rgba(255,255,255,0.58)",
+                        color: "rgba(168, 179, 207, 0.65)",
                         maxWidth: "28rem",
                       }}
                     >
@@ -559,7 +559,7 @@ export default function LandingPage() {
 
         <SplitReveal
           as="h2"
-          className="font-display font-black tracking-tighter text-white mb-20"
+          className="font-display font-black tracking-tighter text-[#fafaf9] mb-20"
           style={{ fontSize: "clamp(3rem, 8.5vw, 10rem)", lineHeight: 0.82 }}
         >
           Total Control.
@@ -592,41 +592,41 @@ export default function LandingPage() {
               <div
                 className="group grid items-start py-9 transition-all duration-500 hover:pl-2 cursor-default"
                 style={{
-                  borderTop: "1px solid rgba(255,255,255,0.1)",
+                  borderTop: "1px solid rgba(129, 140, 248, 0.1)",
                   gridTemplateColumns: "3rem 1fr auto",
                   gap: "2rem",
                 }}
               >
                 <span
-                  className="font-mono pt-1 transition-colors duration-500 group-hover:text-white/60"
-                  style={{ fontSize: "0.52rem", letterSpacing: "0.18em", color: "rgba(255,255,255,0.35)" }}
+                  className="font-mono pt-1 transition-colors duration-500 group-hover:text-[#818cf8]"
+                  style={{ fontSize: "0.52rem", letterSpacing: "0.18em", color: "rgba(82, 82, 91, 0.55)" }}
                 >
                   {item.num}
                 </span>
                 <div className="flex flex-col gap-3">
                   <h3
-                    className="font-display font-bold tracking-tight text-white transition-transform duration-500 group-hover:translate-x-1"
+                    className="font-display font-bold tracking-tight text-[#fafaf9] transition-transform duration-500 group-hover:translate-x-1"
                     style={{ fontSize: "clamp(1.4rem, 2.5vw, 2.2rem)", lineHeight: 1.05 }}
                   >
                     {item.title}
                   </h3>
                   <p
                     className="font-light leading-relaxed"
-                    style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.52)", maxWidth: "36rem" }}
+                    style={{ fontSize: "0.9rem", color: "rgba(168, 179, 207, 0.6)", maxWidth: "36rem" }}
                   >
                     {item.body}
                   </p>
                 </div>
                 <span
                   className="text-sm pt-1 transition-all duration-500 translate-x-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-60"
-                  style={{ color: "rgba(255,255,255,1)" }}
+                  style={{ color: "rgba(129, 140, 248, 0.8)" }}
                 >
                   →
                 </span>
               </div>
             </FadeIn>
           ))}
-          <div style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }} />
+          <div style={{ borderTop: "1px solid rgba(129, 140, 248, 0.07)" }} />
         </div>
       </section>
 
@@ -646,7 +646,7 @@ export default function LandingPage() {
           <FadeIn delay={0.1}>
             <span
               className="font-mono uppercase"
-              style={{ fontSize: "0.48rem", letterSpacing: "0.38em", color: "rgba(255,255,255,0.35)", marginTop: "0.1rem" }}
+              style={{ fontSize: "0.48rem", letterSpacing: "0.38em", color: "rgba(82, 82, 91, 0.45)", marginTop: "0.1rem" }}
             >
               Schollective, Inc. © 2026
             </span>
@@ -657,7 +657,7 @@ export default function LandingPage() {
         <div className="flex-1 flex items-center py-8">
           <SplitReveal
             as="h2"
-            className="font-display font-black tracking-tighter text-white"
+            className="font-display font-black tracking-tighter text-[#fafaf9]"
             style={{ fontSize: "clamp(5rem, 17vw, 20rem)", lineHeight: 0.82 }}
           >
             Start Here.
@@ -665,11 +665,11 @@ export default function LandingPage() {
         </div>
 
         {/* Bottom row: sub-copy left, CTA button right */}
-        <div className="flex items-end justify-between pt-8" style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }}>
+        <div className="flex items-end justify-between pt-8" style={{ borderTop: "1px solid rgba(129, 140, 248, 0.1)" }}>
           <FadeIn delay={0.3}>
             <p
               className="font-light leading-relaxed"
-              style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.52)", maxWidth: "24rem" }}
+              style={{ fontSize: "0.9rem", color: "rgba(168, 179, 207, 0.6)", maxWidth: "24rem" }}
             >
               Join thousands of students already connecting with verified academic mentors — at no cost.
             </p>
@@ -677,17 +677,18 @@ export default function LandingPage() {
           <FadeIn delay={0.5}>
             <Link
               href="/signup"
-              className="group relative rounded-full border text-white font-bold uppercase overflow-hidden transition-colors duration-700 inline-flex items-center gap-3 hover:text-black"
+              className="group relative rounded-full border font-bold uppercase overflow-hidden transition-colors duration-700 inline-flex items-center gap-3"
               style={{
                 padding: "1rem 2.5rem",
                 fontSize: "0.6rem",
                 letterSpacing: "0.15em",
-                borderColor: "rgba(255,255,255,0.3)",
+                borderColor: "rgba(129, 140, 248, 0.5)",
+                color: "#818cf8",
               }}
             >
-              <span className="absolute inset-0 bg-white translate-y-[102%] group-hover:translate-y-0 transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]" />
-              <span className="relative">Create Account</span>
-              <span className="relative transition-transform duration-500 group-hover:translate-x-1">→</span>
+              <span className="absolute inset-0 bg-[#818cf8] translate-y-[102%] group-hover:translate-y-0 transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]" />
+              <span className="relative group-hover:text-[#09090b] transition-colors duration-700">Create Account</span>
+              <span className="relative transition-transform duration-500 group-hover:translate-x-1 group-hover:text-[#09090b]">→</span>
             </Link>
           </FadeIn>
         </div>
