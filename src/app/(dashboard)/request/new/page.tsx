@@ -50,7 +50,7 @@ export default async function RequestNewPage({ searchParams }: RequestNewPagePro
 
           {/* Header */}
           <header className="mb-12">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[rgba(255,255,255,0.07)] bg-[rgba(255,255,255,0.03)] text-[#6a6a6a] text-[0.62rem] font-bold tracking-widest uppercase mb-6">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[rgba(250, 250, 249, 0.07)] bg-[rgba(250, 250, 249, 0.03)] text-[#6a6a6a] text-[0.62rem] font-bold tracking-widest uppercase mb-6">
               <GraduationCap size={12} />
               Mentorship Request
             </div>
@@ -64,7 +64,7 @@ export default async function RequestNewPage({ searchParams }: RequestNewPagePro
           </header>
 
           {/* Form Container */}
-          <div className="bg-[#111111] border border-[rgba(255,255,255,0.06)] rounded-2xl p-8 md:p-14 shadow-[0_60px_120px_-20px_rgba(0,0,0,0.6)]">
+          <div className="bg-[#111111] border border-[rgba(250, 250, 249, 0.06)] rounded-2xl p-8 md:p-14 shadow-[0_60px_120px_-20px_rgba(0,0,0,0.6)]">
             <RequestForm professor={professor as any} />
           </div>
 
