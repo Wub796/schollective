@@ -16,13 +16,13 @@ export default function FeaturesPage() {
     <div className="page-bg">
 
       {/* Nav */}
-      <nav className="relative z-50 flex items-center justify-between px-10 md:px-16" style={{ height: "4.5rem", borderBottom: "1px solid rgba(255,255,255,0.06)", background: "rgba(8,12,20,0.92)", backdropFilter: "blur(20px)" }}>
+      <nav className="relative z-50 flex items-center justify-between px-10 md:px-16" style={{ height: "4.5rem", borderBottom: "1px solid rgba(250, 250, 249, 0.06)", background: "rgba(8,12,20,0.92)", backdropFilter: "blur(20px)" }}>
         <Link href="/" className="flex items-center gap-3 no-underline">
-          <span className="font-display font-bold text-white" style={{ fontSize: "1.1rem", letterSpacing: "-0.02em" }}>Schollective</span>
-          <span className="font-mono uppercase hidden sm:block" style={{ fontSize: "0.42rem", letterSpacing: "0.38em", color: "rgba(255,255,255,0.35)", paddingTop: "2px" }}>Academic Mentorship</span>
+          <span className="font-display font-bold text-[#fafaf9]" style={{ fontSize: "1.1rem", letterSpacing: "-0.02em" }}>Schollective</span>
+          <span className="font-mono uppercase hidden sm:block" style={{ fontSize: "0.42rem", letterSpacing: "0.38em", color: "rgba(250, 250, 249, 0.35)", paddingTop: "2px" }}>Academic Mentorship</span>
         </Link>
         <Link href="/" className="no-underline">
-          <span className="font-mono uppercase text-white rounded-full px-5 py-2 transition-all" style={{ fontSize: "0.52rem", letterSpacing: "0.22em", border: "1px solid rgba(255,255,255,0.25)" }}>← Home</span>
+          <span className="font-mono uppercase text-[#fafaf9] rounded-full px-5 py-2 transition-all" style={{ fontSize: "0.52rem", letterSpacing: "0.22em", border: "1px solid rgba(250, 250, 249, 0.25)" }}>← Home</span>
         </Link>
       </nav>
 
@@ -30,7 +30,7 @@ export default function FeaturesPage() {
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <header className="mb-24 text-center max-w-3xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[rgba(255,255,255,0.07)] bg-[rgba(255,255,255,0.03)] text-[#6a6a6a] text-[0.62rem] font-bold tracking-widest uppercase mb-6">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[rgba(250, 250, 249, 0.07)] bg-[rgba(250, 250, 249, 0.03)] text-[#6a6a6a] text-[0.62rem] font-bold tracking-widest uppercase mb-6">
               <Cpu size={11} />
               Core Capabilities
             </div>
@@ -45,7 +45,7 @@ export default function FeaturesPage() {
           </header>
 
           {/* Feature Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-[rgba(255,255,255,0.05)] mb-32">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-[rgba(250, 250, 249, 0.05)] mb-32">
             {[
               {
                 i: Lock,
@@ -82,7 +82,7 @@ export default function FeaturesPage() {
                 key={i}
                 className="bg-[#0d0d0d] p-12 lg:p-16 flex flex-col group hover:bg-[#111111] transition-colors duration-300"
               >
-                <div className="w-11 h-11 rounded-xl bg-[rgba(255,255,255,0.04)] border border-[rgba(255,255,255,0.06)] flex items-center justify-center mb-8 text-[#6a7a9a] group-hover:text-[#8a8a8a] transition-colors duration-300">
+                <div className="w-11 h-11 rounded-xl bg-[rgba(250, 250, 249, 0.04)] border border-[rgba(250, 250, 249, 0.06)] flex items-center justify-center mb-8 text-[#6a7a9a] group-hover:text-[#8a8a8a] transition-colors duration-300">
                   <f.i size={22} strokeWidth={1.5} />
                 </div>
                 <h3 className="font-display text-2xl text-[#d4d4d2] mb-4 font-semibold leading-tight">
@@ -94,7 +94,7 @@ export default function FeaturesPage() {
           </div>
 
           {/* Security section */}
-          <section className="bg-[#111111] border border-[rgba(255,255,255,0.06)] rounded-2xl p-12 lg:p-20 mb-24 overflow-hidden relative">
+          <section className="bg-[#111111] border border-[rgba(250, 250, 249, 0.06)] rounded-2xl p-12 lg:p-20 mb-24 overflow-hidden relative">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
               <div className="space-y-8">
                 <div>
@@ -112,14 +112,14 @@ export default function FeaturesPage() {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="p-5 bg-[rgba(255,255,255,0.02)] border border-[rgba(255,255,255,0.05)] rounded-xl">
+                  <div className="p-5 bg-[rgba(250, 250, 249, 0.02)] border border-[rgba(250, 250, 249, 0.05)] rounded-xl">
                     <ShieldCheck className="text-[#6a7a9a] mb-4" size={20} />
                     <h4 className="font-display text-base text-[#d4d4d2] mb-2 font-semibold">Edge Guards</h4>
                     <p className="text-xs text-[#888] font-light leading-relaxed">
                       Global routing guards enforce authentication at the edge before data loads.
                     </p>
                   </div>
-                  <div className="p-5 bg-[rgba(255,255,255,0.02)] border border-[rgba(255,255,255,0.05)] rounded-xl">
+                  <div className="p-5 bg-[rgba(250, 250, 249, 0.02)] border border-[rgba(250, 250, 249, 0.05)] rounded-xl">
                     <Lock className="text-[#6a7a9a] mb-4" size={20} />
                     <h4 className="font-display text-base text-[#d4d4d2] mb-2 font-semibold">JWT Integrity</h4>
                     <p className="text-xs text-[#888] font-light leading-relaxed">
@@ -131,9 +131,9 @@ export default function FeaturesPage() {
 
               {/* Abstract visual */}
               <div className="relative aspect-square lg:block hidden">
-                <div className="absolute inset-0 rounded-full border border-[rgba(255,255,255,0.04)]" />
-                <div className="absolute inset-10 border border-[rgba(255,255,255,0.06)] rounded-full border-dashed animate-[spin_20s_linear_infinite]" />
-                <div className="absolute inset-20 bg-[#0f0f0f] border border-[rgba(255,255,255,0.08)] rounded-full flex items-center justify-center shadow-2xl">
+                <div className="absolute inset-0 rounded-full border border-[rgba(250, 250, 249, 0.04)]" />
+                <div className="absolute inset-10 border border-[rgba(250, 250, 249, 0.06)] rounded-full border-dashed animate-[spin_20s_linear_infinite]" />
+                <div className="absolute inset-20 bg-[#0f0f0f] border border-[rgba(250, 250, 249, 0.08)] rounded-full flex items-center justify-center shadow-2xl">
                   <ShieldCheck size={100} strokeWidth={0.8} className="text-[#2a2a2a]" />
                 </div>
               </div>
@@ -141,7 +141,7 @@ export default function FeaturesPage() {
           </section>
 
           {/* CTA */}
-          <section className="text-center py-20 border border-[rgba(255,255,255,0.05)] rounded-2xl">
+          <section className="text-center py-20 border border-[rgba(250, 250, 249, 0.05)] rounded-2xl">
             <h2 className="font-display text-4xl lg:text-5xl font-bold text-[#f2f2f0] mb-8 leading-tight">
               Ready to experience <em className="italic text-[#7a8aa5]">Schollective?</em>
             </h2>
@@ -158,7 +158,7 @@ export default function FeaturesPage() {
       </main>
 
       {/* Footer */}
-      <footer className="py-12 border-t border-[rgba(255,255,255,0.04)] text-center">
+      <footer className="py-12 border-t border-[rgba(250, 250, 249, 0.04)] text-center">
         <div className="font-display text-xl text-[#f2f2f0] mb-3 font-bold">Schollective</div>
         <p className="text-[0.62rem] text-[#2a2a2a] uppercase tracking-widest font-bold">
           Connecting Aspiration with Expertise Since 2025
