@@ -116,8 +116,8 @@ export function NotificationBell() {
           width: "2.2rem",
           height: "2.2rem",
           borderRadius: "50%",
-          border: "1px solid rgba(255,255,255,0.1)",
-          background: open ? "rgba(255,255,255,0.06)" : "transparent",
+          border: "1px solid rgba(250, 250, 249, 0.1)",
+          background: open ? "rgba(250, 250, 249, 0.06)" : "transparent",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -125,7 +125,7 @@ export function NotificationBell() {
           transition: "background 0.2s",
         }}
       >
-        <Bell size={14} color="rgba(255,255,255,0.45)" />
+        <Bell size={14} color="rgba(250, 250, 249, 0.45)" />
         {unreadCount > 0 && (
           <span style={{
             position: "absolute",
@@ -138,7 +138,7 @@ export function NotificationBell() {
             border: "2px solid #080c14",
             fontSize: "0.45rem",
             fontWeight: 700,
-            color: "#fff",
+            color: "#fafaf9",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -157,15 +157,15 @@ export function NotificationBell() {
           right: 0,
           width: "320px",
           background: "#0d1221",
-          border: "1px solid rgba(255,255,255,0.08)",
+          border: "1px solid rgba(250, 250, 249, 0.08)",
           borderRadius: "14px",
           overflow: "hidden",
           boxShadow: "0 16px 48px rgba(0,0,0,0.6)",
           zIndex: 100,
         }}>
           {/* Header */}
-          <div style={{ padding: "1rem 1.25rem", borderBottom: "1px solid rgba(255,255,255,0.06)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <span style={{ fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(255,255,255,0.4)", fontFamily: "var(--font-sans)" }}>
+          <div style={{ padding: "1rem 1.25rem", borderBottom: "1px solid rgba(250, 250, 249, 0.06)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <span style={{ fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.4)", fontFamily: "var(--font-sans)" }}>
               Notifications
             </span>
             {unreadCount > 0 && (
@@ -179,23 +179,23 @@ export function NotificationBell() {
           <div style={{ maxHeight: "360px", overflowY: "auto" }}>
             {notifications.length === 0 ? (
               <div style={{ padding: "2.5rem 1.25rem", textAlign: "center" }}>
-                <Bell size={20} color="rgba(255,255,255,0.1)" style={{ margin: "0 auto 0.75rem" }} />
-                <p style={{ fontSize: "0.72rem", color: "rgba(255,255,255,0.25)", fontFamily: "var(--font-sans)" }}>No notifications yet</p>
+                <Bell size={20} color="rgba(250, 250, 249, 0.1)" style={{ margin: "0 auto 0.75rem" }} />
+                <p style={{ fontSize: "0.72rem", color: "rgba(250, 250, 249, 0.25)", fontFamily: "var(--font-sans)" }}>No notifications yet</p>
               </div>
             ) : (
               notifications.map((n, i) => (
                 <Link key={n.id} href={getHref()} onClick={() => setOpen(false)} style={{
                   textDecoration: "none",
                   padding: "0.9rem 1.25rem",
-                  borderBottom: i < notifications.length - 1 ? "1px solid rgba(255,255,255,0.04)" : "none",
-                  background: n.is_read ? "transparent" : "rgba(255,255,255,0.02)",
+                  borderBottom: i < notifications.length - 1 ? "1px solid rgba(250, 250, 249, 0.04)" : "none",
+                  background: n.is_read ? "transparent" : "rgba(250, 250, 249, 0.02)",
                   display: "flex",
                   flexDirection: "column",
                   gap: "0.3rem",
                   transition: "background 0.2s"
                 }}>
                   <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "0.75rem" }}>
-                    <span style={{ fontSize: "0.78rem", fontWeight: 600, color: n.is_read ? "rgba(255,255,255,0.5)" : "rgba(255,255,255,0.85)", fontFamily: "var(--font-sans)", lineHeight: 1.4 }}>
+                    <span style={{ fontSize: "0.78rem", fontWeight: 600, color: n.is_read ? "rgba(250, 250, 249, 0.5)" : "rgba(250, 250, 249, 0.85)", fontFamily: "var(--font-sans)", lineHeight: 1.4 }}>
                       {n.title}
                     </span>
                     {!n.is_read && (
@@ -203,11 +203,11 @@ export function NotificationBell() {
                     )}
                   </div>
                   {n.body && (
-                    <span style={{ fontSize: "0.68rem", color: "rgba(255,255,255,0.3)", fontFamily: "var(--font-sans)", lineHeight: 1.5 }}>
+                    <span style={{ fontSize: "0.68rem", color: "rgba(250, 250, 249, 0.3)", fontFamily: "var(--font-sans)", lineHeight: 1.5 }}>
                       {n.body}
                     </span>
                   )}
-                  <span style={{ fontSize: "0.5rem", fontWeight: 600, letterSpacing: "0.15em", textTransform: "uppercase", color: "rgba(255,255,255,0.18)", fontFamily: "var(--font-mono, monospace)", marginTop: "0.1rem" }}>
+                  <span style={{ fontSize: "0.5rem", fontWeight: 600, letterSpacing: "0.15em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.18)", fontFamily: "var(--font-mono, monospace)", marginTop: "0.1rem" }}>
                     {formatTime(n.created_at)}
                   </span>
                 </Link>
