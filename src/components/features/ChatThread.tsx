@@ -112,16 +112,27 @@ export function ChatThread({
               )}
             >
               <div
-                className={cn(
-                  "px-5 py-3.5 rounded-2xl text-sm leading-relaxed",
-                  isOwn
-                    ? "bg-[#e8e8e6] text-[#0d0d0d] rounded-br-none"
-                    : "bg-[#1a1a1a] text-[#d4d4d2] border border-[rgba(255,255,255,0.06)] rounded-bl-none"
-                )}
+                style={{
+                  padding: "0.875rem 1.25rem",
+                  borderRadius: isOwn ? "18px 18px 4px 18px" : "18px 18px 18px 4px",
+                  fontSize: "0.875rem",
+                  lineHeight: 1.6,
+                  ...(isOwn
+                    ? {
+                        background: "#818cf8",
+                        color: "#09090b",
+                        fontWeight: 500,
+                      }
+                    : {
+                        background: "rgba(17, 17, 19, 0.8)",
+                        color: "rgba(168, 179, 207, 0.88)",
+                        border: "1px solid rgba(129, 140, 248, 0.12)",
+                      }),
+                }}
               >
                 {msg.content}
               </div>
-              <span className="text-[0.58rem] text-[#3a3a3a] mt-1.5 px-1 font-medium uppercase tracking-wider">
+              <span style={{ fontSize: "0.55rem", color: "rgba(82, 82, 91, 0.5)", marginTop: "0.375rem", padding: "0 0.25rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.12em", fontFamily: "var(--font-mono, monospace)" }}>
                 {new Date(msg.created_at).toLocaleTimeString([], {
                   hour: "2-digit",
                   minute: "2-digit",
@@ -133,11 +144,11 @@ export function ChatThread({
       </div>
 
       {/* Input */}
-      <div className="p-4 md:p-6 bg-[rgba(13,13,13,0.9)] border-t border-[rgba(255,255,255,0.05)] backdrop-blur-xl">
+      <div style={{ padding: "1rem 1.5rem", background: "rgba(9, 9, 11, 0.92)", borderTop: "1px solid rgba(129, 140, 248, 0.1)", backdropFilter: "blur(24px)" }}>
         {isDisabled ? (
-          <div className="bg-[rgba(255,255,255,0.02)] border border-dashed border-[rgba(255,255,255,0.07)] rounded-2xl p-4 flex items-center justify-center gap-3 text-[#4a4a4a] italic text-sm">
-            <Lock size={14} className="shrink-0" />
-            <span className="text-center text-xs">
+          <div style={{ background: "rgba(17, 17, 19, 0.5)", border: "1px dashed rgba(129, 140, 248, 0.12)", borderRadius: "16px", padding: "1rem", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.75rem", color: "rgba(82, 82, 91, 0.5)", fontStyle: "italic", fontSize: "0.875rem" }}>
+            <Lock size={14} style={{ flexShrink: 0 }} />
+            <span style={{ textAlign: "center", fontSize: "0.78rem", color: "rgba(82, 82, 91, 0.6)" }}>
               {status === "pending"
                 ? "Messaging will unlock once the professor accepts the request."
                 : "This thread is closed and no longer accepting messages."}
@@ -154,7 +165,28 @@ export function ChatThread({
                 onChange={(e) => setInputValue(e.target.value)}
                 placeholder="Write a message…"
                 rows={1}
-                className="w-full bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.07)] rounded-2xl px-5 py-3.5 text-sm text-[#f2f2f0] outline-none focus:border-[rgba(232,232,230,0.4)] focus:bg-[rgba(255,255,255,0.05)] transition-all resize-none overflow-hidden placeholder:text-[#3a3a3a]"
+                style={{
+                  width: "100%",
+                  background: "rgba(17, 17, 19, 0.7)",
+                  border: "1px solid rgba(129, 140, 248, 0.15)",
+                  borderRadius: "16px",
+                  padding: "0.875rem 1.25rem",
+                  fontSize: "0.875rem",
+                  color: "rgba(250, 250, 249, 0.9)",
+                  outline: "none",
+                  transition: "border-color 0.2s, background 0.2s",
+                  resize: "none",
+                  overflow: "hidden",
+                  fontFamily: "var(--font-sans)",
+                }}
+                onFocus={e => {
+                  e.currentTarget.style.borderColor = "rgba(129, 140, 248, 0.45)";
+                  e.currentTarget.style.background = "rgba(17, 17, 19, 0.9)";
+                }}
+                onBlur={e => {
+                  e.currentTarget.style.borderColor = "rgba(129, 140, 248, 0.15)";
+                  e.currentTarget.style.background = "rgba(17, 17, 19, 0.7)";
+                }}
                 onInput={(e) => {
                   const target = e.target as HTMLTextAreaElement;
                   target.style.height = "auto";
