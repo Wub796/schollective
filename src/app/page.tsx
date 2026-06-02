@@ -772,11 +772,12 @@ export default function LandingPage() {
               </span>
               <nav style={{ display: "flex", flexDirection: "column", gap: "0.85rem" }}>
                 {[
-                  { label: "Home", href: "/" },
-                  { label: "Sign Up", href: "/signup" },
-                  { label: "Log In", href: "/login" },
-                  { label: "Find a Mentor", href: "/signup" },
-                  { label: "For Professors", href: "/signup" },
+                  { label: "Home",           href: "/" },
+                  { label: "About",          href: "/about" },
+                  { label: "For Students",   href: "/for-students" },
+                  { label: "For Professors", href: "/for-professors" },
+                  { label: "Sign Up",        href: "/signup" },
+                  { label: "Log In",         href: "/login" },
                 ].map((link) => (
                   <Link
                     key={link.label}
