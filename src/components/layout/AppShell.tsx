@@ -38,7 +38,7 @@ export function AppShell({ children, role = "student" }: AppShellProps) {
   return (
     <>
       {/* ── Top nav bar ─────────────────────────────────────────── */}
-      <header className="app-nav" style={{ background: "rgba(8,12,20,0.92)" }}>
+      <header className="app-nav" style={{ background: "rgba(9, 9, 11, 0.94)" }}>
         {/* Hamburger */}
         <button
           className="nav-hamburger"
@@ -55,14 +55,14 @@ export function AppShell({ children, role = "student" }: AppShellProps) {
         {/* Wordmark — matches landing page nav exactly */}
         <a href="/dashboard" className="flex items-center gap-2.5 no-underline group">
           <span
-            className="font-display font-bold text-white"
+            className="font-display font-bold text-[#fafaf9]"
             style={{ fontSize: "1.05rem", letterSpacing: "-0.02em" }}
           >
             Schollective
           </span>
           <span
             className="font-mono uppercase hidden sm:block"
-            style={{ fontSize: "0.42rem", letterSpacing: "0.38em", color: "rgba(255,255,255,0.35)", paddingTop: "2px" }}
+            style={{ fontSize: "0.42rem", letterSpacing: "0.38em", color: "rgba(250, 250, 249, 0.35)", paddingTop: "2px" }}
           >
             Academic Mentorship
           </span>
@@ -85,9 +85,9 @@ export function AppShell({ children, role = "student" }: AppShellProps) {
               key={href}
               href={href}
               className="no-underline"
-              style={{ fontSize: "0.48rem", letterSpacing: "0.32em", textTransform: "uppercase", color: "rgba(255,255,255,0.45)", fontFamily: "var(--font-mono, 'DM Mono', monospace)", transition: "color 0.2s" }}
-              onMouseEnter={e => (e.currentTarget.style.color = "rgba(255,255,255,0.9)")}
-              onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,255,255,0.45)")}
+              style={{ fontSize: "0.48rem", letterSpacing: "0.32em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.45)", fontFamily: "var(--font-mono, 'DM Mono', monospace)", transition: "color 0.2s" }}
+              onMouseEnter={e => (e.currentTarget.style.color = "rgba(250, 250, 249, 0.9)")}
+              onMouseLeave={e => (e.currentTarget.style.color = "rgba(250, 250, 249, 0.45)")}
             >
               {label}
             </a>
@@ -101,12 +101,12 @@ export function AppShell({ children, role = "student" }: AppShellProps) {
           <Link href="/profile" style={{ textDecoration: "none" }}>
             <div
               className="flex h-7 px-3 cursor-pointer items-center justify-center rounded-full border text-[0.58rem] font-semibold tracking-widest uppercase transition-all"
-              style={{ borderColor: "rgba(255,255,255,0.2)", color: "rgba(255,255,255,0.7)", background: "transparent" }}
+              style={{ borderColor: "rgba(250, 250, 249, 0.2)", color: "rgba(250, 250, 249, 0.7)", background: "transparent" }}
               role="button"
               tabIndex={0}
               aria-label="User menu"
-              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.5)"; (e.currentTarget as HTMLElement).style.color = "#fff"; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.2)"; (e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.7)"; }}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = "rgba(250, 250, 249, 0.5)"; (e.currentTarget as HTMLElement).style.color = "#fafaf9"; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = "rgba(250, 250, 249, 0.2)"; (e.currentTarget as HTMLElement).style.color = "rgba(250, 250, 249, 0.7)"; }}
             >
               Account
             </div>
@@ -126,15 +126,15 @@ export function AppShell({ children, role = "student" }: AppShellProps) {
       <div className="app-shell">
         <aside
           id="app-sidebar"
-          className="app-sidebar border-r border-[rgba(255,255,255,0.05)]"
+          className="app-sidebar border-r border-[rgba(129, 140, 248, 0.08)]"
           data-open={sidebarOpen ? "true" : "false"}
           aria-label="Sidebar navigation"
-          style={{ background: "#080c14" }}
+          style={{ background: "var(--bg-base)" }}
         >
           <Sidebar onClose={closeSidebar} role={role} />
         </aside>
 
-        <main className="app-main" style={{ background: "#080c14" }}>
+        <main className="app-main" style={{ background: "var(--bg-base)" }}>
           <motion.div
             key={pathname}
             initial={{ opacity: 0, y: 8 }}
