@@ -11,17 +11,17 @@ function StatCard({ value, label, sub }: { value: string | number; label: string
   return (
     <div style={{
       padding: "1.5rem",
-      border: "1px solid rgba(255,255,255,0.07)",
+      border: "1px solid rgba(250, 250, 249, 0.07)",
       borderRadius: "14px",
-      background: "rgba(255,255,255,0.025)",
+      background: "rgba(250, 250, 249, 0.025)",
       display: "flex", flexDirection: "column", gap: "0.5rem",
     }}>
-      <span className="font-display" style={{ fontSize: "2.4rem", fontWeight: 900, color: "#fff", letterSpacing: "-0.04em", lineHeight: 1 }}>
+      <span className="font-display" style={{ fontSize: "2.4rem", fontWeight: 900, color: "#fafaf9", letterSpacing: "-0.04em", lineHeight: 1 }}>
         {value}
       </span>
       <div>
-        <div style={{ fontSize: "0.78rem", fontWeight: 600, color: "rgba(255,255,255,0.7)", fontFamily: "var(--font-sans)" }}>{label}</div>
-        <div style={{ fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(255,255,255,0.25)", fontFamily: "var(--font-mono, monospace)", marginTop: "0.2rem" }}>
+        <div style={{ fontSize: "0.78rem", fontWeight: 600, color: "rgba(250, 250, 249, 0.7)", fontFamily: "var(--font-sans)" }}>{label}</div>
+        <div style={{ fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.25)", fontFamily: "var(--font-mono, monospace)", marginTop: "0.2rem" }}>
           {sub}
         </div>
       </div>
@@ -68,18 +68,18 @@ export default async function AdminDashboard() {
         justifyContent: "space-between", 
         padding: "1.5rem 5vw", 
         background: "rgba(8,12,20,0.92)",
-        borderBottom: "1px solid rgba(255,255,255,0.05)",
+        borderBottom: "1px solid rgba(250, 250, 249, 0.05)",
         position: "sticky",
         top: 0,
         zIndex: 50,
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
           <Link href="/" style={{ textDecoration: "none" }}>
-            <span className="font-display" style={{ fontSize: "1.05rem", fontWeight: 800, color: "#fff", letterSpacing: "-0.02em" }}>
+            <span className="font-display" style={{ fontSize: "1.05rem", fontWeight: 800, color: "#fafaf9", letterSpacing: "-0.02em" }}>
               Schollective
             </span>
           </Link>
-          <span style={{ fontSize: "0.42rem", fontWeight: 700, letterSpacing: "0.38em", textTransform: "uppercase", color: "rgba(255,255,255,0.35)", fontFamily: "var(--font-mono, monospace)", marginTop: "2px", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+          <span style={{ fontSize: "0.42rem", fontWeight: 700, letterSpacing: "0.38em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.35)", fontFamily: "var(--font-mono, monospace)", marginTop: "2px", display: "flex", alignItems: "center", gap: "0.5rem" }}>
             <span style={{ width: "4px", height: "4px", background: "#ff4a4a", borderRadius: "50%" }}></span>
             Admin Environment
           </span>
@@ -87,12 +87,12 @@ export default async function AdminDashboard() {
 
         <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
           <Link href="/" style={{ textDecoration: "none" }} className="admin-nav-link">
-            <div style={{ padding: "0.5rem 1rem", color: "rgba(255,255,255,0.7)", fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", fontFamily: "var(--font-sans)", display: "flex", alignItems: "center", gap: "0.4rem", transition: "color 0.2s" }}>
+            <div style={{ padding: "0.5rem 1rem", color: "rgba(250, 250, 249, 0.7)", fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", fontFamily: "var(--font-sans)", display: "flex", alignItems: "center", gap: "0.4rem", transition: "color 0.2s" }}>
               <Home size={12} /> Home
             </div>
           </Link>
           <Link href="/profile" style={{ textDecoration: "none" }} className="admin-nav-button">
-            <div style={{ padding: "0.5rem 1rem", border: "1px solid rgba(255,255,255,0.2)", borderRadius: "100px", color: "rgba(255,255,255,0.7)", fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", fontFamily: "var(--font-sans)", display: "flex", alignItems: "center", gap: "0.4rem", transition: "all 0.2s" }}>
+            <div style={{ padding: "0.5rem 1rem", border: "1px solid rgba(250, 250, 249, 0.2)", borderRadius: "100px", color: "rgba(250, 250, 249, 0.7)", fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", fontFamily: "var(--font-sans)", display: "flex", alignItems: "center", gap: "0.4rem", transition: "all 0.2s" }}>
               <Settings size={12} /> Settings
             </div>
           </Link>
@@ -105,15 +105,15 @@ export default async function AdminDashboard() {
         {/* ── Header ── */}
       <header style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <span style={{ width: "1.5rem", height: "1px", background: "rgba(255,255,255,0.2)", display: "block" }} />
-          <span style={{ fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.38em", textTransform: "uppercase", color: "rgba(255,255,255,0.3)", fontFamily: "var(--font-mono, monospace)" }}>
+          <span style={{ width: "1.5rem", height: "1px", background: "rgba(250, 250, 249, 0.2)", display: "block" }} />
+          <span style={{ fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.38em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.3)", fontFamily: "var(--font-mono, monospace)" }}>
             Internal Systems
           </span>
         </div>
-        <h1 className="font-display" style={{ fontSize: "clamp(2.4rem, 5vw, 3.8rem)", fontWeight: 900, color: "#fff", letterSpacing: "-0.035em", lineHeight: 1.05 }}>
-          Admin <em style={{ fontStyle: "italic", color: "rgba(255,255,255,0.35)" }}>Approval Portal</em>
+        <h1 className="font-display" style={{ fontSize: "clamp(2.4rem, 5vw, 3.8rem)", fontWeight: 900, color: "#fafaf9", letterSpacing: "-0.035em", lineHeight: 1.05 }}>
+          Admin <em style={{ fontStyle: "italic", color: "rgba(250, 250, 249, 0.35)" }}>Approval Portal</em>
         </h1>
-        <p style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.4)", fontWeight: 300, maxWidth: "42rem", lineHeight: 1.7, fontFamily: "var(--font-sans)", marginTop: "0.25rem" }}>
+        <p style={{ fontSize: "0.9rem", color: "rgba(250, 250, 249, 0.4)", fontWeight: 300, maxWidth: "42rem", lineHeight: 1.7, fontFamily: "var(--font-sans)", marginTop: "0.25rem" }}>
           Review and verify professor credentials to maintain the academic integrity of the Schollective network.
         </p>
       </header>
@@ -126,16 +126,16 @@ export default async function AdminDashboard() {
       </div>
 
       {/* ── Hairline ── */}
-      <div style={{ height: "1px", background: "rgba(255,255,255,0.06)" }} />
+      <div style={{ height: "1px", background: "rgba(250, 250, 249, 0.06)" }} />
 
       {/* ── Queue ── */}
       <section style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <span style={{ width: "1rem", height: "1px", background: "rgba(255,255,255,0.2)", display: "block" }} />
-          <h2 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "rgba(255,255,255,0.85)", letterSpacing: "-0.02em" }}>
+          <span style={{ width: "1rem", height: "1px", background: "rgba(250, 250, 249, 0.2)", display: "block" }} />
+          <h2 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "rgba(250, 250, 249, 0.85)", letterSpacing: "-0.02em" }}>
             Verification Queue
           </h2>
-          <span style={{ marginLeft: "auto", fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(255,255,255,0.25)", fontFamily: "var(--font-mono, monospace)" }}>
+          <span style={{ marginLeft: "auto", fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.25)", fontFamily: "var(--font-mono, monospace)" }}>
             {pendingProfessors?.length || 0} pending
           </span>
         </div>
@@ -143,7 +143,7 @@ export default async function AdminDashboard() {
         <AdminReviewTable applicants={(pendingProfessors || []) as any} />
       </section>
 
-        <footer style={{ marginTop: "4rem", paddingTop: "2rem", borderTop: "1px solid rgba(255,255,255,0.04)", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(255,255,255,0.2)", fontFamily: "var(--font-mono, monospace)" }}>
+        <footer style={{ marginTop: "4rem", paddingTop: "2rem", borderTop: "1px solid rgba(250, 250, 249, 0.04)", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.2)", fontFamily: "var(--font-mono, monospace)" }}>
           <span>Schollective Admin Engine v1.0</span>
           <span>Secure Environment · Academic Integrity First</span>
         </footer>
