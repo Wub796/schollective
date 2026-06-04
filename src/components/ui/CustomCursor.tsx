@@ -36,8 +36,11 @@ function SpotlightBlob({
   const x = useSpring(sourceX, { stiffness: 38, damping: 22, mass: 1.4 });
   const y = useSpring(sourceY, { stiffness: 38, damping: 22, mass: 1.4 });
 
-  const isActive = mode === "hover-link" || mode === "hover-button";
+  // Hide spotlight when on button, as button handles its own effects
+  const isActive = mode === "hover-link";
   const size = isActive ? 700 : 520;
+
+  if (mode === "hover-button") return null;
 
   return (
     <motion.div
@@ -72,7 +75,10 @@ function PrecisionDot({
   mode: CursorMode;
 }) {
   const isText = mode === "text";
-  const isActive = mode === "hover-link" || mode === "hover-button";
+  const isActive = mode === "hover-link";
+
+  // Hide dot completely on button to let button pseudo-cursor take over
+  if (mode === "hover-button") return null;
 
   return (
     <motion.div
@@ -113,10 +119,13 @@ function CursorRing({
   const isLink   = mode === "hover-link";
   const isButton = mode === "hover-button";
   const isCanvas = mode === "hover-canvas";
-  const isActive = isLink || isButton;
+  const isActive = isLink;
+
+  // Hide ring on button hover so the button's internal ring animation takes over
+  if (isButton) return null;
 
   // Size: button gets a slightly smaller ring than link to feel distinct
-  const size = isText ? 3 : isButton ? 44 : isLink ? 56 : isCanvas ? 48 : 24;
+  const size = isText ? 3 : isLink ? 56 : isCanvas ? 48 : 24;
 
   // Border colour:
   //  • default / canvas  → warm white, semi-transparent
