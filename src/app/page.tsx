@@ -132,8 +132,8 @@ const STEPS = [
     MAIN PAGE
 ══════════════════════════════════════════════════════════════════ */
 export default function LandingPage() {
-  const pageRef       = useRef<HTMLDivElement>(null);
-  const stepsPinRef   = useRef<HTMLDivElement>(null);
+  const pageRef = useRef<HTMLDivElement>(null);
+  const stepsPinRef = useRef<HTMLDivElement>(null);
   const stepsTrackRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
@@ -406,8 +406,8 @@ export default function LandingPage() {
           <div className="grid grid-cols-3 gap-10" style={{ maxWidth: "32rem" }}>
             {[
               { num: "100%", label: "Free for students" },
-              { num: "48h",  label: "Avg. response time" },
-              { num: "0",    label: "Cold emails sent" },
+              { num: "48h", label: "Avg. response time" },
+              { num: "0", label: "Cold emails sent" },
             ].map((s, i) => (
               <FadeIn key={i} delay={0.5 + i * 0.1}>
                 <div className="flex flex-col gap-3">
@@ -693,6 +693,305 @@ export default function LandingPage() {
           </FadeIn>
         </div>
       </section>
+
+
+      {/* ══ FOOTER ═══════════════════════════════════════════════════════ */}
+      <footer
+        style={{
+          background: "var(--bg-surface-1)",
+          borderTop: "1px solid rgba(129, 140, 248, 0.1)",
+        }}
+      >
+        {/* Main footer grid */}
+        <div
+          style={{
+            maxWidth: "80rem",
+            margin: "0 auto",
+            padding: "4.5rem 2.5rem 3rem",
+            display: "grid",
+            gridTemplateColumns: "2fr 1fr 1.5fr",
+            gap: "3rem",
+          }}
+          className="footer-grid"
+        >
+          {/* ── Col 1: Brand ──────────────────────────────────────────── */}
+          <FadeIn delay={0}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+              {/* Logo mark + wordmark */}
+              <div style={{ display: "flex", alignItems: "center", gap: "0.85rem" }}>
+                <div
+                  style={{
+                    width: "40px",
+                    height: "40px",
+                    borderRadius: "10px",
+                    background: "linear-gradient(135deg, #6366f1 0%, #818cf8 100%)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexShrink: 0,
+                    boxShadow: "0 4px 16px rgba(99, 102, 241, 0.35)",
+                  }}
+                >
+                  {/* Stylised "S" lettermark */}
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M17 8C17 5.79 14.76 4 12 4C9.24 4 7 5.79 7 8C7 10.21 9.24 12 12 12C14.76 12 17 13.79 17 16C17 18.21 14.76 20 12 20C9.24 20 7 18.21 7 16"
+                      stroke="#fafaf9"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                </div>
+                <span
+                  className="font-display font-bold"
+                  style={{ fontSize: "1.15rem", letterSpacing: "-0.02em", color: "#fafaf9" }}
+                >
+                  Schollective
+                </span>
+              </div>
+
+              {/* Tagline */}
+              <p
+                className="font-light leading-relaxed"
+                style={{ fontSize: "0.88rem", color: "rgba(168, 179, 207, 0.65)", maxWidth: "22rem" }}
+              >
+                Connecting ambitious students with verified professors for structured, transparent academic mentorship.
+                Every question deserves a real answer.
+              </p>
+            </div>
+          </FadeIn>
+
+          {/* ── Col 2: Quick Links ────────────────────────────────────── */}
+          <FadeIn delay={0.1}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+              <span
+                className="font-mono uppercase"
+                style={{ fontSize: "0.55rem", letterSpacing: "0.35em", color: "rgba(129, 140, 248, 0.6)" }}
+              >
+                Quick Links
+              </span>
+              <nav style={{ display: "flex", flexDirection: "column", gap: "0.85rem" }}>
+                {[
+                  { label: "Home", href: "/" },
+                  { label: "Sign Up", href: "/signup" },
+                  { label: "Log In", href: "/login" },
+                  { label: "Find a Mentor", href: "/signup" },
+                  { label: "For Professors", href: "/signup" },
+                ].map((link) => (
+                  <Link
+                    key={link.label}
+                    href={link.href}
+                    className="link-underline"
+                    style={{
+                      fontSize: "0.88rem",
+                      color: "rgba(168, 179, 207, 0.7)",
+                      transition: "color 0.2s ease",
+                      display: "inline-block",
+                    }}
+                    onMouseEnter={(e) => ((e.currentTarget as HTMLAnchorElement).style.color = "#818cf8")}
+                    onMouseLeave={(e) => ((e.currentTarget as HTMLAnchorElement).style.color = "rgba(168, 179, 207, 0.7)")}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </nav>
+            </div>
+          </FadeIn>
+
+          {/* ── Col 3: Contact ────────────────────────────────────────── */}
+          <FadeIn delay={0.2}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+              <span
+                className="font-mono uppercase"
+                style={{ fontSize: "0.55rem", letterSpacing: "0.35em", color: "rgba(129, 140, 248, 0.6)" }}
+              >
+                Contact Us
+              </span>
+              <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                {/* Email */}
+                <a
+                  href="mailto:schollective.corp@gmail.com"
+                  style={{ display: "flex", alignItems: "center", gap: "0.75rem", textDecoration: "none" }}
+                >
+                  <div
+                    style={{
+                      width: "32px",
+                      height: "32px",
+                      borderRadius: "8px",
+                      background: "rgba(99, 102, 241, 0.12)",
+                      border: "1px solid rgba(129, 140, 248, 0.15)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      flexShrink: 0,
+                    }}
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
+                        stroke="#818cf8"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <polyline
+                        points="22,6 12,13 2,6"
+                        stroke="#818cf8"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </div>
+                  <span style={{ fontSize: "0.83rem", color: "rgba(168, 179, 207, 0.7)" }}>
+                    schollective.corp@gmail.com
+                  </span>
+                </a>
+
+                {/* Institution */}
+                <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                  <div
+                    style={{
+                      width: "32px",
+                      height: "32px",
+                      borderRadius: "8px",
+                      background: "rgba(99, 102, 241, 0.12)",
+                      border: "1px solid rgba(129, 140, 248, 0.15)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      flexShrink: 0,
+                    }}
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"
+                        stroke="#818cf8"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <polyline
+                        points="9,22 9,12 15,12 15,22"
+                        stroke="#818cf8"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </div>
+                  <span style={{ fontSize: "0.83rem", color: "rgba(168, 179, 207, 0.7)" }}>
+                    Serving schools worldwide
+                  </span>
+                </div>
+
+                {/* Availability */}
+                <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                  <div
+                    style={{
+                      width: "32px",
+                      height: "32px",
+                      borderRadius: "8px",
+                      background: "rgba(99, 102, 241, 0.12)",
+                      border: "1px solid rgba(129, 140, 248, 0.15)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      flexShrink: 0,
+                    }}
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <circle cx="12" cy="12" r="10" stroke="#818cf8" strokeWidth="1.5" />
+                      <polyline
+                        points="12,6 12,12 16,14"
+                        stroke="#818cf8"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </div>
+                  <span style={{ fontSize: "0.83rem", color: "rgba(168, 179, 207, 0.7)" }}>
+                    Free to use — always
+                  </span>
+                </div>
+              </div>
+            </div>
+          </FadeIn>
+        </div>
+
+        {/* Hairline divider */}
+        <div
+          style={{
+            maxWidth: "80rem",
+            margin: "0 auto",
+            height: "1px",
+            background: "rgba(129, 140, 248, 0.09)",
+            marginLeft: "2.5rem",
+            marginRight: "2.5rem",
+          }}
+        />
+
+        {/* Bottom bar */}
+        <div
+          style={{
+            maxWidth: "80rem",
+            margin: "0 auto",
+            padding: "1.5rem 2.5rem",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            gap: "0.75rem",
+          }}
+        >
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+            <span
+              className="font-mono"
+              style={{ fontSize: "0.72rem", color: "rgba(82, 82, 91, 0.7)", letterSpacing: "0.02em" }}
+            >
+              © 2026 Schollective, Inc. All rights reserved.
+            </span>
+            <span
+              className="font-mono"
+              style={{ fontSize: "0.68rem", color: "rgba(82, 82, 91, 0.5)", letterSpacing: "0.02em" }}
+            >
+              Not a substitute for official academic advising.
+            </span>
+          </div>
+
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            <span
+              className="font-mono"
+              style={{ fontSize: "0.68rem", color: "rgba(82, 82, 91, 0.55)", letterSpacing: "0.04em" }}
+            >
+              Built with
+            </span>
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              style={{ opacity: 0.55 }}
+            >
+              <path
+                d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"
+                stroke="rgba(129, 140, 248, 0.7)"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            <span
+              className="font-mono"
+              style={{ fontSize: "0.68rem", color: "rgba(82, 82, 91, 0.55)", letterSpacing: "0.04em" }}
+            >
+              for students seeking knowledge
+            </span>
+          </div>
+        </div>
+      </footer>
 
     </div>
   );
