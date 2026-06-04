@@ -1,20 +1,16 @@
 "use client";
 
-import React, { useRef, useLayoutEffect } from "react";
+import React, { useRef, useLayoutEffect, useState, useEffect } from "react";
 import Link from "next/link";
-import { motion, useInView } from "framer-motion";
+import { SchollectiveLogo } from "@/components/ui/SchollectiveLogo";
+import { motion, useInView, AnimatePresence } from "framer-motion";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/dist/ScrollTrigger";
 import dynamic from "next/dynamic";
 import { PublicNav } from "@/components/ui/PublicNav";
 
-
 const ThreeBackground = dynamic(
   () => import("@/components/ui/ThreeBackground").then(m => m.ThreeBackground),
-  { ssr: false }
-);
-const FloatingOrb = dynamic(
-  () => import("@/components/ui/FloatingOrb").then(m => m.FloatingOrb),
   { ssr: false }
 );
 
@@ -22,9 +18,111 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
+/* ── Unseen Studio Loader — dark overlay, letters cycling, fades out ──── */
+function PageLoader({ done }: { done: boolean }) {
+  const LETTERS = ["S", "C", "H", "O", "L", "L"];
+  return (
+    <AnimatePresence>
+      {!done && (
+        <motion.div
+          key="loader"
+          initial={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.55, ease: [0.19, 1, 0.22, 1], delay: 0.1 }}
+          style={{
+            position: "fixed", inset: 0, zIndex: 99999,
+            background: "#09090b",
+            display: "flex", flexDirection: "column",
+            alignItems: "center", justifyContent: "center",
+            gap: "1.5rem",
+          }}
+        >
+          {/* 3D rotating cube — Unseen loader__box spec */}
+          <div style={{
+            width: "5rem", height: "5rem",
+            perspective: "20rem",
+            position: "relative",
+          }}>
+            <motion.div
+              animate={{ rotateY: [0, 90, 90, 180, 180, 270, 270, 360], rotateX: [0, 0, 0, 0, -90, -90, 0, 0] }}
+              transition={{ duration: 2.4, ease: "easeInOut", repeat: Infinity, repeatDelay: 0 }}
+              style={{
+                width: "100%", height: "100%",
+                position: "relative", transformStyle: "preserve-3d",
+              }}
+            >
+              {LETTERS.map((ch, i) => {
+                const faces = [
+                  { rotateY: 0,   translateZ: "2.5rem" },
+                  { rotateY: -90, translateZ: "2.5rem" },
+                  { rotateX: -90, translateZ: "2.5rem" },
+                  { rotateX: 180, translateZ: "2.5rem" },
+                  { rotateX: 90,  translateZ: "2.5rem" },
+                  { rotateY: 90,  translateZ: "2.5rem" },
+                ][i];
+                return (
+                  <div key={i} style={{
+                    position: "absolute", width: "100%", height: "100%",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    background: i % 2 === 0 ? "#818cf8" : "rgba(129,140,248,0.15)",
+                    border: "1px solid rgba(129,140,248,0.3)",
+                    fontSize: "1.8rem", fontWeight: 900, color: "#fafaf9",
+                    transform: `rotate${Object.keys(faces)[0].replace("rotate", "") as string}(${Object.values(faces)[0]}) translateZ(${Object.values(faces)[1]})`,
+                    backfaceVisibility: "hidden",
+                  }}>
+                    {ch}
+                  </div>
+                );
+              })}
+            </motion.div>
+          </div>
 
-/* ── Word-by-word cinematic reveal ──────────────────────────────── */
+          <div style={{ textAlign: "center" }}>
+            <p style={{
+              fontFamily: "monospace",
+              fontSize: "0.7rem",
+              letterSpacing: "0.35em",
+              textTransform: "uppercase",
+              color: "rgba(129,140,248,0.5)",
+              margin: 0,
+            }}>Schollective</p>
+            <p style={{
+              fontFamily: "monospace",
+              fontSize: "0.55rem",
+              letterSpacing: "0.2em",
+              color: "rgba(82,82,91,0.4)",
+              margin: "0.3rem 0 0",
+            }}>Academic Mentorship Platform</p>
+          </div>
+
+          {/* Progress bar */}
+          <motion.div style={{ width: "8rem", height: "1px", background: "rgba(82,82,91,0.2)", position: "relative", overflow: "hidden" }}>
+            <motion.div
+              initial={{ scaleX: 0, originX: 0 }}
+              animate={{ scaleX: 1 }}
+              transition={{ duration: 1.1, ease: [0.19, 1, 0.22, 1] }}
+              style={{ position: "absolute", inset: 0, background: "#818cf8" }}
+            />
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
+/* ── Unseen Studio easing — cubic-bezier(0.19, 1, 0.22, 1) ─────────
+   Exponential out curve: snappy start, silky landing. Used on ALL
+   text reveals, scroll triggers, and hover transitions.
+────────────────────────────────────────────────────────────────────── */
+const EASE: [number, number, number, number] = [0.19, 1, 0.22, 1];
+const EASE_OUT: [number, number, number, number] = [0.22, 1, 0.36, 1];
+
+
+/* ── Line-by-line text reveal — Unseen Studio spec ─────────────────
+   Each LINE is wrapped in overflow:hidden, text starts at translateY(105%)
+   and lands at 0 with cubic-bezier(0.19,1,0.22,1) over 0.8s.
+   Lines stagger by 0.05s. Words within a line stagger by 0.04s.
+────────────────────────────────────────────────────────────────────── */
 function SplitReveal({
   children,
   className = "",
@@ -39,19 +137,19 @@ function SplitReveal({
   style?: React.CSSProperties;
 }) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-8%" });
+  const isInView = useInView(ref, { once: true, margin: "-6%" });
   const words = children.split(" ");
 
   return (
     <Tag ref={ref as any} className={className} style={style}>
       {words
         .map((word, i) => (
-          <span key={i} className="inline-block overflow-hidden">
+          <span key={i} className="inline-block overflow-hidden" style={{ verticalAlign: "bottom" }}>
             <motion.span
               className="inline-block"
-              initial={{ y: "110%", opacity: 0 }}
-              animate={isInView ? { y: 0, opacity: 1 } : {}}
-              transition={{ duration: 1.1, ease: EASE, delay: delay + i * 0.07 }}
+              initial={{ y: "105%" }}
+              animate={isInView ? { y: 0 } : {}}
+              transition={{ duration: 0.8, ease: EASE, delay: delay + i * 0.05 }}
             >
               {word}
             </motion.span>
@@ -66,7 +164,9 @@ function SplitReveal({
   );
 }
 
-/* ── Scroll-triggered fade up ───────────────────────────────────── */
+/* ── Scroll-triggered fade up — Unseen Studio spec ─────────────────
+   opacity: 0→1, y: 40px→0, easing cubic-bezier(0.19,1,0.22,1), 0.7s
+────────────────────────────────────────────────────────────────────── */
 function FadeIn({
   children,
   delay = 0,
@@ -77,13 +177,13 @@ function FadeIn({
   className?: string;
 }) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-5%" });
+  const isInView = useInView(ref, { once: true, margin: "-4%" });
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 24 }}
+      initial={{ opacity: 0, y: 40 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.9, ease: EASE, delay }}
+      transition={{ duration: 0.7, ease: EASE, delay }}
       className={className}
     >
       {children}
@@ -128,52 +228,356 @@ const STEPS = [
     title: "Guided Dialogue",
     body: "Communicate securely through organized, one-on-one threads — no personal email required.",
   },
+  {
+    num: "05",
+    title: "Collaborate & Publish",
+    body: "Build your academic portfolio, co-author research, and present at top-tier conferences.",
+  },
 ];
+
+/* ── ProcessCard — horizontal rail card ────────────────────────────────
+   Animates from x:60px (slides in from right as rail scrolls into view).
+   Fixed width so cards form a horizontal sequence.
+   Hover: CSS-only narrow transitions, no transition-all.
+──────────────────────────────────────────────────────────────────────── */
+function ProcessCard({
+  step,
+  index,
+  railInView,
+}: {
+  step: (typeof STEPS)[number];
+  index: number;
+  railInView: boolean;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: 60 }}
+      animate={railInView ? { opacity: 1, x: 0 } : {}}
+      transition={{
+        duration: 0.7,
+        ease: EASE,
+        delay: 0.15 + index * 0.12,
+      }}
+      className="group relative flex flex-col justify-between flex-shrink-0 cursor-default overflow-hidden"
+      style={{
+        /* snap target */
+        scrollSnapAlign: "start",
+        background: "var(--bg-base)",
+        /* card sizing: ~38vw on desktop, full width on mobile */
+        width: "clamp(280px, 38vw, 520px)",
+        minHeight: "26rem",
+        padding: "2.5rem",
+        borderRight: "1px solid rgba(129,140,248,0.08)",
+        willChange: "transform, opacity",
+      }}
+    >
+      {/* Ghost number — top-right watermark */}
+      <div
+        aria-hidden
+        className="absolute top-4 right-5 select-none pointer-events-none font-mono font-black"
+        style={{
+          fontSize: "clamp(6rem, 12vw, 10rem)",
+          lineHeight: 1,
+          color: "rgba(129,140,248,0.045)",
+          letterSpacing: "-0.05em",
+          transition: "color 0.5s cubic-bezier(0.19,1,0.22,1)",
+        }}
+      >
+        {step.num}
+      </div>
+
+      {/* Step label — top */}
+      <span
+        className="font-mono relative z-10"
+        style={{
+          fontSize: "0.48rem",
+          letterSpacing: "0.42em",
+          color: "rgba(129,140,248,0.35)",
+          textTransform: "uppercase",
+          transition: "color 0.4s cubic-bezier(0.19,1,0.22,1)",
+        }}
+      >
+        {step.num}
+      </span>
+
+      {/* Content — bottom */}
+      <div className="relative z-10 mt-auto">
+        <h3
+          className="font-display font-bold tracking-tighter text-[#fafaf9] mb-3"
+          style={{
+            fontSize: "clamp(1.6rem, 3vw, 2.6rem)",
+            lineHeight: 1.0,
+            transition: "transform 0.4s cubic-bezier(0.19,1,0.22,1)",
+          }}
+        >
+          {step.title}
+        </h3>
+        <p
+          className="font-light leading-relaxed"
+          style={{ fontSize: "0.88rem", color: "rgba(168,179,207,0.5)" }}
+        >
+          {step.body}
+        </p>
+
+        {/* Arrow */}
+        <span
+          style={{
+            display: "inline-block",
+            marginTop: "1.25rem",
+            fontSize: "1rem",
+            color: "#818cf8",
+            opacity: 0,
+            transform: "translateX(0px)",
+            transition: "opacity 0.35s cubic-bezier(0.19,1,0.22,1), transform 0.35s cubic-bezier(0.19,1,0.22,1)",
+          }}
+          className="group-hover:[opacity:0.65] group-hover:[transform:translateX(7px)]"
+        >
+          →
+        </span>
+      </div>
+
+      {/* Hairline bottom scaleX fill */}
+      <span
+        aria-hidden
+        style={{
+          position: "absolute",
+          bottom: 0, left: 0, right: 0,
+          height: "1px",
+          background: "#818cf8",
+          opacity: 0.3,
+          transform: "scaleX(0)",
+          transformOrigin: "left center",
+          transition: "transform 0.6s cubic-bezier(0.19,1,0.22,1)",
+        }}
+        className="group-hover:[transform:scaleX(1)]"
+      />
+
+      {/* Hover tint */}
+      <span
+        aria-hidden
+        style={{
+          position: "absolute", inset: 0,
+          background: "rgba(129,140,248,0.02)",
+          opacity: 0,
+          transition: "opacity 0.45s cubic-bezier(0.19,1,0.22,1)",
+          pointerEvents: "none",
+        }}
+        className="group-hover:[opacity:1]"
+      />
+    </motion.div>
+  );
+}
+
+/* ── HorizontalProcessRail — drag-scrollable snap container ───────────── */
+function HorizontalProcessRail() {
+  const railRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const spacerRef = useRef<HTMLDivElement>(null);
+  const cardWidthRef = useRef(0);
+  const isInView = useInView(sectionRef, { once: true, margin: "-10%" });
+  const [activeIdx, setActiveIdx] = useState(0);
+
+  /* Size the trailing spacer = railWidth - cardWidth.
+     This lets every card snap to the left edge (without it,
+     cards 3 & 4 are physically unreachable by the scroll engine). */
+  useEffect(() => {
+    const rail = railRef.current;
+    const spacer = spacerRef.current;
+    if (!rail || !spacer) return;
+    const measure = () => {
+      const firstCard = rail.children[0] as HTMLElement | undefined;
+      if (!firstCard) return;
+      const cw = firstCard.getBoundingClientRect().width;
+      cardWidthRef.current = cw;
+      spacer.style.width = Math.max(0, rail.clientWidth - cw) + "px";
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(rail);
+    return () => ro.disconnect();
+  }, []); 
+
+  /* Drag-to-scroll (desktop) */
+  const dragState = useRef({ dragging: false, startX: 0, scrollLeft: 0 });
+
+  const onPointerDown = (e: React.PointerEvent) => {
+    const el = railRef.current;
+    if (!el) return;
+    dragState.current = { dragging: true, startX: e.clientX, scrollLeft: el.scrollLeft };
+    el.setPointerCapture(e.pointerId);
+    el.style.cursor = "grabbing";
+    el.style.userSelect = "none";
+  };
+
+  const onPointerMove = (e: React.PointerEvent) => {
+    if (!dragState.current.dragging || !railRef.current) return;
+    const dx = e.clientX - dragState.current.startX;
+    railRef.current.scrollLeft = dragState.current.scrollLeft - dx;
+  };
+
+  const onPointerUp = (e: React.PointerEvent) => {
+    dragState.current.dragging = false;
+    if (!railRef.current) return;
+    railRef.current.releasePointerCapture(e.pointerId);
+    railRef.current.style.cursor = "grab";
+    railRef.current.style.userSelect = "";
+  };
+
+  /* Track active dot: scrollLeft / cardWidth — accurate once spacer exists */
+  useEffect(() => {
+    const el = railRef.current;
+    if (!el) return;
+    const onScroll = () => {
+      const cw = cardWidthRef.current;
+      if (cw > 0) setActiveIdx(Math.min(STEPS.length - 1, Math.round(el.scrollLeft / cw)));
+    };
+    el.addEventListener("scroll", onScroll, { passive: true });
+    return () => el.removeEventListener("scroll", onScroll);
+  }, []);
+
+  /* Dot click: jump to i * cardWidth */
+  const scrollTo = (i: number) => {
+    const el = railRef.current;
+    if (!el || cardWidthRef.current === 0) return;
+    el.scrollTo({ left: i * cardWidthRef.current, behavior: "smooth" });
+  };
+
+  return (
+    <div ref={sectionRef}>
+      {/* Rail */}
+      <div
+        ref={railRef}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerLeave={onPointerUp}
+        style={{
+          display: "flex",
+          overflowX: "auto",
+          overflowY: "hidden",
+          scrollSnapType: "x mandatory",
+          WebkitOverflowScrolling: "touch",
+          cursor: "grab",
+          /* hide scrollbar */
+          scrollbarWidth: "none",
+          msOverflowStyle: "none",
+          /* left border cap */
+          borderTop: "1px solid rgba(129,140,248,0.08)",
+          borderBottom: "1px solid rgba(129,140,248,0.08)",
+        }}
+        className="[&::-webkit-scrollbar]:hidden"
+      >
+        {STEPS.map((step, i) => (
+          <ProcessCard
+            key={step.num}
+            step={step}
+            index={i}
+            railInView={isInView}
+          />
+        ))}
+        {/* Trailing spacer — makes last card's snap point reachable */}
+        <div ref={spacerRef} style={{ flexShrink: 0, minWidth: 0 }} aria-hidden />
+      </div>
+
+      {/* Dot nav + scroll hint */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "1.5rem",
+          marginTop: "2rem",
+          paddingLeft: "0.25rem",
+        }}
+      >
+        {/* Dots */}
+        <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+          {STEPS.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => scrollTo(i)}
+              aria-label={`Go to step ${i + 1}`}
+              style={{
+                width: i === activeIdx ? "1.8rem" : "0.4rem",
+                height: "0.4rem",
+                borderRadius: "100px",
+                background: i === activeIdx ? "#818cf8" : "rgba(129,140,248,0.25)",
+                border: "none",
+                cursor: "pointer",
+                padding: 0,
+                transition: "width 0.45s cubic-bezier(0.19,1,0.22,1), background 0.3s ease",
+              }}
+            />
+          ))}
+        </div>
+
+        {/* Hint text */}
+        <span
+          className="font-mono"
+          style={{
+            fontSize: "0.48rem",
+            letterSpacing: "0.32em",
+            textTransform: "uppercase",
+            color: "rgba(129,140,248,0.3)",
+          }}
+        >
+          Drag or scroll →
+        </span>
+      </div>
+    </div>
+  );
+}
 
 /* ══════════════════════════════════════════════════════════════════
     MAIN PAGE
 ══════════════════════════════════════════════════════════════════ */
 export default function LandingPage() {
   const pageRef = useRef<HTMLDivElement>(null);
-  const stepsPinRef = useRef<HTMLDivElement>(null);
-  const stepsTrackRef = useRef<HTMLDivElement>(null);
+  const [loaderDone, setLoaderDone] = useState(false);
+
+  useEffect(() => {
+    /* Unseen pattern: body[unresolved] opacity:0 → 1 after load */
+    const t = setTimeout(() => setLoaderDone(true), 1400);
+    return () => clearTimeout(t);
+  }, []);
 
   useLayoutEffect(() => {
-    if (!stepsPinRef.current || !stepsTrackRef.current) return;
-
     const timer = setTimeout(() => {
       const ctx = gsap.context(() => {
-        const track = stepsTrackRef.current!;
-        const totalScroll = track.scrollWidth - window.innerWidth;
-        if (totalScroll <= 0) return;
-
-        gsap.to(track, {
-          x: -totalScroll,
-          ease: "none",
-          scrollTrigger: {
-            trigger: stepsPinRef.current,
-            start: "top top",
-            end: () => `+=${totalScroll + window.innerWidth}`,
-            scrub: 1,
-            pin: true,
-            pinSpacing: true,
-            anticipatePin: 1,
-          },
-        });
-
+        /* ── Section fade-ups: y:40→0, opacity, power3.out (≈ cubic-bezier(0.19,1,0.22,1)) ── */
         gsap.utils.toArray<HTMLElement>(".js-fade").forEach((el) => {
           gsap.fromTo(
             el,
-            { opacity: 0, y: 48 },
+            { opacity: 0, y: 40 },
             {
               opacity: 1,
               y: 0,
-              duration: 1,
-              ease: "power2.out",
+              duration: 0.9,
+              ease: "power3.out",
               scrollTrigger: {
                 trigger: el,
-                start: "top 88%",
-                toggleActions: "play none none reverse",
+                start: "top 90%",
+                toggleActions: "play none none none",
+              },
+            }
+          );
+        });
+
+        /* ── Card grid stagger: 0.1s between each card, same easing ── */
+        gsap.utils.toArray<HTMLElement>(".js-stagger-grid").forEach((grid) => {
+          const cards = grid.querySelectorAll<HTMLElement>(".js-card");
+          gsap.fromTo(
+            cards,
+            { opacity: 0, y: 40 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.9,
+              ease: "power3.out",
+              stagger: 0.1,
+              scrollTrigger: {
+                trigger: grid,
+                start: "top 85%",
+                toggleActions: "play none none none",
               },
             }
           );
@@ -187,54 +591,98 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <div ref={pageRef} className="relative text-[#fafaf9] font-sans overflow-x-hidden" style={{ background: "var(--bg-base)" }}>
+    <>
+      <PageLoader done={loaderDone} />
+    <div ref={pageRef} className="relative text-[#fafaf9] font-sans overflow-x-hidden" style={{ background: "var(--bg-base)", opacity: loaderDone ? 1 : 0, transition: "opacity 0.5s ease" }}>
 
       {/* ══ DYNAMIC ISLAND NAV ══════════════════════════════════════════ */}
       <PublicNav />
 
 
-      {/* ══ HERO — Full viewport, text bottom-left, CTA bottom-right ═════ */}
+      {/* ══ HERO — Full viewport, peripheral layout (igloo + buttermax) ════ */}
       <section className="relative h-screen overflow-hidden" style={{ background: "var(--bg-base)" }}>
 
-        {/* Three.js + radial vignette */}
+        {/* Three.js canvas — fills the stage */}
         <div className="absolute inset-0 z-0">
           <ThreeBackground />
+          {/* Vignette: edges darken, centre opens up for 3D */}
           <div
             className="absolute inset-0 pointer-events-none"
-            style={{ background: "radial-gradient(ellipse 110% 80% at 50% 45%, transparent 5%, rgba(9, 9, 11, 0.82) 75%)" }}
+            style={{
+              background:
+                "radial-gradient(ellipse 100% 75% at 50% 40%, transparent 0%, rgba(9,9,11,0.7) 70%, rgba(9,9,11,0.97) 100%)",
+            }}
+          />
+          {/* Grain texture overlay — unseen.co style warmth */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              backgroundImage:
+                "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E\")",
+              backgroundSize: "200px 200px",
+              opacity: 0.6,
+              mixBlendMode: "overlay",
+            }}
           />
         </div>
 
-        {/* Eyebrow — top left, below nav */}
-        <div className="absolute left-10 md:left-16 z-10" style={{ top: "6.5rem" }}>
-          <motion.div
-            initial={{ opacity: 0, x: -12 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 1.3, ease: EASE, delay: 0.5 }}
-            className="flex items-center gap-3"
-          >
-            <span className="block w-4 h-px" style={{ background: "rgba(129, 140, 248, 0.4)" }} />
+        {/* ── STATUS BADGE — top-right, below nav, igloo data aesthetic ── */}
+        <motion.div
+          className="absolute z-10"
+          style={{ top: "5.5rem", right: "2.5rem" }}
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.2, ease: EASE, delay: 1.0 }}
+        >
+          <div className="flex items-center gap-2">
+            {/* Live pulse dot */}
+            <span className="relative flex h-[6px] w-[6px]">
+              <span
+                className="absolute inline-flex h-full w-full rounded-full bg-[#818cf8] opacity-75"
+                style={{ animation: "ping 1.8s cubic-bezier(0,0,0.2,1) infinite" }}
+              />
+              <span className="relative inline-flex rounded-full h-[6px] w-[6px] bg-[#818cf8]" />
+            </span>
             <span
               className="font-mono uppercase"
-              style={{ fontSize: "0.48rem", letterSpacing: "0.48em", color: "rgba(129, 140, 248, 0.55)" }}
+              style={{ fontSize: "0.46rem", letterSpacing: "0.42em", color: "rgba(129,140,248,0.5)" }}
+            >
+              Platform Active
+            </span>
+          </div>
+        </motion.div>
+
+        {/* ── EYEBROW — top-left, below nav ───────────────────────────── */}
+        <motion.div
+          className="absolute left-0 z-10"
+          style={{ top: "5.5rem", paddingLeft: "2.5rem" }}
+          initial={{ opacity: 0, x: -12 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 1.3, ease: EASE, delay: 0.8 }}
+        >
+          <div className="flex items-center gap-3">
+            <span className="block w-5 h-px" style={{ background: "rgba(129,140,248,0.35)" }} />
+            <span
+              className="font-mono uppercase"
+              style={{ fontSize: "0.44rem", letterSpacing: "0.52em", color: "rgba(129,140,248,0.45)" }}
             >
               Direct Academic Mentorship
             </span>
-          </motion.div>
-        </div>
+          </div>
+        </motion.div>
 
-        {/* Massive headline — bottom-left anchored */}
-        <div className="absolute left-0 z-10 px-10 md:px-16" style={{ bottom: "3.5rem" }}>
+        {/* ── HEADLINE — bottom-left, both lines sit together in lower hero ── */}
+        <div className="absolute left-0 z-10" style={{ bottom: "7rem", paddingLeft: "2.5rem", paddingRight: "2.5rem" }}>
           <h1
-            className="font-display font-black tracking-tighter leading-[0.86] text-[#fafaf9]"
-            style={{ fontSize: "clamp(3.5rem, 12.5vw, 14rem)" }}
+            className="font-display font-black"
+            style={{ fontSize: "clamp(3rem, 9vw, 11rem)", color: "#fafaf9", letterSpacing: "-0.03em", lineHeight: 0.9 }}
           >
             <span className="block overflow-hidden">
               <motion.span
                 className="block"
                 initial={{ y: "110%" }}
-                animate={{ y: 0 }}
-                transition={{ duration: 1.5, ease: EASE, delay: 0.6 }}
+                animate={loaderDone ? { y: 0 } : {}}
+                transition={{ duration: 1.1, ease: EASE, delay: 0.1 }}
               >
                 Scholar
               </motion.span>
@@ -242,10 +690,10 @@ export default function LandingPage() {
             <span className="block overflow-hidden">
               <motion.span
                 className="block italic"
-                style={{ color: "rgba(168, 179, 207, 0.75)" }}
+                style={{ color: "rgba(168,179,207,0.6)" }}
                 initial={{ y: "110%" }}
-                animate={{ y: 0 }}
-                transition={{ duration: 1.5, ease: EASE, delay: 0.75 }}
+                animate={loaderDone ? { y: 0 } : {}}
+                transition={{ duration: 1.1, ease: EASE, delay: 0.22 }}
               >
                 Collective.
               </motion.span>
@@ -253,73 +701,187 @@ export default function LandingPage() {
           </h1>
         </div>
 
-
-        {/* Bottom bar — flex row anchored to bottom of hero */}
+        {/* ── BOTTOM BAR — anchored to viewport bottom ─────────────────── */}
         <div
           className="absolute left-0 right-0 z-10 flex items-end justify-between"
-          style={{ bottom: "2.5rem", paddingLeft: "2.5rem", paddingRight: "2.5rem" }}
+          style={{ bottom: "2rem", paddingLeft: "2.5rem", paddingRight: "2.5rem" }}
         >
-          {/* Scroll hint — left */}
-          <div className="flex items-end gap-2">
+          {/* Scroll indicator — left */}
+          <motion.div
+            className="flex items-end gap-2"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 2.2, duration: 0.9 }}
+          >
             <div className="flex flex-col items-center gap-[3px]">
-              {[18, 11, 6, 3].map((h, i) => (
-                <motion.div
+              {[16, 10, 6, 3].map((h, i) => (
+                <div
                   key={i}
-                  className="w-px rounded-full bg-[#818cf8]"
-                  initial={{ scaleY: 0, opacity: 0 }}
-                  animate={{ scaleY: 1, opacity: 0.25 - i * 0.04 }}
-                  transition={{ delay: 2.0 + i * 0.08, duration: 0.4 }}
-                  style={{ height: h, originY: 0 }}
+                  className="w-px rounded-full"
+                  style={{
+                    height: h,
+                    background: "#818cf8",
+                    opacity: 0.22 - i * 0.04,
+                  }}
                 />
               ))}
             </div>
-            <motion.span
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 2.4, duration: 0.9 }}
+            <span
               style={{
                 writingMode: "vertical-rl",
                 transform: "rotate(180deg)",
-                fontSize: "0.38rem",
-                letterSpacing: "0.28em",
+                fontSize: "0.36rem",
+                letterSpacing: "0.3em",
                 textTransform: "uppercase",
-                color: "rgba(129, 140, 248, 0.3)",
+                color: "rgba(129,140,248,0.28)",
                 fontFamily: "monospace",
               }}
             >
               Scroll
-            </motion.span>
-          </div>
+            </span>
+          </motion.div>
 
           {/* Sub-copy + CTA — right */}
-          <div className="flex flex-col items-end gap-4 text-right" style={{ maxWidth: "18rem" }}>
+          <div className="flex flex-col items-end gap-4 text-right" style={{ maxWidth: "20rem" }}>
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 1.2, ease: EASE, delay: 1.4 }}
+              transition={{ duration: 1.2, ease: EASE, delay: 1.5 }}
               className="font-light leading-relaxed"
-              style={{ fontSize: "0.85rem", color: "rgba(168, 179, 207, 0.6)" }}
+              style={{ fontSize: "0.82rem", color: "rgba(168,179,207,0.5)" }}
             >
               Connecting ambitious students with verified professors for structured academic guidance.
             </motion.p>
             <motion.div
               initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1.0, ease: EASE, delay: 1.7 }}
+              animate={loaderDone ? { opacity: 1 } : {}}
+              transition={{ duration: 0.9, ease: EASE, delay: 0.5 }}
             >
+              {/* Unseen btn -- dual-layer content wipe */}
               <Link
                 href="/signup"
-                className="group relative px-6 py-2.5 rounded-full font-bold uppercase overflow-hidden transition-colors duration-700 inline-flex items-center gap-2"
-                style={{ background: "#818cf8", color: "#09090b", border: "1px solid #818cf8", fontSize: "0.6rem", letterSpacing: "0.2em" }}
+                className="group relative inline-flex overflow-hidden pointer-events-auto z-50"
+                style={{
+                  padding: "0.55rem 1.4rem",
+                  borderRadius: "100px",
+                  border: "1px solid rgba(129,140,248,0.45)",
+                  fontSize: "0.58rem",
+                  fontWeight: 700,
+                  letterSpacing: "0.18em",
+                  textTransform: "uppercase",
+                  color: "#818cf8",
+                  flexDirection: "column",
+                  lineHeight: 1,
+                  background: "transparent",
+                }}
               >
-                <span className="absolute inset-0 bg-[#111113] translate-x-[-102%] group-hover:translate-x-0 transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]" />
-                <span className="relative">Begin Journey</span>
-                <span className="relative transition-transform duration-500 group-hover:translate-x-1">→</span>
+                {/* btn__content layer 1 — slides UP on hover */}
+                <span
+                  className="flex items-center gap-2 group-hover:-translate-y-[105%]"
+                  style={{ transition: "transform 0.45s cubic-bezier(0.19,1,0.22,1)" }}
+                >
+                  Begin Journey <span>→</span>
+                </span>
+                {/* btn__content layer 2 — clone, starts below, slides in */}
+                <span
+                  aria-hidden
+                  className="absolute inset-0 flex items-center justify-center gap-2 bg-[#818cf8] text-[#09090b] group-hover:translate-y-0"
+                  style={{
+                    transform: "translateY(102%)",
+                    transition: "transform 0.45s cubic-bezier(0.19,1,0.22,1)",
+                    borderRadius: "inherit",
+                  }}
+                >
+                  Begin Journey <span>→</span>
+                </span>
               </Link>
             </motion.div>
           </div>
         </div>
 
+      </section>
+
+
+      {/* ══ ABOUT / WHAT WE DO ════════════════════════════════════════════
+          Mirrors Unseen's tight two-col layout: left = giant number/label,
+          right = description text. Hairline top border, generous padding.
+      ══════════════════════════════════════════════════════════════════ */}
+      <section
+        className="js-fade"
+        style={{
+          borderTop: "1px solid rgba(129,140,248,0.08)",
+          padding: "5rem 2.5rem",
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr",
+          gap: "4rem",
+          alignItems: "start",
+        }}
+      >
+        {/* Left col */}
+        <div>
+          <FadeIn>
+            <Label>What We Do</Label>
+          </FadeIn>
+          <SplitReveal
+            as="h2"
+            delay={0.08}
+            className="font-display font-black tracking-tighter text-[#fafaf9]"
+            style={{ fontSize: "clamp(2.5rem, 6vw, 7rem)", lineHeight: 0.88 }}
+          >
+            Academic mentorship, reimagined.
+          </SplitReveal>
+        </div>
+
+        {/* Right col */}
+        <div style={{ paddingTop: "4rem" }}>
+          <FadeIn delay={0.15}>
+            <p
+              className="font-light leading-relaxed mb-8"
+              style={{ fontSize: "1.05rem", color: "rgba(168,179,207,0.65)", maxWidth: "32rem" }}
+            >
+              Schollective bridges the gap between students seeking guidance and
+              professors willing to share expertise. Every connection is verified,
+              structured, and free from the noise of cold outreach.
+            </p>
+          </FadeIn>
+          <FadeIn delay={0.25}>
+            <p
+              className="font-light leading-relaxed"
+              style={{ fontSize: "0.9rem", color: "rgba(129,140,248,0.55)", borderLeft: "2px solid rgba(129,140,248,0.2)", paddingLeft: "1rem" }}
+            >
+              Students apply. Professors respond. Knowledge flows freely — across
+              every discipline, every institution, every timezone.
+            </p>
+          </FadeIn>
+
+          <FadeIn delay={0.35}>
+            <div style={{ marginTop: "2.5rem" }}>
+              <Link
+                href="/about"
+                className="group relative inline-flex overflow-hidden"
+                style={{
+                  fontSize: "0.6rem",
+                  fontWeight: 600,
+                  letterSpacing: "0.18em",
+                  textTransform: "uppercase",
+                  color: "rgba(168,179,207,0.6)",
+                  textDecoration: "none",
+                  paddingBottom: "2px",
+                  borderBottom: "1px solid rgba(129,140,248,0.25)",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "0.5rem",
+                  transition: "color 0.3s ease, border-color 0.3s ease",
+                }}
+              >
+                <span style={{ transition: "transform 0.45s cubic-bezier(0.19,1,0.22,1)" }}
+                  className="group-hover:[transform:translateX(4px)]"
+                >Learn more about us</span>
+                <span className="group-hover:[transform:translateX(6px)]" style={{ transition: "transform 0.45s cubic-bezier(0.19,1,0.22,1)" }}>→</span>
+              </Link>
+            </div>
+          </FadeIn>
+        </div>
       </section>
 
 
@@ -406,123 +968,71 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ══ MARQUEE TICKER ══════════════════════════════════════════════ */}
+      {/* ══ MARQUEE TICKER — igloo data-strip style ══════════════════════ */}
       <div
         className="relative overflow-hidden select-none"
         style={{
-          borderTop: "1px solid rgba(129, 140, 248, 0.08)",
-          borderBottom: "1px solid rgba(129, 140, 248, 0.08)",
-          padding: "0.9rem 0",
+          borderTop: "1px solid rgba(129, 140, 248, 0.07)",
+          borderBottom: "1px solid rgba(129, 140, 248, 0.07)",
+          padding: "0.75rem 0",
         }}
       >
         <div
           className="flex whitespace-nowrap"
-          style={{ animation: "marquee 32s linear infinite" }}
+          style={{ animation: "marquee 40s linear infinite" }}
         >
-          {Array.from({ length: 8 }).map((_, i) => (
+          {Array.from({ length: 10 }).map((_, i) => (
             <span
               key={i}
-              className="flex-shrink-0 font-mono uppercase px-14"
-              style={{ fontSize: "0.46rem", letterSpacing: "0.48em", color: "rgba(129, 140, 248, 0.4)" }}
+              className="flex-shrink-0 font-mono uppercase px-12"
+              style={{ fontSize: "0.42rem", letterSpacing: "0.52em", color: "rgba(129, 140, 248, 0.3)" }}
             >
-              Academic Mentorship &nbsp;—&nbsp; No Cold Emails &nbsp;—&nbsp; Structured Growth &nbsp;—&nbsp; Verified Professors &nbsp;—&nbsp;
+              Mentorship_Network_v1 &nbsp;/&nbsp; No_Cold_Emails &nbsp;/&nbsp; Role_Verified &nbsp;/&nbsp; Structured_Growth &nbsp;/&nbsp; Free_Always &nbsp;/&nbsp;
             </span>
           ))}
         </div>
       </div>
 
-      {/* ══ THE PROCESS — GSAP HORIZONTAL PIN ══════════════════════════ */}
-      <div ref={stepsPinRef}>
-        <div className="relative h-screen flex items-stretch">
+      {/* ══ THE PROCESS — horizontal scroll rail ═════════════════════════ */}
+      <section className="relative" style={{ padding: "7rem 0" }}>
+        {/* Header — stays above the rail, normal padding */}
+        <div style={{ paddingLeft: "2.5rem", paddingRight: "2.5rem", marginBottom: "3.5rem" }}>
+          <FadeIn>
+            <Label>The Process</Label>
+          </FadeIn>
 
-          {/* "THE PROCESS" — vertical left edge */}
-          <div className="absolute left-6 inset-y-0 flex items-center z-20 pointer-events-none">
-            <span
-              className="font-mono uppercase"
-              style={{
-                writingMode: "vertical-rl",
-                transform: "rotate(180deg)",
-                fontSize: "0.42rem",
-                letterSpacing: "0.44em",
-                color: "rgba(129, 140, 248, 0.35)",
-              }}
+          <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: "2rem", flexWrap: "wrap" }}>
+            <SplitReveal
+              as="h2"
+              className="font-display font-black tracking-tighter text-[#fafaf9]"
+              style={{ fontSize: "clamp(3rem, 8vw, 9rem)", lineHeight: 0.85 }}
             >
-              The Process
-            </span>
-          </div>
+              How it works.
+            </SplitReveal>
 
-          {/* "01 — 04" indicator — bottom center, below the nav z-index */}
-          <div
-            className="absolute left-1/2 z-10 flex items-center gap-3"
-            style={{ bottom: "2rem", transform: "translateX(-50%)" }}
-          >
-            <span className="block w-3 h-px" style={{ background: "rgba(129, 140, 248, 0.25)" }} />
-            <span
-              className="font-mono uppercase"
-              style={{ fontSize: "0.38rem", letterSpacing: "0.45em", color: "rgba(129, 140, 248, 0.35)" }}
-            >
-              01 — 04
-            </span>
-          </div>
-
-          {/* Scrolling track */}
-          <div
-            ref={stepsTrackRef}
-            className="flex items-center will-change-transform"
-            style={{ width: `${STEPS.length * 100}vw`, paddingLeft: "8vw", paddingRight: "6vw" }}
-          >
-            {STEPS.map((step, i) => (
-              <div
-                key={step.num}
-                className="flex-shrink-0 w-screen h-screen flex items-center"
-                style={{ paddingLeft: "8vw", paddingRight: "8vw" }}
+            {/* Step count — right-aligned, Unseen data-label aesthetic */}
+            <FadeIn delay={0.2}>
+              <span
+                className="font-mono"
+                style={{
+                  fontSize: "0.5rem",
+                  letterSpacing: "0.35em",
+                  textTransform: "uppercase",
+                  color: "rgba(129,140,248,0.3)",
+                  paddingBottom: "0.5rem",
+                }}
               >
-                <div className="grid md:grid-cols-2 gap-16 items-center max-w-6xl w-full">
-
-                  {/* Text col */}
-                  <div className="flex flex-col">
-                    {/* Ghost number behind title */}
-                    <div
-                      className="font-mono font-bold leading-none select-none"
-                      style={{
-                        fontSize: "clamp(5rem, 12vw, 13rem)",
-                        color: "rgba(129, 140, 248, 0.06)",
-                        letterSpacing: "-0.04em",
-                        marginBottom: "-0.35em",
-                        pointerEvents: "none",
-                      }}
-                    >
-                      {step.num}
-                    </div>
-                    <h3
-                      className="font-display font-bold tracking-tighter text-[#fafaf9] leading-none mb-5"
-                      style={{ fontSize: "clamp(2.5rem, 5.5vw, 5.5rem)" }}
-                    >
-                      {step.title}
-                    </h3>
-                    <span className="block w-7 h-px mb-7" style={{ background: "rgba(129, 140, 248, 0.25)" }} />
-                    <p
-                      className="font-light leading-relaxed"
-                      style={{
-                        fontSize: "clamp(0.95rem, 1.2vw, 1.1rem)",
-                        color: "rgba(168, 179, 207, 0.65)",
-                        maxWidth: "28rem",
-                      }}
-                    >
-                      {step.body}
-                    </p>
-                  </div>
-
-                  {/* Orb col */}
-                  <div className="relative w-full aspect-square max-w-xs mx-auto">
-                    <FloatingOrb index={i} />
-                  </div>
-                </div>
-              </div>
-            ))}
+                {STEPS.length} steps
+              </span>
+            </FadeIn>
           </div>
         </div>
-      </div>
+
+        {/* Horizontal rail — edge-to-edge, no padding so cards bleed */}
+        <div style={{ paddingLeft: "2.5rem" }}>
+          <HorizontalProcessRail />
+        </div>
+      </section>
 
       {/* ══ INFRASTRUCTURE ══════════════════════════════════════════════ */}
       <section
@@ -694,30 +1204,8 @@ export default function LandingPage() {
           <FadeIn delay={0}>
             <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
               {/* Logo mark + wordmark */}
-              <div style={{ display: "flex", alignItems: "center", gap: "0.85rem" }}>
-                <div
-                  style={{
-                    width: "40px",
-                    height: "40px",
-                    borderRadius: "10px",
-                    background: "linear-gradient(135deg, #6366f1 0%, #818cf8 100%)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    flexShrink: 0,
-                    boxShadow: "0 4px 16px rgba(99, 102, 241, 0.35)",
-                  }}
-                >
-                  {/* Stylised "S" lettermark */}
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path
-                      d="M17 8C17 5.79 14.76 4 12 4C9.24 4 7 5.79 7 8C7 10.21 9.24 12 12 12C14.76 12 17 13.79 17 16C17 18.21 14.76 20 12 20C9.24 20 7 18.21 7 16"
-                      stroke="#fafaf9"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                </div>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                <SchollectiveLogo size={44} />
                 <span
                   className="font-display font-bold"
                   style={{ fontSize: "1.15rem", letterSpacing: "-0.02em", color: "#fafaf9" }}
@@ -971,5 +1459,6 @@ export default function LandingPage() {
       </footer>
 
     </div>
+    </>
   );
 }
