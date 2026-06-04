@@ -112,6 +112,8 @@ interface CTAButtonProps {
 function CTAButton({ href, label, variant = "default", className = "", onClick }: CTAButtonProps) {
   const wrapRef = useRef<HTMLAnchorElement>(null);
   const borderRef = useRef<HTMLSpanElement>(null);
+  const chars = label.split("");
+  const isIndigo = variant === "indigo";
 
   useEffect(() => {
     const el = wrapRef.current;
@@ -123,7 +125,7 @@ function CTAButton({ href, label, variant = "default", className = "", onClick }
       dot.style.width = `${width + 2}px`;
       dot.style.height = `${height + 2}px`;
       dot.style.borderRadius = "100px";
-      dot.style.borderColor = variant === "indigo" ? "rgba(129,140,248,0.9)" : "rgba(255,255,255,0.85)";
+      dot.style.borderColor = isIndigo ? "rgba(129,140,248,0.85)" : "rgba(255,255,255,0.85)";
     };
     const leave = () => {
       dot.style.width = "10px";
@@ -138,17 +140,14 @@ function CTAButton({ href, label, variant = "default", className = "", onClick }
       el.removeEventListener("mouseenter", enter);
       el.removeEventListener("mouseleave", leave);
     };
-  }, [variant]);
-
-  const chars = label.split("");
-
-  const isIndigo = variant === "indigo";
+  }, [isIndigo]);
 
   return (
     <Link
       ref={wrapRef}
       href={href}
       onClick={onClick}
+      data-cursor-hide="true"
       className={`group relative inline-flex items-center justify-center rounded-full ${className}`}
       style={{
         textDecoration: "none",
@@ -163,15 +162,7 @@ function CTAButton({ href, label, variant = "default", className = "", onClick }
         background: "transparent",
       }}
     >
-      {/* ── Indigo fill wipe (variant=indigo only) ─────────────────── */}
-      {isIndigo && (
-        <span
-          className="absolute inset-0 rounded-full translate-y-[102%] group-hover:translate-y-0 transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] pointer-events-none"
-          style={{ background: "#818cf8", zIndex: 0 }}
-        />
-      )}
-
-      {/* ── Cursor-morphing border ──────────────────────────────────── */}
+      {/* Cursor-morphing border span */}
       <span
         ref={borderRef}
         aria-hidden
@@ -189,17 +180,25 @@ function CTAButton({ href, label, variant = "default", className = "", onClick }
             "width 520ms cubic-bezier(0.19,1,0.22,1), " +
             "height 520ms cubic-bezier(0.19,1,0.22,1), " +
             "border-radius 520ms cubic-bezier(0.19,1,0.22,1), " +
-            "border-color 180ms ease",
+            "border-color 200ms ease",
           zIndex: 2,
         }}
       />
+
+      {/* ── Indigo fill wipe (variant=indigo only) ─────────────────── */}
+      {isIndigo && (
+        <span
+          className="absolute inset-0 rounded-full translate-y-[102%] group-hover:translate-y-0 transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] pointer-events-none"
+          style={{ background: "#818cf8", zIndex: 0 }}
+        />
+      )}
 
       {/* ── Text stack (overflow-hidden clips the vertical slide) ───── */}
       <span
         style={{
           position: "relative",
           display: "flex",
-          overflow: "hidden",
+          clipPath: "inset(0 -0.15em 0 0)",
           height: "1em",
           alignItems: "center",
           zIndex: 3,
@@ -207,7 +206,7 @@ function CTAButton({ href, label, variant = "default", className = "", onClick }
       >
         {/* Layer 1: normal — slides UP out on hover */}
         <span
-          className="flex transition-transform duration-[430ms] ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:-translate-y-10"
+          className="flex transition-transform duration-[430ms] ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:-translate-y-full"
           style={{ position: "absolute", inset: 0, alignItems: "center", display: "flex" }}
         >
           {chars.map((ch, i) => (
@@ -540,6 +539,7 @@ function CreateAccountButton() {
     <Link
       ref={wrapRef}
       href="/signup"
+      data-cursor-hide="true"
       className="group relative inline-flex items-center justify-center rounded-full"
       style={{
         textDecoration: "none",
@@ -578,7 +578,7 @@ function CreateAccountButton() {
         style={{
           position: "relative",
           display: "flex",
-          overflow: "hidden",
+          clipPath: "inset(0 -0.15em 0 0)",
           height: "1em",
           alignItems: "center",
           zIndex: 3,
@@ -587,7 +587,7 @@ function CreateAccountButton() {
         {/* Layer 1: normal, slides UP out */}
         <span
           className="flex transition-transform duration-[430ms] ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:-translate-y-full"
-          style={{ position: "absolute", inset: 0, alignItems: "center", display: "flex", justifyContent: "center" }}
+          style={{ position: "absolute", inset: 0, alignItems: "center", display: "flex" }}
         >
           {chars.map((ch, i) => (
             <span
@@ -607,7 +607,7 @@ function CreateAccountButton() {
         {/* Layer 2: italic serif, slides UP in from below */}
         <span
           className="flex translate-y-full group-hover:translate-y-0 transition-transform duration-[430ms] ease-[cubic-bezier(0.19,1,0.22,1)]"
-          style={{ position: "absolute", inset: 0, alignItems: "center", display: "flex", justifyContent: "center" }}
+          style={{ position: "absolute", inset: 0, alignItems: "center", display: "flex" }}
         >
           {chars.map((ch, i) => (
             <span

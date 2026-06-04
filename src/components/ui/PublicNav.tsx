@@ -27,6 +27,7 @@ function NavItem({ label, href, active }: {
   return (
     <Link
       href={href}
+      data-cursor-engulf="true"
       className="group relative inline-flex"
       style={{
         textDecoration: "none",
@@ -37,7 +38,7 @@ function NavItem({ label, href, active }: {
       }}
     >
       {/* Layer 1 — sans-serif, slides UP out on hover */}
-      <span style={{ display: "flex", gap: 0 }} aria-label={label}>
+      <span style={{ display: "flex", gap: 0, clipPath: "inset(0 -0.15em 0 0)" }} aria-label={label}>
         {chars.map((ch, i) => (
           <span
             key={i}
@@ -65,6 +66,7 @@ function NavItem({ label, href, active }: {
           top: "0.3rem",
           display: "flex",
           gap: 0,
+          clipPath: "inset(0 -0.15em 0 0)",
         }}
       >
         {chars.map((ch, i) => (
@@ -295,7 +297,7 @@ function SignUpButtonWithCursorBorder() {
         style={{
           position: "relative",
           display: "flex",
-          overflow: "hidden",
+          clipPath: "inset(0 -0.15em 0 0)",
           height: "1em",
           alignItems: "center",
           zIndex: 3,
@@ -388,7 +390,7 @@ function FullscreenMenu({
             transition={{ duration: 0.6, ease: [0.19, 1, 0.22, 1] }}
             style={{
               position: "fixed", top: 0, bottom: 0, right: 0,
-              width: "min(100vw, 480px)", zIndex: 998,
+              width: "min(100vw, 720px)", zIndex: 998,
               background: "#09090b",
               borderLeft: "1px solid rgba(129, 140, 248, 0.08)",
               display: "flex", flexDirection: "column", justifyContent: "center",
@@ -415,7 +417,8 @@ function FullscreenMenu({
                     className="group"
                     style={{
                       display: "flex", alignItems: "flex-start", gap: "1.5rem",
-                      textDecoration: "none", marginBottom: "1rem", overflow: "hidden",
+                      textDecoration: "none", marginBottom: "1rem",
+                      padding: "0.2em 0",
                     }}
                   >
                     <motion.span
@@ -430,7 +433,7 @@ function FullscreenMenu({
                     >
                       {num}
                     </motion.span>
-                    <span className="relative" style={{ display: "flex", overflow: "hidden", lineHeight: 0.9 }}>
+                    <span className="relative" style={{ display: "flex", overflow: "hidden", lineHeight: 1.1, paddingBottom: "0.1em", paddingTop: "0.1em", paddingRight: "0.15em" }}>
                       <span style={{ display: "flex" }}>
                         {chars.map((ch, i) => (
                           <motion.span
@@ -438,17 +441,20 @@ function FullscreenMenu({
                             initial={{ scaleX: 0, opacity: 0 }}
                             animate={{ scaleX: 1, opacity: 1 }}
                             transition={{ duration: 0.5, ease: [0.19, 1, 0.22, 1], delay: 0.15 + idx * 0.07 + i * 0.03 }}
-                            style={{
-                              display: "inline-block", transformOrigin: "left center",
-                              fontFamily: "var(--font-display)",
-                              fontSize: "clamp(3rem, 6vw, 6rem)", fontWeight: 400,
-                              letterSpacing: "-0.03em",
-                              color: isActive ? "#fafaf9" : "rgba(168,179,207,0.65)",
-                              transition: "color 0.3s ease",
-                            }}
-                            className="group-hover:text-[#fafaf9]"
+                            style={{ display: "inline-block", transformOrigin: "left center" }}
                           >
-                            {ch === " " ? "\u00A0" : ch}
+                            <span
+                              className="inline-block transition-all duration-[450ms] ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:-translate-y-[110%] group-hover:text-[#fafaf9]"
+                              style={{
+                                fontFamily: "var(--font-display)",
+                                fontSize: "clamp(3rem, 6vw, 6rem)", fontWeight: 400,
+                                letterSpacing: "-0.03em",
+                                color: isActive ? "#fafaf9" : "rgba(168,179,207,0.65)",
+                                transitionDelay: `${i * 15}ms`,
+                              }}
+                            >
+                              {ch === " " ? "\u00A0" : ch}
+                            </span>
                           </motion.span>
                         ))}
                       </span>
@@ -607,6 +613,7 @@ export function PublicNav() {
           <button
             onClick={() => setMenuOpen(v => !v)}
             aria-label="Toggle menu"
+            data-cursor-engulf="true"
             style={{
               pointerEvents: "all", background: "rgba(129,140,248,0.08)",
               border: "1px solid rgba(129,140,248,0.18)", borderRadius: "100px",
