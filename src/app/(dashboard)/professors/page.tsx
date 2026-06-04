@@ -46,7 +46,7 @@ export default async function ProfessorsPage({ searchParams }: ProfessorsPagePro
   if (expertise && expertise !== "all") {
     const selectedExpertise = expertise.split(",").map(decodeURIComponent).filter(Boolean);
     if (selectedExpertise.length > 0) {
-      dbQuery = dbQuery.overlap("expertise_fields", selectedExpertise);
+      dbQuery = dbQuery.overlaps("expertise_fields", selectedExpertise);
     }
   }
 
