@@ -259,6 +259,7 @@ function SignUpButtonWithCursorBorder() {
     <Link
       ref={wrapRef}
       href="/signup"
+      data-cursor-engulf="true"
       className="hidden md:inline-flex group relative items-center justify-center rounded-full"
       style={{
         textDecoration: "none",
@@ -355,6 +356,147 @@ function SignUpButtonWithCursorBorder() {
       <span
         className="ml-2 transition-transform duration-500 group-hover:translate-x-1"
         style={{ position: "relative", zIndex: 3, fontSize: "0.75rem" }}
+      >
+        →
+      </span>
+    </Link>
+  );
+}
+
+/* ─── Get Started button used in the fullscreen menu footer ─────────────
+   Same cursor-morphing + char slide treatment as Sign Up. ─────────────── */
+function GetStartedButton({ onClose }: { onClose: () => void }) {
+  const wrapRef   = useRef<HTMLAnchorElement>(null);
+  const borderRef = useRef<HTMLSpanElement>(null);
+  const label = "Get Started";
+  const chars = label.split("");
+
+  useEffect(() => {
+    const el  = wrapRef.current;
+    const dot = borderRef.current;
+    if (!el || !dot) return;
+    const enter = () => {
+      const { width, height } = el.getBoundingClientRect();
+      dot.style.width        = `${width + 2}px`;
+      dot.style.height       = `${height + 2}px`;
+      dot.style.borderRadius = "100px";
+      dot.style.borderColor  = "rgba(129,140,248,0.9)";
+    };
+    const leave = () => {
+      dot.style.width        = "10px";
+      dot.style.height       = "10px";
+      dot.style.borderRadius = "50%";
+      dot.style.borderColor  = "rgba(129,140,248,0)";
+    };
+    el.addEventListener("mouseenter", enter);
+    el.addEventListener("mouseleave", leave);
+    return () => { el.removeEventListener("mouseenter", enter); el.removeEventListener("mouseleave", leave); };
+  }, []);
+
+  return (
+    <Link
+      ref={wrapRef}
+      href="/signup"
+      onClick={onClose}
+      data-cursor-engulf="true"
+      className="group relative inline-flex items-center justify-center"
+      style={{
+        textDecoration: "none",
+        padding: "0.6rem 1.4rem",
+        border: "1px solid rgba(129,140,248,0.35)",
+        borderRadius: "100px",
+        color: "#fafaf9",
+        overflow: "visible",
+        position: "relative",
+      }}
+    >
+      {/* Cursor-morphing border */}
+      <span
+        ref={borderRef}
+        aria-hidden
+        style={{
+          pointerEvents: "none",
+          position: "absolute",
+          top: "50%", left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: "10px", height: "10px",
+          borderRadius: "50%",
+          border: "1.5px solid rgba(129,140,248,0)",
+          transition:
+            "width 520ms cubic-bezier(0.19,1,0.22,1), " +
+            "height 520ms cubic-bezier(0.19,1,0.22,1), " +
+            "border-radius 520ms cubic-bezier(0.19,1,0.22,1), " +
+            "border-color 200ms ease",
+          zIndex: 2,
+        }}
+      />
+
+      {/* Text stack */}
+      <span
+        style={{
+          position: "relative",
+          display: "flex",
+          overflow: "hidden",
+          height: "1em",
+          alignItems: "center",
+          zIndex: 3,
+        }}
+      >
+        {/* Layer 1: normal → slides UP out */}
+        <span
+          className="flex transition-transform duration-[430ms] ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:-translate-y-full"
+          style={{ position: "absolute", inset: 0, alignItems: "center", display: "flex" }}
+        >
+          {chars.map((ch, i) => (
+            <span
+              key={i}
+              style={{
+                fontSize: "0.6rem",
+                fontWeight: 600,
+                letterSpacing: "0.2em",
+                textTransform: "uppercase" as const,
+                color: "#818cf8",
+                transitionDelay: `${i * 10}ms`,
+              }}
+            >
+              {ch === " " ? "\u00A0" : ch}
+            </span>
+          ))}
+        </span>
+
+        {/* Layer 2: italic serif → slides UP in from below */}
+        <span
+          className="flex translate-y-full group-hover:translate-y-0 transition-transform duration-[430ms] ease-[cubic-bezier(0.19,1,0.22,1)]"
+          style={{ position: "absolute", inset: 0, alignItems: "center", display: "flex" }}
+        >
+          {chars.map((ch, i) => (
+            <span
+              key={i}
+              style={{
+                fontFamily: "var(--font-display)",
+                fontStyle: "italic",
+                fontWeight: 400,
+                fontSize: "0.78rem",
+                letterSpacing: "0.01em",
+                color: "#fafaf9",
+                transitionDelay: `${i * 10}ms`,
+              }}
+            >
+              {ch === " " ? "\u00A0" : ch}
+            </span>
+          ))}
+        </span>
+
+        {/* Invisible spacer */}
+        <span aria-hidden style={{ visibility: "hidden", fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase" as const }}>
+          {label}
+        </span>
+      </span>
+
+      {/* Arrow */}
+      <span
+        className="ml-2 transition-transform duration-500 group-hover:translate-x-1"
+        style={{ position: "relative", zIndex: 3, fontSize: "0.75rem", color: "#818cf8" }}
       >
         →
       </span>
@@ -497,18 +639,7 @@ function FullscreenMenu({
                   © {new Date().getFullYear()} Schollective, Inc.
                 </p>
               </div>
-              <Link
-                href="/signup"
-                onClick={onClose}
-                style={{
-                  fontSize: "0.6rem", letterSpacing: "0.2em", textTransform: "uppercase",
-                  color: "#818cf8", textDecoration: "none", fontWeight: 600,
-                  border: "1px solid rgba(129,140,248,0.35)", padding: "0.6rem 1.4rem",
-                  borderRadius: "100px", transition: "background 0.4s ease, color 0.4s ease",
-                }}
-              >
-                Get Started →
-              </Link>
+              <GetStartedButton onClose={onClose} />
             </motion.div>
           </motion.div>
         </>
