@@ -259,7 +259,7 @@ function SignUpButtonWithCursorBorder() {
     <Link
       ref={wrapRef}
       href="/signup"
-      data-cursor-engulf="true"
+      data-cursor-hide="true"
       className="hidden md:inline-flex group relative items-center justify-center rounded-full"
       style={{
         textDecoration: "none",
@@ -398,7 +398,7 @@ function GetStartedButton({ onClose }: { onClose: () => void }) {
       ref={wrapRef}
       href="/signup"
       onClick={onClose}
-      data-cursor-engulf="true"
+      data-cursor-hide="true"
       className="group relative inline-flex items-center justify-center"
       style={{
         textDecoration: "none",
