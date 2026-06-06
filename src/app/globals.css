@@ -585,12 +585,20 @@ body::after {
   background: transparent;
   color: var(--text-secondary);
   cursor: pointer;
-  transition: background 0.15s, color 0.15s;
+  transition:
+    background 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    color 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .nav-hamburger:hover {
   background: rgba(129, 140, 248, 0.08);
   color: var(--accent);
+  transform: translateY(-1px);
+}
+
+.nav-hamburger:active {
+  transform: scale(0.92);
 }
 
 @media (max-width: 1023px) {
@@ -1070,4 +1078,150 @@ body {
 }
 .group:hover .char-layer-2-nav {
   transform: translateY(0%);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   UNIFIED BUTTON ANIMATION SYSTEM
+   Single source of truth for every interactive button in the app.
+   All transitions use the same cubic-bezier for consistency.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Shared base for all clickable buttons ──────────────────── */
+/* Applied via Tailwind or className wherever transition-all exists */
+:root {
+  --btn-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --btn-duration: 0.28s;
+}
+
+/* ── Filter Pill (admin tables, role selectors) ─────────────── */
+.btn-filter-pill {
+  transition:
+    background var(--btn-duration) var(--btn-ease),
+    border-color var(--btn-duration) var(--btn-ease),
+    color var(--btn-duration) var(--btn-ease),
+    transform var(--btn-duration) var(--btn-ease);
+}
+.btn-filter-pill:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+.btn-filter-pill:active:not(:disabled) {
+  transform: scale(0.96) translateY(0px);
+}
+
+/* ── Action Button (table row actions: Revoke, Suspend, etc.) ── */
+.btn-action {
+  transition:
+    background var(--btn-duration) var(--btn-ease),
+    border-color var(--btn-duration) var(--btn-ease),
+    color var(--btn-duration) var(--btn-ease),
+    opacity var(--btn-duration) var(--btn-ease),
+    transform var(--btn-duration) var(--btn-ease),
+    box-shadow var(--btn-duration) var(--btn-ease);
+}
+.btn-action:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px -4px rgba(0, 0, 0, 0.45);
+}
+.btn-action:active:not(:disabled) {
+  transform: scale(0.96) translateY(0px);
+  box-shadow: none;
+}
+
+/* ── Danger-tinted action (Suspend, Revoke, Close Thread) ─────── */
+.btn-action-danger {
+  transition:
+    background var(--btn-duration) var(--btn-ease),
+    border-color var(--btn-duration) var(--btn-ease),
+    color var(--btn-duration) var(--btn-ease),
+    transform var(--btn-duration) var(--btn-ease),
+    box-shadow var(--btn-duration) var(--btn-ease);
+}
+.btn-action-danger:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px -4px rgba(255, 80, 80, 0.25);
+}
+.btn-action-danger:active:not(:disabled) {
+  transform: scale(0.96) translateY(0px);
+  box-shadow: none;
+}
+
+/* ── Success-tinted action (Reactivate, Approve) ──────────────── */
+.btn-action-success {
+  transition:
+    background var(--btn-duration) var(--btn-ease),
+    border-color var(--btn-duration) var(--btn-ease),
+    color var(--btn-duration) var(--btn-ease),
+    transform var(--btn-duration) var(--btn-ease),
+    box-shadow var(--btn-duration) var(--btn-ease);
+}
+.btn-action-success:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px -4px rgba(74, 222, 128, 0.2);
+}
+.btn-action-success:active:not(:disabled) {
+  transform: scale(0.96) translateY(0px);
+  box-shadow: none;
+}
+
+/* ── Icon Button (hamburger, close, notification bell) ──────── */
+.btn-icon {
+  transition:
+    background var(--btn-duration) var(--btn-ease),
+    color var(--btn-duration) var(--btn-ease),
+    border-color var(--btn-duration) var(--btn-ease),
+    transform var(--btn-duration) var(--btn-ease);
+}
+.btn-icon:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+.btn-icon:active:not(:disabled) {
+  transform: scale(0.92);
+}
+
+/* ── Availability Toggle (AcceptingToggle) ─────────────────── */
+.btn-availability {
+  transition:
+    background 0.35s var(--btn-ease),
+    border-color 0.35s var(--btn-ease),
+    color 0.35s var(--btn-ease),
+    transform var(--btn-duration) var(--btn-ease),
+    opacity var(--btn-duration) ease;
+}
+.btn-availability:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+.btn-availability:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+/* ── Primary Submit Button (auth forms) — adds active scale ─── */
+.btn-submit {
+  transition:
+    opacity 0.2s ease,
+    transform var(--btn-duration) var(--btn-ease),
+    box-shadow var(--btn-duration) var(--btn-ease);
+}
+.btn-submit:hover:not(:disabled) {
+  box-shadow: 0 8px 24px -6px rgba(129, 140, 248, 0.45);
+  transform: translateY(-1px);
+}
+.btn-submit:active:not(:disabled) {
+  transform: scale(0.97) translateY(0);
+  box-shadow: none;
+}
+
+/* ── Professor page full-width request button ──────────────── */
+.btn-request {
+  transition:
+    opacity 0.2s ease,
+    transform var(--btn-duration) var(--btn-ease),
+    box-shadow var(--btn-duration) var(--btn-ease);
+}
+.btn-request:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 28px -6px rgba(0, 0, 0, 0.4);
+}
+.btn-request:active:not(:disabled) {
+  transform: scale(0.97) translateY(0);
+  box-shadow: none;
 }
