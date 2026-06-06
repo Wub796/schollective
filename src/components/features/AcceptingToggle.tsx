@@ -37,6 +37,7 @@ export function AcceptingToggle({ initialValue }: AcceptingToggleProps) {
       onClick={toggle}
       disabled={isPending}
       title={accepting ? "Click to stop accepting requests" : "Click to accept requests"}
+      className="btn-availability"
       style={{
         display: "flex",
         alignItems: "center",
@@ -47,7 +48,6 @@ export function AcceptingToggle({ initialValue }: AcceptingToggleProps) {
         background: accepting ? "rgba(120,220,120,0.05)" : "rgba(250, 250, 249, 0.03)",
         cursor: isPending ? "wait" : "pointer",
         opacity: isPending ? 0.7 : 1,
-        transition: "all 0.3s",
         flexShrink: 0,
       }}
     >
