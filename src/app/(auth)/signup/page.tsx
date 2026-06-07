@@ -171,11 +171,16 @@ export default function SignupPage() {
 
   const handleGoogleSignIn = async () => {
     try {
+      // Store the selected role in localStorage so the onboarding page
+      // can read it after the OAuth redirect. We can't put it in the
+      // redirectTo URL because Supabase validates redirect URLs against
+      // an exact allowlist and rejects URLs with query params.
+      localStorage.setItem("signup_role", role);
+
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          // Pass the selected role to /onboarding via the next param
-          redirectTo: `${window.location.origin}/auth/callback?next=/onboarding&role=${role}`,
+          redirectTo: `${window.location.origin}/auth/callback`,
         },
       });
       if (error) throw error;
