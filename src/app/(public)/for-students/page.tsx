@@ -52,7 +52,7 @@ export default function ForStudentsPage() {
       <PublicNav />
 
       {/* ── HERO ──────────────────────────────────────────── */}
-      <section className="relative z-10 flex flex-col items-stretch text-center px-8" style={HERO_STYLE}>
+      <section className="relative z-10 flex flex-col items-center text-center px-8" style={HERO_STYLE}>
         <div className="w-full max-w-[760px] mx-auto">
           <FadeIn>
             <Eyebrow>For Students</Eyebrow>
@@ -61,8 +61,8 @@ export default function ForStudentsPage() {
               <em className="italic text-[var(--accent)]">deserve real answers.</em>
             </h1>
           </FadeIn>
-          <FadeIn delay={0.15} className="w-full">
-            <p style={{ textAlign: "center" }} className="text-[clamp(1.05rem,1.4vw,1.25rem)] text-[var(--text-secondary)] leading-[1.85] max-w-[620px] mx-auto mb-10">
+          <FadeIn delay={0.15}>
+            <p className="text-[clamp(1.05rem,1.4vw,1.25rem)] text-[var(--text-secondary)] leading-[1.85] max-w-[620px] mx-auto mb-10">
               Whether you&apos;re a high schooler working on a science fair project or an undergrad navigating grad school
               applications, Schollective connects you directly with verified professors who can actually help —
               for free, with no cold-email anxiety.
@@ -82,7 +82,7 @@ export default function ForStudentsPage() {
       </section>
 
       {/* ── HOW IT WORKS ─────────────────────────────────── */}
-      <section className="relative z-10 flex flex-col items-stretch text-center px-8 border-t border-[var(--border)]" style={SECTION_STYLE}>
+      <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-[var(--border)]" style={SECTION_STYLE}>
         <div className="w-full max-w-[920px] mx-auto">
           <FadeIn>
             <h2 className="font-display text-[clamp(2.2rem,4vw,3.5rem)] font-black tracking-[-0.04em] leading-none mb-14 text-[var(--text-primary)]">
@@ -107,7 +107,7 @@ export default function ForStudentsPage() {
       </section>
 
       {/* ── USE CASES ────────────────────────────────────── */}
-      <section className="relative z-10 flex flex-col items-stretch text-center px-8 border-t border-[var(--border)]" style={SECTION_STYLE}>
+      <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-[var(--border)]" style={SECTION_STYLE}>
         <div className="w-full max-w-[920px] mx-auto">
           <FadeIn>
             <h2 className="font-display text-[clamp(2.2rem,4vw,3.5rem)] font-black tracking-[-0.04em] leading-none mb-14 text-[var(--text-primary)]">
@@ -129,7 +129,7 @@ export default function ForStudentsPage() {
       </section>
 
       {/* ── CTA ──────────────────────────────────────────── */}
-      <section className="relative z-10 flex flex-col items-stretch text-center px-8 border-t border-[var(--border)]" style={SECTION_STYLE}>
+      <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-[var(--border)]" style={SECTION_STYLE}>
         <div className="w-full max-w-[920px] mx-auto">
           <FadeIn>
             <div className="p-12 md:p-16 border border-[var(--border)] rounded-3xl bg-indigo-600/[0.03] flex flex-col items-center gap-10 text-center w-full">
