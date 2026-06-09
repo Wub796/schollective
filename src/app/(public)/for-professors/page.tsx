@@ -55,7 +55,7 @@ export default function ForProfessorsPage() {
       <PublicNav />
 
       {/* ── HERO ──────────────────────────────────────────── */}
-      <section className="relative z-10 flex flex-col items-center text-center pt-48 pb-32 px-8">
+      <section className="relative z-10 flex flex-col items-center text-center pt-48 pb-40 px-8">
         <div className="w-full max-w-[800px] mx-auto">
           <FadeIn>
             <Eyebrow>For Professors</Eyebrow>
@@ -84,10 +84,10 @@ export default function ForProfessorsPage() {
       </section>
 
       {/* ── WHY SCHOLLECTIVE ─────────────────────────────── */}
-      <section className="relative z-10 flex flex-col items-center text-center py-24 px-8 border-t border-[var(--border)]">
+      <section className="relative z-10 flex flex-col items-center text-center py-32 px-8 border-t border-[var(--border)]">
         <div className="w-full max-w-[920px] mx-auto">
           <FadeIn>
-            <h2 className="font-display text-[clamp(2.2rem,4vw,3.5rem)] font-black tracking-[-0.04em] leading-[0.95] mb-16 text-[var(--text-primary)]">
+            <h2 className="font-display text-[clamp(2.2rem,4vw,3.5rem)] font-black tracking-[-0.04em] leading-[0.95] mb-20 text-[var(--text-primary)]">
               Mentorship on<br /><em className="italic text-[var(--accent)]">your terms.</em>
             </h2>
           </FadeIn>
@@ -109,7 +109,7 @@ export default function ForProfessorsPage() {
       </section>
 
       {/* ── FIELDS ───────────────────────────────────────── */}
-      <section className="relative z-10 flex flex-col items-center text-center py-24 px-8 border-t border-[var(--border)]">
+      <section className="relative z-10 flex flex-col items-center text-center py-32 px-8 border-t border-[var(--border)]">
         <div className="w-full max-w-[920px] mx-auto">
           <FadeIn>
             <h2 className="font-display text-[clamp(2.2rem,3vw,3.2rem)] font-black tracking-[-0.04em] leading-[0.95] mb-12 text-[var(--text-primary)]">
@@ -127,7 +127,7 @@ export default function ForProfessorsPage() {
       </section>
 
       {/* ── VERIFICATION ─────────────────────────────────── */}
-      <section className="relative z-10 flex flex-col items-center text-center py-24 px-8 border-t border-[var(--border)]">
+      <section className="relative z-10 flex flex-col items-center text-center py-32 px-8 border-t border-[var(--border)]">
         <div className="w-full max-w-[920px] mx-auto">
           <FadeIn>
             <div className="p-12 border border-[var(--border)] rounded-3xl bg-[var(--bg-surface-1)] w-full">
@@ -156,10 +156,10 @@ export default function ForProfessorsPage() {
       </section>
 
       {/* ── FAQ ──────────────────────────────────────────── */}
-      <section className="relative z-10 flex flex-col items-center text-center py-24 px-8 border-t border-[var(--border)]">
+      <section className="relative z-10 flex flex-col items-center text-center py-32 px-8 border-t border-[var(--border)]">
         <div className="w-full max-w-[920px] mx-auto">
           <FadeIn>
-            <h2 className="font-display text-[clamp(2.2rem,3.5vw,3rem)] font-black tracking-[-0.04em] leading-[0.95] mb-16 text-[var(--text-primary)]">
+            <h2 className="font-display text-[clamp(2.2rem,3.5vw,3rem)] font-black tracking-[-0.04em] leading-[0.95] mb-20 text-[var(--text-primary)]">
               Everything you need<br /><em className="italic text-[var(--accent)]">to know.</em>
             </h2>
           </FadeIn>
@@ -178,7 +178,7 @@ export default function ForProfessorsPage() {
       </section>
 
       {/* ── CTA ──────────────────────────────────────────── */}
-      <section className="relative z-10 flex flex-col items-center text-center py-24 px-8 border-t border-[var(--border)]">
+      <section className="relative z-10 flex flex-col items-center text-center py-32 px-8 border-t border-[var(--border)]">
         <div className="w-full max-w-[920px] mx-auto">
           <FadeIn>
             <div className="p-12 border border-[var(--border)] rounded-3xl bg-indigo-600/[0.03] flex flex-wrap justify-between items-center gap-12 text-center lg:text-left w-full">

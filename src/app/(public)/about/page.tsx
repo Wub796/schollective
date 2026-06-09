@@ -47,7 +47,7 @@ export default function AboutPage() {
       <PublicNav />
 
       {/* ── HERO ──────────────────────────────────────────── */}
-      <section className="relative z-10 flex flex-col items-center text-center pt-48 pb-32 px-8">
+      <section className="relative z-10 flex flex-col items-center text-center pt-48 pb-40 px-8">
         <div className="w-full max-w-[800px] mx-auto">
           <FadeIn>
             <Eyebrow>Our Story</Eyebrow>
@@ -67,7 +67,7 @@ export default function AboutPage() {
       </section>
 
       {/* ── THE PROBLEM ──────────────────────────────────── */}
-      <section className="relative z-10 flex flex-col items-center text-center py-24 px-8 border-t border-[var(--border)]">
+      <section className="relative z-10 flex flex-col items-center text-center py-32 px-8 border-t border-[var(--border)]">
         <div className="w-full max-w-[920px] mx-auto">
           <FadeIn>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-16 text-left">
@@ -93,11 +93,11 @@ export default function AboutPage() {
       </section>
 
       {/* ── VALUES ───────────────────────────────────────── */}
-      <section className="relative z-10 flex flex-col items-center text-center py-24 px-8 border-t border-[var(--border)]">
+      <section className="relative z-10 flex flex-col items-center text-center py-32 px-8 border-t border-[var(--border)]">
         <div className="w-full max-w-[920px] mx-auto">
           <FadeIn>
             <Eyebrow>What We Stand For</Eyebrow>
-            <h2 className="font-display text-[clamp(2.2rem,4vw,3.5rem)] font-black tracking-[-0.04em] leading-[0.95] mb-16 text-[var(--text-primary)]">
+            <h2 className="font-display text-[clamp(2.2rem,4vw,3.5rem)] font-black tracking-[-0.04em] leading-[0.95] mb-20 text-[var(--text-primary)]">
               Four principles.<br /><em className="italic text-[var(--accent)]">One direction.</em>
             </h2>
           </FadeIn>
@@ -119,10 +119,10 @@ export default function AboutPage() {
       </section>
 
       {/* ── TEAM ─────────────────────────────────────────── */}
-      <section className="relative z-10 flex flex-col items-center text-center py-24 px-8 border-t border-[var(--border)]">
+      <section className="relative z-10 flex flex-col items-center text-center py-32 px-8 border-t border-[var(--border)]">
         <div className="w-full max-w-[920px] mx-auto">
           <FadeIn>
-            <h2 className="font-display text-[clamp(2.2rem,3.5vw,3rem)] font-black tracking-[-0.04em] leading-[0.95] mb-16 text-[var(--text-primary)]">
+            <h2 className="font-display text-[clamp(2.2rem,3.5vw,3rem)] font-black tracking-[-0.04em] leading-[0.95] mb-20 text-[var(--text-primary)]">
               Built by someone who<br /><em className="italic text-[var(--accent)]">lived the problem.</em>
             </h2>
           </FadeIn>
@@ -144,7 +144,7 @@ export default function AboutPage() {
       </section>
 
       {/* ── CTA ──────────────────────────────────────────── */}
-      <section className="relative z-10 flex flex-col items-center text-center py-24 px-8 border-t border-[var(--border)]">
+      <section className="relative z-10 flex flex-col items-center text-center py-32 px-8 border-t border-[var(--border)]">
         <div className="w-full max-w-[920px] mx-auto">
           <FadeIn>
             <div className="p-12 border border-[var(--border)] rounded-3xl bg-indigo-600/[0.03] flex flex-wrap justify-between items-center gap-12 text-center lg:text-left w-full">
