@@ -61,8 +61,8 @@ export default function ForStudentsPage() {
               <em className="italic text-[var(--accent)]">deserve real answers.</em>
             </h1>
           </FadeIn>
-          <FadeIn delay={0.15}>
-            <p className="text-[clamp(1.05rem,1.4vw,1.25rem)] text-[var(--text-secondary)] leading-[1.85] max-w-[620px] mx-auto mb-10 text-center">
+          <FadeIn delay={0.15} className="w-full">
+            <p style={{ textAlign: "center" }} className="text-[clamp(1.05rem,1.4vw,1.25rem)] text-[var(--text-secondary)] leading-[1.85] max-w-[620px] mx-auto mb-10">
               Whether you&apos;re a high schooler working on a science fair project or an undergrad navigating grad school
               applications, Schollective connects you directly with verified professors who can actually help —
               for free, with no cold-email anxiety.

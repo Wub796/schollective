@@ -58,8 +58,8 @@ export default function AboutPage() {
               <em className="italic text-[var(--accent)]">academic mentorship.</em>
             </h1>
           </FadeIn>
-          <FadeIn delay={0.15}>
-            <p className="text-[clamp(1.05rem,1.4vw,1.25rem)] text-[var(--text-secondary)] leading-[1.85] max-w-[620px] mx-auto text-center">
+          <FadeIn delay={0.15} className="w-full">
+            <p style={{ textAlign: "center" }} className="text-[clamp(1.05rem,1.4vw,1.25rem)] text-[var(--text-secondary)] leading-[1.85] max-w-[620px] mx-auto">
               Schollective was built on a simple belief: students should be able to reach the academics
               who can change their trajectory — without needing to know the right people, attend the right school,
               or send hundreds of cold emails into the void.
