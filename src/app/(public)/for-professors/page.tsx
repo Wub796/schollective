@@ -54,135 +54,152 @@ export default function ForProfessorsPage() {
     <div className="bg-transparent text-[var(--text-primary)] min-h-screen">
       <PublicNav />
 
-      <div className="relative z-10 max-w-[920px] mx-auto pt-48 pb-32 px-8 flex flex-col items-center text-center">
-
-        {/* ── HERO ─────────────────────────────────────── */}
-        <FadeIn>
-          <Eyebrow>For Professors</Eyebrow>
-          <h1 className="font-display text-[clamp(3rem,7.5vw,5.5rem)] font-black tracking-[-0.04em] leading-[0.95] mb-14 text-[var(--text-primary)]">
-            Your expertise.<br />
-            <em className="italic text-[var(--accent)]">Their breakthrough.</em>
-          </h1>
-        </FadeIn>
-
-        <FadeIn delay={0.15}>
-          <p className="text-[clamp(1.05rem,1.4vw,1.25rem)] text-[var(--text-secondary)] leading-[1.85] max-w-[660px] mb-14">
-            Schollective gives professors a structured, low-friction way to mentor motivated students from anywhere in the world —
-            without the noise of unsolicited cold emails, on a schedule that respects your time.
-          </p>
-        </FadeIn>
-
-        <FadeIn delay={0.2}>
-          <div className="flex justify-center gap-6 flex-wrap mb-30">
-            <Button href="/signup" size="lg">
-              Apply to Join
-            </Button>
-            <Button href="/about" variant="ghost" size="lg">
-              Learn About Us
-            </Button>
-          </div>
-        </FadeIn>
-
-        {/* ── WHY SCHOLLECTIVE ─────────────────────────── */}
-        <FadeIn>
-          <h2 className="font-display text-[clamp(2.2rem,4vw,3.5rem)] font-black tracking-[-0.04em] leading-[0.95] mb-18 text-[var(--text-primary)]">
-            Mentorship on<br /><em className="italic text-[var(--accent)]">your terms.</em>
-          </h2>
-        </FadeIn>
-
-        <div className="mb-30 w-full">
-          {BENEFITS.map((b, i) => (
-            <FadeIn key={b.n} delay={i * 0.06}>
-              <div className="grid grid-cols-[3.5rem_1fr] gap-10 py-12 border-t border-[var(--border)] text-left items-start">
-                <span className="font-mono text-[0.55rem] tracking-[0.18em] text-[var(--text-tertiary)] pt-1.5">{b.n}</span>
-                <div>
-                  <h3 className="font-display text-[1.45rem] font-bold text-[var(--text-primary)] tracking-[-0.02em] mb-3">{b.title}</h3>
-                  <p className="text-[0.95rem] text-[var(--text-secondary)] leading-1.8">{b.body}</p>
-                </div>
-              </div>
-            </FadeIn>
-          ))}
-          <div className="border-t border-[var(--border)]" />
-        </div>
-
-        {/* ── FIELDS ─────────────────────────────────────── */}
-        <FadeIn>
-          <h2 className="font-display text-[clamp(2.2rem,3vw,3.2rem)] font-black tracking-[-0.04em] leading-[0.95] mb-16 text-[var(--text-primary)]">
-            Students seeking guidance across<br /><em className="italic text-[var(--accent)]">every discipline.</em>
-          </h2>
-          <div className="flex flex-wrap gap-3 mb-30 justify-center">
-            {FIELDS.map((f) => (
-              <span key={f} className="px-5 py-2.5 border border-[var(--border)] rounded-full text-[0.8rem] text-[var(--text-secondary)] bg-[var(--bg-surface-1)] font-sans">
-                {f}
-              </span>
-            ))}
-          </div>
-        </FadeIn>
-
-        {/* ── VERIFICATION ─────────────────────────────── */}
-        <FadeIn>
-          <div className="p-12 border border-[var(--border)] rounded-3xl bg-[var(--bg-surface-1)] mb-30 w-full">
-            <h2 className="font-display font-black text-[clamp(1.8rem,2.8vw,2.4rem)] tracking-[-0.03em] text-[var(--text-primary)] mb-6">
-              Rigorous by design.
-            </h2>
-            <p className="text-[0.95rem] text-[var(--text-secondary)] leading-[1.85] max-w-[560px] mb-10 mx-auto">
-              To protect students and maintain the integrity of the platform, every professor application is manually reviewed. We cross-reference university directories, faculty pages, and institutional email addresses before approving any account.
+      {/* ── HERO ──────────────────────────────────────────── */}
+      <section className="relative z-10 flex flex-col items-center text-center pt-48 pb-32 px-8">
+        <div className="w-full max-w-[800px] mx-auto">
+          <FadeIn>
+            <Eyebrow>For Professors</Eyebrow>
+            <h1 className="font-display text-[clamp(3rem,7.5vw,5.5rem)] font-black tracking-[-0.04em] leading-[0.95] mb-10 text-[var(--text-primary)]">
+              Your expertise.<br />
+              <em className="italic text-[var(--accent)]">Their breakthrough.</em>
+            </h1>
+          </FadeIn>
+          <FadeIn delay={0.15}>
+            <p className="text-[clamp(1.05rem,1.4vw,1.25rem)] text-[var(--text-secondary)] leading-[1.85] max-w-[660px] mx-auto mb-12">
+              Schollective gives professors a structured, low-friction way to mentor motivated students from anywhere in the world —
+              without the noise of unsolicited cold emails, on a schedule that respects your time.
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
-              {[
-                { step: "1", label: "Submit Application", desc: "Complete your professor profile with your institutional email and faculty page URL." },
-                { step: "2", label: "Manual Review", desc: "Our team verifies your identity against university records. Takes 24–72 hours." },
-                { step: "3", label: "Approval & Access", desc: "Once approved, you can browse incoming requests and start accepting mentorships." },
-              ].map(({ step, label, desc }) => (
-                <div key={step} className="p-6 bg-[var(--bg-base)] rounded-xl border border-[var(--border)]">
-                  <div className="text-[0.55rem] font-bold tracking-[0.3em] uppercase text-[var(--accent)] mb-3">Step {step}</div>
-                  <div className="font-display font-bold text-[1.05rem] text-[var(--text-primary)] mb-2">{label}</div>
-                  <p className="text-[0.85rem] text-[var(--text-secondary)] leading-[1.75]">{desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </FadeIn>
-
-        {/* ── FAQ ─────────────────────────────────────── */}
-        <FadeIn>
-          <h2 className="font-display text-[clamp(2.2rem,3.5vw,3rem)] font-black tracking-[-0.04em] leading-[0.95] mb-18 text-[var(--text-primary)]">
-            Everything you need<br /><em className="italic text-[var(--accent)]">to know.</em>
-          </h2>
-        </FadeIn>
-
-        <div className="mb-30 w-full text-left">
-          {FAQ.map((item, i) => (
-            <FadeIn key={i} delay={i * 0.05}>
-              <div className="py-10 border-t border-[var(--border)]">
-                <h3 className="font-display text-[1.2rem] font-bold text-[var(--text-primary)] tracking-[-0.02em] mb-4">{item.q}</h3>
-                <p className="text-[0.92rem] text-[var(--text-secondary)] leading-1.8 max-w-[680px]">{item.a}</p>
-              </div>
-            </FadeIn>
-          ))}
-          <div className="border-t border-[var(--border)]" />
-        </div>
-
-        {/* ── CTA ─────────────────────────────────────── */}
-        <FadeIn>
-          <div className="p-12 border border-[var(--border)] rounded-3xl bg-indigo-600/[0.03] flex flex-wrap justify-between items-center gap-12 text-center lg:text-left w-full">
-            <div className="flex-[1_1_350px] max-w-md">
-              <h2 className="font-display font-black text-[clamp(2rem,3vw,2.6rem)] tracking-[-0.04em] text-[var(--text-primary)] mb-6 leading-tight">
-                Ready to make an impact?
-              </h2>
-              <p className="text-[0.95rem] text-[var(--text-secondary)] leading-1.8 text-center lg:text-left">
-                Apply today. Manual verification means the students you meet have already been filtered for seriousness of purpose.
-              </p>
-            </div>
-            <div className="flex-shrink-0 mx-auto lg:mx-0">
+          </FadeIn>
+          <FadeIn delay={0.2}>
+            <div className="flex justify-center gap-6 flex-wrap">
               <Button href="/signup" size="lg">
-                Apply as Professor
+                Apply to Join
+              </Button>
+              <Button href="/about" variant="ghost" size="lg">
+                Learn About Us
               </Button>
             </div>
-          </div>
-        </FadeIn>
+          </FadeIn>
+        </div>
+      </section>
 
-      </div>
+      {/* ── WHY SCHOLLECTIVE ─────────────────────────────── */}
+      <section className="relative z-10 flex flex-col items-center text-center py-24 px-8 border-t border-[var(--border)]">
+        <div className="w-full max-w-[920px] mx-auto">
+          <FadeIn>
+            <h2 className="font-display text-[clamp(2.2rem,4vw,3.5rem)] font-black tracking-[-0.04em] leading-[0.95] mb-16 text-[var(--text-primary)]">
+              Mentorship on<br /><em className="italic text-[var(--accent)]">your terms.</em>
+            </h2>
+          </FadeIn>
+          <div className="w-full">
+            {BENEFITS.map((b, i) => (
+              <FadeIn key={b.n} delay={i * 0.06}>
+                <div className="grid grid-cols-[3.5rem_1fr] gap-10 py-12 border-t border-[var(--border)] text-left items-start">
+                  <span className="font-mono text-[0.55rem] tracking-[0.18em] text-[var(--text-tertiary)] pt-1.5">{b.n}</span>
+                  <div>
+                    <h3 className="font-display text-[1.45rem] font-bold text-[var(--text-primary)] tracking-[-0.02em] mb-3">{b.title}</h3>
+                    <p className="text-[0.95rem] text-[var(--text-secondary)] leading-[1.8]">{b.body}</p>
+                  </div>
+                </div>
+              </FadeIn>
+            ))}
+            <div className="border-t border-[var(--border)]" />
+          </div>
+        </div>
+      </section>
+
+      {/* ── FIELDS ───────────────────────────────────────── */}
+      <section className="relative z-10 flex flex-col items-center text-center py-24 px-8 border-t border-[var(--border)]">
+        <div className="w-full max-w-[920px] mx-auto">
+          <FadeIn>
+            <h2 className="font-display text-[clamp(2.2rem,3vw,3.2rem)] font-black tracking-[-0.04em] leading-[0.95] mb-12 text-[var(--text-primary)]">
+              Students seeking guidance across<br /><em className="italic text-[var(--accent)]">every discipline.</em>
+            </h2>
+            <div className="flex flex-wrap gap-3 justify-center">
+              {FIELDS.map((f) => (
+                <span key={f} className="px-5 py-2.5 border border-[var(--border)] rounded-full text-[0.8rem] text-[var(--text-secondary)] bg-[var(--bg-surface-1)] font-sans">
+                  {f}
+                </span>
+              ))}
+            </div>
+          </FadeIn>
+        </div>
+      </section>
+
+      {/* ── VERIFICATION ─────────────────────────────────── */}
+      <section className="relative z-10 flex flex-col items-center text-center py-24 px-8 border-t border-[var(--border)]">
+        <div className="w-full max-w-[920px] mx-auto">
+          <FadeIn>
+            <div className="p-12 border border-[var(--border)] rounded-3xl bg-[var(--bg-surface-1)] w-full">
+              <h2 className="font-display font-black text-[clamp(1.8rem,2.8vw,2.4rem)] tracking-[-0.03em] text-[var(--text-primary)] mb-6">
+                Rigorous by design.
+              </h2>
+              <p className="text-[0.95rem] text-[var(--text-secondary)] leading-[1.85] max-w-[560px] mb-10 mx-auto">
+                To protect students and maintain the integrity of the platform, every professor application is manually reviewed. We cross-reference university directories, faculty pages, and institutional email addresses before approving any account.
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
+                {[
+                  { step: "1", label: "Submit Application", desc: "Complete your professor profile with your institutional email and faculty page URL." },
+                  { step: "2", label: "Manual Review", desc: "Our team verifies your identity against university records. Takes 24–72 hours." },
+                  { step: "3", label: "Approval & Access", desc: "Once approved, you can browse incoming requests and start accepting mentorships." },
+                ].map(({ step, label, desc }) => (
+                  <div key={step} className="p-6 bg-[var(--bg-base)] rounded-xl border border-[var(--border)]">
+                    <div className="text-[0.55rem] font-bold tracking-[0.3em] uppercase text-[var(--accent)] mb-3">Step {step}</div>
+                    <div className="font-display font-bold text-[1.05rem] text-[var(--text-primary)] mb-2">{label}</div>
+                    <p className="text-[0.85rem] text-[var(--text-secondary)] leading-[1.75]">{desc}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </FadeIn>
+        </div>
+      </section>
+
+      {/* ── FAQ ──────────────────────────────────────────── */}
+      <section className="relative z-10 flex flex-col items-center text-center py-24 px-8 border-t border-[var(--border)]">
+        <div className="w-full max-w-[920px] mx-auto">
+          <FadeIn>
+            <h2 className="font-display text-[clamp(2.2rem,3.5vw,3rem)] font-black tracking-[-0.04em] leading-[0.95] mb-16 text-[var(--text-primary)]">
+              Everything you need<br /><em className="italic text-[var(--accent)]">to know.</em>
+            </h2>
+          </FadeIn>
+          <div className="w-full text-left">
+            {FAQ.map((item, i) => (
+              <FadeIn key={i} delay={i * 0.05}>
+                <div className="py-10 border-t border-[var(--border)]">
+                  <h3 className="font-display text-[1.2rem] font-bold text-[var(--text-primary)] tracking-[-0.02em] mb-4">{item.q}</h3>
+                  <p className="text-[0.92rem] text-[var(--text-secondary)] leading-[1.8] max-w-[680px]">{item.a}</p>
+                </div>
+              </FadeIn>
+            ))}
+            <div className="border-t border-[var(--border)]" />
+          </div>
+        </div>
+      </section>
+
+      {/* ── CTA ──────────────────────────────────────────── */}
+      <section className="relative z-10 flex flex-col items-center text-center py-24 px-8 border-t border-[var(--border)]">
+        <div className="w-full max-w-[920px] mx-auto">
+          <FadeIn>
+            <div className="p-12 border border-[var(--border)] rounded-3xl bg-indigo-600/[0.03] flex flex-wrap justify-between items-center gap-12 text-center lg:text-left w-full">
+              <div className="flex-[1_1_350px] max-w-md">
+                <h2 className="font-display font-black text-[clamp(2rem,3vw,2.6rem)] tracking-[-0.04em] text-[var(--text-primary)] mb-6 leading-tight">
+                  Ready to make an impact?
+                </h2>
+                <p className="text-[0.95rem] text-[var(--text-secondary)] leading-[1.8] text-center lg:text-left">
+                  Apply today. Manual verification means the students you meet have already been filtered for seriousness of purpose.
+                </p>
+              </div>
+              <div className="flex-shrink-0 mx-auto lg:mx-0">
+                <Button href="/signup" size="lg">
+                  Apply as Professor
+                </Button>
+              </div>
+            </div>
+          </FadeIn>
+        </div>
+      </section>
+
     </div>
   );
 }
