@@ -13,24 +13,15 @@ export const dynamic = "force-dynamic";
 
 function StatCard({ value, label, sub }: { value: string | number; label: string; sub: string }) {
   return (
-    <div style={{
-      padding: "2rem",
-      border: "1px solid rgba(37, 99, 235, 0.08)",
-      borderRadius: "14px",
-      background: "rgba(37, 99, 235, 0.03)",
-      display: "flex", flexDirection: "column", gap: "0.5rem",
-    }}>
-      <span className="font-display" style={{
-        fontSize: "2.8rem", fontWeight: 900, color: "var(--text-primary)",
-        letterSpacing: "-0.04em", lineHeight: 1,
-      }}>
+    <div className="p-8 border border-blue-600/8 rounded-[14px] bg-blue-600/[0.03] flex flex-col gap-2">
+      <span className="font-display text-[2.8rem] font-black text-[var(--text-primary)] tracking-[-0.04em] leading-none">
         {value}
       </span>
       <div>
-        <div style={{ fontSize: "0.78rem", fontWeight: 600, color: "rgba(15, 23, 42, 0.6)", fontFamily: "var(--font-sans)" }}>
+        <div className="text-[0.78rem] font-semibold text-slate-900/60 font-sans">
           {label}
         </div>
-        <div style={{ fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(37, 99, 235, 0.3)", fontFamily: "var(--font-sans, monospace)", marginTop: "0.2rem" }}>
+        <div className="text-[0.6rem] font-semibold tracking-[0.2em] uppercase text-blue-600/30 font-sans mt-1">
           {sub}
         </div>
       </div>
@@ -40,33 +31,22 @@ function StatCard({ value, label, sub }: { value: string | number; label: string
 
 function QuickAction({ href, title, sub, icon }: { href: string; title: string; sub: string; icon: React.ReactNode }) {
   return (
-    <Link href={href} style={{ textDecoration: "none" }}>
-      <div className="quick-action-card" style={{
-        padding: "1.5rem",
-        border: "1px solid rgba(37, 99, 235, 0.08)",
-        borderRadius: "14px",
-        background: "var(--bg-surface-2)",
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-        cursor: "pointer",
-      }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-          <div style={{
-            width: "2.4rem", height: "2.4rem", borderRadius: "10px",
-            background: "rgba(37, 99, 235, 0.06)", border: "1px solid rgba(37, 99, 235, 0.15)",
-            display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
-          }}>
+    <Link href={href} className="no-underline">
+      <div className="quick-action-card p-6 border border-blue-600/8 rounded-[14px] bg-[var(--bg-surface-2)] flex items-center justify-between cursor-pointer transition-all duration-200 hover:border-blue-600/20 hover:shadow-xs">
+        <div className="flex items-center gap-4">
+          <div className="w-[2.4rem] h-[2.4rem] rounded-[10px] bg-blue-600/[0.06] border border-blue-600/15 flex items-center justify-center flex-shrink-0">
             {icon}
           </div>
           <div>
-            <div style={{ fontSize: "0.85rem", fontWeight: 600, color: "rgba(15, 23, 42, 0.85)", fontFamily: "var(--font-sans)", marginBottom: "0.2rem" }}>
+            <div className="text-[0.85rem] font-semibold text-slate-900/85 font-sans mb-1">
               {title}
             </div>
-            <div style={{ fontSize: "0.62rem", color: "rgba(15, 23, 42, 0.35)", fontFamily: "var(--font-sans)" }}>
+            <div className="text-[0.62rem] text-slate-900/35 font-sans">
               {sub}
             </div>
           </div>
         </div>
-        <ArrowRight size={14} color="rgba(15, 23, 42, 0.25)" style={{ flexShrink: 0 }} />
+        <ArrowRight size={14} className="text-slate-900/25 flex-shrink-0" />
       </div>
     </Link>
   );
@@ -74,21 +54,15 @@ function QuickAction({ href, title, sub, icon }: { href: string; title: string; 
 
 function StepItem({ n, title, desc }: { n: number; title: string; desc: string }) {
   return (
-    <div style={{ display: "flex", gap: "1.25rem" }}>
-      <div style={{
-        width: "1.75rem", height: "1.75rem", borderRadius: "50%", flexShrink: 0,
-        border: "1px solid rgba(37, 99, 235, 0.15)",
-        display: "flex", alignItems: "center", justifyContent: "center",
-        fontSize: "0.58rem", fontWeight: 700, color: "rgba(15, 23, 42, 0.45)",
-        fontFamily: "var(--font-sans, monospace)", marginTop: "0.1rem",
-      }}>
+    <div className="flex gap-5">
+      <div className="w-7 h-7 rounded-full flex-shrink-0 border border-blue-600/15 flex items-center justify-center text-[0.58rem] font-bold text-slate-900/45 font-mono mt-0.5">
         {n}
       </div>
       <div>
-        <div style={{ fontSize: "0.85rem", fontWeight: 600, color: "rgba(15, 23, 42, 0.8)", fontFamily: "var(--font-sans)", marginBottom: "0.3rem" }}>
+        <div className="text-[0.85rem] font-semibold text-slate-900/80 font-sans mb-1">
           {title}
         </div>
-        <div style={{ fontSize: "0.76rem", color: "rgba(15, 23, 42, 0.38)", fontFamily: "var(--font-sans)", lineHeight: 1.6 }}>
+        <div className="text-[0.76rem] text-slate-900/38 font-sans leading-1.6">
           {desc}
         </div>
       </div>
@@ -168,23 +142,23 @@ export default async function StudentDashboard() {
   const isEmpty       = totalRequests === 0;
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "8rem" }}>
+    <div className="flex flex-col gap-32">
 
       {/* ── Header ─────────────────────────────────────────────── */}
-      <header style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <span style={{ width: "1.5rem", height: "1px", background: "rgba(15, 23, 42, 0.2)", display: "block" }} />
-          <span style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.3)", fontFamily: "var(--font-sans, monospace)" }}>
+      <header className="flex flex-col gap-5">
+        <div className="flex items-center gap-3">
+          <span className="w-6 h-[1px] bg-slate-900/20 block" />
+          <span className="text-[0.62rem] font-bold tracking-[0.2em] uppercase text-slate-900/30 font-sans">
             Student Portal
           </span>
         </div>
-        <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: "2rem", flexWrap: "wrap" }}>
-          <h1 className="font-display" style={{ fontSize: "clamp(2.6rem, 5vw, 4rem)", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.035em", lineHeight: 1.05 }}>
+        <div className="flex items-end justify-between gap-8 flex-wrap">
+          <h1 className="font-display text-[clamp(2.6rem,5vw,4rem)] font-black text-[var(--text-primary)] tracking-[-0.035em] leading-[1.05]">
             Welcome back,{" "}
-            <em style={{ fontStyle: "italic", color: "rgba(15, 23, 42, 0.35)" }}>{displayName}</em>
+            <em className="italic text-slate-900/35">{displayName}</em>
           </h1>
         </div>
-        <p style={{ fontSize: "0.95rem", color: "rgba(15, 23, 42, 0.4)", fontWeight: 300, maxWidth: "42rem", lineHeight: 1.8, fontFamily: "var(--font-sans)", marginTop: "0.25rem" }}>
+        <p className="text-[0.95rem] text-slate-900/40 font-light max-w-[42rem] leading-1.8 font-sans mt-1">
           Track your mentorship requests and active research dialogues below.
         </p>
       </header>
@@ -192,57 +166,57 @@ export default async function StudentDashboard() {
       {activeCount > 0 && <FeedbackPrompt />}
 
       {/* ── Stats row ──────────────────────────────────────────── */}
-      <div className="dash-stat-grid">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
         <StatCard value={totalRequests} label="Total Requests" sub="Lifetime"  />
         <StatCard value={activeCount}   label="Active Threads" sub="Ongoing"   />
         <StatCard value={pendingCount}  label="Awaiting Reply" sub="Pending"   />
       </div>
 
       {/* ── Hairline ───────────────────────────────────────────── */}
-      <div style={{ height: "1px", background: "rgba(37, 99, 235, 0.07)" }} />
+      <div className="h-[1px] bg-blue-600/7" />
 
       {/* ── Two-column body ────────────────────────────────────── */}
-      <div className="dash-two-col">
+      <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-12 items-start">
 
         {/* Left: quick actions + how it works */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }}>
+        <div className="flex flex-col gap-10">
 
           {/* Quick actions */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-              <span style={{ width: "1rem", height: "1px", background: "rgba(15, 23, 42, 0.2)", display: "block" }} />
-              <h2 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "rgba(15, 23, 42, 0.75)", letterSpacing: "-0.025em" }}>
+          <div className="flex flex-col gap-5">
+            <div className="flex items-center gap-3">
+              <span className="w-4 h-[1px] bg-slate-900/20 block" />
+              <h2 className="font-display text-[1.2rem] font-bold text-slate-900/75 tracking-[-0.025em]">
                 Quick Actions
               </h2>
             </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
+            <div className="flex flex-col gap-2.5">
               <QuickAction
                 href="/professors"
                 title="Browse Mentors"
                 sub={requestsToday >= 5 ? "Daily limit reached (5/5)" : `${requestsToday} of 5 requests used today`}
-                icon={<Search size={14} color="rgba(15, 23, 42, 0.5)" />}
+                icon={<Search size={14} className="text-slate-900/50" />}
               />
               <QuickAction
                 href="/profile"
                 title="Your Profile"
                 sub="Edit name & institution"
-                icon={<User size={14} color="rgba(15, 23, 42, 0.5)" />}
+                icon={<User size={14} className="text-slate-900/50" />}
               />
             </div>
           </div>
 
           {/* Hairline */}
-          <div style={{ height: "1px", background: "rgba(37, 99, 235, 0.07)" }} />
+          <div className="h-[1px] bg-blue-600/7" />
 
           {/* How it works */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-              <span style={{ width: "1rem", height: "1px", background: "rgba(15, 23, 42, 0.2)", display: "block" }} />
-              <h2 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "rgba(15, 23, 42, 0.75)", letterSpacing: "-0.025em" }}>
+          <div className="flex flex-col gap-6">
+            <div className="flex items-center gap-3">
+              <span className="w-4 h-[1px] bg-slate-900/20 block" />
+              <h2 className="font-display text-[1.2rem] font-bold text-slate-900/75 tracking-[-0.025em]">
                 How It Works
               </h2>
             </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+            <div className="flex flex-col gap-6">
               <StepItem n={1} title="Browse the directory" desc="Find professors by discipline, institution, or name." />
               <StepItem n={2} title="Send a focused request" desc="Describe your research question or learning goal clearly." />
               <StepItem n={3} title="Begin your dialogue" desc="Once accepted, your thread opens for ongoing mentorship." />
@@ -251,45 +225,45 @@ export default async function StudentDashboard() {
         </div>
 
         {/* Right: threads */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "1.75rem" }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-              <span style={{ width: "1rem", height: "1px", background: "rgba(15, 23, 42, 0.2)", display: "block" }} />
-              <h2 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "rgba(15, 23, 42, 0.85)", letterSpacing: "-0.025em" }}>
+        <div className="flex flex-col gap-7">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <span className="w-4 h-[1px] bg-slate-900/20 block" />
+              <h2 className="font-display text-[1.2rem] font-bold text-slate-900/85 tracking-[-0.025em]">
                 Your Threads
               </h2>
             </div>
             {!isEmpty && (
-              <span style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.28em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.25)", fontFamily: "var(--font-sans, monospace)" }}>
+              <span className="text-[0.6rem] font-bold tracking-[0.28em] uppercase text-slate-900/25 font-mono">
                 {totalRequests} total
               </span>
             )}
           </div>
 
           {isEmpty ? (
-            <div style={{ border: "1px dashed rgba(37, 99, 235, 0.12)", borderRadius: "16px", padding: "4rem 2rem", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: "1.25rem" }}>
-              <div style={{ width: "3rem", height: "3rem", borderRadius: "50%", background: "rgba(37, 99, 235, 0.05)", border: "1px solid rgba(37, 99, 235, 0.12)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <BookOpen size={18} color="rgba(15, 23, 42, 0.3)" />
+            <div className="border border-dashed border-blue-600/12 rounded-2xl py-16 px-8 text-center flex flex-col items-center gap-5">
+              <div className="w-12 h-12 rounded-full bg-blue-600/5 border border-blue-600/12 flex items-center justify-center">
+                <BookOpen size={18} className="text-slate-900/30" />
               </div>
               <div>
-                <h3 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "rgba(15, 23, 42, 0.7)", marginBottom: "0.5rem", letterSpacing: "-0.02em" }}>
+                <h3 className="font-display text-[1.2rem] font-bold text-slate-900/70 mb-2 tracking-[-0.02em]">
                   Find your first research mentor
                 </h3>
-                <p style={{ fontSize: "0.8rem", color: "rgba(15, 23, 42, 0.32)", maxWidth: "24rem", lineHeight: 1.7, fontFamily: "var(--font-sans)" }}>
+                <p className="text-[0.8rem] text-slate-900/32 max-w-[24rem] leading-1.7 font-sans">
                   Connect with verified faculty members. Your active mentorship threads will appear here.
                 </p>
               </div>
-              <Link href="/professors" style={{ textDecoration: "none", marginTop: "0.25rem" }}>
-                <div style={{ padding: "0.75rem 1.75rem", border: "1px solid rgba(37, 99, 235, 0.25)", borderRadius: "100px", fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--accent)", fontFamily: "var(--font-sans)", cursor: "pointer" }}>
+              <Link href="/professors" className="mt-1 no-underline">
+                <div className="py-3 px-7 border border-blue-600/25 rounded-full text-[0.58rem] font-bold tracking-[0.22em] uppercase text-[var(--accent)] font-sans cursor-pointer transition-colors hover:bg-blue-600/5">
                   Find a Mentor &rarr;
                 </div>
               </Link>
             </div>
           ) : (
-            <div style={{ display: "flex", flexDirection: "column", gap: "3rem" }}>
+            <div className="flex flex-col gap-12">
               {/* Ongoing Threads */}
               {processedRequests.filter((r: any) => r.status !== "closed").length > 0 && (
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "1.25rem" }}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   {processedRequests.filter((r: any) => r.status !== "closed").map((req: any) => (
                     <ThreadCard key={req.id} request={req} viewerRole="student" hasUnread={req.hasUnread} />
                   ))}
@@ -298,14 +272,14 @@ export default async function StudentDashboard() {
 
               {/* Closed Threads */}
               {processedRequests.filter((r: any) => r.status === "closed").length > 0 && (
-                <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-                    <span style={{ width: "1rem", height: "1px", background: "rgba(15, 23, 42, 0.2)", display: "block" }} />
-                    <h2 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "rgba(15, 23, 42, 0.5)", letterSpacing: "-0.025em" }}>
+                <div className="flex flex-col gap-5">
+                  <div className="flex items-center gap-3">
+                    <span className="w-4 h-[1px] bg-slate-900/20 block" />
+                    <h2 className="font-display text-[1.2rem] font-bold text-slate-900/50 tracking-[-0.025em]">
                       Past Mentorships
                     </h2>
                   </div>
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "1.25rem", opacity: 0.8 }}>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5 opacity-80">
                     {processedRequests.filter((r: any) => r.status === "closed").map((req: any) => (
                       <ThreadCard key={req.id} request={req} viewerRole="student" hasUnread={req.hasUnread} />
                     ))}

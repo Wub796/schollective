@@ -93,7 +93,7 @@ const Button = React.forwardRef<HTMLElement, ButtonProps>(
     );
 
     const mergedClassName = cn(
-      "group relative inline-flex items-center justify-center rounded-full overflow-visible",
+      "group relative inline-flex items-center justify-center rounded-full overflow-visible whitespace-nowrap",
       "transition-[background,border-color,opacity,transform] duration-300",
       "disabled:opacity-40 disabled:cursor-not-allowed",
       "active:scale-[0.98]",
