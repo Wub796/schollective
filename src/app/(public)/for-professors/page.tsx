@@ -136,11 +136,13 @@ export default function ForProfessorsPage() {
               <h2 className="font-display font-black text-[clamp(1.8rem,2.8vw,2.4rem)] tracking-[-0.03em] text-[var(--text-primary)] mb-6">
                 Rigorous by design.
               </h2>
-              <p className="text-[1rem] text-[var(--text-secondary)] leading-[1.85] max-w-[560px] mb-12 mx-auto">
-                To protect students and maintain the integrity of the platform, every professor application is manually
-                reviewed. We cross-reference university directories, faculty pages, and institutional email addresses
-                before approving any account.
-              </p>
+              <div className="w-full flex flex-col items-center justify-center text-center">
+                <p className="text-center text-[1rem] text-[var(--text-secondary)] leading-[1.85] max-w-[560px] mb-12">
+                  To protect students and maintain the integrity of the platform, every professor application is manually
+                  reviewed. We cross-reference university directories, faculty pages, and institutional email addresses
+                  before approving any account.
+                </p>
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
                 {[
                   { step: "1", label: "Submit Application", desc: "Complete your professor profile with your institutional email and faculty page URL." },
