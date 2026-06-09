@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/Button";
 
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 const SECTION_STYLE = { paddingTop: "8rem", paddingBottom: "8rem" };
-const HERO_STYLE   = { paddingTop: "9rem", paddingBottom: "8rem" };
+const HERO_STYLE = { paddingTop: "9rem", paddingBottom: "8rem" };
 
 function FadeIn({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
   const ref = useRef(null);
@@ -37,10 +37,10 @@ const VALUES = [
 ];
 
 const TEAM = [
-  { initials: "AR", name: "Aiden Raj",       role: "Founder", desc: "Passionate about using technology to break barriers in education and expand access to meaningful mentorship." },
-  { initials: "AS", name: "Ayaan Siddiqui",  role: "Founder", desc: "Driven by the belief that every student deserves a mentor, regardless of background or institution." },
-  { initials: "BW", name: "Benjamin Wu",     role: "Builder", desc: "Built Schollective to democratize the academic connections that shaped his own path." },
-  { initials: "JH", name: "Joseph Hu",       role: "Builder", desc: "Dedicated to engineering systems that connect students with the guidance they need to grow academically and professionally." },
+  { initials: "AR", name: "Aiden Raj", role: "Founder", desc: "Passionate about using technology to break barriers in education and expand access to meaningful mentorship." },
+  { initials: "AS", name: "Ayaan Siddiqui", role: "Founder", desc: "Driven by the belief that every student deserves a mentor, regardless of background or institution." },
+  { initials: "BW", name: "Benjamin Wu", role: "Builder", desc: "Built Schollective to democratize the academic connections that shaped his own path." },
+  { initials: "JH", name: "Joseph Hu", role: "Builder", desc: "Dedicated to engineering systems that connect students with the guidance they need to grow academically and professionally." },
 ];
 
 export default function AboutPage() {
@@ -49,7 +49,7 @@ export default function AboutPage() {
       <PublicNav />
 
       {/* ── HERO ──────────────────────────────────────────── */}
-      <section className="relative z-10 px-8" style={HERO_STYLE}>
+      <section className="relative z-10 px-8 min-h-[85vh] flex flex-col items-center justify-center">
         <div className="w-full max-w-[760px] mx-auto flex flex-col items-center text-center">
           <FadeIn className="w-full flex flex-col items-center">
             <Eyebrow>Our Story</Eyebrow>

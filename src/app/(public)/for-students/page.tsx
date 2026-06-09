@@ -8,7 +8,7 @@ import { FileText, GraduationCap, Microscope, BookOpen, Users, PenTool } from "l
 
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 const SECTION_STYLE = { paddingTop: "8rem", paddingBottom: "8rem" };
-const HERO_STYLE   = { paddingTop: "9rem", paddingBottom: "8rem" };
+const HERO_STYLE = { paddingTop: "9rem", paddingBottom: "8rem" };
 
 function FadeIn({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
   const ref = useRef(null);
@@ -31,19 +31,19 @@ function Eyebrow({ children }: { children: string }) {
 }
 
 const HOW_IT_WORKS = [
-  { n: "01", title: "Create Your Profile",        body: "Sign up in under two minutes. Tell us your grade level, school, and what areas of research excite you. No essays, no applications." },
-  { n: "02", title: "Browse Verified Professors",  body: "Search our database of institutionally verified academics by field, research interest, or university. Every profile is real and reviewed." },
-  { n: "03", title: "Send a Focused Request",      body: "Use our structured request template to explain your question clearly. Professors get context upfront — which means faster, better responses." },
-  { n: "04", title: "Grow Through Dialogue",       body: "Continue the conversation in a dedicated thread. Build a relationship with your mentor over time, entirely within Schollective." },
+  { n: "01", title: "Create Your Profile", body: "Sign up in under two minutes. Tell us your grade level, school, and what areas of research excite you. No essays, no applications." },
+  { n: "02", title: "Browse Verified Professors", body: "Search our database of institutionally verified academics by field, research interest, or university. Every profile is real and reviewed." },
+  { n: "03", title: "Send a Focused Request", body: "Use our structured request template to explain your question clearly. Professors get context upfront — which means faster, better responses." },
+  { n: "04", title: "Grow Through Dialogue", body: "Continue the conversation in a dedicated thread. Build a relationship with your mentor over time, entirely within Schollective." },
 ];
 
 const USE_CASES = [
-  { icon: <FileText      className="w-6 h-6 text-indigo-600" />, title: "Research Paper Guidance",        body: "Get feedback on your thesis, methodology, or literature review from a professor in exactly that field." },
-  { icon: <GraduationCap className="w-6 h-6 text-indigo-600" />, title: "Graduate School Planning",       body: "Ask professors about their programs, what they look for in applicants, and how to strengthen your profile." },
-  { icon: <Microscope    className="w-6 h-6 text-indigo-600" />, title: "Science Fair & Research Projects", body: "High schoolers: get expert perspective on your project before competition season." },
-  { icon: <BookOpen      className="w-6 h-6 text-indigo-600" />, title: "Understanding Complex Topics",   body: "Sometimes textbooks aren't enough. Get a nuanced explanation from someone who has spent a career studying it." },
-  { icon: <Users         className="w-6 h-6 text-indigo-600" />, title: "Finding Research Opportunities", body: "Learn about lab openings, summer programs, and internships directly from professors actively seeking students." },
-  { icon: <PenTool       className="w-6 h-6 text-indigo-600" />, title: "Academic Writing Improvement",   body: "Get your writing reviewed by academics who publish regularly and know exactly what clarity looks like." },
+  { icon: <FileText className="w-6 h-6 text-indigo-600" />, title: "Research Paper Guidance", body: "Get feedback on your thesis, methodology, or literature review from a professor in exactly that field." },
+  { icon: <GraduationCap className="w-6 h-6 text-indigo-600" />, title: "Graduate School Planning", body: "Ask professors about their programs, what they look for in applicants, and how to strengthen your profile." },
+  { icon: <Microscope className="w-6 h-6 text-indigo-600" />, title: "Science Fair & Research Projects", body: "High schoolers: get expert perspective on your project before competition season." },
+  { icon: <BookOpen className="w-6 h-6 text-indigo-600" />, title: "Understanding Complex Topics", body: "Sometimes textbooks aren't enough. Get a nuanced explanation from someone who has spent a career studying it." },
+  { icon: <Users className="w-6 h-6 text-indigo-600" />, title: "Finding Research Opportunities", body: "Learn about lab openings, summer programs, and internships directly from professors actively seeking students." },
+  { icon: <PenTool className="w-6 h-6 text-indigo-600" />, title: "Academic Writing Improvement", body: "Get your writing reviewed by academics who publish regularly and know exactly what clarity looks like." },
 ];
 
 export default function ForStudentsPage() {
@@ -52,7 +52,7 @@ export default function ForStudentsPage() {
       <PublicNav />
 
       {/* ── HERO ──────────────────────────────────────────── */}
-      <section className="relative z-10 px-8" style={HERO_STYLE}>
+      <section className="relative z-10 px-8 min-h-[85vh] flex flex-col items-center justify-center">
         <div className="w-full max-w-[760px] mx-auto flex flex-col items-center text-center">
           <FadeIn className="w-full flex flex-col items-center">
             <Eyebrow>For Students</Eyebrow>
