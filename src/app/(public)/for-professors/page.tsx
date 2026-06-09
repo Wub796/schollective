@@ -57,7 +57,7 @@ export default function ForProfessorsPage() {
       <PublicNav />
 
       {/* ── HERO ──────────────────────────────────────────── */}
-      <section className="relative z-10 flex flex-col items-stretch text-center px-8" style={HERO_STYLE}>
+      <section className="relative z-10 flex flex-col items-center text-center px-8" style={HERO_STYLE}>
         <div className="w-full max-w-[760px] mx-auto">
           <FadeIn>
             <Eyebrow>For Professors</Eyebrow>
@@ -66,8 +66,8 @@ export default function ForProfessorsPage() {
               <em className="italic text-[var(--accent)]">Their breakthrough.</em>
             </h1>
           </FadeIn>
-          <FadeIn delay={0.15} className="w-full">
-            <p style={{ textAlign: "center" }} className="text-[clamp(1.05rem,1.4vw,1.25rem)] text-[var(--text-secondary)] leading-[1.85] max-w-[620px] mx-auto mb-10">
+          <FadeIn delay={0.15}>
+            <p className="text-[clamp(1.05rem,1.4vw,1.25rem)] text-[var(--text-secondary)] leading-[1.85] max-w-[620px] mx-auto mb-10">
               Schollective gives professors a structured, low-friction way to mentor motivated students from anywhere
               in the world — without the noise of unsolicited cold emails, on a schedule that respects your time.
             </p>
@@ -86,7 +86,7 @@ export default function ForProfessorsPage() {
       </section>
 
       {/* ── WHY SCHOLLECTIVE ─────────────────────────────── */}
-      <section className="relative z-10 flex flex-col items-stretch text-center px-8 border-t border-[var(--border)]" style={SECTION_STYLE}>
+      <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-[var(--border)]" style={SECTION_STYLE}>
         <div className="w-full max-w-[920px] mx-auto">
           <FadeIn>
             <h2 className="font-display text-[clamp(2.2rem,4vw,3.5rem)] font-black tracking-[-0.04em] leading-[0.95] mb-14 text-[var(--text-primary)]">
@@ -111,7 +111,7 @@ export default function ForProfessorsPage() {
       </section>
 
       {/* ── FIELDS ───────────────────────────────────────── */}
-      <section className="relative z-10 flex flex-col items-stretch text-center px-8 border-t border-[var(--border)]" style={SECTION_STYLE}>
+      <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-[var(--border)]" style={SECTION_STYLE}>
         <div className="w-full max-w-[920px] mx-auto">
           <FadeIn>
             <h2 className="font-display text-[clamp(2.2rem,3vw,3.2rem)] font-black tracking-[-0.04em] leading-[0.95] mb-12 text-[var(--text-primary)]">
@@ -129,7 +129,7 @@ export default function ForProfessorsPage() {
       </section>
 
       {/* ── VERIFICATION ─────────────────────────────────── */}
-      <section className="relative z-10 flex flex-col items-stretch text-center px-8 border-t border-[var(--border)]" style={SECTION_STYLE}>
+      <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-[var(--border)]" style={SECTION_STYLE}>
         <div className="w-full max-w-[920px] mx-auto">
           <FadeIn>
             <div className="p-12 md:p-16 border border-[var(--border)] rounded-3xl bg-[var(--bg-surface-1)] w-full">
@@ -160,7 +160,7 @@ export default function ForProfessorsPage() {
       </section>
 
       {/* ── FAQ ──────────────────────────────────────────── */}
-      <section className="relative z-10 flex flex-col items-stretch text-center px-8 border-t border-[var(--border)]" style={SECTION_STYLE}>
+      <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-[var(--border)]" style={SECTION_STYLE}>
         <div className="w-full max-w-[920px] mx-auto">
           <FadeIn>
             <h2 className="font-display text-[clamp(2.2rem,3.5vw,3rem)] font-black tracking-[-0.04em] leading-[0.95] mb-14 text-[var(--text-primary)]">
@@ -182,7 +182,7 @@ export default function ForProfessorsPage() {
       </section>
 
       {/* ── CTA ──────────────────────────────────────────── */}
-      <section className="relative z-10 flex flex-col items-stretch text-center px-8 border-t border-[var(--border)]" style={SECTION_STYLE}>
+      <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-[var(--border)]" style={SECTION_STYLE}>
         <div className="w-full max-w-[920px] mx-auto">
           <FadeIn>
             <div className="p-12 md:p-16 border border-[var(--border)] rounded-3xl bg-indigo-600/[0.03] flex flex-col items-center gap-10 text-center w-full">
