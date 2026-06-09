@@ -49,7 +49,7 @@ export default function AboutPage() {
       <PublicNav />
 
       {/* ── HERO ──────────────────────────────────────────── */}
-      <section className="relative z-10 flex flex-col items-center text-center px-8" style={HERO_STYLE}>
+      <section className="relative z-10 flex flex-col items-stretch text-center px-8" style={HERO_STYLE}>
         <div className="w-full max-w-[760px] mx-auto">
           <FadeIn>
             <Eyebrow>Our Story</Eyebrow>
@@ -69,7 +69,7 @@ export default function AboutPage() {
       </section>
 
       {/* ── THE PROBLEM ──────────────────────────────────── */}
-      <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-[var(--border)]" style={SECTION_STYLE}>
+      <section className="relative z-10 flex flex-col items-stretch text-center px-8 border-t border-[var(--border)]" style={SECTION_STYLE}>
         <div className="w-full max-w-[920px] mx-auto">
           <FadeIn>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-16 text-left">
@@ -95,7 +95,7 @@ export default function AboutPage() {
       </section>
 
       {/* ── VALUES ───────────────────────────────────────── */}
-      <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-[var(--border)]" style={SECTION_STYLE}>
+      <section className="relative z-10 flex flex-col items-stretch text-center px-8 border-t border-[var(--border)]" style={SECTION_STYLE}>
         <div className="w-full max-w-[920px] mx-auto">
           <FadeIn>
             <Eyebrow>What We Stand For</Eyebrow>
@@ -121,7 +121,7 @@ export default function AboutPage() {
       </section>
 
       {/* ── TEAM ─────────────────────────────────────────── */}
-      <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-[var(--border)]" style={SECTION_STYLE}>
+      <section className="relative z-10 flex flex-col items-stretch text-center px-8 border-t border-[var(--border)]" style={SECTION_STYLE}>
         <div className="w-full max-w-[920px] mx-auto">
           <FadeIn>
             <h2 className="font-display text-[clamp(2.2rem,3.5vw,3rem)] font-black tracking-[-0.04em] leading-[0.95] mb-14 text-[var(--text-primary)]">
@@ -146,7 +146,7 @@ export default function AboutPage() {
       </section>
 
       {/* ── CTA ──────────────────────────────────────────── */}
-      <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-[var(--border)]" style={SECTION_STYLE}>
+      <section className="relative z-10 flex flex-col items-stretch text-center px-8 border-t border-[var(--border)]" style={SECTION_STYLE}>
         <div className="w-full max-w-[920px] mx-auto">
           <FadeIn>
             <div className="p-12 md:p-16 border border-[var(--border)] rounded-3xl bg-indigo-600/[0.03] flex flex-col items-center gap-10 text-center w-full">
