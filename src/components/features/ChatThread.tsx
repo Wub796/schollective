@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { Button } from "@/components/ui/Button";
-import { sendMessage } from "@/app/(dashboard)/messages/[id]/actions";
+import { sendMessage } from "@/app/messages/[id]/actions";
 import { Send, Lock } from "lucide-react";
 import { toast } from "sonner";
 
@@ -167,9 +167,9 @@ export function ChatThread({
                         fontWeight: 500,
                       }
                     : {
-                        background: "rgba(17, 17, 22, 0.85)",
+                        background: "rgba(15, 23, 42, 0.05)",
                         color: "rgba(15, 23, 42, 0.9)",
-                        border: "1px solid rgba(37, 99, 235, 0.1)",
+                        border: "1px solid rgba(15, 23, 42, 0.08)",
                       }),
                 }}>
                   {msg.content}
@@ -227,7 +227,7 @@ export function ChatThread({
                 rows={1}
                 style={{
                   width: "100%",
-                  background: "rgba(17, 17, 22, 0.7)",
+                  background: "rgba(15, 23, 42, 0.03)",
                   border: "1px solid rgba(37, 99, 235, 0.12)",
                   borderRadius: "14px",
                   padding: "0.8rem 1.1rem",
@@ -242,11 +242,11 @@ export function ChatThread({
                 }}
                 onFocus={e => {
                   e.currentTarget.style.borderColor = "rgba(37, 99, 235, 0.4)";
-                  e.currentTarget.style.background = "rgba(17, 17, 22, 0.92)";
+                  e.currentTarget.style.background = "#ffffff";
                 }}
                 onBlur={e => {
                   e.currentTarget.style.borderColor = "rgba(37, 99, 235, 0.12)";
-                  e.currentTarget.style.background = "rgba(17, 17, 22, 0.7)";
+                  e.currentTarget.style.background = "rgba(15, 23, 42, 0.03)";
                 }}
                 onInput={(e) => {
                   const target = e.target as HTMLTextAreaElement;

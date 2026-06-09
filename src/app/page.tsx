@@ -4,7 +4,7 @@ import React, { useRef, useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { SchollectiveLogo } from "@/components/ui/SchollectiveLogo";
-import { motion, useInView, AnimatePresence } from "framer-motion";
+import { motion, useInView, AnimatePresence, useReducedMotion } from "framer-motion";
 import { PublicNav } from "@/components/ui/PublicNav";
 import { Button } from "@/components/ui/Button";
 import { AnimatedBackground } from "@/components/ui/AnimatedBackground";
@@ -91,10 +91,10 @@ function Label({ children }: { children: React.ReactNode }) {
   );
 }
 
-function MockupChrome({ url, children }: { url: string; children: React.ReactNode }) {
+function MockupChrome({ url, children, className = "" }: { url: string; children: React.ReactNode; className?: string }) {
   return (
-    <div className="relative p-6 md:p-8 rounded-3xl border border-slate-200/80 bg-white flex flex-col gap-6 w-full text-left max-w-lg mx-auto">
-      <div className="flex items-center justify-between border-b border-slate-100 pb-3 w-full">
+    <div className={`relative p-5 md:p-6 rounded-3xl border border-slate-200/80 bg-white flex flex-col w-full text-left max-w-lg mx-auto h-[350px] md:h-[370px] shrink-0 ${className}`}>
+      <div className="flex items-center justify-between border-b border-slate-100 pb-3 w-full shrink-0">
         <div className="flex items-center gap-1.5">
           <div className="w-2.5 h-2.5 rounded-full bg-red-400/50" />
           <div className="w-2.5 h-2.5 rounded-full bg-yellow-400/50" />
@@ -102,7 +102,9 @@ function MockupChrome({ url, children }: { url: string; children: React.ReactNod
         </div>
         <span className="font-mono text-[0.55rem] text-slate-300 text-center mx-auto flex-1">{url}</span>
       </div>
-      {children}
+      <div className="flex-1 flex flex-col justify-center gap-4 min-h-0 mt-4">
+        {children}
+      </div>
     </div>
   );
 }
@@ -113,11 +115,26 @@ function MockupChrome({ url, children }: { url: string; children: React.ReactNod
 export default function LandingPage() {
   const router = useRouter();
   const [loaderDone, setLoaderDone] = useState(false);
+  const reduceMotion = useReducedMotion();
 
   useEffect(() => {
     const t = setTimeout(() => setLoaderDone(true), 1800);
     return () => clearTimeout(t);
   }, []);
+
+  const containerVariants = {
+    hidden: {},
+    show: {
+      transition: {
+        staggerChildren: reduceMotion ? 0 : 0.15,
+      },
+    },
+  };
+
+  const cardVariants = {
+    hidden: reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 },
+    show: reduceMotion ? { opacity: 1, y: 0 } : { opacity: 1, y: 0, transition: { duration: 0.7, ease: EASE } },
+  };
 
   return (
     <>
@@ -197,7 +214,6 @@ export default function LandingPage() {
         {/* ══ COMPARISON TABLE ═════════════════════════════════════════ */}
         <section className="js-fade relative border-t border-slate-100 min-h-screen flex flex-col items-center justify-center py-24 px-6" style={{ background: "#fdfdfd" }}>
           <div className="w-full max-w-4xl mx-auto flex flex-col items-center text-center">
-            <Label>Comparing Outreach</Label>
             <h2
               className="font-display font-bold text-slate-900 tracking-tighter leading-[1.1] text-center w-full mb-16 mx-auto"
               style={{ fontSize: "clamp(2rem, 3.5vw, 3rem)" }}
@@ -240,137 +256,150 @@ export default function LandingPage() {
 
         {/* ══ 3-STEP WALKTHROUGH ══════════════════════════════════════ */}
         <section className="js-fade relative border-t border-slate-100 min-h-screen flex flex-col items-center justify-center py-24 px-6" style={{ background: "#fdfdfd" }}>
-          <div className="w-full max-w-4xl mx-auto flex flex-col items-center text-center mb-16 md:mb-24">
-            <Label>How it works</Label>
+          <div className="w-full max-w-6xl mx-auto flex flex-col items-center text-center mb-16">
+            <h2 className="font-display font-bold text-slate-900 tracking-tighter leading-[1.1] mb-4" style={{ fontSize: "clamp(2rem, 3.5vw, 3rem)" }}>
+              From sign-up to insight, in <em className="italic font-light text-indigo-600">three steps.</em>
+            </h2>
+            <p className="font-sans text-slate-500 text-base max-w-md mx-auto">
+              How Schollective transforms academic cold-outreach into structured collaboration.
+            </p>
           </div>
 
-          {/* Step 01 */}
-          <div className="w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center mb-16 md:mb-24">
-            {/* The fix: Center text column always, stagger comes from grid order */}
-            <div className="flex flex-col items-center justify-center text-center w-full mx-auto">
-              <span className="font-mono text-4xl font-light text-indigo-600/25 mb-8 select-none block w-full text-center">01</span>
-              <h3 className="font-display font-bold text-slate-900 tracking-tighter leading-[1.1] text-center w-full" style={{ fontSize: "clamp(1.8rem, 3vw, 2.6rem)" }}>
-                Search any research interest.
-              </h3>
-              <p className="text-slate-500 leading-relaxed text-sm mt-6 mb-10 max-w-sm mx-auto text-center">
-                Type what you care about: quantum computing, cognitive neuroscience, or climate policy. We surface top professors publishing in that exact space, ranked by impact.
-              </p>
-              <Link href="/signup" className="group inline-flex items-center justify-center gap-1.5 font-sans text-xs uppercase tracking-widest text-indigo-600 border-b border-indigo-600/20 pb-1.5 hover:border-indigo-600 font-bold transition-colors mx-auto text-center" style={{ textDecoration: "none" }}>
-                Try a search <span className="transition-transform group-hover:translate-x-1">→</span>
-              </Link>
-            </div>
-            {/* Right mockup */}
-            <div className="w-full mx-auto flex justify-center">
-              <MockupChrome url="schollective.org/app">
-                <div className="flex items-center justify-center gap-2 p-2.5 rounded-xl bg-slate-50/60 border border-slate-100 select-none">
-                  <span className="px-4 py-2 rounded-lg bg-indigo-600/10 border border-indigo-600/20 text-xs text-indigo-600 font-semibold">neuroscience</span>
-                  <span className="px-4 py-2 rounded-lg text-xs text-slate-400">Harvard</span>
-                </div>
-                <div className="flex flex-col gap-3">
-                  {[
-                    { name: "Dr. Emily Nakamura", uni: "Harvard Medical School", tag1: "Memory", tag2: "fMRI" },
-                    { name: "Prof. James Miller", uni: "MIT Brain & Cognitive", tag1: "Neural Circuits", tag2: "AI" },
-                    { name: "Dr. Aisha Patel", uni: "Stanford Neuroscience", tag1: "BCI", tag2: "Computation" },
-                  ].map((prof, i) => (
-                    <div key={i} className="flex flex-col items-center p-4 rounded-xl border border-slate-100 bg-slate-50/30">
-                      <div className="flex items-center justify-between w-full mb-2">
-                        <span className="font-display font-bold text-xs text-slate-800">{prof.name}</span>
-                        <span className="font-sans text-[0.6rem] text-slate-400">{prof.uni}</span>
-                      </div>
-                      <div className="flex gap-1.5">
-                        <span className="px-2 py-0.5 rounded bg-slate-100 text-[0.55rem] text-slate-500 font-medium">{prof.tag1}</span>
-                        <span className="px-2 py-0.5 rounded bg-indigo-600/5 text-[0.55rem] text-indigo-600 border border-indigo-600/10 font-semibold">{prof.tag2}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </MockupChrome>
-            </div>
-          </div>
-
-          {/* Step 02 */}
-          <div className="w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center mb-16 md:mb-24">
-            {/* The fix: Center text column always, forced to the right via grid order */}
-            <div className="flex flex-col items-center justify-center text-center w-full mx-auto order-1 lg:order-2">
-              <span className="font-mono text-4xl font-light text-indigo-600/25 mb-8 select-none block w-full text-center">02</span>
-              <h3 className="font-display font-bold text-slate-900 tracking-tighter leading-[1.1] text-center w-full" style={{ fontSize: "clamp(1.8rem, 3vw, 2.6rem)" }}>
-                Understand their research.
-              </h3>
-              <p className="text-slate-500 leading-relaxed text-sm mt-6 mb-10 max-w-sm mx-auto text-center">
-                Every professor profile has an AI-synthesized summary of their key findings, written so a high schooler or undergrad can understand it and reference it with precision. No more pretending to read 40-page papers.
-              </p>
-              <Link href="/signup" className="group inline-flex items-center justify-center gap-1.5 font-sans text-xs uppercase tracking-widest text-indigo-600 border-b border-indigo-600/20 pb-1.5 hover:border-indigo-600 font-bold transition-colors mx-auto text-center" style={{ textDecoration: "none" }}>
-                See an example <span className="transition-transform group-hover:translate-x-1">→</span>
-              </Link>
-            </div>
-            {/* Left mockup */}
-            <div className="w-full mx-auto flex justify-center order-2 lg:order-1">
-              <MockupChrome url="schollective.org/app">
-                <div className="p-5 rounded-2xl border border-indigo-600/10 bg-[#fdfdfd] flex flex-col items-center text-center">
-                  <div className="flex items-center justify-between mb-4 border-b border-slate-100 pb-3 w-full">
-                    <span className="font-display font-bold text-xs text-slate-900">Dr. Emily Nakamura</span>
-                    <span className="px-2 py-0.5 rounded bg-indigo-600/10 text-[0.55rem] text-indigo-600 font-bold">2024 PAPER</span>
-                  </div>
-                  <p className="text-slate-500 text-xs leading-[1.7] mb-4 text-center mx-auto">
-                    Studies how memories form and consolidate during sleep using fMRI. Recent work shows neural oscillation patterns predict next-day recall accuracy in elderly patients with early cognitive decline.
+          <motion.div
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.15 }}
+            variants={containerVariants}
+            className="w-full max-w-6xl mx-auto flex flex-col gap-10 md:gap-16"
+          >
+            {/* Step 1 */}
+            <motion.div
+              variants={cardVariants}
+              className="p-8 md:p-12 lg:p-16 rounded-3xl border border-slate-200/60 bg-[#fdfdfd] shadow-sm flex items-center justify-center md:h-[480px] lg:h-[520px]"
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center w-full">
+                <div className="md:order-1 flex flex-col items-center text-center max-w-md mx-auto">
+                  <span className="font-mono text-xs uppercase tracking-widest text-indigo-600 font-bold block mb-4">Step 01</span>
+                  <h3 className="font-display font-bold text-slate-900 tracking-tight text-2xl lg:text-3xl mb-4">
+                    Search any research interest.
+                  </h3>
+                  <p className="text-slate-500 text-sm md:text-base leading-relaxed">
+                    Type what you care about: quantum computing, cognitive neuroscience, or climate policy. We surface top professors publishing in that exact space, ranked by impact.
                   </p>
-                  <div className="p-4 rounded-xl bg-indigo-600/[0.03] border border-indigo-600/10 flex flex-col items-center text-center w-full">
-                    <span className="font-sans text-[0.52rem] uppercase text-indigo-600 tracking-widest font-bold block mb-1.5">Key Finding</span>
-                    <p className="text-slate-900 text-xs leading-[1.6] font-medium text-center mx-auto">
-                      Theta oscillations during REM sleep increased memory consolidation by 34%. Published 2024, first-author.
-                    </p>
-                  </div>
                 </div>
-              </MockupChrome>
-            </div>
-          </div>
+                <div className="md:order-2 w-full">
+                  <MockupChrome url="schollective.org/app">
+                    <div className="flex items-center justify-center gap-2 p-2.5 rounded-xl bg-slate-50/60 border border-slate-100 select-none">
+                      <span className="px-4 py-2 rounded-lg bg-indigo-600/10 border border-indigo-600/20 text-xs text-indigo-600 font-semibold">neuroscience</span>
+                      <span className="px-4 py-2 rounded-lg text-xs text-slate-400">Harvard</span>
+                    </div>
+                    <div className="flex flex-col gap-3">
+                      {[
+                        { name: "Dr. Emily Nakamura", uni: "Harvard Medical School", tag1: "Memory", tag2: "fMRI" },
+                        { name: "Prof. James Miller", uni: "MIT Brain & Cognitive", tag1: "Neural Circuits", tag2: "AI" },
+                        { name: "Dr. Aisha Patel", uni: "Stanford Neuroscience", tag1: "BCI", tag2: "Computation" },
+                      ].map((prof, i) => (
+                        <div key={i} className="flex flex-col items-center p-4 rounded-xl border border-slate-100 bg-slate-50/30">
+                          <div className="flex items-center justify-between w-full mb-2">
+                            <span className="font-display font-bold text-xs text-slate-800">{prof.name}</span>
+                            <span className="font-sans text-[0.6rem] text-slate-400">{prof.uni}</span>
+                          </div>
+                          <div className="flex gap-1.5">
+                            <span className="px-2 py-0.5 rounded bg-slate-100 text-[0.55rem] text-slate-500 font-medium">{prof.tag1}</span>
+                            <span className="px-2 py-0.5 rounded bg-indigo-600/5 text-[0.55rem] text-indigo-600 border border-indigo-600/10 font-semibold">{prof.tag2}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </MockupChrome>
+                </div>
+              </div>
+            </motion.div>
 
-          {/* Step 03 */}
-          <div className="w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-            {/* The fix: Center text column always */}
-            <div className="flex flex-col items-center justify-center text-center w-full mx-auto">
-              <span className="font-mono text-4xl font-light text-indigo-600/25 mb-8 select-none block w-full text-center">03</span>
-              <h3 className="font-display font-bold text-slate-900 tracking-tighter leading-[1.1] text-center w-full" style={{ fontSize: "clamp(1.8rem, 3vw, 2.6rem)" }}>
-                Draft structured requests.
-              </h3>
-              <p className="text-slate-500 leading-relaxed text-sm mt-6 mb-10 max-w-sm mx-auto text-center">
-                Our structured request model, co-designed with research faculty, guides you through describing your understanding, interests, and availability. No more guessing what professors want to hear.
-              </p>
-              <Link href="/signup" className="group inline-flex items-center justify-center gap-1.5 font-sans text-xs uppercase tracking-widest text-indigo-600 border-b border-indigo-600/20 pb-1.5 hover:border-indigo-600 font-bold transition-colors mx-auto text-center" style={{ textDecoration: "none" }}>
-                Try request flow <span className="transition-transform group-hover:translate-x-1">→</span>
-              </Link>
-            </div>
-            {/* Right mockup */}
-            <div className="w-full mx-auto flex justify-center">
-              <MockupChrome url="schollective.org/editor">
-                <div className="flex flex-col gap-5 w-full">
-                  <div className="flex-1 p-5 rounded-xl border border-slate-100 bg-slate-50/50 flex flex-col items-center gap-3 text-center">
-                    <span className="font-sans text-[0.52rem] text-slate-400 uppercase tracking-wider font-semibold">Structured Request Flow</span>
-                    <div className="text-xs leading-[1.7] text-slate-500 flex flex-col items-center">
-                      <p className="mb-2.5 line-through text-red-400/80 decoration-[#ea580c] decoration-1">I would love to join your lab next semester.</p>
-                      <p className="text-slate-800 border-l-2 border-indigo-600 bg-indigo-600/[0.02] py-2 px-4 font-medium rounded-sm text-center">
-                        I have been analyzing memory consolidation in sleep. Your 2024 theta oscillation findings motivated my question...
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex flex-row justify-center gap-2 flex-wrap">
-                    <div className="p-2.5 rounded-lg border border-red-500/10 bg-red-500/[0.02] flex items-center justify-center gap-2">
-                      <span className="text-red-500 text-xs font-bold select-none">✕</span>
-                      <span className="font-sans text-[0.58rem] text-red-500 tracking-wider font-bold">Generic</span>
-                    </div>
-                    <div className="p-2.5 rounded-lg border border-green-500/10 bg-green-500/[0.02] flex items-center justify-center gap-2">
-                      <span className="text-green-500 text-xs font-bold select-none">✓</span>
-                      <span className="font-sans text-[0.58rem] text-green-600 tracking-wider font-bold">Cites Work</span>
-                    </div>
-                    <div className="p-2.5 rounded-lg border border-green-500/10 bg-green-500/[0.02] flex items-center justify-center gap-2">
-                      <span className="text-green-500 text-xs font-bold select-none">✓</span>
-                      <span className="font-sans text-[0.58rem] text-green-600 tracking-wider font-bold">Structured</span>
-                    </div>
-                  </div>
+            {/* Step 2 */}
+            <motion.div
+              variants={cardVariants}
+              className="p-8 md:p-12 lg:p-16 rounded-3xl border border-indigo-100 bg-indigo-600/[0.01] shadow-sm flex items-center justify-center md:h-[480px] lg:h-[520px]"
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center w-full">
+                <div className="md:order-2 flex flex-col items-center text-center max-w-md mx-auto">
+                  <span className="font-mono text-xs uppercase tracking-widest text-indigo-600 font-bold block mb-4">Step 02</span>
+                  <h3 className="font-display font-bold text-slate-900 tracking-tight text-2xl lg:text-3xl mb-4">
+                    Understand their research.
+                  </h3>
+                  <p className="text-slate-500 text-sm md:text-base leading-relaxed">
+                    Every professor profile has an AI-synthesized summary of their key findings, written so a student can understand it and reference it with precision.
+                  </p>
                 </div>
-              </MockupChrome>
-            </div>
-          </div>
+                <div className="md:order-1 w-full">
+                  <MockupChrome url="schollective.org/app">
+                    <div className="p-5 rounded-2xl border border-indigo-600/10 bg-[#fdfdfd] flex flex-col items-center text-center">
+                      <div className="flex items-center justify-between mb-4 border-b border-slate-100 pb-3 w-full">
+                        <span className="font-display font-bold text-xs text-slate-900">Dr. Emily Nakamura</span>
+                        <span className="px-2 py-0.5 rounded bg-indigo-600/10 text-[0.55rem] text-indigo-600 font-bold">2024 PAPER</span>
+                      </div>
+                      <p className="text-slate-500 text-xs leading-[1.7] mb-4 text-center mx-auto">
+                        Studies how memories form and consolidate during sleep using fMRI. Recent work shows neural oscillation patterns predict next-day recall accuracy.
+                      </p>
+                      <div className="p-4 rounded-xl bg-indigo-600/[0.03] border border-indigo-600/10 flex flex-col items-center text-center w-full">
+                        <span className="font-sans text-[0.52rem] uppercase text-indigo-600 tracking-widest font-bold block mb-1.5">Key Finding</span>
+                        <p className="text-slate-900 text-xs leading-[1.6] font-medium text-center mx-auto">
+                          Theta oscillations during REM sleep increased memory consolidation by 34%.
+                        </p>
+                      </div>
+                    </div>
+                  </MockupChrome>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Step 3 */}
+            <motion.div
+              variants={cardVariants}
+              className="p-8 md:p-12 lg:p-16 rounded-3xl border border-slate-200/60 bg-[#fdfdfd] shadow-sm flex items-center justify-center md:h-[480px] lg:h-[520px]"
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center w-full">
+                <div className="md:order-1 flex flex-col items-center text-center max-w-md mx-auto">
+                  <span className="font-mono text-xs uppercase tracking-widest text-indigo-600 font-bold block mb-4">Step 03</span>
+                  <h3 className="font-display font-bold text-slate-900 tracking-tight text-2xl lg:text-3xl mb-4">
+                    Draft structured requests.
+                  </h3>
+                  <p className="text-slate-500 text-sm md:text-base leading-relaxed">
+                    Our structured request model, co-designed with research faculty, guides you through describing your understanding, interests, and availability clearly.
+                  </p>
+                </div>
+                <div className="md:order-2 w-full">
+                  <MockupChrome url="schollective.org/editor">
+                    <div className="flex flex-col gap-5 w-full">
+                      <div className="flex-1 p-5 rounded-xl border border-slate-100 bg-slate-50/50 flex flex-col items-center gap-3 text-center">
+                        <span className="font-sans text-[0.52rem] text-slate-400 uppercase tracking-wider font-semibold">Structured Request Flow</span>
+                        <div className="text-xs leading-[1.7] text-slate-500 flex flex-col items-center">
+                          <p className="mb-2.5 line-through text-red-400/80 decoration-[#ea580c] decoration-1">I would love to join your lab next semester.</p>
+                          <p className="text-slate-800 border-l-2 border-indigo-600 bg-indigo-600/[0.02] py-2 px-4 font-medium rounded-sm text-center">
+                            I have been analyzing memory consolidation in sleep. Your 2024 theta oscillation findings motivated my question...
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex flex-row justify-center gap-2 flex-wrap">
+                        <div className="p-2.5 rounded-lg border border-red-500/10 bg-red-500/[0.02] flex items-center justify-center gap-2">
+                          <span className="text-red-500 text-xs font-bold select-none">✕</span>
+                          <span className="font-sans text-[0.58rem] text-red-500 tracking-wider font-bold">Generic</span>
+                        </div>
+                        <div className="p-2.5 rounded-lg border border-green-500/10 bg-green-500/[0.02] flex items-center justify-center gap-2">
+                          <span className="text-green-500 text-xs font-bold select-none">✓</span>
+                          <span className="font-sans text-[0.58rem] text-green-600 tracking-wider font-bold">Cites Work</span>
+                        </div>
+                        <div className="p-2.5 rounded-lg border border-green-500/10 bg-green-500/[0.02] flex items-center justify-center gap-2">
+                          <span className="text-green-500 text-xs font-bold select-none">✓</span>
+                          <span className="font-sans text-[0.58rem] text-green-600 tracking-wider font-bold">Structured</span>
+                        </div>
+                      </div>
+                    </div>
+                  </MockupChrome>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
         </section>
 
         {/* ══ TESTIMONIALS ══════════════════════════════════════════════ */}
