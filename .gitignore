@@ -40,3 +40,30 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .aider*
+
+# AI agent configs (local dev tools, not needed for deployment)
+.agent/
+
+# Legacy vanilla prototype (superseded by Next.js app)
+_legacy_vanilla/
+
+# Database migration scripts (run manually, not part of the app)
+*.sql
+
+# Dev utility scripts
+scripts/
+
+# IDE settings
+.vscode/
+
+# One-off test files
+test_btn.css
+
+# Default Next.js placeholder assets (not used in the app)
+public/file.svg
+public/globe.svg
+public/window.svg
+public/next.svg
+public/vercel.svg
+public/dark-fluid.png
+public/hero-glass.png
