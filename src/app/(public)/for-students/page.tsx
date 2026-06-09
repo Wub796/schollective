@@ -52,23 +52,23 @@ export default function ForStudentsPage() {
       <PublicNav />
 
       {/* ── HERO ──────────────────────────────────────────── */}
-      <section className="relative z-10 flex flex-col items-center text-center px-8" style={HERO_STYLE}>
-        <div className="w-full max-w-[760px] mx-auto">
-          <FadeIn>
+      <section className="relative z-10 px-8" style={HERO_STYLE}>
+        <div className="w-full max-w-[760px] mx-auto flex flex-col items-center text-center">
+          <FadeIn className="w-full flex flex-col items-center">
             <Eyebrow>For Students</Eyebrow>
-            <h1 className="font-display text-[clamp(3rem,7.5vw,5.5rem)] font-black tracking-[-0.04em] leading-[0.95] mb-8 text-[var(--text-primary)]">
+            <h1 className="font-display text-[clamp(3rem,7.5vw,5.5rem)] font-black tracking-[-0.04em] leading-[0.95] mb-8 text-[var(--text-primary)] text-center">
               Your questions<br />
               <em className="italic text-[var(--accent)]">deserve real answers.</em>
             </h1>
           </FadeIn>
-          <FadeIn delay={0.15}>
-            <p className="text-[clamp(1.05rem,1.4vw,1.25rem)] text-[var(--text-secondary)] leading-[1.85] max-w-[620px] mx-auto mb-10">
+          <FadeIn delay={0.15} className="w-full flex flex-col items-center">
+            <p style={{ textAlign: "center" }} className="text-[clamp(1.05rem,1.4vw,1.25rem)] text-[var(--text-secondary)] leading-[1.85] max-w-[620px] mb-10">
               Whether you&apos;re a high schooler working on a science fair project or an undergrad navigating grad school
               applications, Schollective connects you directly with verified professors who can actually help —
               for free, with no cold-email anxiety.
             </p>
           </FadeIn>
-          <FadeIn delay={0.2}>
+          <FadeIn delay={0.2} className="w-full flex justify-center">
             <div className="flex justify-center gap-4 flex-wrap">
               <Button href="/signup" variant="primary" size="lg">
                 Join Free
