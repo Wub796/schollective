@@ -50,7 +50,7 @@ export default function ForStudentsPage() {
       <PublicNav />
 
       {/* ── HERO ──────────────────────────────────────────── */}
-      <section className="relative z-10 flex flex-col items-center text-center pt-48 pb-48 px-8">
+      <section className="relative z-10 flex flex-col items-center text-center px-8" style={{ paddingTop: "9rem", paddingBottom: "8rem" }}>
         <div className="w-full max-w-[800px] mx-auto">
           <FadeIn>
             <Eyebrow>For Students</Eyebrow>
@@ -82,7 +82,7 @@ export default function ForStudentsPage() {
       <section className="relative z-10 flex flex-col items-center text-center py-40 px-8 border-t border-[var(--border)]">
         <div className="w-full max-w-[920px] mx-auto">
           <FadeIn>
-            <h2 className="font-display text-[clamp(2.2rem,4vw,3.5rem)] font-black tracking-[-0.04em] leading-none mb-24 text-[var(--text-primary)]">
+            <h2 className="font-display text-[clamp(2.2rem,4vw,3.5rem)] font-black tracking-[-0.04em] leading-none mb-14 text-[var(--text-primary)]">
               From sign-up to<br /><em className="italic text-[var(--accent)]">insight, in four steps.</em>
             </h2>
           </FadeIn>
@@ -107,7 +107,7 @@ export default function ForStudentsPage() {
       <section className="relative z-10 flex flex-col items-center text-center py-40 px-8 border-t border-[var(--border)]">
         <div className="w-full max-w-[920px] mx-auto">
           <FadeIn>
-            <h2 className="font-display text-[clamp(2.2rem,4vw,3.5rem)] font-black tracking-[-0.04em] leading-none mb-24 text-[var(--text-primary)]">
+            <h2 className="font-display text-[clamp(2.2rem,4vw,3.5rem)] font-black tracking-[-0.04em] leading-none mb-14 text-[var(--text-primary)]">
               Every serious question<br /><em className="italic text-[var(--accent)]">has a home here.</em>
             </h2>
           </FadeIn>
