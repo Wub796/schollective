@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/Button";
 
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 const SECTION_STYLE = { paddingTop: "8rem", paddingBottom: "8rem" };
-const HERO_STYLE   = { paddingTop: "9rem", paddingBottom: "8rem" };
+const HERO_STYLE = { paddingTop: "9rem", paddingBottom: "8rem" };
 
 function FadeIn({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
   const ref = useRef(null);
@@ -30,11 +30,11 @@ function Eyebrow({ children }: { children: string }) {
 }
 
 const BENEFITS = [
-  { n: "01", title: "Students Come Prepared",       body: "Every request on Schollective is structured — students provide clear context, specific questions, and their academic background before you ever read a word. No more vague 'can I pick your brain?' emails." },
+  { n: "01", title: "Students Come Prepared", body: "Every request on Schollective is structured — students provide clear context, specific questions, and their academic background before you ever read a word. No more vague 'can I pick your brain?' emails." },
   { n: "02", title: "Total Control Over Your Time", body: "You choose which requests to accept, at what pace, and when. There are no obligations, no minimums, and no institutional pressure. Your expertise, your schedule." },
-  { n: "03", title: "Focused, One-on-One Threads",  body: "Every mentorship happens in a dedicated thread tied to a specific topic. No inbox clutter, no chain replies — just clean, purposeful academic dialogue." },
+  { n: "03", title: "Focused, One-on-One Threads", body: "Every mentorship happens in a dedicated thread tied to a specific topic. No inbox clutter, no chain replies — just clean, purposeful academic dialogue." },
   { n: "04", title: "Verified Identity for Both Sides", body: "Students know they're talking to a real professor. You know students are serious learners, not spam accounts. Every profile is reviewed." },
-  { n: "05", title: "Pay Expertise Forward",         body: "Many of the students reaching out to you today are exactly where you were before your mentor changed your trajectory. Schollective makes that moment replicable at scale." },
+  { n: "05", title: "Pay Expertise Forward", body: "Many of the students reaching out to you today are exactly where you were before your mentor changed your trajectory. Schollective makes that moment replicable at scale." },
 ];
 
 const FIELDS = [
@@ -44,10 +44,10 @@ const FIELDS = [
 ];
 
 const FAQ = [
-  { q: "How long does verification take?",   a: "Typically 24–72 hours after you submit your institutional email and professional profile. Our team manually reviews every professor application." },
-  { q: "How much time does this require?",   a: "As much or as little as you want. Some professors respond to one or two requests a month. Others are more active. There is no minimum commitment." },
-  { q: "Are there any fees?",                a: "Schollective is completely free for professors. We are funded to keep academic mentorship accessible, not monetized." },
-  { q: "Can I end a mentorship thread?",     a: "Yes — you can close any thread at any time. Students can also close threads once their question has been answered." },
+  { q: "How long does verification take?", a: "Typically 24–72 hours after you submit your institutional email and professional profile. Our team manually reviews every professor application." },
+  { q: "How much time does this require?", a: "As much or as little as you want. Some professors respond to one or two requests a month. Others are more active. There is no minimum commitment." },
+  { q: "Are there any fees?", a: "Schollective is completely free for professors. We are funded to keep academic mentorship accessible, not monetized." },
+  { q: "Can I end a mentorship thread?", a: "Yes — you can close any thread at any time. Students can also close threads once their question has been answered." },
   { q: "What if a student is inappropriate?", a: "We have a strict conduct policy. Any thread can be reported and reviewed. Accounts that violate our academic integrity standards are permanently removed." },
 ];
 
@@ -57,22 +57,22 @@ export default function ForProfessorsPage() {
       <PublicNav />
 
       {/* ── HERO ──────────────────────────────────────────── */}
-      <section className="relative z-10 flex flex-col items-center text-center px-8" style={HERO_STYLE}>
-        <div className="w-full max-w-[760px] mx-auto">
-          <FadeIn>
+      <section className="relative z-10 px-8 min-h-[85vh] flex flex-col items-center justify-center">
+        <div className="w-full max-w-[760px] mx-auto flex flex-col items-center text-center">
+          <FadeIn className="w-full flex flex-col items-center">
             <Eyebrow>For Professors</Eyebrow>
-            <h1 className="font-display text-[clamp(3rem,7.5vw,5.5rem)] font-black tracking-[-0.04em] leading-[0.95] mb-8 text-[var(--text-primary)]">
+            <h1 className="font-display text-[clamp(3rem,7.5vw,5.5rem)] font-black tracking-[-0.04em] leading-[0.95] mb-8 text-[var(--text-primary)] text-center">
               Your expertise.<br />
               <em className="italic text-[var(--accent)]">Their breakthrough.</em>
             </h1>
           </FadeIn>
-          <FadeIn delay={0.15}>
-            <p className="text-[clamp(1.05rem,1.4vw,1.25rem)] text-[var(--text-secondary)] leading-[1.85] max-w-[620px] mx-auto mb-10">
+          <FadeIn delay={0.15} className="w-full flex flex-col items-center">
+            <p style={{ textAlign: "center" }} className="text-[clamp(1.05rem,1.4vw,1.25rem)] text-[var(--text-secondary)] leading-[1.85] max-w-[620px] mb-10">
               Schollective gives professors a structured, low-friction way to mentor motivated students from anywhere
               in the world — without the noise of unsolicited cold emails, on a schedule that respects your time.
             </p>
           </FadeIn>
-          <FadeIn delay={0.2}>
+          <FadeIn delay={0.2} className="w-full flex justify-center">
             <div className="flex justify-center gap-4 flex-wrap">
               <Button href="/signup" variant="primary" size="lg">
                 Apply to Join
@@ -136,16 +136,18 @@ export default function ForProfessorsPage() {
               <h2 className="font-display font-black text-[clamp(1.8rem,2.8vw,2.4rem)] tracking-[-0.03em] text-[var(--text-primary)] mb-6">
                 Rigorous by design.
               </h2>
-              <p className="text-[1rem] text-[var(--text-secondary)] leading-[1.85] max-w-[560px] mb-12 mx-auto">
-                To protect students and maintain the integrity of the platform, every professor application is manually
-                reviewed. We cross-reference university directories, faculty pages, and institutional email addresses
-                before approving any account.
-              </p>
+              <div className="w-full flex flex-col items-center justify-center text-center">
+                <p className="text-center text-[1rem] text-[var(--text-secondary)] leading-[1.85] max-w-[560px] mb-12">
+                  To protect students and maintain the integrity of the platform, every professor application is manually
+                  reviewed. We cross-reference university directories, faculty pages, and institutional email addresses
+                  before approving any account.
+                </p>
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
                 {[
                   { step: "1", label: "Submit Application", desc: "Complete your professor profile with your institutional email and faculty page URL." },
-                  { step: "2", label: "Manual Review",      desc: "Our team verifies your identity against university records. Takes 24–72 hours." },
-                  { step: "3", label: "Approval & Access",  desc: "Once approved, you can browse incoming requests and start accepting mentorships." },
+                  { step: "2", label: "Manual Review", desc: "Our team verifies your identity against university records. Takes 24–72 hours." },
+                  { step: "3", label: "Approval & Access", desc: "Once approved, you can browse incoming requests and start accepting mentorships." },
                 ].map(({ step, label, desc }) => (
                   <div key={step} className="p-6 bg-[var(--bg-base)] rounded-xl border border-[var(--border)]">
                     <div className="text-[0.55rem] font-bold tracking-[0.3em] uppercase text-[var(--accent)] mb-3">Step {step}</div>
