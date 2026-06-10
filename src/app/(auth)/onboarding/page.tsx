@@ -126,7 +126,9 @@ function OnboardingContent() {
       first_name:     fd.get("first_name") as string,
       preferred_name: fd.get("preferred_name") as string,
       last_name:      fd.get("last_name") as string,
-      institution:    institution || fd.get("institution") as string,
+      institution:    role === "professor"
+        ? (institution || fd.get("institution") as string)
+        : (fd.get("institution") as string ?? ""),
       updated_at:     new Date().toISOString(),
     };
 
@@ -266,43 +268,50 @@ function OnboardingContent() {
 
             <Field id="preferred_name" name="preferred_name" label="Preferred Name (optional)" placeholder="Janey" />
 
-            {/* Institution */}
-            <div>
-              <label htmlFor="institution" style={{
-                display: "block", fontSize: "0.6rem", fontWeight: 600,
-                letterSpacing: "0.18em", textTransform: "uppercase",
-                color: "rgba(250, 250, 249, 0.3)", marginBottom: "0.55rem",
-                fontFamily: "var(--font-sans)",
-              }}>
-                Institution
-              </label>
-              <InstitutionInput
-                id="institution" name="institution"
-                value={institution} onChange={setInstitution}
-                placeholder="e.g. Stanford University"
-              />
-              <input type="hidden" name="institution" value={institution} />
-            </div>
-
             {/* Role-specific fields */}
             <AnimatePresence mode="wait">
               {role === "student" ? (
                 <motion.div key="student" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.25 }}>
-                  <div>
-                    <label htmlFor="education_level" style={{ display: "block", fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.3)", marginBottom: "0.55rem", fontFamily: "var(--font-sans)" }}>
-                      Education Level
-                    </label>
-                    <select id="education_level" name="education_level" required
-                      style={{ width: "100%", background: "#111113", border: "none", borderBottom: "1px solid rgba(129, 140, 248, 0.15)", padding: "0.7rem 0", fontSize: "0.95rem", color: "#fafaf9", outline: "none", fontFamily: "var(--font-sans)", cursor: "pointer" }}>
-                      <option value="high-school">High School</option>
-                      <option value="college">College / Undergraduate</option>
-                      <option value="graduate">Graduate (Masters / PhD)</option>
-                    </select>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "1.75rem" }}>
+                    <div>
+                      <label htmlFor="education_level" style={{ display: "block", fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.3)", marginBottom: "0.55rem", fontFamily: "var(--font-sans)" }}>
+                        Education Level
+                      </label>
+                      <select id="education_level" name="education_level" required
+                        style={{ width: "100%", background: "#111113", border: "none", borderBottom: "1px solid rgba(129, 140, 248, 0.15)", padding: "0.7rem 0", fontSize: "0.95rem", color: "#fafaf9", outline: "none", fontFamily: "var(--font-sans)", cursor: "pointer" }}>
+                        <option value="high-school">High School</option>
+                        <option value="college">College / Undergraduate</option>
+                        <option value="graduate">Graduate (Masters / PhD)</option>
+                      </select>
+                    </div>
+                    <Field
+                      id="institution" name="institution"
+                      label="School (optional)"
+                      placeholder="e.g. Lincoln High School, MIT, …"
+                    />
                   </div>
                 </motion.div>
               ) : (
                 <motion.div key="prof" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.25 }}>
-                  <Field id="expertise" name="expertise" label="Expertise Fields (comma-separated)" placeholder="e.g. Machine Learning, Bio-Ethics" required />
+                  <div style={{ display: "flex", flexDirection: "column", gap: "1.75rem" }}>
+                    <div>
+                      <label htmlFor="institution" style={{
+                        display: "block", fontSize: "0.6rem", fontWeight: 600,
+                        letterSpacing: "0.18em", textTransform: "uppercase",
+                        color: "rgba(250, 250, 249, 0.3)", marginBottom: "0.55rem",
+                        fontFamily: "var(--font-sans)",
+                      }}>
+                        Institution
+                      </label>
+                      <InstitutionInput
+                        id="institution" name="institution"
+                        value={institution} onChange={setInstitution}
+                        placeholder="e.g. Stanford University"
+                      />
+                      <input type="hidden" name="institution" value={institution} />
+                    </div>
+                    <Field id="expertise" name="expertise" label="Expertise Fields (comma-separated)" placeholder="e.g. Machine Learning, Bio-Ethics" required />
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>
