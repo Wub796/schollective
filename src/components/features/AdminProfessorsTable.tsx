@@ -189,13 +189,13 @@ export function AdminProfessorsTable({ professors }: { professors: ProfessorReco
                         {p.status === "approved" && (
                           <button disabled={isBusy} onClick={() => handleRevoke(p.id)}
                             className="btn-action"
-                            style={{ padding: "0.3rem 0.7rem", borderRadius: "7px", border: "1px solid rgba(250,204,21,0.2)", background: "rgba(250,204,21,0.05)", color: "rgba(250,204,21,0.75)", fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", fontFamily: "var(--font-sans)", cursor: isBusy ? "wait" : "pointer", opacity: isBusy ? 0.5 : 1, display: "flex", alignItems: "center", gap: "0.3rem" }}>
+                            style={{ padding: "0.3rem 0.7rem", borderRadius: "7px", border: "1px solid rgba(250,204,21,0.2)", background: "rgba(250,204,21,0.05)", color: "rgba(250,204,21,0.75)", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", fontFamily: "var(--font-sans)", cursor: isBusy ? "wait" : "pointer", opacity: isBusy ? 0.5 : 1, display: "flex", alignItems: "center", gap: "0.3rem" }}>
                             <RotateCcw size={9} />{isBusy ? "…" : "Revoke"}
                           </button>
                         )}
                         <button disabled={isBusy} onClick={() => handleSuspend(p.id, !isSuspended)}
                           className={isSuspended ? "btn-action-success" : "btn-action-danger"}
-                          style={{ padding: "0.3rem 0.7rem", borderRadius: "7px", border: isSuspended ? "1px solid rgba(74,222,128,0.2)" : "1px solid rgba(248,113,113,0.2)", background: isSuspended ? "rgba(74,222,128,0.05)" : "rgba(248,113,113,0.05)", color: isSuspended ? "rgba(74,222,128,0.75)" : "rgba(248,113,113,0.75)", fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", fontFamily: "var(--font-sans)", cursor: isBusy ? "wait" : "pointer", opacity: isBusy ? 0.5 : 1, display: "flex", alignItems: "center", gap: "0.3rem" }}>
+                          style={{ padding: "0.3rem 0.7rem", borderRadius: "7px", border: isSuspended ? "1px solid rgba(74,222,128,0.2)" : "1px solid rgba(248,113,113,0.2)", background: isSuspended ? "rgba(74,222,128,0.05)" : "rgba(248,113,113,0.05)", color: isSuspended ? "rgba(74,222,128,0.75)" : "rgba(248,113,113,0.75)", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", fontFamily: "var(--font-sans)", cursor: isBusy ? "wait" : "pointer", opacity: isBusy ? 0.5 : 1, display: "flex", alignItems: "center", gap: "0.3rem" }}>
                           {isSuspended ? <><RotateCcw size={9} />{isBusy ? "…" : "Reactivate"}</> : <><Ban size={9} />{isBusy ? "…" : "Suspend"}</>}
                         </button>
                       </div>
