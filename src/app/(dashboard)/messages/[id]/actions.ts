@@ -19,6 +19,21 @@ export async function sendMessage(requestId: string, content: string) {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return { error: "Unauthorized" };
 
+    // Fetch request to verify it's active
+    const { data: request, error: fetchError } = await supabase
+      .from("requests")
+      .select("status, student_id, professor_id")
+      .eq("id", requestId)
+      .single();
+
+    if (fetchError || !request) return { error: "Thread not found." };
+    if (request.status !== "active") {
+      return { error: "This thread is not active and cannot receive messages." };
+    }
+    if (request.student_id !== user.id && request.professor_id !== user.id) {
+      return { error: "Unauthorized: You are not a participant in this thread." };
+    }
+
     // Insert message
     const { error } = await supabase
       .from("messages")
