@@ -46,11 +46,11 @@ export async function middleware(request: NextRequest) {
     if (isStudentRoute || isProfessorRoute || isAdminRoute || isProfessorBrowse) {
       const { data: profile } = await supabase
         .from('profiles')
-        .select('role, first_name, suspended')
+        .select('role, first_name, status')
         .eq('id', user.id)
         .single()
 
-      if (profile?.suspended) {
+      if (profile?.status === 'suspended') {
         return Response.redirect(new URL('/suspended', request.url))
       }
 
