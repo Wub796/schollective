@@ -531,7 +531,7 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
       </div>
 
       {/* ── Mobile cards ── */}
-      <div className="lg:hidden" style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+      <div className="flex lg:hidden" style={{ flexDirection: "column", gap: "0.75rem" }}>
         {filtered.length === 0 ? (
           <div style={{ textAlign: "center", padding: "3rem 1rem", fontSize: "0.78rem", color: "rgba(15, 23, 42,0.2)", fontFamily: "var(--font-sans)" }}>
             No accounts match the current filters.

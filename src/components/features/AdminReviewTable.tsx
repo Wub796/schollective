@@ -237,7 +237,7 @@ export function AdminReviewTable({ applicants }: AdminReviewTableProps) {
       </div>
 
       {/* Mobile Cards */}
-      <div className="lg:hidden" style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+      <div className="flex lg:hidden" style={{ flexDirection: "column", gap: "0.75rem" }}>
         {applicants.map((prof) => {
           const displayName = prof.preferred_name || prof.first_name;
           const isProcessing = processingId === prof.id;
