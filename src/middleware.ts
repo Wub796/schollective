@@ -28,14 +28,18 @@ export async function middleware(request: NextRequest) {
   }
 
   // 2. Email Verification Guard: Redirect to /verify-email if email is not confirmed
-  if (user && !user.email_confirmed_at && path !== '/verify-email' && !path.startsWith('/auth/')) {
+  //    Skip for OAuth providers (e.g. Google) — the provider already verified the email,
+  //    but Supabase may not set email_confirmed_at immediately, causing a redirect loop.
+  const isOAuthUser = user?.app_metadata?.provider && user.app_metadata.provider !== 'email'
+  if (user && !user.email_confirmed_at && !isOAuthUser && path !== '/verify-email' && !path.startsWith('/auth/')) {
     if (isStudentRoute || isProfessorRoute || isAdminRoute || isOnboarding) {
       return Response.redirect(new URL('/verify-email', request.url))
     }
   }
 
   // 3. Onboarding & Suspension Guard: Redirect incomplete profiles to /onboarding, suspended to /suspended
-  if (user && user.email_confirmed_at && !isOnboarding && !path.startsWith('/auth/') && path !== '/verify-email' && path !== '/suspended') {
+  const emailVerifiedOrOAuth = user?.email_confirmed_at || isOAuthUser
+  if (user && emailVerifiedOrOAuth && !isOnboarding && !path.startsWith('/auth/') && path !== '/verify-email' && path !== '/suspended') {
     if (isStudentRoute || isProfessorRoute || isAdminRoute || isProfessorBrowse) {
       const { data: profile } = await supabase
         .from('profiles')
