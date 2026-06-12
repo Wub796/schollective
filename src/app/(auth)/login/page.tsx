@@ -116,11 +116,20 @@ function LoginContent() {
 
       const { data: profile } = await supabase
         .from("profiles")
-        .select("role, status")
+        .select("role, status, first_name")
         .eq("id", data.user.id)
         .single();
 
-      if (!profile) throw new Error("Profile not found.");
+      // No profile row, or incomplete profile → send to onboarding
+      if (!profile || !profile.role || !profile.first_name) {
+        router.refresh();
+        const next = searchParams.get("next");
+        const onboardingUrl = next && next !== "/dashboard"
+          ? `/onboarding?next=${encodeURIComponent(next)}`
+          : "/onboarding";
+        router.push(onboardingUrl);
+        return;
+      }
 
       const next = searchParams.get("next");
       if (next) {
