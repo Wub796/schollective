@@ -2,9 +2,12 @@ import { type NextRequest } from 'next/server'
 import { updateSession } from '@/utils/supabase/middleware'
 
 export async function middleware(request: NextRequest) {
-  const { supabase, response } = await updateSession(request)
-
-  const { data: { user } } = await supabase.auth.getUser()
+  // updateSession() calls getUser() internally to refresh the session and returns
+  // the user. We must NOT call getUser() again — a second call could trigger a token
+  // rotation whose new cookies would be written to updateSession's internal response
+  // closure, not the `response` we captured here. That silently drops refreshed
+  // auth cookies and breaks the session on subsequent requests.
+  const { supabase, response, user } = await updateSession(request)
 
   const url = new URL(request.url)
   const path = url.pathname
