@@ -1,14 +1,15 @@
 import React from "react";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
+import { createAdminClient } from "@/utils/supabase/admin";
 import { AdminShell } from "@/components/ui/AdminShell";
 import { AdminUsersTable } from "@/components/features/AdminUsersTable";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminUsersPage() {
+  // Use session client to verify the requester is an admin
   const supabase = await createClient();
-
   const { data: { session } } = await supabase.auth.getSession();
   if (!session) redirect("/login");
 
@@ -18,10 +19,13 @@ export default async function AdminUsersPage() {
     redirect(profile?.role === "professor" ? "/prof/dashboard" : "/dashboard");
   }
 
-  const { data: allUsers } = await supabase
+  // Use service-role client to read ALL profiles (bypasses RLS)
+  const adminClient = createAdminClient();
+  const { data: allUsers } = await adminClient
     .from("profiles")
     .select("id, first_name, last_name, preferred_name, email, role, status, institution, created_at")
     .order("created_at", { ascending: false });
+
 
   return (
     <AdminShell>
