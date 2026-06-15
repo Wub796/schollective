@@ -61,3 +61,42 @@ export async function revokeVerification(professorId: string) {
   revalidatePath("/admin/dashboard");
   return { success: true };
 }
+
+/**
+ * Admin: change a user's role.
+ * Also resets status to the appropriate default for the new role.
+ */
+export async function changeUserRole(
+  targetUserId: string,
+  newRole: "student" | "professor" | "admin"
+) {
+  // Verify caller is admin
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Unauthorized" };
+
+  const { data: admin } = await supabase.from("profiles").select("role").eq("id", user.id).single();
+  if (admin?.role !== "admin") return { error: "Access denied" };
+
+  // Prevent self-role-change (avoid accidental lockout)
+  if (targetUserId === user.id) return { error: "Cannot change your own role" };
+
+  // Status defaults per role
+  const defaultStatus = newRole === "professor" ? "approved" : "active";
+
+  const adminClient = createAdminClient();
+  const { error } = await adminClient
+    .from("profiles")
+    .update({
+      role: newRole,
+      status: defaultStatus,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", targetUserId);
+
+  if (error) return { error: error.message };
+  revalidatePath("/admin/dashboard");
+  revalidatePath("/admin/users");
+  return { success: true };
+}
+
