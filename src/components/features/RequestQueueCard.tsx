@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
-import { Check, X, Loader2, Calendar, MessageSquare } from "lucide-react";
+import { Check, X, Loader2, Calendar } from "lucide-react";
 import { updateRequestStatus } from "@/app/(dashboard)/prof/dashboard/actions";
 import { toast } from "sonner";
 
@@ -90,16 +90,45 @@ export function RequestQueueCard({ request }: RequestQueueCardProps) {
         </p>
       </div>
 
-      {/* Initial message preview */}
+      {/* Initial message — editorial quote block */}
       {request.initial_message && (
-        <div style={{ background: "rgba(9, 9, 11, 0.5)", borderRadius: "12px", padding: "1rem", border: "1px solid rgba(129, 140, 248, 0.08)", marginBottom: "1.25rem" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", fontSize: "0.6rem", color: "rgba(129, 140, 248, 0.4)", textTransform: "uppercase", letterSpacing: "0.18em", fontWeight: 700, marginBottom: "0.5rem", fontFamily: "var(--font-mono, monospace)" }}>
-            <MessageSquare size={10} />
-            Initial Message
+        <div style={{ position: "relative", marginBottom: "1.25rem" }}>
+          {/* Left accent bar */}
+          <div style={{
+            position: "absolute", left: 0, top: 0, bottom: 0,
+            width: "2px",
+            background: "linear-gradient(to bottom, rgba(129,140,248,0.5), rgba(129,140,248,0.05))",
+            borderRadius: "2px",
+          }} />
+          <div style={{ paddingLeft: "1rem" }}>
+            <div style={{
+              fontSize: "0.52rem", color: "rgba(129,140,248,0.45)",
+              textTransform: "uppercase", letterSpacing: "0.22em",
+              fontWeight: 700, marginBottom: "0.6rem",
+              fontFamily: "var(--font-mono, monospace)",
+            }}>
+              Student&apos;s Message
+            </div>
+            {/* Quote with gradient fade */}
+            <div style={{ position: "relative", maxHeight: "5.5rem", overflow: "hidden" }}>
+              <p className="font-display" style={{
+                fontSize: "0.82rem",
+                color: "rgba(168,179,207,0.65)",
+                lineHeight: 1.75,
+                fontStyle: "italic",
+                fontWeight: 400,
+              }}>
+                {request.initial_message}
+              </p>
+              {/* Fade-out gradient */}
+              <div style={{
+                position: "absolute", bottom: 0, left: 0, right: 0,
+                height: "2rem",
+                background: "linear-gradient(to bottom, transparent, rgba(17,17,19,0.95))",
+                pointerEvents: "none",
+              }} />
+            </div>
           </div>
-          <p style={{ fontSize: "0.8rem", color: "rgba(168, 179, 207, 0.55)", lineHeight: 1.6, display: "-webkit-box", WebkitLineClamp: 4, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
-            {request.initial_message}
-          </p>
         </div>
       )}
 
