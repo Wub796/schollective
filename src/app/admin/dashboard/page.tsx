@@ -4,6 +4,7 @@ import { createClient } from "@/utils/supabase/server";
 import { createAdminClient } from "@/utils/supabase/admin";
 import { AdminShell } from "@/components/ui/AdminShell";
 import { AdminReviewTable } from "@/components/features/AdminReviewTable";
+import { AdminPreviewControls } from "@/components/features/AdminPreviewControls";
 import {
   Users, GraduationCap, MessageSquare, ClipboardCheck,
 } from "lucide-react";
@@ -97,6 +98,7 @@ export default async function AdminDashboard() {
         <p style={{ fontSize: "0.85rem", color: "rgba(250,250,249,0.38)", fontWeight: 300, maxWidth: "38rem", lineHeight: 1.7, fontFamily: "var(--font-sans)", marginTop: "0.5rem" }}>
           Platform health at a glance. Manage the verification queue, user accounts, and mentorship activity.
         </p>
+        <AdminPreviewControls />
       </div>
 
       {/* ── Stats ── */}
