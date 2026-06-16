@@ -22,20 +22,22 @@ export default async function MessagePage({ params }: MessagePageProps) {
 
   const { data: request, error: requestError } = await supabase
     .from("requests")
-    .select(`
-      id, status, topic, student_id, professor_id,
-      student:student_id ( id, first_name, last_name, preferred_name, role ),
-      professor:professor_id ( id, first_name, last_name, preferred_name, role, expertise )
-    `)
+    .select("id, status, topic, student_id, professor_id")
     .eq("id", requestId)
     .single();
 
   if (requestError || !request) return notFound();
 
+  // Fetch profiles separately so a failing join doesn't kill the whole page
+  const [{ data: studentProfile }, { data: professorProfile }] = await Promise.all([
+    supabase.from("profiles").select("id, first_name, last_name, preferred_name, role").eq("id", request.student_id).single(),
+    supabase.from("profiles").select("id, first_name, last_name, preferred_name, role, expertise").eq("id", request.professor_id).single(),
+  ]);
+
   const isProfessor = session.user.id === request.professor_id;
-  const student = (Array.isArray(request.student) ? request.student[0] : request.student) as any;
-  const professor = (Array.isArray(request.professor) ? request.professor[0] : request.professor) as any;
-  const participant = (isProfessor ? student : professor) ?? {};
+  const student   = (studentProfile   ?? {}) as any;
+  const professor = (professorProfile ?? {}) as any;
+  const participant = (isProfessor ? student : professor) as any;
   const participantName = participant.preferred_name || participant.first_name || "Unknown";
   const participantTitle =
     participant.role === "professor"
