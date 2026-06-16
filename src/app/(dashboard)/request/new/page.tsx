@@ -61,8 +61,8 @@ export default async function RequestNewPage({ searchParams }: RequestNewPagePro
         </p>
       </header>
 
-      {/* Form Container */}
-      <div className="bg-[#111113] border border-[rgba(250, 250, 249, 0.06)] rounded-2xl p-8 md:p-14 shadow-[0_60px_120px_-20px_rgba(0,0,0,0.6)]">
+      {/* Form */}
+      <div className="py-4">
         <RequestForm professor={professor as any} />
       </div>
 
