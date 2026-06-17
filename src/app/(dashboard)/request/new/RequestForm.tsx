@@ -3,8 +3,6 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
-import { Label } from "@/components/ui/Label";
 import { submitMentorshipRequest } from "./actions";
 import { Loader2, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
@@ -19,12 +17,81 @@ interface RequestFormProps {
   };
 }
 
-const textareaClass =
-  "flex min-h-[160px] w-full rounded-xl border border-[rgba(129,140,248,0.07)] " +
-  "bg-[rgba(17,17,19,0.5)] px-5 py-4 text-sm text-[#fafaf9] outline-none " +
-  "focus:border-[rgba(129,140,248,0.3)] focus:bg-[rgba(17,17,19,0.7)] " +
-  "focus:ring-2 focus:ring-[rgba(129,140,248,0.06)] placeholder:text-[rgba(250,250,249,0.18)] " +
-  "transition-all resize-none";
+function FormField({
+  id,
+  name,
+  label,
+  placeholder,
+  required = false,
+  type = "input",
+}: {
+  id: string;
+  name: string;
+  label: string;
+  placeholder: string;
+  required?: boolean;
+  type?: "input" | "textarea";
+}) {
+  const [focused, setFocused] = useState(false);
+
+  const baseInputStyle: React.CSSProperties = {
+    width: "100%",
+    background: focused ? "rgba(17, 17, 22, 0.9)" : "rgba(17, 17, 22, 0.6)",
+    border: `1px solid ${focused ? "rgba(129, 140, 248, 0.35)" : "rgba(129, 140, 248, 0.1)"}`,
+    borderRadius: "12px",
+    padding: "0.875rem 1.1rem",
+    fontSize: "0.875rem",
+    color: "rgba(250, 250, 249, 0.9)",
+    outline: "none",
+    transition: "border-color 0.2s, background 0.2s",
+    fontFamily: "var(--font-sans)",
+    lineHeight: 1.6,
+  };
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
+      <label
+        htmlFor={id}
+        style={{
+          fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.22em",
+          textTransform: "uppercase",
+          color: focused ? "rgba(129, 140, 248, 0.6)" : "rgba(250, 250, 249, 0.3)",
+          fontFamily: "var(--font-mono, monospace)",
+          transition: "color 0.2s",
+        }}
+      >
+        {label}
+      </label>
+      {type === "textarea" ? (
+        <textarea
+          id={id}
+          name={name}
+          required={required}
+          placeholder={placeholder}
+          rows={5}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
+          style={{
+            ...baseInputStyle,
+            resize: "none",
+            minHeight: "130px",
+          }}
+        />
+      ) : (
+        <input
+          id={id}
+          name={name}
+          type="text"
+          required={required}
+          placeholder={placeholder}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
+          style={baseInputStyle}
+        />
+      )}
+    </div>
+  );
+}
 
 export function RequestForm({ professor }: RequestFormProps) {
   const router = useRouter();
@@ -51,69 +118,95 @@ export function RequestForm({ professor }: RequestFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-10">
+    <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }}>
       <input type="hidden" name="prof_id" value={professor.id} />
 
-      {/* Professor preview */}
-      <div className="bg-[rgba(250,250,249,0.02)] border border-[rgba(129,140,248,0.08)] rounded-2xl p-6 flex items-center gap-5">
-        <div className="w-12 h-12 rounded-xl bg-[rgba(129,140,248,0.06)] border border-[rgba(129,140,248,0.1)] flex items-center justify-center text-base font-semibold text-[rgba(250,250,249,0.5)]">
+      {/* Professor preview strip */}
+      <div style={{
+        display: "flex", alignItems: "center", gap: "1.25rem",
+        padding: "1.25rem 1.5rem",
+        background: "rgba(129, 140, 248, 0.04)",
+        border: "1px solid rgba(129, 140, 248, 0.1)",
+        borderRadius: "14px",
+      }}>
+        <div style={{
+          width: "2.75rem", height: "2.75rem", borderRadius: "10px", flexShrink: 0,
+          background: "rgba(129, 140, 248, 0.08)",
+          border: "1px solid rgba(129, 140, 248, 0.18)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          fontSize: "0.85rem", fontWeight: 700, color: "rgba(129, 140, 248, 0.9)",
+          fontFamily: "var(--font-sans)",
+        }}>
           {professor.first_name[0]}{professor.last_name[0]}
         </div>
-        <div>
-          <div className="text-[0.6rem] text-[rgba(250,250,249,0.25)] uppercase tracking-[0.2em] font-semibold mb-0.5">
+        <div style={{ minWidth: 0 }}>
+          <div style={{
+            fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.22em",
+            textTransform: "uppercase", color: "rgba(129, 140, 248, 0.4)",
+            fontFamily: "var(--font-mono, monospace)", marginBottom: "0.3rem",
+          }}>
             Receiving Professor
           </div>
-          <div className="font-display text-lg text-[rgba(250,250,249,0.9)]">
+          <div className="font-display" style={{
+            fontSize: "1.05rem", fontWeight: 700,
+            color: "rgba(250, 250, 249, 0.88)", letterSpacing: "-0.015em",
+            overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+          }}>
             Dr. {profDisplayName} {professor.last_name}
           </div>
-          <div className="text-[0.72rem] text-[rgba(250,250,249,0.35)] font-light">{professor.institution}</div>
+          {professor.institution && (
+            <div style={{
+              fontSize: "0.72rem", color: "rgba(168, 179, 207, 0.4)",
+              fontFamily: "var(--font-sans)", marginTop: "0.15rem",
+            }}>
+              {professor.institution}
+            </div>
+          )}
         </div>
       </div>
 
-      <div className="space-y-8">
-        <div className="space-y-3">
-          <Label htmlFor="topic">Mentorship Topic / Focus Area</Label>
-          <Input
-            id="topic"
-            name="topic"
-            placeholder="e.g. Research Methodology for Quantum Computing"
-            required
-          />
-        </div>
-
-        <div className="space-y-3">
-          <Label htmlFor="background">Academic Background &amp; Current Progress</Label>
-          <textarea
-            id="background"
-            name="background"
-            required
-            placeholder="Describe your current level of understanding…"
-            className={textareaClass}
-          />
-        </div>
-
-        <div className="space-y-3">
-          <Label htmlFor="goals">Specific Mentorship Goals</Label>
-          <textarea
-            id="goals"
-            name="goals"
-            required
-            placeholder="What specifically are you hoping to achieve?"
-            className={textareaClass}
-          />
-        </div>
+      {/* Fields */}
+      <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
+        <FormField
+          id="topic"
+          name="topic"
+          label="Mentorship Topic / Focus Area"
+          placeholder="e.g. Research Methodology for Quantum Computing"
+          required
+        />
+        <FormField
+          id="background"
+          name="background"
+          label="Academic Background & Current Progress"
+          placeholder="Describe your current level of understanding and what you've explored so far…"
+          required
+          type="textarea"
+        />
+        <FormField
+          id="goals"
+          name="goals"
+          label="Specific Mentorship Goals"
+          placeholder="What specifically are you hoping to achieve through this mentorship?"
+          required
+          type="textarea"
+        />
       </div>
 
-      <Button type="submit" disabled={loading} className="w-full py-4 text-sm gap-3">
+      {/* Submit */}
+      <Button
+        type="submit"
+        disabled={loading}
+        style={{ width: "100%", padding: "1rem", fontSize: "0.78rem", gap: "0.75rem" }}
+      >
         {loading ? (
           <>
-            <Loader2 className="animate-spin" size={16} />
+            <Loader2 className="animate-spin" size={15} />
             Sending Request…
           </>
         ) : (
           <>
             Send Mentorship Request
-            <ArrowRight size={16} />
+            <ArrowRight size={15} />
           </>
         )}
       </Button>
