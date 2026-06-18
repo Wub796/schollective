@@ -62,16 +62,16 @@ export default async function ProfStudentsPage() {
       {/* ── Header ── */}
       <header style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <span style={{ width: "1.5rem", height: "1px", background: "rgba(250, 250, 249, 0.2)", display: "block" }} />
-          <span style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.42em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.3)", fontFamily: "var(--font-mono, monospace)" }}>
+          <span style={{ width: "1.5rem", height: "1px", background: "rgba(15, 23, 42, 0.2)", display: "block" }} />
+          <span style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.42em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.3)", fontFamily: "var(--font-mono, monospace)" }}>
             Faculty Portal
           </span>
         </div>
-        <h1 className="font-display" style={{ fontSize: "clamp(2.6rem, 5vw, 4rem)", fontWeight: 900, color: "#fafaf9", letterSpacing: "-0.035em", lineHeight: 1.05 }}>
+        <h1 className="font-display" style={{ fontSize: "clamp(2.6rem, 5vw, 4rem)", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.035em", lineHeight: 1.05 }}>
           Dr. {displayName}&apos;s{" "}
-          <em style={{ fontStyle: "italic", color: "rgba(250, 250, 249, 0.35)" }}>students</em>
+          <em style={{ fontStyle: "italic", color: "rgba(15, 23, 42, 0.35)" }}>students</em>
         </h1>
-        <p style={{ fontSize: "0.95rem", color: "rgba(250, 250, 249, 0.4)", fontWeight: 300, maxWidth: "42rem", lineHeight: 1.8, fontFamily: "var(--font-sans)", marginTop: "0.25rem" }}>
+        <p style={{ fontSize: "0.95rem", color: "rgba(15, 23, 42, 0.4)", fontWeight: 300, maxWidth: "42rem", lineHeight: 1.8, fontFamily: "var(--font-sans)", marginTop: "0.25rem" }}>
           An overview of every student you&apos;re currently mentoring and those you&apos;ve guided in the past.
         </p>
       </header>
@@ -85,52 +85,52 @@ export default async function ProfStudentsPage() {
         ].map(({ value, label, sub }) => (
           <div key={label} style={{
             padding: "1.25rem 1.75rem",
-            border: "1px solid rgba(250, 250, 249, 0.07)",
+            border: "1px solid rgba(15, 23, 42, 0.07)",
             borderRadius: "14px",
-            background: "rgba(250, 250, 249, 0.025)",
+            background: "rgba(15, 23, 42, 0.025)",
             display: "flex", flexDirection: "column", gap: "0.35rem", minWidth: "9rem",
           }}>
-            <span className="font-display" style={{ fontSize: "2.4rem", fontWeight: 900, color: "#fafaf9", letterSpacing: "-0.04em", lineHeight: 1 }}>
+            <span className="font-display" style={{ fontSize: "2.4rem", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.04em", lineHeight: 1 }}>
               {value}
             </span>
-            <div style={{ fontSize: "0.75rem", fontWeight: 600, color: "rgba(250, 250, 249, 0.65)", fontFamily: "var(--font-sans)" }}>{label}</div>
-            <div style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.22)", fontFamily: "var(--font-mono, monospace)" }}>{sub}</div>
+            <div style={{ fontSize: "0.75rem", fontWeight: 600, color: "rgba(15, 23, 42, 0.65)", fontFamily: "var(--font-sans)" }}>{label}</div>
+            <div style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.22)", fontFamily: "var(--font-mono, monospace)" }}>{sub}</div>
           </div>
         ))}
       </div>
 
       {/* ── Hairline ── */}
-      <div style={{ height: "1px", background: "rgba(250, 250, 249, 0.06)" }} />
+      <div style={{ height: "1px", background: "rgba(15, 23, 42, 0.06)" }} />
 
       {/* ── Empty state ── */}
       {activeStudents.length === 0 && pastStudents.length === 0 && (
         <div style={{
-          border: "1px dashed rgba(250, 250, 249, 0.08)", borderRadius: "16px",
+          border: "1px dashed rgba(15, 23, 42, 0.08)", borderRadius: "16px",
           padding: "5rem 2rem", textAlign: "center",
           display: "flex", flexDirection: "column", alignItems: "center", gap: "1.5rem",
         }}>
           <div style={{
             width: "3.5rem", height: "3.5rem", borderRadius: "50%",
-            background: "rgba(250, 250, 249, 0.04)", border: "1px solid rgba(250, 250, 249, 0.08)",
+            background: "rgba(15, 23, 42, 0.04)", border: "1px solid rgba(15, 23, 42, 0.08)",
             display: "flex", alignItems: "center", justifyContent: "center",
           }}>
-            <Users size={20} color="rgba(250, 250, 249, 0.3)" />
+            <Users size={20} color="rgba(15, 23, 42, 0.3)" />
           </div>
           <div>
-            <h3 className="font-display" style={{ fontSize: "1.3rem", fontWeight: 700, color: "rgba(250, 250, 249, 0.7)", marginBottom: "0.5rem", letterSpacing: "-0.02em" }}>
+            <h3 className="font-display" style={{ fontSize: "1.3rem", fontWeight: 700, color: "rgba(15, 23, 42, 0.7)", marginBottom: "0.5rem", letterSpacing: "-0.02em" }}>
               No students yet
             </h3>
-            <p style={{ fontSize: "0.82rem", color: "rgba(250, 250, 249, 0.32)", maxWidth: "26rem", lineHeight: 1.7, fontFamily: "var(--font-sans)" }}>
+            <p style={{ fontSize: "0.82rem", color: "rgba(15, 23, 42, 0.32)", maxWidth: "26rem", lineHeight: 1.7, fontFamily: "var(--font-sans)" }}>
               Students will appear here once you accept their mentorship requests.
               Head to the dashboard to review your pending queue.
             </p>
           </div>
           <Link href="/prof/dashboard" style={{ textDecoration: "none" }}>
             <div style={{
-              padding: "0.8rem 1.85rem", border: "1px solid rgba(250, 250, 249, 0.15)",
+              padding: "0.8rem 1.85rem", border: "1px solid rgba(15, 23, 42, 0.15)",
               borderRadius: "100px", fontSize: "0.58rem", fontWeight: 700,
               letterSpacing: "0.22em", textTransform: "uppercase",
-              color: "rgba(250, 250, 249, 0.7)", fontFamily: "var(--font-sans)", cursor: "pointer",
+              color: "rgba(15, 23, 42, 0.7)", fontFamily: "var(--font-sans)", cursor: "pointer",
             }}>
               View Request Queue
             </div>
@@ -142,11 +142,11 @@ export default async function ProfStudentsPage() {
       {activeStudents.length > 0 && (
         <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-            <span style={{ width: "1rem", height: "1px", background: "rgba(250, 250, 249, 0.2)", display: "block" }} />
-            <h2 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "rgba(250, 250, 249, 0.85)", letterSpacing: "-0.025em" }}>
+            <span style={{ width: "1rem", height: "1px", background: "rgba(15, 23, 42, 0.2)", display: "block" }} />
+            <h2 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "rgba(15, 23, 42, 0.85)", letterSpacing: "-0.025em" }}>
               Currently Mentoring
             </h2>
-            <span style={{ marginLeft: "auto", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.25)", fontFamily: "var(--font-mono, monospace)" }}>
+            <span style={{ marginLeft: "auto", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.25)", fontFamily: "var(--font-mono, monospace)" }}>
               {activeStudents.length} active
             </span>
           </div>
@@ -162,11 +162,11 @@ export default async function ProfStudentsPage() {
       {pastStudents.length > 0 && (
         <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-            <span style={{ width: "1rem", height: "1px", background: "rgba(250, 250, 249, 0.2)", display: "block" }} />
-            <h2 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "rgba(250, 250, 249, 0.45)", letterSpacing: "-0.025em" }}>
+            <span style={{ width: "1rem", height: "1px", background: "rgba(15, 23, 42, 0.2)", display: "block" }} />
+            <h2 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "rgba(15, 23, 42, 0.45)", letterSpacing: "-0.025em" }}>
               Alumni
             </h2>
-            <span style={{ marginLeft: "auto", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.15)", fontFamily: "var(--font-mono, monospace)" }}>
+            <span style={{ marginLeft: "auto", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.15)", fontFamily: "var(--font-mono, monospace)" }}>
               {pastStudents.length} completed
             </span>
           </div>
