@@ -92,7 +92,7 @@ export function AppShell({ children, role = "student" }: AppShellProps) {
         <Link href={role === "professor" ? "/prof/dashboard" : "/dashboard"} style={{ textDecoration: "none", flexShrink: 0 }}>
           <span
             className="font-display"
-            style={{ fontSize: "1rem", fontWeight: 800, letterSpacing: "-0.025em", color: "#fafaf9" }}
+            style={{ fontSize: "1.1rem", fontWeight: 800, letterSpacing: "-0.025em", color: "#fafaf9" }}
           >
             Schollective
           </span>
@@ -210,7 +210,7 @@ export function AppShell({ children, role = "student" }: AppShellProps) {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
-            className="content-container py-8 sm:py-10"
+            className="content-container py-12 sm:py-16"
           >
             {children}
           </motion.div>

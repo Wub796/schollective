@@ -8,8 +8,9 @@
   --font-display: var(--font-display), "Playfair Display", Georgia, serif;
 
   /* App shell dimensions */
-  --sidebar-width: 220px;
-  --nav-height: 60px;
+  --sidebar-width: 200px;
+  --nav-height: 56px;
+  --content-max-width: 60rem;
 
   /* Z-index scale — single source of truth */
   --z-noise: 0;
@@ -51,7 +52,7 @@
   --glass-blur:   24px;
   --glass-shadow: 0 16px 40px rgba(0, 0, 0, 0.55);
 
-  --card-padding: 1.5rem;
+  --card-padding: 1.75rem;
   --card-radius:  0.75rem;
 }
 
@@ -75,7 +76,7 @@ body {
   background: var(--bg-base);
   color: var(--text-primary);
   font-family: var(--font-sans);
-  line-height: 1.7;
+  line-height: 1.8;
   overflow-x: hidden;
   isolation: isolate;
   -webkit-font-smoothing: antialiased;
@@ -357,25 +358,29 @@ body::after {
    ═══════════════════════════════════════════════════════════════ */
 .content-container {
   width: 100%;
-  max-width: 80rem;
+  max-width: var(--content-max-width, 60rem);
   margin-left: auto;
   margin-right: auto;
-  padding-left: 1.25rem;
-  padding-right: 1.25rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
 }
 
 @media (min-width: 640px) {
   .content-container {
-    padding-left: 2rem;
-    padding-right: 2rem;
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
   }
 }
 
 @media (min-width: 1024px) {
   .content-container {
-    padding-left: 2.5rem;
-    padding-right: 2.5rem;
+    padding-left: 3.5rem;
+    padding-right: 3.5rem;
   }
+}
+
+.page-section {
+  padding-block: 5rem;
 }
 
 /* Dashboard-specific container with tighter max-width */
@@ -825,7 +830,7 @@ body::after {
 .dash-stat-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
+  gap: 1.75rem;
 }
 
 /* About / terms / privacy two-col split */
