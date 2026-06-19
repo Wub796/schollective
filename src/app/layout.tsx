@@ -62,7 +62,7 @@ export default function RootLayout({
             style: {
               background: "rgba(11, 18, 36, 0.96)",
               backdropFilter: "blur(20px)",
-              border: "1px solid rgba(129, 140, 248, 0.18)",
+              border: "1px solid rgba(37, 99, 235, 0.18)",
               color: "#e8f0ff",
               borderRadius: "10px",
               boxShadow: "0 24px 48px rgba(0,0,0,0.55)",
