@@ -20,9 +20,9 @@ function StatCard({
     <div
       style={{
         padding: "2rem",
-        border: `1px solid ${accent ? `${accent}18` : "rgba(250,250,249,0.07)"}`,
+        border: `1px solid ${accent ? `${accent}18` : "rgba(15, 23, 42,0.07)"}`,
         borderRadius: "14px",
-        background: accent ? `${accent}06` : "rgba(250,250,249,0.025)",
+        background: accent ? `${accent}06` : "rgba(15, 23, 42,0.025)",
         display: "flex", flexDirection: "column", gap: "0.5rem",
       }}
     >
@@ -33,10 +33,10 @@ function StatCard({
         {value}
       </span>
       <div>
-        <div style={{ fontSize: "0.78rem", fontWeight: 600, color: "rgba(250,250,249,0.7)", fontFamily: "var(--font-sans)" }}>
+        <div style={{ fontSize: "0.78rem", fontWeight: 600, color: "rgba(15, 23, 42,0.7)", fontFamily: "var(--font-sans)" }}>
           {label}
         </div>
-        <div style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(250,250,249,0.22)", fontFamily: "var(--font-mono, monospace)", marginTop: "0.2rem" }}>
+        <div style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(15, 23, 42,0.22)", fontFamily: "var(--font-mono, monospace)", marginTop: "0.2rem" }}>
           {sub}
         </div>
       </div>
@@ -87,15 +87,15 @@ export default async function AdminDashboard() {
       {/* ── Page header ── */}
       <div style={{ marginBottom: "2.5rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", marginBottom: "0.75rem" }}>
-          <span style={{ width: "1.25rem", height: "1px", background: "rgba(250,250,249,0.2)", display: "block" }} />
-          <span style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.42em", textTransform: "uppercase", color: "rgba(250,250,249,0.3)", fontFamily: "var(--font-mono, monospace)" }}>
+          <span style={{ width: "1.25rem", height: "1px", background: "rgba(15, 23, 42,0.2)", display: "block" }} />
+          <span style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.42em", textTransform: "uppercase", color: "rgba(15, 23, 42,0.3)", fontFamily: "var(--font-mono, monospace)" }}>
             Internal Systems
           </span>
         </div>
-        <h1 className="font-display" style={{ fontSize: "clamp(2.6rem, 4vw, 3.5rem)", fontWeight: 900, color: "#fafaf9", letterSpacing: "-0.035em", lineHeight: 1.05 }}>
-          Admin <em style={{ fontStyle: "italic", color: "rgba(250,250,249,0.3)" }}>Overview</em>
+        <h1 className="font-display" style={{ fontSize: "clamp(2.6rem, 4vw, 3.5rem)", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.035em", lineHeight: 1.05 }}>
+          Admin <em style={{ fontStyle: "italic", color: "rgba(15, 23, 42,0.3)" }}>Overview</em>
         </h1>
-        <p style={{ fontSize: "0.95rem", color: "rgba(250,250,249,0.38)", fontWeight: 300, maxWidth: "38rem", lineHeight: 1.8, fontFamily: "var(--font-sans)", marginTop: "0.5rem" }}>
+        <p style={{ fontSize: "0.95rem", color: "rgba(15, 23, 42,0.38)", fontWeight: 300, maxWidth: "38rem", lineHeight: 1.8, fontFamily: "var(--font-sans)", marginTop: "0.5rem" }}>
           Platform health at a glance. Manage the verification queue, user accounts, and mentorship activity.
         </p>
         <AdminPreviewControls />
@@ -110,22 +110,22 @@ export default async function AdminDashboard() {
       </div>
 
       {/* ── Hairline ── */}
-      <div style={{ height: "1px", background: "rgba(250,250,249,0.06)", marginBottom: "2.5rem" }} />
+      <div style={{ height: "1px", background: "rgba(15, 23, 42,0.06)", marginBottom: "2.5rem" }} />
 
       {/* ── Verification queue ── */}
       <section style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.65rem" }}>
-          <span style={{ width: "1rem", height: "1px", background: "rgba(250,250,249,0.2)", display: "block" }} />
-          <h2 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "rgba(250,250,249,0.85)", letterSpacing: "-0.025em" }}>
+          <span style={{ width: "1rem", height: "1px", background: "rgba(15, 23, 42,0.2)", display: "block" }} />
+          <h2 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "rgba(15, 23, 42,0.85)", letterSpacing: "-0.025em" }}>
             Verification Queue
           </h2>
-          <span style={{ marginLeft: "auto", fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.42em", textTransform: "uppercase", color: "rgba(250,250,249,0.25)", fontFamily: "var(--font-mono, monospace)" }}>
+          <span style={{ marginLeft: "auto", fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.42em", textTransform: "uppercase", color: "rgba(15, 23, 42,0.25)", fontFamily: "var(--font-mono, monospace)" }}>
             {pendingProfessors?.length ?? 0} pending
           </span>
         </div>
         {(pendingProfessors?.length ?? 0) === 0 ? (
-          <div style={{ padding: "2.5rem 1.5rem", borderRadius: "12px", border: "1px solid rgba(250,250,249,0.05)", background: "rgba(250,250,249,0.01)", textAlign: "center" }}>
-            <div style={{ fontSize: "0.7rem", color: "rgba(250,250,249,0.2)", fontFamily: "var(--font-sans)", letterSpacing: "0.05em" }}>
+          <div style={{ padding: "2.5rem 1.5rem", borderRadius: "12px", border: "1px solid rgba(15, 23, 42,0.05)", background: "rgba(15, 23, 42,0.01)", textAlign: "center" }}>
+            <div style={{ fontSize: "0.7rem", color: "rgba(15, 23, 42,0.2)", fontFamily: "var(--font-sans)", letterSpacing: "0.05em" }}>
               All caught up — no pending reviews.
             </div>
           </div>
