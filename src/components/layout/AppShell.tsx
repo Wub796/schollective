@@ -68,10 +68,10 @@ export function AppShell({ children, role = "student" }: AppShellProps) {
       <header
         className="app-nav"
         style={{
-          background: scrolled ? "rgba(9, 9, 11, 0.97)" : "rgba(9, 9, 11, 0.92)",
+          background: scrolled ? "rgba(255, 255, 255, 0.97)" : "rgba(255, 255, 255, 0.92)",
           borderBottom: scrolled
-            ? "1px solid rgba(129, 140, 248, 0.1)"
-            : "1px solid rgba(129, 140, 248, 0.07)",
+            ? "1px solid var(--border-hover)"
+            : "1px solid var(--border)",
           transition: "background 0.3s ease, border-color 0.3s ease",
         }}
       >
@@ -92,7 +92,7 @@ export function AppShell({ children, role = "student" }: AppShellProps) {
         <Link href={role === "professor" ? "/prof/dashboard" : "/dashboard"} style={{ textDecoration: "none", flexShrink: 0 }}>
           <span
             className="font-display"
-            style={{ fontSize: "1.1rem", fontWeight: 800, letterSpacing: "-0.025em", color: "#fafaf9" }}
+            style={{ fontSize: "1.1rem", fontWeight: 800, letterSpacing: "-0.025em", color: "var(--text-primary)" }}
           >
             Schollective
           </span>
@@ -104,8 +104,8 @@ export function AppShell({ children, role = "student" }: AppShellProps) {
           style={{
             display: "flex", alignItems: "center", gap: "0.15rem",
             padding: "0.3rem",
-            background: "rgba(250, 250, 249, 0.03)",
-            border: "1px solid rgba(250, 250, 249, 0.07)",
+            background: "rgba(15, 23, 42, 0.03)",
+            border: "1px solid rgba(15, 23, 42, 0.08)",
             borderRadius: "100px",
           }}
           aria-label="Main navigation"
@@ -126,17 +126,17 @@ export function AppShell({ children, role = "student" }: AppShellProps) {
                   letterSpacing: "0.22em",
                   textTransform: "uppercase",
                   fontFamily: "var(--font-sans)",
-                  color: active ? "#fafaf9" : "rgba(168, 179, 207, 0.5)",
-                  background: active ? "rgba(129, 140, 248, 0.12)" : "transparent",
-                  border: active ? "1px solid rgba(129, 140, 248, 0.2)" : "1px solid transparent",
+                  color: active ? "var(--accent)" : "var(--text-secondary)",
+                  background: active ? "var(--accent-dim)" : "transparent",
+                  border: active ? "1px solid rgba(37, 99, 235, 0.2)" : "1px solid transparent",
                   transition: "all 0.2s cubic-bezier(0.22, 1, 0.36, 1)",
                   whiteSpace: "nowrap",
                 }}
                 onMouseEnter={(e) => {
-                  if (!active) (e.currentTarget as HTMLElement).style.color = "rgba(250, 250, 249, 0.85)";
+                  if (!active) (e.currentTarget as HTMLElement).style.color = "var(--text-primary)";
                 }}
                 onMouseLeave={(e) => {
-                  if (!active) (e.currentTarget as HTMLElement).style.color = "rgba(168, 179, 207, 0.5)";
+                  if (!active) (e.currentTarget as HTMLElement).style.color = "var(--text-secondary)";
                 }}
               >
                 {label}
@@ -154,22 +154,22 @@ export function AppShell({ children, role = "student" }: AppShellProps) {
                 height: "28px", padding: "0 0.9rem",
                 display: "flex", alignItems: "center", justifyContent: "center",
                 borderRadius: "100px",
-                border: "1px solid rgba(250, 250, 249, 0.14)",
+                border: "1px solid var(--border)",
                 background: "transparent",
                 fontSize: "0.52rem", fontWeight: 700,
                 letterSpacing: "0.24em", textTransform: "uppercase",
-                color: "rgba(250, 250, 249, 0.6)",
+                color: "var(--text-secondary)",
                 fontFamily: "var(--font-sans)",
                 transition: "all 0.2s",
                 cursor: "pointer",
               }}
               onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.borderColor = "rgba(250, 250, 249, 0.32)";
-                (e.currentTarget as HTMLElement).style.color = "#fafaf9";
+                (e.currentTarget as HTMLElement).style.borderColor = "var(--border-focus)";
+                (e.currentTarget as HTMLElement).style.color = "var(--text-primary)";
               }}
               onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.borderColor = "rgba(250, 250, 249, 0.14)";
-                (e.currentTarget as HTMLElement).style.color = "rgba(250, 250, 249, 0.6)";
+                (e.currentTarget as HTMLElement).style.borderColor = "var(--border)";
+                (e.currentTarget as HTMLElement).style.color = "var(--text-secondary)";
               }}
               role="button"
               tabIndex={0}
@@ -197,8 +197,8 @@ export function AppShell({ children, role = "student" }: AppShellProps) {
           data-open={sidebarOpen ? "true" : "false"}
           aria-label="Sidebar navigation"
           style={{
-            background: "var(--bg-base)",
-            borderRight: "1px solid rgba(129, 140, 248, 0.07)",
+            background: "var(--bg-surface-2)",
+            borderRight: "1px solid var(--border)",
           }}
         >
           <Sidebar onClose={closeSidebar} role={role} />
