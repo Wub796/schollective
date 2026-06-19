@@ -79,7 +79,7 @@ function NavItem({ label, href, active }: {
               fontWeight: 400,
               fontStyle: "italic",
               letterSpacing: "-0.01em",
-              color: "#fafaf9",
+              color: "var(--text-primary)",
               transitionDelay: `${i * 12}ms`,
               willChange: "transform",
             }}
@@ -110,7 +110,7 @@ function SignUpButton() {
       style={{
         textDecoration: "none",
         padding: "0.65rem 1.4rem",
-        color: "#fafaf9",
+        color: "var(--text-primary)",
         /* Base border — very subtle, lets the hover border replace it */
         border: "1px solid rgba(255,255,255,0.15)",
         /* Must NOT clip here — clipping kills the expanding border pseudo-element */
@@ -192,7 +192,7 @@ function SignUpButton() {
                 fontWeight: 400,
                 fontSize: "0.8rem",
                 letterSpacing: "0.01em",
-                color: "#fafaf9",
+                color: "var(--text-primary)",
                 transitionDelay: `${i * 10}ms`,
               }}
             >
@@ -264,8 +264,8 @@ function SignUpButtonWithCursorBorder() {
       style={{
         textDecoration: "none",
         padding: "0.65rem 1.4rem",
-        color: "#fafaf9",
-        border: "1px solid rgba(255,255,255,0.12)",
+        color: "var(--text-primary)",
+        border: "1px solid rgba(15, 23, 42, 0.12)",
         overflow: "visible",
         position: "relative",
       }}
@@ -338,7 +338,7 @@ function SignUpButtonWithCursorBorder() {
                 fontWeight: 400,
                 fontSize: "0.8rem",
                 letterSpacing: "0.01em",
-                color: "#fafaf9",
+                color: "var(--text-primary)",
               }}
             >
               {ch === " " ? "\u00A0" : ch}
@@ -380,13 +380,13 @@ function GetStartedButton({ onClose }: { onClose: () => void }) {
       dot.style.width        = `${width + 2}px`;
       dot.style.height       = `${height + 2}px`;
       dot.style.borderRadius = "100px";
-      dot.style.borderColor  = "rgba(129,140,248,0.9)";
+      dot.style.borderColor  = "rgba(37, 99, 235,0.9)";
     };
     const leave = () => {
       dot.style.width        = "10px";
       dot.style.height       = "10px";
       dot.style.borderRadius = "50%";
-      dot.style.borderColor  = "rgba(129,140,248,0)";
+      dot.style.borderColor  = "rgba(37, 99, 235,0)";
     };
     el.addEventListener("mouseenter", enter);
     el.addEventListener("mouseleave", leave);
@@ -403,9 +403,9 @@ function GetStartedButton({ onClose }: { onClose: () => void }) {
       style={{
         textDecoration: "none",
         padding: "0.6rem 1.4rem",
-        border: "1px solid rgba(129,140,248,0.35)",
+        border: "1px solid rgba(37, 99, 235,0.35)",
         borderRadius: "100px",
-        color: "#fafaf9",
+        color: "var(--text-primary)",
         overflow: "visible",
         position: "relative",
       }}
@@ -421,7 +421,7 @@ function GetStartedButton({ onClose }: { onClose: () => void }) {
           transform: "translate(-50%, -50%)",
           width: "10px", height: "10px",
           borderRadius: "50%",
-          border: "1.5px solid rgba(129,140,248,0)",
+          border: "1.5px solid rgba(37, 99, 235,0)",
           transition:
             "width 520ms cubic-bezier(0.19,1,0.22,1), " +
             "height 520ms cubic-bezier(0.19,1,0.22,1), " +
@@ -455,7 +455,7 @@ function GetStartedButton({ onClose }: { onClose: () => void }) {
                 fontWeight: 600,
                 letterSpacing: "0.2em",
                 textTransform: "uppercase" as const,
-                color: "#818cf8",
+                color: "var(--accent)",
                 transitionDelay: `${i * 10}ms`,
               }}
             >
@@ -478,7 +478,7 @@ function GetStartedButton({ onClose }: { onClose: () => void }) {
                 fontWeight: 400,
                 fontSize: "0.78rem",
                 letterSpacing: "0.01em",
-                color: "#818cf8",
+                color: "var(--accent)",
                 transitionDelay: `${i * 10}ms`,
               }}
             >
@@ -496,7 +496,7 @@ function GetStartedButton({ onClose }: { onClose: () => void }) {
       {/* Arrow */}
       <span
         className="ml-3 transition-transform duration-500 group-hover:translate-x-1"
-        style={{ position: "relative", zIndex: 3, fontSize: "0.75rem", color: "#818cf8" }}
+        style={{ position: "relative", zIndex: 3, fontSize: "0.75rem", color: "var(--accent)" }}
       >
         →
       </span>
@@ -520,7 +520,7 @@ function FullscreenMenu({
             onClick={onClose}
             style={{
               position: "fixed", inset: 0, zIndex: 997,
-              background: "rgba(9, 9, 11, 0.6)",
+              background: "rgba(255, 255, 255, 0.6)",
               backdropFilter: "blur(8px)",
             }}
           />
@@ -533,8 +533,8 @@ function FullscreenMenu({
             style={{
               position: "fixed", top: 0, bottom: 0, right: 0,
               width: "min(100vw, 720px)", zIndex: 998,
-              background: "#09090b",
-              borderLeft: "1px solid rgba(129, 140, 248, 0.08)",
+              background: "var(--bg-base)",
+              borderLeft: "1px solid rgba(37, 99, 235, 0.08)",
               display: "flex", flexDirection: "column", justifyContent: "center",
               padding: "2.5rem",
               boxShadow: "-10px 0 40px rgba(0,0,0,0.5)",
@@ -569,7 +569,7 @@ function FullscreenMenu({
                       transition={{ duration: 0.6, ease: [0.19, 1, 0.22, 1], delay: 0.1 + idx * 0.06 }}
                       style={{
                         fontFamily: "monospace", fontSize: "0.75rem",
-                        color: "rgba(129,140,248,0.4)", letterSpacing: "0.1em",
+                        color: "rgba(37, 99, 235,0.4)", letterSpacing: "0.1em",
                         marginTop: "0.6rem", minWidth: "2rem",
                       }}
                     >
@@ -586,7 +586,7 @@ function FullscreenMenu({
                             style={{ display: "inline-block", transformOrigin: "left center" }}
                           >
                             <span
-                              className="inline-block transition-all duration-[450ms] ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:-translate-y-[110%] group-hover:text-[#fafaf9]"
+                              className="inline-block transition-all duration-[450ms] ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:-translate-y-[110%] group-hover:text-slate-900"
                               style={{
                                 fontFamily: "var(--font-display)",
                                 fontSize: "clamp(3rem, 6vw, 6rem)", fontWeight: 400,
@@ -609,7 +609,7 @@ function FullscreenMenu({
                               fontFamily: "var(--font-display)",
                               fontSize: "clamp(3rem, 6vw, 6rem)", fontWeight: 400,
                               fontStyle: "italic", letterSpacing: "-0.03em",
-                              color: "#818cf8", transitionDelay: `${i * 15}ms`,
+                              color: "var(--accent)", transitionDelay: `${i * 15}ms`,
                             }}
                           >
                             {ch === " " ? "\u00A0" : ch}
@@ -628,14 +628,14 @@ function FullscreenMenu({
               style={{
                 position: "absolute", bottom: "2.5rem", left: "2.5rem", right: "2.5rem",
                 display: "flex", justifyContent: "space-between", alignItems: "flex-end",
-                borderTop: "1px solid rgba(129,140,248,0.08)", paddingTop: "1.5rem",
+                borderTop: "1px solid rgba(37, 99, 235,0.08)", paddingTop: "1.5rem",
               }}
             >
               <div>
-                <p style={{ fontSize: "0.75rem", color: "rgba(168,179,207,0.4)", margin: 0, fontFamily: "monospace", letterSpacing: "0.05em" }}>
+                <p style={{ fontSize: "0.75rem", color: "rgba(15, 23, 42,0.4)", margin: 0, fontFamily: "monospace", letterSpacing: "0.05em" }}>
                   ACADEMIC MENTORSHIP PLATFORM
                 </p>
-                <p style={{ fontSize: "0.7rem", color: "rgba(82,82,91,0.5)", margin: "0.25rem 0 0", fontFamily: "monospace" }}>
+                <p style={{ fontSize: "0.7rem", color: "rgba(15, 23, 42,0.5)", margin: "0.25rem 0 0", fontFamily: "monospace" }}>
                   © {new Date().getFullYear()} Schollective, Inc.
                 </p>
               </div>
@@ -685,7 +685,7 @@ export function PublicNav() {
         >
           <Link href="/" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "0.6rem" }}>
             <SchollectiveLogo size={32} />
-            <span style={{ fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.02em", color: "rgba(168,179,207,0.7)" }}>
+            <span style={{ fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.02em", color: "rgba(15, 23, 42,0.7)" }}>
               Schollective
             </span>
           </Link>
@@ -729,7 +729,7 @@ export function PublicNav() {
             style={{
               textDecoration: "none", padding: "0.2rem 0", marginRight: "1.5rem",
               fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.06em",
-              textTransform: "uppercase", color: "#fafaf9", lineHeight: 1,
+              textTransform: "uppercase", color: "var(--text-primary)", lineHeight: 1,
             }}
           >
             <span style={{ position: "relative", zIndex: 2 }}>Log In</span>
@@ -746,8 +746,8 @@ export function PublicNav() {
             aria-label="Toggle menu"
             data-cursor-engulf="true"
             style={{
-              pointerEvents: "all", background: "rgba(129,140,248,0.08)",
-              border: "1px solid rgba(129,140,248,0.18)", borderRadius: "100px",
+              pointerEvents: "all", background: "rgba(37, 99, 235,0.08)",
+              border: "1px solid rgba(37, 99, 235,0.18)", borderRadius: "100px",
               width: "2.6rem", height: "2.6rem", display: "flex",
               alignItems: "center", justifyContent: "center", cursor: "pointer",
               transition: "background 0.3s ease, border-color 0.3s ease", flexShrink: 0,
@@ -761,7 +761,7 @@ export function PublicNav() {
                   animate={{ opacity: 1, rotate: 0 }}
                   exit={{ opacity: 0, rotate: 90 }}
                   transition={{ duration: 0.25 }}
-                  style={{ color: "#fafaf9", fontSize: "1rem", lineHeight: 1 }}
+                  style={{ color: "var(--text-primary)", fontSize: "1rem", lineHeight: 1 }}
                 >
                   ×
                 </motion.span>
