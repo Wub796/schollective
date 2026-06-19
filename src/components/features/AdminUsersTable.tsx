@@ -89,10 +89,10 @@ function FilterPill({
         padding: "0.35rem 0.85rem",
         borderRadius: "100px",
         border: active
-          ? "1px solid rgba(250, 250, 249, 0.3)"
-          : "1px solid rgba(250, 250, 249, 0.07)",
-        background: active ? "rgba(250, 250, 249, 0.08)" : "transparent",
-        color: active ? "#fafaf9" : "rgba(250, 250, 249, 0.35)",
+          ? "1px solid rgba(15, 23, 42, 0.3)"
+          : "1px solid rgba(15, 23, 42, 0.07)",
+        background: active ? "rgba(15, 23, 42, 0.08)" : "transparent",
+        color: active ? "#fafaf9" : "rgba(15, 23, 42, 0.35)",
         fontSize: "0.6rem",
         fontWeight: 700,
         letterSpacing: "0.18em",
@@ -204,7 +204,7 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
           fontWeight: 700,
           letterSpacing: "0.2em",
           textTransform: "uppercase",
-          color: active ? "rgba(250,250,249,0.55)" : "rgba(250,250,249,0.2)",
+          color: active ? "rgba(15, 23, 42,0.55)" : "rgba(15, 23, 42,0.2)",
           fontFamily: "var(--font-mono, monospace)",
           cursor: "pointer",
           userSelect: "none",
@@ -239,7 +239,7 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
             style={{
               position: "absolute", left: "0.9rem", top: "50%",
               transform: "translateY(-50%)",
-              color: "rgba(250,250,249,0.25)", pointerEvents: "none",
+              color: "rgba(15, 23, 42,0.25)", pointerEvents: "none",
             }}
           />
           <input
@@ -250,17 +250,17 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
             style={{
               width: "100%",
               padding: "0.65rem 1rem 0.65rem 2.5rem",
-              background: "rgba(250,250,249,0.03)",
-              border: "1px solid rgba(250,250,249,0.08)",
+              background: "rgba(15, 23, 42,0.03)",
+              border: "1px solid rgba(15, 23, 42,0.08)",
               borderRadius: "10px",
-              color: "#fafaf9",
+              color: "var(--text-primary)",
               fontSize: "0.78rem",
               fontFamily: "var(--font-sans)",
               outline: "none",
               transition: "border-color 0.18s",
             }}
-            onFocus={(e) => (e.currentTarget.style.borderColor = "rgba(250,250,249,0.2)")}
-            onBlur={(e)  => (e.currentTarget.style.borderColor = "rgba(250,250,249,0.08)")}
+            onFocus={(e) => (e.currentTarget.style.borderColor = "rgba(15, 23, 42,0.2)")}
+            onBlur={(e)  => (e.currentTarget.style.borderColor = "rgba(15, 23, 42,0.08)")}
           />
         </div>
 
@@ -279,7 +279,7 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
           </div>
 
           {/* Divider */}
-          <div style={{ width: "1px", height: "18px", background: "rgba(250,250,249,0.08)", flexShrink: 0 }} />
+          <div style={{ width: "1px", height: "18px", background: "rgba(15, 23, 42,0.08)", flexShrink: 0 }} />
 
           {/* Status filters */}
           <div style={{ display: "flex", gap: "0.4rem", flexWrap: "wrap" }}>
@@ -296,28 +296,28 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
       </div>
 
       {/* ── Results count ── */}
-      <div style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(250,250,249,0.2)", fontFamily: "var(--font-mono, monospace)" }}>
+      <div style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(15, 23, 42,0.2)", fontFamily: "var(--font-mono, monospace)" }}>
         {filtered.length} {filtered.length === 1 ? "account" : "accounts"} found
       </div>
 
       {/* ── Desktop table ── */}
-      <div className="hidden lg:block" style={{ border: "1px solid rgba(250,250,249,0.06)", borderRadius: "14px", overflow: "hidden", background: "rgba(250,250,249,0.015)" }}>
+      <div className="hidden lg:block" style={{ border: "1px solid rgba(15, 23, 42,0.06)", borderRadius: "14px", overflow: "hidden", background: "rgba(15, 23, 42,0.015)" }}>
         <div style={{ overflowX: "auto" }}>
           <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
             <thead>
-              <tr style={{ borderBottom: "1px solid rgba(250,250,249,0.05)" }}>
+              <tr style={{ borderBottom: "1px solid rgba(15, 23, 42,0.05)" }}>
                 <SortTh col="name"   label="Account" />
                 <SortTh col="role"   label="Role" />
-                <th style={{ padding: "0.85rem 1.25rem", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(250,250,249,0.2)", fontFamily: "var(--font-mono, monospace)", whiteSpace: "nowrap" }}>Status</th>
-                <th style={{ padding: "0.85rem 1.25rem", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(250,250,249,0.2)", fontFamily: "var(--font-mono, monospace)", whiteSpace: "nowrap" }}>Institution</th>
+                <th style={{ padding: "0.85rem 1.25rem", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(15, 23, 42,0.2)", fontFamily: "var(--font-mono, monospace)", whiteSpace: "nowrap" }}>Status</th>
+                <th style={{ padding: "0.85rem 1.25rem", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(15, 23, 42,0.2)", fontFamily: "var(--font-mono, monospace)", whiteSpace: "nowrap" }}>Institution</th>
                 <SortTh col="joined" label="Joined" />
-                <th style={{ padding: "0.85rem 1.25rem", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(250,250,249,0.2)", fontFamily: "var(--font-mono, monospace)", textAlign: "right", whiteSpace: "nowrap" }}>Actions</th>
+                <th style={{ padding: "0.85rem 1.25rem", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(15, 23, 42,0.2)", fontFamily: "var(--font-mono, monospace)", textAlign: "right", whiteSpace: "nowrap" }}>Actions</th>
               </tr>
             </thead>
             <tbody>
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={6} style={{ padding: "3.5rem 1.25rem", textAlign: "center", fontSize: "0.75rem", color: "rgba(250,250,249,0.2)", fontFamily: "var(--font-sans)" }}>
+                  <td colSpan={6} style={{ padding: "3.5rem 1.25rem", textAlign: "center", fontSize: "0.75rem", color: "rgba(15, 23, 42,0.2)", fontFamily: "var(--font-sans)" }}>
                     No accounts match the current filters.
                   </td>
                 </tr>
@@ -332,10 +332,10 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
                   <tr
                     key={u.id}
                     style={{
-                      borderBottom: "1px solid rgba(250,250,249,0.04)",
+                      borderBottom: "1px solid rgba(15, 23, 42,0.04)",
                       transition: "background 0.15s",
                     }}
-                    onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(250,250,249,0.02)")}
+                    onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(15, 23, 42,0.02)")}
                     onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
                   >
                     {/* Account */}
@@ -343,19 +343,19 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
                       <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
                         <div style={{
                           width: "2rem", height: "2rem", borderRadius: "8px",
-                          background: "rgba(250,250,249,0.04)",
-                          border: "1px solid rgba(250,250,249,0.07)",
+                          background: "rgba(15, 23, 42,0.04)",
+                          border: "1px solid rgba(15, 23, 42,0.07)",
                           display: "flex", alignItems: "center", justifyContent: "center",
-                          fontSize: "0.65rem", fontWeight: 700, color: "rgba(250,250,249,0.4)",
+                          fontSize: "0.65rem", fontWeight: 700, color: "rgba(15, 23, 42,0.4)",
                           fontFamily: "var(--font-sans)", flexShrink: 0,
                         }}>
                           {u.first_name[0]}{u.last_name[0]}
                         </div>
                         <div>
-                          <div style={{ fontSize: "0.82rem", fontWeight: 600, color: isSuspended ? "rgba(250,250,249,0.35)" : "#fafaf9", fontFamily: "var(--font-sans)", textDecoration: isSuspended ? "line-through" : "none" }}>
+                          <div style={{ fontSize: "0.82rem", fontWeight: 600, color: isSuspended ? "rgba(15, 23, 42,0.35)" : "#fafaf9", fontFamily: "var(--font-sans)", textDecoration: isSuspended ? "line-through" : "none" }}>
                             {displayName} {u.last_name}
                           </div>
-                          <div style={{ display: "flex", alignItems: "center", gap: "0.3rem", fontSize: "0.6rem", color: "rgba(250,250,249,0.3)", fontFamily: "var(--font-sans)", marginTop: "0.15rem" }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: "0.3rem", fontSize: "0.6rem", color: "rgba(15, 23, 42,0.3)", fontFamily: "var(--font-sans)", marginTop: "0.15rem" }}>
                             <Mail size={9} />
                             {u.email}
                           </div>
@@ -386,23 +386,23 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
                         display: "inline-flex", alignItems: "center", gap: "0.3rem",
                         fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.08em",
                         textTransform: "capitalize", fontFamily: "var(--font-sans)",
-                        color: STATUS_COLOUR[status] ?? "rgba(250,250,249,0.35)",
+                        color: STATUS_COLOUR[status] ?? "rgba(15, 23, 42,0.35)",
                       }}>
-                        <span style={{ width: "5px", height: "5px", borderRadius: "50%", background: STATUS_COLOUR[status] ?? "rgba(250,250,249,0.35)", flexShrink: 0 }} />
+                        <span style={{ width: "5px", height: "5px", borderRadius: "50%", background: STATUS_COLOUR[status] ?? "rgba(15, 23, 42,0.35)", flexShrink: 0 }} />
                         {status}
                       </span>
                     </td>
 
                     {/* Institution */}
                     <td style={{ padding: "1rem 1.25rem" }}>
-                      <span style={{ fontSize: "0.72rem", color: "rgba(250,250,249,0.4)", fontFamily: "var(--font-sans)" }}>
-                        {u.institution || <span style={{ color: "rgba(250,250,249,0.15)", fontStyle: "italic" }}>—</span>}
+                      <span style={{ fontSize: "0.72rem", color: "rgba(15, 23, 42,0.4)", fontFamily: "var(--font-sans)" }}>
+                        {u.institution || <span style={{ color: "rgba(15, 23, 42,0.15)", fontStyle: "italic" }}>—</span>}
                       </span>
                     </td>
 
                     {/* Joined */}
                     <td style={{ padding: "1rem 1.25rem" }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: "0.35rem", fontSize: "0.6rem", color: "rgba(250,250,249,0.3)", fontFamily: "var(--font-mono, monospace)" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.35rem", fontSize: "0.6rem", color: "rgba(15, 23, 42,0.3)", fontFamily: "var(--font-mono, monospace)" }}>
                         <Calendar size={9} />
                         {formatDate(u.created_at)}
                       </div>
@@ -420,9 +420,9 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
                             style={{
                               padding: "0.3rem 0.6rem",
                               borderRadius: "7px",
-                              border: "1px solid rgba(250,250,249,0.12)",
-                              background: "rgba(250,250,249,0.04)",
-                              color: changingRole === u.id ? "rgba(250,250,249,0.3)" : "rgba(250,250,249,0.75)",
+                              border: "1px solid rgba(15, 23, 42,0.12)",
+                              background: "rgba(15, 23, 42,0.04)",
+                              color: changingRole === u.id ? "rgba(15, 23, 42,0.3)" : "rgba(15, 23, 42,0.75)",
                               fontSize: "0.6rem",
                               fontWeight: 700,
                               letterSpacing: "0.08em",
@@ -432,7 +432,7 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
                               outline: "none",
                               appearance: "none",
                               paddingRight: "1.5rem",
-                              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='rgba(250,250,249,0.3)' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E")`,
+                              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='rgba(15, 23, 42,0.3)' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E")`,
                               backgroundRepeat: "no-repeat",
                               backgroundPosition: "right 0.4rem center",
                             }}
@@ -485,7 +485,7 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
       {/* ── Mobile cards ── */}
       <div className="lg:hidden" style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
         {filtered.length === 0 ? (
-          <div style={{ textAlign: "center", padding: "3rem 1rem", fontSize: "0.78rem", color: "rgba(250,250,249,0.2)", fontFamily: "var(--font-sans)" }}>
+          <div style={{ textAlign: "center", padding: "3rem 1rem", fontSize: "0.78rem", color: "rgba(15, 23, 42,0.2)", fontFamily: "var(--font-sans)" }}>
             No accounts match the current filters.
           </div>
         ) : filtered.map((u) => {
@@ -499,9 +499,9 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
               key={u.id}
               style={{
                 padding: "1.25rem",
-                border: "1px solid rgba(250,250,249,0.06)",
+                border: "1px solid rgba(15, 23, 42,0.06)",
                 borderRadius: "12px",
-                background: "rgba(250,250,249,0.015)",
+                background: "rgba(15, 23, 42,0.015)",
                 display: "flex", flexDirection: "column", gap: "0.85rem",
               }}
             >
@@ -509,19 +509,19 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
               <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
                 <div style={{
                   width: "2.2rem", height: "2.2rem", borderRadius: "8px",
-                  background: "rgba(250,250,249,0.04)",
-                  border: "1px solid rgba(250,250,249,0.07)",
+                  background: "rgba(15, 23, 42,0.04)",
+                  border: "1px solid rgba(15, 23, 42,0.07)",
                   display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: "0.65rem", fontWeight: 700, color: "rgba(250,250,249,0.4)",
+                  fontSize: "0.65rem", fontWeight: 700, color: "rgba(15, 23, 42,0.4)",
                   fontFamily: "var(--font-sans)", flexShrink: 0,
                 }}>
                   {u.first_name[0]}{u.last_name[0]}
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: "0.82rem", fontWeight: 600, color: "#fafaf9", fontFamily: "var(--font-sans)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  <div style={{ fontSize: "0.82rem", fontWeight: 600, color: "var(--text-primary)", fontFamily: "var(--font-sans)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                     {displayName} {u.last_name}
                   </div>
-                  <div style={{ fontSize: "0.6rem", color: "rgba(250,250,249,0.3)", fontFamily: "var(--font-sans)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  <div style={{ fontSize: "0.6rem", color: "rgba(15, 23, 42,0.3)", fontFamily: "var(--font-sans)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                     {u.email}
                   </div>
                 </div>
@@ -544,16 +544,16 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
 
               {/* Meta row */}
               <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
-                <span style={{ display: "flex", alignItems: "center", gap: "0.3rem", fontSize: "0.6rem", color: STATUS_COLOUR[status] ?? "rgba(250,250,249,0.35)", fontFamily: "var(--font-sans)", fontWeight: 700 }}>
-                  <span style={{ width: "5px", height: "5px", borderRadius: "50%", background: STATUS_COLOUR[status] ?? "rgba(250,250,249,0.35)" }} />
+                <span style={{ display: "flex", alignItems: "center", gap: "0.3rem", fontSize: "0.6rem", color: STATUS_COLOUR[status] ?? "rgba(15, 23, 42,0.35)", fontFamily: "var(--font-sans)", fontWeight: 700 }}>
+                  <span style={{ width: "5px", height: "5px", borderRadius: "50%", background: STATUS_COLOUR[status] ?? "rgba(15, 23, 42,0.35)" }} />
                   {status}
                 </span>
                 {u.institution && (
-                  <span style={{ fontSize: "0.6rem", color: "rgba(250,250,249,0.3)", fontFamily: "var(--font-sans)" }}>
+                  <span style={{ fontSize: "0.6rem", color: "rgba(15, 23, 42,0.3)", fontFamily: "var(--font-sans)" }}>
                     {u.institution}
                   </span>
                 )}
-                <span style={{ display: "flex", alignItems: "center", gap: "0.3rem", fontSize: "0.6rem", color: "rgba(250,250,249,0.25)", fontFamily: "var(--font-mono, monospace)" }}>
+                <span style={{ display: "flex", alignItems: "center", gap: "0.3rem", fontSize: "0.6rem", color: "rgba(15, 23, 42,0.25)", fontFamily: "var(--font-mono, monospace)" }}>
                   <Calendar size={9} />
                   {formatDate(u.created_at)}
                 </span>
@@ -569,9 +569,9 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
                   style={{
                     padding: "0.35rem 1.5rem 0.35rem 0.7rem",
                     borderRadius: "7px",
-                    border: "1px solid rgba(250,250,249,0.12)",
-                    background: "rgba(250,250,249,0.04)",
-                    color: "rgba(250,250,249,0.75)",
+                    border: "1px solid rgba(15, 23, 42,0.12)",
+                    background: "rgba(15, 23, 42,0.04)",
+                    color: "rgba(15, 23, 42,0.75)",
                     fontSize: "0.6rem",
                     fontWeight: 700,
                     letterSpacing: "0.08em",
@@ -579,7 +579,7 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
                     cursor: changingRole === u.id ? "wait" : "pointer",
                     outline: "none",
                     appearance: "none",
-                    backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='rgba(250,250,249,0.3)' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E")`,
+                    backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='rgba(15, 23, 42,0.3)' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E")`,
                     backgroundRepeat: "no-repeat",
                     backgroundPosition: "right 0.4rem center",
                   }}
