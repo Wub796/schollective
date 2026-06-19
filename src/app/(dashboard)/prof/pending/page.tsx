@@ -25,18 +25,18 @@ export default async function ProfessorPendingPage() {
 
   return (
     <div className="page-bg flex items-center justify-center p-6" style={{ minHeight: "100vh" }}>
-      <main className="relative z-10 w-full max-w-[500px] text-center">
+      <main className="relative z-10 w-full max-w-[480px] text-center">
         <div style={{
           background: "rgba(17, 17, 22, 0.7)",
           border: "1px solid rgba(129, 140, 248, 0.1)",
           borderRadius: "20px",
-          padding: "3rem 2.5rem",
+          padding: "3.5rem 3rem",
           backdropFilter: "blur(24px)",
           boxShadow: "0 40px 80px rgba(0,0,0,0.5)",
         }}>
           <LottieReview />
 
-          <header style={{ marginBottom: "2rem" }}>
+          <header style={{ marginBottom: "2.5rem" }}>
             <div style={{
               display: "inline-flex", alignItems: "center", gap: "0.5rem",
               padding: "0.3rem 0.85rem", borderRadius: "100px",
@@ -52,7 +52,7 @@ export default async function ProfessorPendingPage() {
               Verification in Progress
             </div>
             <h1 className="font-display" style={{
-              fontSize: "2rem", fontWeight: 900, color: "rgba(250, 250, 249, 0.9)",
+              fontSize: "2.4rem", fontWeight: 900, color: "rgba(250, 250, 249, 0.9)",
               letterSpacing: "-0.03em", lineHeight: 1.1, marginBottom: "1rem",
             }}>
               Application Under{" "}
