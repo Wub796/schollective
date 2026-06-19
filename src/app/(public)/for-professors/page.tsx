@@ -20,8 +20,8 @@ function FadeIn({ children, delay = 0, className = "" }: { children: React.React
 function Eyebrow({ children }: { children: string }) {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.5rem" }}>
-      <span style={{ width: "1.5rem", height: "1px", background: "rgba(129, 140, 248, 0.4)", display: "block", flexShrink: 0 }} />
-      <span style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.42em", textTransform: "uppercase", color: "rgba(129, 140, 248, 0.6)", fontFamily: "var(--font-sans)" }}>{children}</span>
+      <span style={{ width: "1.5rem", height: "1px", background: "rgba(37, 99, 235, 0.4)", display: "block", flexShrink: 0 }} />
+      <span style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.42em", textTransform: "uppercase", color: "rgba(37, 99, 235, 0.6)", fontFamily: "var(--font-sans)" }}>{children}</span>
     </div>
   );
 }
@@ -54,7 +54,7 @@ export default function ForProfessorsPage() {
       <PublicNav />
 
       {/* Ambient glow — warm indigo, slightly different from students page */}
-      <div style={{ position: "fixed", inset: 0, pointerEvents: "none", background: "radial-gradient(ellipse 65% 50% at 85% 20%, rgba(99,102,241,0.08) 0%, transparent 60%), radial-gradient(ellipse 55% 45% at 5% 80%, rgba(129,140,248,0.04) 0%, transparent 55%)", zIndex: 0 }} />
+      <div style={{ position: "fixed", inset: 0, pointerEvents: "none", background: "radial-gradient(ellipse 65% 50% at 85% 20%, rgba(99,102,241,0.08) 0%, transparent 60%), radial-gradient(ellipse 55% 45% at 5% 80%, rgba(37, 99, 235,0.04) 0%, transparent 55%)", zIndex: 0 }} />
 
       <div style={{ position: "relative", zIndex: 1, maxWidth: "920px", margin: "0 auto", padding: "12rem 2rem 8rem" }}>
 

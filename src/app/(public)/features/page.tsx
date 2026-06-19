@@ -20,13 +20,13 @@ export default function FeaturesPage() {
       <PublicNav />
 
       {/* Ambient glow */}
-      <div style={{ position: "fixed", inset: 0, pointerEvents: "none", background: "radial-gradient(ellipse 80% 60% at 80% 20%, rgba(99,102,241,0.06) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 20% 80%, rgba(129,140,248,0.04) 0%, transparent 60%)", zIndex: 0 }} />
+      <div style={{ position: "fixed", inset: 0, pointerEvents: "none", background: "radial-gradient(ellipse 80% 60% at 80% 20%, rgba(99,102,241,0.06) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 20% 80%, rgba(37, 99, 235,0.04) 0%, transparent 60%)", zIndex: 0 }} />
 
       <main className="relative z-10 px-6 sm:px-8 py-32 lg:py-40">
         <div style={{ maxWidth: "960px", margin: "0 auto" }}>
           {/* Header */}
           <header className="mb-24 text-center max-w-3xl mx-auto" style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[rgba(129,140,248,0.15)] bg-[rgba(129,140,248,0.04)] text-var(--accent) text-[0.62rem] font-bold tracking-widest uppercase mb-6" style={{ fontFamily: "var(--font-sans)", color: "var(--accent)" }}>
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[rgba(37, 99, 235,0.15)] bg-[rgba(37, 99, 235,0.04)] text-var(--accent) text-[0.62rem] font-bold tracking-widest uppercase mb-6" style={{ fontFamily: "var(--font-sans)", color: "var(--accent)" }}>
               <Cpu size={11} />
               Core Capabilities
             </div>
@@ -83,7 +83,7 @@ export default function FeaturesPage() {
                   borderRadius: "16px",
                 }}
               >
-                <div className="w-11 h-11 rounded-xl bg-[rgba(129,140,248,0.05)] border border-[rgba(129,140,248,0.12)] flex items-center justify-center mb-8 text-var(--text-secondary) group-hover:text-var(--accent) transition-colors duration-300">
+                <div className="w-11 h-11 rounded-xl bg-[rgba(37, 99, 235,0.05)] border border-[rgba(37, 99, 235,0.12)] flex items-center justify-center mb-8 text-var(--text-secondary) group-hover:text-var(--accent) transition-colors duration-300">
                   <f.i size={20} strokeWidth={1.5} style={{ color: "var(--accent)" }} />
                 </div>
                 <h3 className="font-display text-2xl text-var(--text-primary) mb-4 font-semibold leading-tight" style={{ fontSize: "1.3rem", letterSpacing: "-0.01em" }}>
