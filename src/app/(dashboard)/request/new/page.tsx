@@ -50,7 +50,7 @@ export default async function RequestNewPage({ searchParams }: RequestNewPagePro
         <span style={{
           fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.3em",
           textTransform: "uppercase", color: "rgba(37, 99, 235, 0.4)",
-          fontFamily: "var(--font-mono, monospace)",
+          fontFamily: "var(--font-sans, monospace)",
         }}>
           Back to Directory
         </span>
@@ -62,9 +62,9 @@ export default async function RequestNewPage({ searchParams }: RequestNewPagePro
           <span style={{ width: "1.5rem", height: "1px", background: "rgba(15, 23, 42, 0.2)", display: "block" }} />
           <div style={{
             display: "inline-flex", alignItems: "center", gap: "0.5rem",
-            fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.42em",
+            fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.2em",
             textTransform: "uppercase", color: "rgba(37, 99, 235, 0.5)",
-            fontFamily: "var(--font-mono, monospace)",
+            fontFamily: "var(--font-sans, monospace)",
           }}>
             <GraduationCap size={11} />
             Mentorship Request
@@ -105,7 +105,7 @@ export default async function RequestNewPage({ searchParams }: RequestNewPagePro
         textTransform: "uppercase",
         letterSpacing: "0.35em",
         fontWeight: 700,
-        fontFamily: "var(--font-mono, monospace)",
+        fontFamily: "var(--font-sans, monospace)",
         paddingBottom: "2rem",
       }}>
         Powered by academic equity · Schollective 2025
