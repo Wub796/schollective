@@ -26,7 +26,7 @@ export default function FeaturesPage() {
         <div style={{ maxWidth: "960px", margin: "0 auto" }}>
           {/* Header */}
           <header className="mb-24 text-center max-w-3xl mx-auto" style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[rgba(37, 99, 235,0.15)] bg-[rgba(37, 99, 235,0.04)] text-var(--accent) text-[0.62rem] font-bold tracking-widest uppercase mb-6" style={{ fontFamily: "var(--font-sans)", color: "var(--accent)" }}>
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[rgba(37, 99, 235,0.15)] bg-[rgba(37, 99, 235,0.04)] text-var(--accent) text-[0.62rem] font-bold tracking-wider uppercase mb-6" style={{ fontFamily: "var(--font-sans)", color: "var(--accent)" }}>
               <Cpu size={11} />
               Core Capabilities
             </div>
@@ -41,7 +41,7 @@ export default function FeaturesPage() {
           </header>
 
           {/* Feature Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-32">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-32">
             {[
               {
                 i: Lock,
@@ -112,15 +112,15 @@ export default function FeaturesPage() {
                   </p>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="p-5 rounded-xl" style={{ background: "var(--bg-base)", border: "1px solid var(--border)" }}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                  <div className="p-7 rounded-xl" style={{ background: "var(--bg-base)", border: "1px solid var(--border)" }}>
                     <ShieldCheck className="text-var(--accent) mb-4" size={20} style={{ color: "var(--accent)" }} />
                     <h4 className="font-display text-base text-var(--text-primary) mb-2 font-semibold" style={{ fontSize: "1rem" }}>Edge Guards</h4>
                     <p className="text-xs text-var(--text-secondary) font-light leading-relaxed" style={{ fontSize: "0.8rem", lineHeight: 1.7 }}>
                       Global routing guards enforce authentication at the edge before data loads.
                     </p>
                   </div>
-                  <div className="p-5 rounded-xl" style={{ background: "var(--bg-base)", border: "1px solid var(--border)" }}>
+                  <div className="p-7 rounded-xl" style={{ background: "var(--bg-base)", border: "1px solid var(--border)" }}>
                     <Lock className="text-var(--accent) mb-4" size={20} style={{ color: "var(--accent)" }} />
                     <h4 className="font-display text-base text-var(--text-primary) mb-2 font-semibold" style={{ fontSize: "1rem" }}>JWT Integrity</h4>
                     <p className="text-xs text-var(--text-secondary) font-light leading-relaxed" style={{ fontSize: "0.8rem", lineHeight: 1.7 }}>
@@ -146,7 +146,7 @@ export default function FeaturesPage() {
             <h2 className="font-display text-4xl lg:text-5xl font-bold text-var(--text-primary) mb-8 leading-tight" style={{ fontSize: "clamp(2rem, 3.5vw, 2.8rem)", letterSpacing: "-0.03em" }}>
               Ready to experience <em className="italic" style={{ fontStyle: "italic", color: "var(--accent)" }}>Schollective?</em>
             </h2>
-            <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-8">
               <Link href="/signup" style={{ textDecoration: "none" }}>
                 <Button size="lg" className="px-10 py-4" style={{ borderRadius: "100px", padding: "1rem 2.5rem", background: "var(--accent)", color: "var(--bg-base)", fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase" }}>Get Started Free</Button>
               </Link>
@@ -161,7 +161,7 @@ export default function FeaturesPage() {
       {/* Footer */}
       <footer className="py-12 border-t text-center" style={{ borderTop: "1px solid var(--border)" }}>
         <div className="font-display text-xl text-var(--text-primary) mb-3 font-bold" style={{ fontSize: "1.2rem", letterSpacing: "-0.02em" }}>Schollective</div>
-        <p className="text-[0.62rem] text-var(--text-tertiary) uppercase tracking-widest font-bold" style={{ color: "var(--text-tertiary)" }}>
+        <p className="text-[0.62rem] text-var(--text-tertiary) uppercase tracking-wider font-bold" style={{ color: "var(--text-tertiary)" }}>
           Connecting Aspiration with Expertise Since 2025
         </p>
       </footer>
