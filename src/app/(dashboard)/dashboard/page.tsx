@@ -13,14 +13,14 @@ export const dynamic = "force-dynamic";
 function StatCard({ value, label, sub }: { value: string | number; label: string; sub: string }) {
   return (
     <div style={{
-      padding: "1.5rem",
+      padding: "2rem",
       border: "1px solid rgba(129, 140, 248, 0.08)",
       borderRadius: "14px",
       background: "rgba(129, 140, 248, 0.03)",
       display: "flex", flexDirection: "column", gap: "0.5rem",
     }}>
       <span className="font-display" style={{
-        fontSize: "2.4rem", fontWeight: 900, color: "#fafaf9",
+        fontSize: "2.8rem", fontWeight: 900, color: "#fafaf9",
         letterSpacing: "-0.04em", lineHeight: 1,
       }}>
         {value}
@@ -156,23 +156,23 @@ export default async function StudentDashboard() {
   const isEmpty       = totalRequests === 0;
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "3.5rem" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "8rem" }}>
 
       {/* ── Header ─────────────────────────────────────────────── */}
       <header style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
           <span style={{ width: "1.5rem", height: "1px", background: "rgba(250, 250, 249, 0.2)", display: "block" }} />
-          <span style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.38em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.3)", fontFamily: "var(--font-mono, monospace)" }}>
+          <span style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.42em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.3)", fontFamily: "var(--font-mono, monospace)" }}>
             Student Portal
           </span>
         </div>
         <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: "2rem", flexWrap: "wrap" }}>
-          <h1 className="font-display" style={{ fontSize: "clamp(2.4rem, 5vw, 3.8rem)", fontWeight: 900, color: "#fafaf9", letterSpacing: "-0.035em", lineHeight: 1.05 }}>
+          <h1 className="font-display" style={{ fontSize: "clamp(2.6rem, 5vw, 4rem)", fontWeight: 900, color: "#fafaf9", letterSpacing: "-0.035em", lineHeight: 1.05 }}>
             Welcome back,{" "}
             <em style={{ fontStyle: "italic", color: "rgba(250, 250, 249, 0.35)" }}>{displayName}</em>
           </h1>
         </div>
-        <p style={{ fontSize: "0.9rem", color: "rgba(250, 250, 249, 0.4)", fontWeight: 300, maxWidth: "42rem", lineHeight: 1.7, fontFamily: "var(--font-sans)", marginTop: "0.25rem" }}>
+        <p style={{ fontSize: "0.95rem", color: "rgba(250, 250, 249, 0.4)", fontWeight: 300, maxWidth: "42rem", lineHeight: 1.8, fontFamily: "var(--font-sans)", marginTop: "0.25rem" }}>
           Track your mentorship requests and active research dialogues below.
         </p>
       </header>
@@ -197,7 +197,7 @@ export default async function StudentDashboard() {
           <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
               <span style={{ width: "1rem", height: "1px", background: "rgba(250, 250, 249, 0.2)", display: "block" }} />
-              <h2 className="font-display" style={{ fontSize: "1rem", fontWeight: 700, color: "rgba(250, 250, 249, 0.75)", letterSpacing: "-0.02em" }}>
+              <h2 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "rgba(250, 250, 249, 0.75)", letterSpacing: "-0.025em" }}>
                 Quick Actions
               </h2>
             </div>
@@ -224,7 +224,7 @@ export default async function StudentDashboard() {
           <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
               <span style={{ width: "1rem", height: "1px", background: "rgba(250, 250, 249, 0.2)", display: "block" }} />
-              <h2 className="font-display" style={{ fontSize: "1rem", fontWeight: 700, color: "rgba(250, 250, 249, 0.75)", letterSpacing: "-0.02em" }}>
+              <h2 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "rgba(250, 250, 249, 0.75)", letterSpacing: "-0.025em" }}>
                 How It Works
               </h2>
             </div>
@@ -241,7 +241,7 @@ export default async function StudentDashboard() {
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
               <span style={{ width: "1rem", height: "1px", background: "rgba(250, 250, 249, 0.2)", display: "block" }} />
-              <h2 className="font-display" style={{ fontSize: "1.1rem", fontWeight: 700, color: "rgba(250, 250, 249, 0.85)", letterSpacing: "-0.02em" }}>
+              <h2 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "rgba(250, 250, 249, 0.85)", letterSpacing: "-0.025em" }}>
                 Your Threads
               </h2>
             </div>
@@ -287,7 +287,7 @@ export default async function StudentDashboard() {
                 <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
                     <span style={{ width: "1rem", height: "1px", background: "rgba(250, 250, 249, 0.2)", display: "block" }} />
-                    <h2 className="font-display" style={{ fontSize: "1rem", fontWeight: 700, color: "rgba(250, 250, 249, 0.5)", letterSpacing: "-0.02em" }}>
+                    <h2 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "rgba(250, 250, 249, 0.5)", letterSpacing: "-0.025em" }}>
                       Past Mentorships
                     </h2>
                   </div>

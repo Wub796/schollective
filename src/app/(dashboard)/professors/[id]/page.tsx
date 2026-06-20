@@ -45,7 +45,7 @@ export default async function ProfessorProfilePage({ params }: PageProps) {
   const hasActiveRequest = !!existingRequest;
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "3rem", maxWidth: "680px" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "5rem", maxWidth: "680px" }}>
 
       {/* Back */}
       <Link href="/professors" style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", textDecoration: "none", width: "fit-content" }}>
@@ -59,7 +59,7 @@ export default async function ProfessorProfilePage({ params }: PageProps) {
       <header style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
           <span style={{ width: "1.5rem", height: "1px", background: "rgba(250, 250, 249, 0.2)", display: "block" }} />
-          <span style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.38em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.3)", fontFamily: "var(--font-mono, monospace)" }}>
+          <span style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.42em", textTransform: "uppercase", color: "rgba(250, 250, 249, 0.3)", fontFamily: "var(--font-mono, monospace)" }}>
             Faculty Profile
           </span>
         </div>
@@ -76,7 +76,7 @@ export default async function ProfessorProfilePage({ params }: PageProps) {
           </div>
 
           <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
-            <h1 className="font-display" style={{ fontSize: "clamp(1.8rem, 4vw, 2.8rem)", fontWeight: 900, color: "#fafaf9", letterSpacing: "-0.035em", lineHeight: 1.05 }}>
+            <h1 className="font-display" style={{ fontSize: "clamp(2.4rem, 4vw, 3.2rem)", fontWeight: 900, color: "#fafaf9", letterSpacing: "-0.035em", lineHeight: 1.05 }}>
               Dr. {displayName} <em style={{ fontStyle: "italic", color: "rgba(250, 250, 249, 0.35)" }}>{professor.last_name}</em>
             </h1>
             <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap" }}>
@@ -149,7 +149,7 @@ export default async function ProfessorProfilePage({ params }: PageProps) {
           </div>
         ) : isAccepting ? (
           <Link href={`/request/new?prof_id=${professor.id}`} style={{ textDecoration: "none" }}>
-            <button className="btn-request" style={{ width: "100%", padding: "1.1rem 2rem", background: "#fafaf9", color: "#080c14", border: "none", borderRadius: "100px", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.28em", textTransform: "uppercase", cursor: "pointer", fontFamily: "var(--font-sans)", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}>
+            <button className="btn-request" style={{ width: "100%", padding: "1.15rem 2.5rem", background: "#fafaf9", color: "#080c14", border: "none", borderRadius: "100px", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.28em", textTransform: "uppercase", cursor: "pointer", fontFamily: "var(--font-sans)", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}>
               <Mail size={13} />
               Request Mentorship
             </button>
