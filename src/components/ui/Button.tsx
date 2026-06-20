@@ -11,22 +11,22 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const variants = {
       // Indigo fill — primary CTA
       primary:
-        "bg-[#818cf8] text-[#09090b] font-semibold " +
-        "shadow-[0_0_0_1px_rgba(129,140,248,0.3),0_4px_20px_rgba(129,140,248,0.20)] " +
+        "bg-blue-600 text-[var(--bg-base)] font-semibold " +
+        "shadow-[0_0_0_1px_rgba(37, 99, 235,0.3),0_4px_20px_rgba(37, 99, 235,0.20)] " +
         "hover:bg-[#9399f5] " +
-        "hover:shadow-[0_0_0_1px_rgba(129,140,248,0.55),0_8px_28px_rgba(129,140,248,0.4)] " +
+        "hover:shadow-[0_0_0_1px_rgba(37, 99, 235,0.55),0_8px_28px_rgba(37, 99, 235,0.4)] " +
         "hover:-translate-y-0.5",
       // Glass ghost — secondary actions
       ghost:
-        "bg-[rgba(17,17,19,0.6)] backdrop-blur-md text-[#a8b3cf] " +
-        "border border-[rgba(129,140,248,0.14)] " +
-        "hover:bg-[rgba(17,17,19,0.85)] hover:border-[rgba(129,140,248,0.3)] hover:text-[#fafaf9] " +
+        "bg-[rgba(17,17,19,0.6)] backdrop-blur-md text-slate-600 " +
+        "border border-[rgba(37, 99, 235,0.14)] " +
+        "hover:bg-[rgba(17,17,19,0.85)] hover:border-[rgba(37, 99, 235,0.3)] hover:text-slate-900 " +
         "hover:-translate-y-0.5",
       // Hairline outline — tertiary
       outline:
         "bg-transparent text-[#52525b] " +
-        "border border-[rgba(129,140,248,0.18)] " +
-        "hover:bg-[rgba(129,140,248,0.06)] hover:border-[rgba(129,140,248,0.4)] hover:text-[#818cf8] " +
+        "border border-[rgba(37, 99, 235,0.18)] " +
+        "hover:bg-[rgba(37, 99, 235,0.06)] hover:border-[rgba(37, 99, 235,0.4)] hover:text-blue-600 " +
         "hover:-translate-y-0.5",
     };
 
