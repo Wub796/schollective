@@ -25,7 +25,7 @@ function StatCard({ value, label, sub }: { value: string | number; label: string
       </span>
       <div>
         <div style={{ fontSize: "0.78rem", fontWeight: 600, color: "rgba(15, 23, 42, 0.6)", fontFamily: "var(--font-sans)" }}>{label}</div>
-        <div style={{ fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(37, 99, 235, 0.3)", fontFamily: "var(--font-mono, monospace)", marginTop: "0.2rem" }}>
+        <div style={{ fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(37, 99, 235, 0.3)", fontFamily: "var(--font-sans, monospace)", marginTop: "0.2rem" }}>
           {sub}
         </div>
       </div>
@@ -139,9 +139,9 @@ export default async function ProfessorDashboard() {
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
           <span style={{ width: "1.5rem", height: "1px", background: "rgba(15, 23, 42, 0.2)", display: "block" }} />
           <span style={{
-            fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.42em",
+            fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.2em",
             textTransform: "uppercase", color: "rgba(15, 23, 42, 0.3)",
-            fontFamily: "var(--font-mono, monospace)",
+            fontFamily: "var(--font-sans, monospace)",
           }}>
             Faculty Portal
           </span>
@@ -189,9 +189,9 @@ export default async function ProfessorDashboard() {
             </h2>
             <span style={{
               marginLeft: "auto",
-              fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.42em",
+              fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.2em",
               textTransform: "uppercase", color: "rgba(15, 23, 42, 0.25)",
-              fontFamily: "var(--font-mono, monospace)",
+              fontFamily: "var(--font-sans, monospace)",
             }}>
               {pendingRequests.length} pending
             </span>
@@ -225,9 +225,9 @@ export default async function ProfessorDashboard() {
             </h2>
             <span style={{
               marginLeft: "auto",
-              fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.42em",
+              fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.2em",
               textTransform: "uppercase", color: "rgba(15, 23, 42, 0.25)",
-              fontFamily: "var(--font-mono, monospace)",
+              fontFamily: "var(--font-sans, monospace)",
             }}>
               {activeThreads.length} active
             </span>
@@ -268,9 +268,9 @@ export default async function ProfessorDashboard() {
               </h2>
               <span style={{
                 marginLeft: "auto",
-                fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.42em",
+                fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.2em",
                 textTransform: "uppercase", color: "rgba(15, 23, 42, 0.15)",
-                fontFamily: "var(--font-mono, monospace)",
+                fontFamily: "var(--font-sans, monospace)",
               }}>
                 {closedRequests.length} closed
               </span>
