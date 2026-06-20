@@ -63,7 +63,7 @@ export default async function ProfStudentsPage() {
       <header style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
           <span style={{ width: "1.5rem", height: "1px", background: "rgba(15, 23, 42, 0.2)", display: "block" }} />
-          <span style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.42em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.3)", fontFamily: "var(--font-mono, monospace)" }}>
+          <span style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.3)", fontFamily: "var(--font-sans, monospace)" }}>
             Faculty Portal
           </span>
         </div>
@@ -94,7 +94,7 @@ export default async function ProfStudentsPage() {
               {value}
             </span>
             <div style={{ fontSize: "0.75rem", fontWeight: 600, color: "rgba(15, 23, 42, 0.65)", fontFamily: "var(--font-sans)" }}>{label}</div>
-            <div style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.22)", fontFamily: "var(--font-mono, monospace)" }}>{sub}</div>
+            <div style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.22)", fontFamily: "var(--font-sans, monospace)" }}>{sub}</div>
           </div>
         ))}
       </div>
@@ -146,7 +146,7 @@ export default async function ProfStudentsPage() {
             <h2 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "rgba(15, 23, 42, 0.85)", letterSpacing: "-0.025em" }}>
               Currently Mentoring
             </h2>
-            <span style={{ marginLeft: "auto", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.25)", fontFamily: "var(--font-mono, monospace)" }}>
+            <span style={{ marginLeft: "auto", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.25)", fontFamily: "var(--font-sans, monospace)" }}>
               {activeStudents.length} active
             </span>
           </div>
@@ -166,7 +166,7 @@ export default async function ProfStudentsPage() {
             <h2 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "rgba(15, 23, 42, 0.45)", letterSpacing: "-0.025em" }}>
               Alumni
             </h2>
-            <span style={{ marginLeft: "auto", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.15)", fontFamily: "var(--font-mono, monospace)" }}>
+            <span style={{ marginLeft: "auto", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.15)", fontFamily: "var(--font-sans, monospace)" }}>
               {pastStudents.length} completed
             </span>
           </div>
