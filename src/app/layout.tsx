@@ -3,6 +3,7 @@ import { Geist, Cormorant_Garamond } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
 import { CustomCursor } from "@/components/ui/CustomCursor";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const geist = Geist({
   subsets: ["latin"],
@@ -73,6 +74,9 @@ export default function RootLayout({
             },
           }}
         />
+
+        {/* ── Vercel Speed Insights ───────────────────────────── */}
+        <SpeedInsights />
       </body>
     </html>
   );
