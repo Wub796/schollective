@@ -36,7 +36,7 @@ function StatCard({
         <div style={{ fontSize: "0.78rem", fontWeight: 600, color: "rgba(15, 23, 42,0.7)", fontFamily: "var(--font-sans)" }}>
           {label}
         </div>
-        <div style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(15, 23, 42,0.22)", fontFamily: "var(--font-mono, monospace)", marginTop: "0.2rem" }}>
+        <div style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(15, 23, 42,0.22)", fontFamily: "var(--font-sans, monospace)", marginTop: "0.2rem" }}>
           {sub}
         </div>
       </div>
@@ -88,7 +88,7 @@ export default async function AdminDashboard() {
       <div style={{ marginBottom: "2.5rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", marginBottom: "0.75rem" }}>
           <span style={{ width: "1.25rem", height: "1px", background: "rgba(15, 23, 42,0.2)", display: "block" }} />
-          <span style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.42em", textTransform: "uppercase", color: "rgba(15, 23, 42,0.3)", fontFamily: "var(--font-mono, monospace)" }}>
+          <span style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(15, 23, 42,0.3)", fontFamily: "var(--font-sans, monospace)" }}>
             Internal Systems
           </span>
         </div>
@@ -119,7 +119,7 @@ export default async function AdminDashboard() {
           <h2 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "rgba(15, 23, 42,0.85)", letterSpacing: "-0.025em" }}>
             Verification Queue
           </h2>
-          <span style={{ marginLeft: "auto", fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.42em", textTransform: "uppercase", color: "rgba(15, 23, 42,0.25)", fontFamily: "var(--font-mono, monospace)" }}>
+          <span style={{ marginLeft: "auto", fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(15, 23, 42,0.25)", fontFamily: "var(--font-sans, monospace)" }}>
             {pendingProfessors?.length ?? 0} pending
           </span>
         </div>
