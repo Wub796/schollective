@@ -325,7 +325,7 @@ function Label({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex items-center gap-3 mb-6">
       <span className="block w-5 h-px flex-shrink-0" style={{ background: "rgba(37, 99, 235, 0.35)" }} />
-      <span className="font-mono uppercase text-blue-600" style={{ fontSize: "0.55rem", letterSpacing: "0.48em" }}>
+      <span className="font-sans uppercase text-blue-600" style={{ fontSize: "0.55rem", letterSpacing: "0.2em" }}>
         {children}
       </span>
     </div>
@@ -552,7 +552,7 @@ export default function LandingPage() {
                   style={{ animation: "ping 1.8s cubic-bezier(0,0,0.2,1) infinite" }} />
                 <span className="relative inline-flex rounded-full h-[6px] w-[6px] bg-blue-600" />
               </span>
-              <span className="font-mono uppercase" style={{ fontSize: "0.46rem", letterSpacing: "0.42em", color: "rgba(37, 99, 235,0.5)" }}>
+              <span className="font-sans uppercase" style={{ fontSize: "0.46rem", letterSpacing: "0.2em", color: "rgba(37, 99, 235,0.5)" }}>
                 Platform Active
               </span>
             </div>
@@ -566,7 +566,7 @@ export default function LandingPage() {
               className="flex items-center gap-2 mb-8"
             >
               <span className="w-1.5 h-1.5 rounded-full bg-blue-600" />
-              <span className="font-mono uppercase tracking-widest text-xs text-slate-900/60">
+              <span className="font-sans uppercase tracking-wider text-xs text-slate-900/60">
                 Used by 1,000+ students at Stanford, MIT, and beyond.
               </span>
             </motion.div>
@@ -600,8 +600,8 @@ export default function LandingPage() {
                 boxShadow: "0 24px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(15, 23, 42, 0.05)",
               }}
             >
-              <div className="flex-1 flex flex-col justify-center px-4 py-2 text-left">
-                <label className="font-mono uppercase text-[0.52rem] tracking-wider text-slate-600/60 mb-1">
+              <div className="flex-1 flex flex-col justify-center px-6 py-3 text-left">
+                <label className="font-sans uppercase text-[0.52rem] tracking-wider text-slate-600/60 mb-1">
                   Research Interest
                 </label>
                 <input
@@ -615,8 +615,8 @@ export default function LandingPage() {
 
               <div className="hidden md:block w-px bg-slate-100 my-3" />
 
-              <div className="flex-1 flex flex-col justify-center px-4 py-2 text-left">
-                <label className="font-mono uppercase text-[0.52rem] tracking-wider text-slate-600/60 mb-1">
+              <div className="flex-1 flex flex-col justify-center px-6 py-3 text-left">
+                <label className="font-sans uppercase text-[0.52rem] tracking-wider text-slate-600/60 mb-1">
                   University
                 </label>
                 <input
@@ -630,7 +630,7 @@ export default function LandingPage() {
 
               <button
                 type="submit"
-                className="group relative flex items-center justify-center rounded-full bg-blue-600 text-[var(--bg-base)] font-bold text-xs uppercase tracking-widest px-8 py-4 transition-transform duration-300 hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+                className="group relative flex items-center justify-center rounded-full bg-blue-600 text-[var(--bg-base)] font-bold text-xs uppercase tracking-wider px-8 py-4 transition-transform duration-300 hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
                 style={{ fontFamily: "var(--font-sans)", border: "none" }}
               >
                 <span>Search collective</span>
@@ -657,14 +657,14 @@ export default function LandingPage() {
               <span className="italic font-light text-slate-900/35">before finishing the first line.</span>
             </h2>
 
-            <div className="flex flex-col gap-5 text-left max-w-xl w-full mb-12">
+            <div className="flex flex-col gap-7 text-left max-w-xl w-full mb-12">
               {[
                 "Professors ignore generic, template-driven outreach.",
                 "Traditional cold emails lack structured academic context.",
                 "Unverified databases lead to wrong contacts and lost time."
               ].map((reason, i) => (
-                <div key={i} className="flex items-start gap-4 p-4 rounded-xl border border-slate-200 bg-slate-50">
-                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-400 text-xs font-bold font-mono">
+                <div key={i} className="flex items-start gap-8 p-8 rounded-xl border border-slate-200 bg-slate-50">
+                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-400 text-xs font-bold font-sans">
                     ✕
                   </span>
                   <span className="text-slate-600 text-sm leading-relaxed">{reason}</span>
@@ -678,7 +678,7 @@ export default function LandingPage() {
 
         {/* ══ PROOF STRIP ════════════════════════════════════════════════ */}
         <div className="js-fade border-y border-slate-200 py-12 bg-white shadow-xl">
-          <div className="max-w-[80rem] mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4 text-center">
+          <div className="max-w-[80rem] mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-8 text-center">
             {[
               { num: "250M+", label: "papers indexed" },
               { num: "1,000+", label: "universities" },
@@ -689,7 +689,7 @@ export default function LandingPage() {
                 <span className="font-display font-black text-3xl md:text-5xl text-slate-900 tracking-tight mb-2">
                   {stat.num}
                 </span>
-                <span className="font-mono text-[0.55rem] tracking-widest uppercase text-blue-600/70">
+                <span className="font-sans text-[0.55rem] tracking-wider uppercase text-blue-600/70">
                   {stat.label}
                 </span>
               </div>
@@ -710,12 +710,12 @@ export default function LandingPage() {
             <div className="glass-refraction" style={{ padding: "40px" }}>
               <div className="grid grid-cols-2 border-b border-slate-200 pb-6 mb-6">
                 <div className="pr-6">
-                  <span className="font-mono text-[0.68rem] font-bold tracking-widest text-slate-900/30 uppercase">
+                  <span className="font-sans text-[0.68rem] font-bold tracking-wider text-slate-900/30 uppercase">
                     Traditional Cold Databases
                   </span>
                 </div>
                 <div className="pl-6 border-l border-slate-200">
-                  <span className="font-mono text-[0.68rem] font-bold tracking-widest text-blue-600 uppercase">
+                  <span className="font-sans text-[0.68rem] font-bold tracking-wider text-blue-600 uppercase">
                     Schollective
                   </span>
                 </div>
@@ -736,12 +736,12 @@ export default function LandingPage() {
                 }
               ].map((row, i) => (
                 <div key={i} className="grid grid-cols-2 py-6 border-b border-slate-200 last:border-none">
-                  <div className="pr-6 flex gap-4 items-start">
-                    <span className="text-red-500 font-bold font-mono text-xs pt-1 select-none">✕</span>
+                  <div className="pr-6 flex gap-8 items-start">
+                    <span className="text-red-500 font-bold font-sans text-xs pt-1 select-none">✕</span>
                     <p className="text-slate-600 text-sm leading-relaxed">{row.bad}</p>
                   </div>
-                  <div className="pl-6 border-l border-slate-200 flex gap-4 items-start">
-                    <span className="text-blue-600 font-bold font-mono text-xs pt-1 select-none">✓</span>
+                  <div className="pl-6 border-l border-slate-200 flex gap-8 items-start">
+                    <span className="text-blue-600 font-bold font-sans text-xs pt-1 select-none">✓</span>
                     <p className="text-slate-900 text-sm leading-relaxed font-medium">{row.good}</p>
                   </div>
                 </div>
@@ -759,35 +759,35 @@ export default function LandingPage() {
           {/* Feature 01 */}
           <div className="js-fade max-w-[80rem] mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div className="flex flex-col items-start">
-              <span className="font-mono text-2xl text-blue-600/45 mb-4">01</span>
+              <span className="font-sans text-2xl text-blue-600/45 mb-4">01</span>
               <h3 className="font-display font-bold text-3xl md:text-4xl text-slate-900 tracking-tight mb-6">
                 Search any research interest.
               </h3>
               <p className="text-slate-600 leading-relaxed text-base mb-8 max-w-md">
                 Type what you care about: quantum computing, cognitive neuroscience, or climate policy. We surface top professors publishing in that exact space, ranked by impact.
               </p>
-              <Link href="/signup" className="font-mono text-xs uppercase tracking-widest text-blue-600 border-b border-blue-600/20 pb-1 hover:border-blue-600/80 transition-colors">
+              <Link href="/signup" className="font-sans text-xs uppercase tracking-wider text-blue-600 border-b border-blue-600/20 pb-1 hover:border-blue-600/80 transition-colors">
                 Try a search →
               </Link>
             </div>
 
             {/* Visual Mockup 01 */}
-            <div className="relative p-6 rounded-3xl border border-slate-200 bg-white shadow-xl shadow-2xl flex flex-col gap-4">
+            <div className="relative p-8 rounded-3xl border border-slate-200 bg-white shadow-xl shadow-2xl flex flex-col gap-8">
               <div className="flex items-center justify-between border-b border-slate-200 pb-4">
                 <div className="flex items-center gap-1.5">
                   <div className="w-2.5 h-2.5 rounded-full bg-red-500/40" />
                   <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/40" />
                   <div className="w-2.5 h-2.5 rounded-full bg-green-500/40" />
                 </div>
-                <span className="font-mono text-[0.55rem] text-slate-900/20">schollective.org/app</span>
+                <span className="font-sans text-[0.55rem] text-slate-900/20">schollective.org/app</span>
               </div>
 
               {/* Mock Input */}
               <div className="flex gap-2 p-2 rounded-xl bg-slate-50 border border-slate-200 items-center">
-                <span className="px-3 py-1.5 rounded-lg bg-blue-600/15 border border-blue-600/25 text-xs text-blue-600 font-medium">
+                <span className="px-5 py-2.5 rounded-lg bg-blue-600/15 border border-blue-600/25 text-xs text-blue-600 font-medium">
                   neuroscience
                 </span>
-                <span className="px-3 py-1.5 rounded-lg bg-slate-50 text-xs text-slate-600/60">
+                <span className="px-5 py-2.5 rounded-lg bg-slate-50 text-xs text-slate-600/60">
                   Harvard
                 </span>
               </div>
@@ -798,10 +798,10 @@ export default function LandingPage() {
                 { name: "Prof. James Miller", uni: "MIT Brain & Cognitive", tag1: "Neural Circuits", tag2: "AI" },
                 { name: "Dr. Aisha Patel", uni: "Stanford Neuroscience", tag1: "BCI", tag2: "Computation" }
               ].map((prof, i) => (
-                <div key={i} className="flex flex-col items-start p-4 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-50 transition-colors">
+                <div key={i} className="flex flex-col items-start p-8 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-50 transition-colors">
                   <div className="flex items-center justify-between w-full mb-1">
                     <span className="font-display font-medium text-sm text-slate-900">{prof.name}</span>
-                    <span className="font-mono text-[0.62rem] text-slate-600/45">{prof.uni}</span>
+                    <span className="font-sans text-[0.62rem] text-slate-600/45">{prof.uni}</span>
                   </div>
                   <div className="flex gap-1.5">
                     <span className="px-2 py-0.5 rounded-md bg-slate-50 text-[0.6rem] text-slate-600/60">{prof.tag1}</span>
@@ -815,27 +815,27 @@ export default function LandingPage() {
           {/* Feature 02 */}
           <div className="js-fade max-w-[80rem] mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             {/* Visual Mockup 02 (Left side for desktop layout) */}
-            <div className="order-2 lg:order-1 relative p-6 rounded-3xl border border-slate-200 bg-white shadow-xl shadow-2xl flex flex-col gap-4">
+            <div className="order-2 lg:order-1 relative p-8 rounded-3xl border border-slate-200 bg-white shadow-xl shadow-2xl flex flex-col gap-8">
               <div className="flex items-center justify-between border-b border-slate-200 pb-4">
                 <div className="flex items-center gap-1.5">
                   <div className="w-2.5 h-2.5 rounded-full bg-red-500/40" />
                   <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/40" />
                   <div className="w-2.5 h-2.5 rounded-full bg-green-500/40" />
                 </div>
-                <span className="font-mono text-[0.55rem] text-slate-900/20">schollective.org/app</span>
+                <span className="font-sans text-[0.55rem] text-slate-900/20">schollective.org/app</span>
               </div>
 
               {/* Research summary UI */}
-              <div className="p-5 rounded-2xl border border-blue-600/15 bg-blue-600/[0.01]">
+              <div className="p-7 rounded-2xl border border-blue-600/15 bg-blue-600/[0.01]">
                 <div className="flex items-center justify-between mb-3 border-b border-slate-200 pb-2">
                   <span className="font-display font-bold text-base text-slate-900">Dr. Emily Nakamura</span>
-                  <span className="px-2 py-0.5 rounded bg-blue-600/10 text-[0.58rem] text-blue-600 font-mono">2024 PAPER</span>
+                  <span className="px-2 py-0.5 rounded bg-blue-600/10 text-[0.58rem] text-blue-600 font-sans">2024 PAPER</span>
                 </div>
                 <p className="text-slate-600 text-xs leading-relaxed mb-4">
                   Studies how memories form and consolidate during sleep using fMRI. Recent work shows neural oscillation patterns predict next-day recall accuracy in elderly patients with early cognitive decline.
                 </p>
                 <div className="p-3 rounded-lg bg-blue-600/5 border border-blue-600/10">
-                  <span className="font-mono text-[0.52rem] uppercase text-blue-600 tracking-widest font-bold block mb-1">Key Finding</span>
+                  <span className="font-sans text-[0.52rem] uppercase text-blue-600 tracking-wider font-bold block mb-1">Key Finding</span>
                   <p className="text-slate-900 text-xs leading-relaxed">
                     Theta oscillations during REM sleep increased memory consolidation by 34%. Published 2024, first-author.
                   </p>
@@ -844,14 +844,14 @@ export default function LandingPage() {
             </div>
 
             <div className="order-1 lg:order-2 flex flex-col items-start">
-              <span className="font-mono text-2xl text-blue-600/45 mb-4">02</span>
+              <span className="font-sans text-2xl text-blue-600/45 mb-4">02</span>
               <h3 className="font-display font-bold text-3xl md:text-4xl text-slate-900 tracking-tight mb-6">
                 Understand their research in plain English.
               </h3>
               <p className="text-slate-600 leading-relaxed text-base mb-8 max-w-md">
                 Every professor profile has an AI-synthesized summary of their key findings, written so a high schooler or undergrad can understand it and reference it with precision. No more pretending to read 40-page papers.
               </p>
-              <Link href="/signup" className="font-mono text-xs uppercase tracking-widest text-blue-600 border-b border-blue-600/20 pb-1 hover:border-blue-600/80 transition-colors">
+              <Link href="/signup" className="font-sans text-xs uppercase tracking-wider text-blue-600 border-b border-blue-600/20 pb-1 hover:border-blue-600/80 transition-colors">
                 See an example →
               </Link>
             </div>
@@ -860,33 +860,33 @@ export default function LandingPage() {
           {/* Feature 03 */}
           <div className="js-fade max-w-[80rem] mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div className="flex flex-col items-start">
-              <span className="font-mono text-2xl text-blue-600/45 mb-4">03</span>
+              <span className="font-sans text-2xl text-blue-600/45 mb-4">03</span>
               <h3 className="font-display font-bold text-3xl md:text-4xl text-slate-900 tracking-tight mb-6">
                 Draft structured requests that get answered.
               </h3>
               <p className="text-slate-600 leading-relaxed text-base mb-8 max-w-md">
                 Our structured request model, co-designed with research faculty, guides you through describing your understanding, interests, and availability. No more guessing what professors want to hear.
               </p>
-              <Link href="/signup" className="font-mono text-xs uppercase tracking-widest text-blue-600 border-b border-blue-600/20 pb-1 hover:border-blue-600/80 transition-colors">
+              <Link href="/signup" className="font-sans text-xs uppercase tracking-wider text-blue-600 border-b border-blue-600/20 pb-1 hover:border-blue-600/80 transition-colors">
                 Try request flow →
               </Link>
             </div>
 
             {/* Visual Mockup 03 */}
-            <div className="relative p-6 rounded-3xl border border-slate-200 bg-white shadow-xl shadow-2xl flex flex-col gap-5">
+            <div className="relative p-8 rounded-3xl border border-slate-200 bg-white shadow-xl shadow-2xl flex flex-col gap-7">
               <div className="flex items-center justify-between border-b border-slate-200 pb-4">
                 <div className="flex items-center gap-1.5">
                   <div className="w-2.5 h-2.5 rounded-full bg-red-500/40" />
                   <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/40" />
                   <div className="w-2.5 h-2.5 rounded-full bg-green-500/40" />
                 </div>
-                <span className="font-mono text-[0.55rem] text-slate-900/20">schollective.org/editor</span>
+                <span className="font-sans text-[0.55rem] text-slate-900/20">schollective.org/editor</span>
               </div>
 
-              <div className="flex flex-col md:flex-row gap-6">
+              <div className="flex flex-col md:flex-row gap-8">
                 {/* Mock email draft */}
-                <div className="flex-1 p-4 rounded-xl border border-slate-200 bg-slate-50 flex flex-col gap-3">
-                  <span className="font-mono text-[0.5rem] text-slate-600/30 uppercase tracking-widest">STRUCTURED REQUEST FLOW</span>
+                <div className="flex-1 p-8 rounded-xl border border-slate-200 bg-slate-50 flex flex-col gap-3">
+                  <span className="font-sans text-[0.5rem] text-slate-600/30 uppercase tracking-wider">STRUCTURED REQUEST FLOW</span>
                   <div className="text-xs leading-relaxed text-slate-600/60">
                     <p className="mb-2 line-through text-red-400/80 decoration-[#ea580c] decoration-2">
                       I would love to join your lab next semester.
@@ -902,7 +902,7 @@ export default function LandingPage() {
                   <div className="p-2.5 rounded-lg border border-red-500/10 bg-red-500/[0.02] flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <span className="text-red-400 text-xs">✕</span>
-                      <span className="font-mono text-[0.62rem] text-red-400 tracking-wider">GENERIC REQUEST</span>
+                      <span className="font-sans text-[0.62rem] text-red-400 tracking-wider">GENERIC REQUEST</span>
                     </div>
                     <span className="text-[0.55rem] text-red-400/70">Refine</span>
                   </div>
@@ -910,14 +910,14 @@ export default function LandingPage() {
                   <div className="p-2.5 rounded-lg border border-green-500/10 bg-green-500/[0.02] flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <span className="text-green-400 text-xs">✓</span>
-                      <span className="font-mono text-[0.62rem] text-green-400 tracking-wider">CITES WORK DIRECTLY</span>
+                      <span className="font-sans text-[0.62rem] text-green-400 tracking-wider">CITES WORK DIRECTLY</span>
                     </div>
                   </div>
 
                   <div className="p-2.5 rounded-lg border border-green-500/10 bg-green-500/[0.02] flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <span className="text-green-400 text-xs">✓</span>
-                      <span className="font-mono text-[0.62rem] text-green-400 tracking-wider">STRUCTURED CONTEXT</span>
+                      <span className="font-sans text-[0.62rem] text-green-400 tracking-wider">STRUCTURED CONTEXT</span>
                     </div>
                   </div>
                 </div>
@@ -964,15 +964,15 @@ export default function LandingPage() {
                   { initial: "RP", text: "Endorse this format 💯. If a student request has real context and specific questions, I always answer it.", author: "Research Professor" },
                   { initial: "SU", text: "First time I've gotten actual structured feedback on my academic outreach.", author: "Student user" }
                 ].map((item, i) => (
-                  <article key={i} className="flex-shrink-0 w-[360px] p-6 rounded-2xl border border-slate-200 bg-slate-50 flex flex-col justify-between">
+                  <article key={i} className="flex-shrink-0 w-[360px] p-8 rounded-2xl border border-slate-200 bg-slate-50 flex flex-col justify-between">
                     <div className="flex items-center justify-between mb-4">
-                      <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center font-mono text-xs text-slate-600">
+                      <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center font-sans text-xs text-slate-600">
                         {item.initial}
                       </div>
                       <span className="font-display text-2xl text-blue-600/20">“</span>
                     </div>
                     <p className="text-sm text-slate-600 leading-relaxed mb-6 font-light">{item.text}</p>
-                    <span className="font-mono text-[0.62rem] text-slate-900/50 uppercase tracking-wider">{item.author}</span>
+                    <span className="font-sans text-[0.62rem] text-slate-900/50 uppercase tracking-wider">{item.author}</span>
                   </article>
                 ))}
               </div>
@@ -986,15 +986,15 @@ export default function LandingPage() {
                   { initial: "RP", text: "Endorse this format 💯. If a student request has real context and specific questions, I always answer it.", author: "Research Professor" },
                   { initial: "SU", text: "First time I've gotten actual structured feedback on my academic outreach.", author: "Student user" }
                 ].map((item, i) => (
-                  <article key={`dup-${i}`} className="flex-shrink-0 w-[360px] p-6 rounded-2xl border border-slate-200 bg-slate-50 flex flex-col justify-between">
+                  <article key={`dup-${i}`} className="flex-shrink-0 w-[360px] p-8 rounded-2xl border border-slate-200 bg-slate-50 flex flex-col justify-between">
                     <div className="flex items-center justify-between mb-4">
-                      <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center font-mono text-xs text-slate-600">
+                      <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center font-sans text-xs text-slate-600">
                         {item.initial}
                       </div>
                       <span className="font-display text-2xl text-blue-600/20">“</span>
                     </div>
                     <p className="text-sm text-slate-600 leading-relaxed mb-6 font-light">{item.text}</p>
-                    <span className="font-mono text-[0.62rem] text-slate-900/50 uppercase tracking-wider">{item.author}</span>
+                    <span className="font-sans text-[0.62rem] text-slate-900/50 uppercase tracking-wider">{item.author}</span>
                   </article>
                 ))}
               </div>
@@ -1008,7 +1008,7 @@ export default function LandingPage() {
           <div className="flex items-start justify-between mb-auto">
             <FadeIn><Label>Ready?</Label></FadeIn>
             <FadeIn delay={0.1}>
-              <span className="font-mono uppercase"
+              <span className="font-sans uppercase"
                 style={{ fontSize: "0.48rem", letterSpacing: "0.38em", color: "rgba(15, 23, 42, 0.45)", marginTop: "0.1rem" }}>
                 Schollective, Inc. © 2026
               </span>
@@ -1051,7 +1051,7 @@ export default function LandingPage() {
 
             <FadeIn delay={0.1}>
               <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-                <span className="font-mono uppercase" style={{ fontSize: "0.55rem", letterSpacing: "0.35em", color: "rgba(37, 99, 235, 0.6)" }}>
+                <span className="font-sans uppercase" style={{ fontSize: "0.55rem", letterSpacing: "0.35em", color: "rgba(37, 99, 235, 0.6)" }}>
                   Quick Links
                 </span>
                 <nav style={{ display: "flex", flexDirection: "column", gap: "0.85rem" }}>
@@ -1076,7 +1076,7 @@ export default function LandingPage() {
 
             <FadeIn delay={0.2}>
               <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-                <span className="font-mono uppercase" style={{ fontSize: "0.55rem", letterSpacing: "0.35em", color: "rgba(37, 99, 235, 0.6)" }}>
+                <span className="font-sans uppercase" style={{ fontSize: "0.55rem", letterSpacing: "0.35em", color: "rgba(37, 99, 235, 0.6)" }}>
                   Contact Us
                 </span>
                 <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
@@ -1108,19 +1108,19 @@ export default function LandingPage() {
 
           <div style={{ maxWidth: "80rem", margin: "0 auto", padding: "1.5rem 2.5rem", display: "flex", alignItems: "center", justifyItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "0.75rem" }}>
             <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
-              <span className="font-mono" style={{ fontSize: "0.72rem", color: "rgba(15, 23, 42, 0.7)", letterSpacing: "0.02em" }}>
+              <span className="font-sans" style={{ fontSize: "0.72rem", color: "rgba(15, 23, 42, 0.7)", letterSpacing: "0.02em" }}>
                 © 2026 Schollective, Inc. All rights reserved.
               </span>
-              <span className="font-mono" style={{ fontSize: "0.68rem", color: "rgba(15, 23, 42, 0.5)", letterSpacing: "0.02em" }}>
+              <span className="font-sans" style={{ fontSize: "0.68rem", color: "rgba(15, 23, 42, 0.5)", letterSpacing: "0.02em" }}>
                 Not a substitute for official academic advising.
               </span>
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-              <span className="font-mono" style={{ fontSize: "0.68rem", color: "rgba(15, 23, 42, 0.55)", letterSpacing: "0.04em" }}>Built with</span>
+              <span className="font-sans" style={{ fontSize: "0.68rem", color: "rgba(15, 23, 42, 0.55)", letterSpacing: "0.04em" }}>Built with</span>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ opacity: 0.55 }}>
                 <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" stroke="rgba(37, 99, 235, 0.7)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-              <span className="font-mono" style={{ fontSize: "0.68rem", color: "rgba(15, 23, 42, 0.55)", letterSpacing: "0.04em" }}>for students seeking knowledge</span>
+              <span className="font-sans" style={{ fontSize: "0.68rem", color: "rgba(15, 23, 42, 0.55)", letterSpacing: "0.04em" }}>for students seeking knowledge</span>
             </div>
           </div>
         </footer>
