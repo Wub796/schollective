@@ -178,7 +178,7 @@ export function ChatThread({
                   fontSize: "0.52rem", color: "rgba(15, 23, 42, 0.45)",
                   marginTop: "0.3rem", padding: "0 0.2rem",
                   fontWeight: 600, textTransform: "uppercase",
-                  letterSpacing: "0.12em", fontFamily: "var(--font-mono, monospace)",
+                  letterSpacing: "0.12em", fontFamily: "var(--font-sans, monospace)",
                 }}>
                   {new Date(msg.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                 </span>

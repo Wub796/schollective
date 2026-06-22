@@ -205,7 +205,7 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
           letterSpacing: "0.2em",
           textTransform: "uppercase",
           color: active ? "rgba(15, 23, 42,0.55)" : "rgba(15, 23, 42,0.2)",
-          fontFamily: "var(--font-mono, monospace)",
+          fontFamily: "var(--font-sans, monospace)",
           cursor: "pointer",
           userSelect: "none",
           whiteSpace: "nowrap",
@@ -296,7 +296,7 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
       </div>
 
       {/* ── Results count ── */}
-      <div style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(15, 23, 42,0.2)", fontFamily: "var(--font-mono, monospace)" }}>
+      <div style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(15, 23, 42,0.2)", fontFamily: "var(--font-sans, monospace)" }}>
         {filtered.length} {filtered.length === 1 ? "account" : "accounts"} found
       </div>
 
@@ -308,10 +308,10 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
               <tr style={{ borderBottom: "1px solid rgba(15, 23, 42,0.05)" }}>
                 <SortTh col="name"   label="Account" />
                 <SortTh col="role"   label="Role" />
-                <th style={{ padding: "0.85rem 1.25rem", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(15, 23, 42,0.2)", fontFamily: "var(--font-mono, monospace)", whiteSpace: "nowrap" }}>Status</th>
-                <th style={{ padding: "0.85rem 1.25rem", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(15, 23, 42,0.2)", fontFamily: "var(--font-mono, monospace)", whiteSpace: "nowrap" }}>Institution</th>
+                <th style={{ padding: "0.85rem 1.25rem", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(15, 23, 42,0.2)", fontFamily: "var(--font-sans, monospace)", whiteSpace: "nowrap" }}>Status</th>
+                <th style={{ padding: "0.85rem 1.25rem", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(15, 23, 42,0.2)", fontFamily: "var(--font-sans, monospace)", whiteSpace: "nowrap" }}>Institution</th>
                 <SortTh col="joined" label="Joined" />
-                <th style={{ padding: "0.85rem 1.25rem", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(15, 23, 42,0.2)", fontFamily: "var(--font-mono, monospace)", textAlign: "right", whiteSpace: "nowrap" }}>Actions</th>
+                <th style={{ padding: "0.85rem 1.25rem", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(15, 23, 42,0.2)", fontFamily: "var(--font-sans, monospace)", textAlign: "right", whiteSpace: "nowrap" }}>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -402,7 +402,7 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
 
                     {/* Joined */}
                     <td style={{ padding: "1rem 1.25rem" }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: "0.35rem", fontSize: "0.6rem", color: "rgba(15, 23, 42,0.3)", fontFamily: "var(--font-mono, monospace)" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.35rem", fontSize: "0.6rem", color: "rgba(15, 23, 42,0.3)", fontFamily: "var(--font-sans, monospace)" }}>
                         <Calendar size={9} />
                         {formatDate(u.created_at)}
                       </div>
@@ -553,7 +553,7 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
                     {u.institution}
                   </span>
                 )}
-                <span style={{ display: "flex", alignItems: "center", gap: "0.3rem", fontSize: "0.6rem", color: "rgba(15, 23, 42,0.25)", fontFamily: "var(--font-mono, monospace)" }}>
+                <span style={{ display: "flex", alignItems: "center", gap: "0.3rem", fontSize: "0.6rem", color: "rgba(15, 23, 42,0.25)", fontFamily: "var(--font-sans, monospace)" }}>
                   <Calendar size={9} />
                   {formatDate(u.created_at)}
                 </span>
