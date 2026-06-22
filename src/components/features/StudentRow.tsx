@@ -71,7 +71,7 @@ export function StudentRow({ req, status }: { req: any; status: "active" | "clos
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexShrink: 0 }}>
           <div style={{ display: "flex", alignItems: "center", gap: "0.35rem" }}>
             <span style={{ width: "5px", height: "5px", borderRadius: "50%", background: isActive ? "rgba(120,220,120,0.8)" : "rgba(15, 23, 42, 0.2)" }} />
-            <span style={{ fontSize: "0.48rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: isActive ? "rgba(15, 23, 42, 0.4)" : "rgba(15, 23, 42, 0.18)", fontFamily: "var(--font-mono, monospace)" }}>
+            <span style={{ fontSize: "0.48rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: isActive ? "rgba(15, 23, 42, 0.4)" : "rgba(15, 23, 42, 0.18)", fontFamily: "var(--font-sans, monospace)" }}>
               {isActive ? "Active" : "Closed"}
             </span>
           </div>
