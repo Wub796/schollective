@@ -109,7 +109,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           <span
             style={{
               fontSize: "0.42rem", fontWeight: 700, letterSpacing: "0.38em", textTransform: "uppercase",
-              color: "rgba(15, 23, 42,0.3)", fontFamily: "var(--font-mono, monospace)",
+              color: "rgba(15, 23, 42,0.3)", fontFamily: "var(--font-sans, monospace)",
             }}
           >
             Admin Environment
@@ -121,7 +121,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
       <div
         style={{
           fontSize: "0.42rem", fontWeight: 700, letterSpacing: "0.35em", textTransform: "uppercase",
-          color: "rgba(15, 23, 42,0.2)", fontFamily: "var(--font-mono, monospace)",
+          color: "rgba(15, 23, 42,0.2)", fontFamily: "var(--font-sans, monospace)",
           padding: "0 0.5rem", marginBottom: "0.35rem",
         }}
       >
@@ -231,7 +231,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             padding: "1.25rem 3vw",
             display: "flex", justifyContent: "space-between", alignItems: "center",
             fontSize: "0.42rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase",
-            color: "rgba(15, 23, 42,0.15)", fontFamily: "var(--font-mono, monospace)",
+            color: "rgba(15, 23, 42,0.15)", fontFamily: "var(--font-sans, monospace)",
           }}
         >
           <span>Schollective Admin Engine v1.0</span>

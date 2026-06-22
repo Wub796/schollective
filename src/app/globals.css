@@ -35,13 +35,13 @@
   --text-tertiary:  #64748b;  /* slate 500                     */
 
   /* Bright corporate blue accent */
-  --accent:       #2563eb;
-  --accent-dim:   rgba(37, 99, 235, 0.1);
-  --accent-glow:  rgba(37, 99, 235, 0.2);
+  --accent:       #1d4ed8;
+  --accent-dim:   rgba(29, 78, 216, 0.08);
+  --accent-glow:  rgba(29, 78, 216, 0.15);
 
   /* Vivid blue mid */
-  --accent-blue:     #3b82f6;
-  --accent-blue-dim: rgba(59, 130, 246, 0.15);
+  --accent-blue:     #2563eb;
+  --accent-blue-dim: rgba(37, 99, 235, 0.12);
 
   --border:       #e2e8f0;
   --border-hover: #cbd5e1;
@@ -153,9 +153,10 @@ body {
   display: flex;
   align-items: center;
   gap: 1rem;
-  font-family: 'DM Mono', 'Courier New', monospace;
-  font-size: 0.55rem;
-  letter-spacing: 0.4em;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--text-tertiary);
 }

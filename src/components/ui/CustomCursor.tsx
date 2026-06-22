@@ -44,8 +44,9 @@ function SpotlightBlob({
 
   return (
     <motion.div
-      className="absolute bg-indigo-500/10 pointer-events-none rounded-full blur-[80px]"
+      className="absolute pointer-events-none rounded-full blur-[80px]"
       style={{
+        background: "var(--accent-glow)",
         x,
         y,
         translateX: "-50%",
@@ -76,13 +77,13 @@ function PrecisionDot({
 
   return (
     <motion.div
-      className="absolute bg-[#fafaf9] pointer-events-none"
+      className="absolute pointer-events-none"
       style={{
+        background: "var(--accent)",
         x: sourceX,
         y: sourceY,
         translateX: "-50%",
         translateY: "-50%",
-        mixBlendMode: "difference",
         zIndex: 2,
       }}
       animate={{
@@ -159,8 +160,6 @@ function CursorRing({
           y,
           translateX: "-50%",
           translateY: "-50%",
-          // Link uses difference blend; button uses normal so accent colour shows
-          mixBlendMode: isButton ? "normal" : "difference",
           zIndex: 1,
         }}
         animate={{
@@ -196,8 +195,8 @@ function CursorRing({
               translateX: "-50%",
               translateY: "-50%",
               border: isButton
-                ? "1px solid rgba(37, 99, 235, 0.25)"
-                : "1px solid rgba(15, 23, 42, 0.2)",
+                ? "1px solid var(--accent-glow)"
+                : "1px solid var(--border)",
               borderRadius: borderRadius,
               zIndex: 1,
             }}
