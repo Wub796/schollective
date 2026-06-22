@@ -245,7 +245,7 @@ function OnboardingContent() {
               style={{
                 flex: 1, padding: "0.65rem 1rem", borderRadius: "100px",
                 border: "none",
-                background: role === r ? "#818cf8" : "transparent",
+                background: role === r ? "var(--accent)" : "transparent",
                 color: role === r ? "var(--bg-base)" : "rgba(168, 179, 207, 0.5)",
                 fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.2em",
                 textTransform: "uppercase", cursor: "pointer",
@@ -327,7 +327,7 @@ function OnboardingContent() {
               whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }}
               style={{
                 width: "100%", padding: "1.15rem 2.5rem",
-                background: "#818cf8", color: "var(--bg-base)",
+                background: "var(--accent)", color: "var(--bg-base)",
                 border: "none", borderRadius: "100px",
                 fontSize: "0.6rem", fontWeight: 700,
                 letterSpacing: "0.28em", textTransform: "uppercase",

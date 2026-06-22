@@ -148,7 +148,7 @@ function ResetPasswordContent() {
               <Field id="email" name="email" type="email" label="Institutional Email" placeholder="name@university.edu" required />
               {error && <p style={{ fontSize: "0.78rem", color: "#ff7070", fontFamily: "var(--font-sans)" }}>{error}</p>}
               <motion.button type="submit" disabled={loading} whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }}
-                style={{ width: "100%", padding: "1.15rem 2.5rem", background: "#fafaf9", color: "#080c14", border: "none", borderRadius: "100px", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.28em", textTransform: "uppercase", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.6 : 1, fontFamily: "var(--font-sans)" }}
+                style={{ width: "100%", padding: "1.15rem 2.5rem", background: "var(--text-primary)", color: "#080c14", border: "none", borderRadius: "100px", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.28em", textTransform: "uppercase", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.6 : 1, fontFamily: "var(--font-sans)" }}
               >
                 {loading ? "Sending…" : "Send Reset Link"}
               </motion.button>
@@ -183,7 +183,7 @@ function ResetPasswordContent() {
               <Field id="password2" name="password2" type="password" label="Confirm Password"  placeholder="Repeat password"   required />
               {error && <p style={{ fontSize: "0.78rem", color: "#ff7070", fontFamily: "var(--font-sans)" }}>{error}</p>}
               <motion.button type="submit" disabled={loading} whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }}
-                style={{ width: "100%", padding: "1.15rem 2.5rem", background: "#fafaf9", color: "#080c14", border: "none", borderRadius: "100px", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.28em", textTransform: "uppercase", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.6 : 1, fontFamily: "var(--font-sans)" }}
+                style={{ width: "100%", padding: "1.15rem 2.5rem", background: "var(--text-primary)", color: "#080c14", border: "none", borderRadius: "100px", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.28em", textTransform: "uppercase", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.6 : 1, fontFamily: "var(--font-sans)" }}
               >
                 {loading ? "Updating…" : "Set New Password"}
               </motion.button>
