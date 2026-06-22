@@ -7,7 +7,7 @@ const Select = React.forwardRef<HTMLSelectElement, React.SelectHTMLAttributes<HT
       <div className="relative w-full">
         <select
           className={cn(
-            "flex h-11 w-full rounded-xl px-4 py-2 text-sm transition-all appearance-none cursor-pointer",
+            "flex h-11 w-full rounded-xl px-6 py-3 text-sm transition-all appearance-none cursor-pointer",
             "bg-[rgba(15, 23, 42, 0.03)] border border-[rgba(15, 23, 42, 0.07)]",
             "text-[#f2f2f0]",
             "focus:outline-none focus:border-[rgba(232,232,230,0.4)] focus:bg-[rgba(15, 23, 42, 0.05)]",
