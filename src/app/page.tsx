@@ -57,7 +57,7 @@ function PageLoader({ done }: { done: boolean }) {
                   <div key={i} style={{
                     position: "absolute", width: "100%", height: "100%",
                     display: "flex", alignItems: "center", justifyContent: "center",
-                    background: i % 2 === 0 ? "#818cf8" : "rgba(37, 99, 235,0.15)",
+                    background: i % 2 === 0 ? "var(--accent)" : "rgba(37, 99, 235,0.15)",
                     border: "1px solid rgba(37, 99, 235,0.3)",
                     fontSize: "1.8rem", fontWeight: 900, color: "var(--text-primary)",
                     transform: `rotate${Object.keys(faces)[0].replace("rotate", "") as string}(${Object.values(faces)[0]}) translateZ(${Object.values(faces)[1]})`,
@@ -84,7 +84,7 @@ function PageLoader({ done }: { done: boolean }) {
               initial={{ scaleX: 0, originX: 0 }}
               animate={{ scaleX: 1 }}
               transition={{ duration: 1.1, ease: [0.19, 1, 0.22, 1] }}
-              style={{ position: "absolute", inset: 0, background: "#818cf8" }}
+              style={{ position: "absolute", inset: 0, background: "var(--accent)" }}
             />
           </motion.div>
         </motion.div>
@@ -147,10 +147,10 @@ function CTAButton({ href, label, variant = "default", className = "", onClick }
       style={{
         textDecoration: "none",
         padding: isIndigo ? "1.1rem 2.5rem" : "0.8rem 2rem",
-        color: isIndigo ? "#818cf8" : "#fafaf9",
+        color: isIndigo ? "var(--accent)" : "var(--text-primary)",
         border: isIndigo
-          ? "1px solid rgba(37, 99, 235,0.5)"
-          : "1px solid rgba(15, 23, 42,0.3)",
+          ? "1px solid var(--accent)"
+          : "1px solid var(--border-focus)",
         overflow: "visible",
         position: "relative",
         lineHeight: 1,
@@ -182,7 +182,7 @@ function CTAButton({ href, label, variant = "default", className = "", onClick }
       {isIndigo && (
         <span
           className="absolute inset-0 rounded-full translate-y-[102%] group-hover:translate-y-0 transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] pointer-events-none"
-          style={{ background: "#818cf8", zIndex: 0 }}
+          style={{ background: "var(--accent)", zIndex: 0 }}
         />
       )}
 
@@ -208,7 +208,7 @@ function CTAButton({ href, label, variant = "default", className = "", onClick }
                 fontWeight: 600,
                 letterSpacing: isIndigo ? "0.15em" : "0.05em",
                 textTransform: "uppercase",
-                color: isIndigo ? "#818cf8" : "#fafaf9",
+                color: isIndigo ? "var(--accent)" : "var(--text-primary)",
               }}
             >
               {ch === " " ? "\u00A0" : ch}
@@ -229,7 +229,7 @@ function CTAButton({ href, label, variant = "default", className = "", onClick }
                 fontWeight: 400,
                 fontSize: isIndigo ? "0.72rem" : "0.8rem",
                 letterSpacing: isIndigo ? "0.12em" : "0.01em",
-                color: isIndigo ? "var(--bg-base)" : "#fafaf9",
+                color: isIndigo ? "var(--bg-base)" : "var(--text-primary)",
               }}
             >
               {ch === " " ? "\u00A0" : ch}
@@ -257,7 +257,7 @@ function CTAButton({ href, label, variant = "default", className = "", onClick }
           position: "relative",
           zIndex: 3,
           fontSize: "0.75rem",
-          color: isIndigo ? "#818cf8" : "#fafaf9",
+          color: isIndigo ? "var(--accent)" : "var(--text-primary)",
         }}
       >
         →
@@ -559,17 +559,7 @@ export default function LandingPage() {
           </motion.div>
 
           <div className="relative z-10 w-full max-w-[80rem] mx-auto px-6 md:px-12 lg:px-16 pt-24 pb-16 flex flex-col items-start">
-            {/* Eyebrow */}
-            <motion.div
-              initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 1.3, ease: EASE, delay: 0.8 }}
-              className="flex items-center gap-2 mb-8"
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-blue-600" />
-              <span className="font-sans uppercase tracking-wider text-xs text-slate-900/60">
-                Used by 1,000+ students at Stanford, MIT, and beyond.
-              </span>
-            </motion.div>
+
 
             {/* Headline */}
             <h1 className="font-display font-black text-slate-900 mb-6 select-none"
@@ -609,7 +599,7 @@ export default function LandingPage() {
                   placeholder="e.g. machine learning"
                   value={interest}
                   onChange={(e) => setInterest(e.target.value)}
-                  className="bg-transparent border-none outline-none font-sans text-sm text-slate-900 placeholder-[#fafaf9]/25 w-full"
+                  className="bg-transparent border-none outline-none font-sans text-sm text-slate-900 placeholder-slate-400 w-full"
                 />
               </div>
 
@@ -624,7 +614,7 @@ export default function LandingPage() {
                   placeholder="e.g. MIT, Stanford..."
                   value={university}
                   onChange={(e) => setUniversity(e.target.value)}
-                  className="bg-transparent border-none outline-none font-sans text-sm text-slate-900 placeholder-[#fafaf9]/25 w-full"
+                  className="bg-transparent border-none outline-none font-sans text-sm text-slate-900 placeholder-slate-400 w-full"
                 />
               </div>
 
@@ -641,7 +631,7 @@ export default function LandingPage() {
           {/* Scroll cue */}
           <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5 opacity-40 animate-pulse">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M6 9l6 6 6-6" stroke="#818cf8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M6 9l6 6 6-6" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </div>
         </section>
@@ -1065,7 +1055,7 @@ export default function LandingPage() {
                   ].map((link) => (
                     <Link key={link.label} href={link.href}
                       style={{ fontSize: "0.88rem", color: "rgba(15, 23, 42, 0.7)", transition: "color 0.2s ease", display: "inline-block" }}
-                      onMouseEnter={(e) => ((e.currentTarget as HTMLAnchorElement).style.color = "#818cf8")}
+                      onMouseEnter={(e) => ((e.currentTarget as HTMLAnchorElement).style.color = "var(--accent)")}
                       onMouseLeave={(e) => ((e.currentTarget as HTMLAnchorElement).style.color = "rgba(168, 179, 207, 0.7)")}>
                       {link.label}
                     </Link>
@@ -1081,9 +1071,9 @@ export default function LandingPage() {
                 </span>
                 <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                   {[
-                    { icon: <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="#818cf8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />, extra: <polyline points="22,6 12,13 2,6" stroke="#818cf8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />, text: "schollective.corp@gmail.com", href: "mailto:schollective.corp@gmail.com" },
-                    { icon: <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" stroke="#818cf8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />, extra: <polyline points="9,22 9,12 15,12 15,22" stroke="#818cf8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />, text: "Serving schools worldwide" },
-                    { icon: <circle cx="12" cy="12" r="10" stroke="#818cf8" strokeWidth="1.5" />, extra: <polyline points="12,6 12,12 16,14" stroke="#818cf8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />, text: "Free to use — always" },
+                    { icon: <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />, extra: <polyline points="22,6 12,13 2,6" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />, text: "schollective.corp@gmail.com", href: "mailto:schollective.corp@gmail.com" },
+                    { icon: <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />, extra: <polyline points="9,22 9,12 15,12 15,22" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />, text: "Serving schools worldwide" },
+                    { icon: <circle cx="12" cy="12" r="10" stroke="var(--accent)" strokeWidth="1.5" />, extra: <polyline points="12,6 12,12 16,14" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />, text: "Free to use — always" },
                   ].map((item, i) => {
                     const inner = (
                       <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
