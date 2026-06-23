@@ -5,10 +5,10 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { createClient } from "@/utils/supabase/client";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/Button";
 import { InstitutionInput } from "@/components/ui/InstitutionInput";
 
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
-
 const fadeUp = {
   hidden: { opacity: 0, y: 22 },
   show:   { opacity: 1, y: 0, transition: { duration: 0.9, ease: EASE } },
@@ -17,6 +17,8 @@ const stagger = {
   hidden: {},
   show:   { transition: { staggerChildren: 0.09, delayChildren: 0.05 } },
 };
+
+
 
 type Role = "student" | "professor";
 
@@ -240,20 +242,14 @@ function OnboardingContent() {
           borderRadius: "100px", border: "1px solid rgba(15, 23, 42, 0.07)",
         }}>
           {(["student", "professor"] as Role[]).map((r) => (
-            <button
+            <Button
               key={r} type="button" onClick={() => setRole(r)}
-              style={{
-                flex: 1, padding: "0.65rem 1rem", borderRadius: "100px",
-                border: "none",
-                background: role === r ? "var(--accent)" : "transparent",
-                color: role === r ? "var(--bg-base)" : "rgba(168, 179, 207, 0.5)",
-                fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.2em",
-                textTransform: "uppercase", cursor: "pointer",
-                transition: "all 0.25s", fontFamily: "var(--font-sans)",
-              }}
+              variant={role === r ? "primary" : "ghost"}
+              size="md"
+              className={`flex-1 ${role !== r && 'border-transparent text-slate-400'}`}
             >
               {r === "student" ? "Student" : "Professor"}
-            </button>
+            </Button>
           ))}
         </motion.div>
 
@@ -322,22 +318,14 @@ function OnboardingContent() {
               </motion.p>
             )}
 
-            <motion.button
+            <Button
               type="submit" disabled={loading}
-              whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }}
-              style={{
-                width: "100%", padding: "1.15rem 2.5rem",
-                background: "var(--accent)", color: "var(--bg-base)",
-                border: "none", borderRadius: "100px",
-                fontSize: "0.6rem", fontWeight: 700,
-                letterSpacing: "0.28em", textTransform: "uppercase",
-                cursor: loading ? "not-allowed" : "pointer",
-                opacity: loading ? 0.6 : 1,
-                transition: "opacity 0.2s", fontFamily: "var(--font-sans)",
-              }}
+              variant="primary"
+              size="lg"
+              className="w-full uppercase tracking-widest text-[0.6rem]"
             >
               {loading ? "Setting up your account…" : "Enter the Collective →"}
-            </motion.button>
+            </Button>
           </motion.div>
         </form>
       </motion.div>
