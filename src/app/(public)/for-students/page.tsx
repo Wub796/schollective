@@ -19,9 +19,9 @@ function FadeIn({ children, delay = 0, className = "" }: { children: React.React
 
 function Eyebrow({ children }: { children: string }) {
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.5rem" }}>
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.75rem", marginBottom: "1.5rem" }}>
       <span style={{ width: "1.5rem", height: "1px", background: "rgba(37, 99, 235, 0.4)", display: "block", flexShrink: 0 }} />
-      <span style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(37, 99, 235, 0.6)", fontFamily: "var(--font-sans)" }}>{children}</span>
+      <span style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--accent)", fontFamily: "var(--font-sans)" }}>{children}</span>
     </div>
   );
 }
@@ -44,13 +44,10 @@ const USE_CASES = [
 
 export default function ForStudentsPage() {
   return (
-    <div style={{ background: "var(--bg-base)", color: "var(--text-primary)", minHeight: "100vh" }}>
+    <div style={{ background: "transparent", color: "var(--text-primary)", minHeight: "100vh" }}>
       <PublicNav />
 
-      {/* Ambient glow */}
-      <div style={{ position: "fixed", inset: 0, pointerEvents: "none", background: "radial-gradient(ellipse 70% 55% at 10% 25%, rgba(99,102,241,0.08) 0%, transparent 65%), radial-gradient(ellipse 50% 45% at 90% 75%, rgba(37, 99, 235,0.04) 0%, transparent 60%)", zIndex: 0 }} />
-
-      <div style={{ position: "relative", zIndex: 1, maxWidth: "920px", margin: "0 auto", padding: "12rem 2rem 8rem" }}>
+      <div style={{ position: "relative", zIndex: 1, maxWidth: "920px", margin: "0 auto", padding: "12rem 2rem 8rem", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
 
         {/* ── HERO ─────────────────────────────────────── */}
         <FadeIn>
@@ -69,7 +66,7 @@ export default function ForStudentsPage() {
         </FadeIn>
 
         <FadeIn delay={0.2}>
-          <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", marginBottom: "7.5rem" }}>
+          <div style={{ display: "flex", justifyContent: "center", gap: "1rem", flexWrap: "wrap", marginBottom: "7.5rem" }}>
             <Link href="/signup" className="group relative inline-flex items-center justify-center rounded-full" style={{ textDecoration: "none", padding: "1.1rem 2.5rem", background: "var(--accent)", color: "var(--bg-base)", fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", transition: "background 0.3s" }}>
               Join Free →
             </Link>

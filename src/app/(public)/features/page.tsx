@@ -16,11 +16,8 @@ import {
 
 export default function FeaturesPage() {
   return (
-    <div className="page-bg" style={{ minHeight: "100vh", background: "var(--bg-base)", color: "var(--text-primary)" }}>
+    <div className="page-bg" style={{ minHeight: "100vh", background: "transparent", color: "var(--text-primary)" }}>
       <PublicNav />
-
-      {/* Ambient glow */}
-      <div style={{ position: "fixed", inset: 0, pointerEvents: "none", background: "radial-gradient(ellipse 80% 60% at 80% 20%, rgba(99,102,241,0.06) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 20% 80%, rgba(37, 99, 235,0.04) 0%, transparent 60%)", zIndex: 0 }} />
 
       <main className="relative z-10 px-6 sm:px-8 py-32 lg:py-40">
         <div style={{ maxWidth: "960px", margin: "0 auto" }}>
