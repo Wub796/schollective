@@ -245,7 +245,7 @@ export default function LandingPage() {
           <div className="relative z-10 w-full max-w-[80rem] mx-auto px-6 md:px-12 lg:px-16 pt-24 pb-16 flex flex-col items-center text-center">
 
             {/* Headline */}
-            <h1 className="font-display font-black text-slate-900 mb-10 select-none"
+            <h1 className="font-display font-black text-slate-900 mb-12 select-none"
               style={{ fontSize: "clamp(2.5rem, 6.5vw, 6.2rem)", letterSpacing: "-0.03em", lineHeight: 0.95 }}>
               Find the mentor<br />
               <span className="italic font-light text-slate-900/40">who changes your </span>
@@ -256,7 +256,8 @@ export default function LandingPage() {
             <motion.p
               initial={{ opacity: 0 }} animate={{ opacity: 1 }}
               transition={{ duration: 1.2, ease: EASE, delay: 1.1 }}
-              className="font-light leading-relaxed text-slate-600 mb-12 text-lg max-w-xl mx-auto"
+              className="font-light leading-relaxed text-slate-600 mb-14 text-lg max-w-xl mx-auto"
+              style={{ lineHeight: 1.75 }}
             >
               Cold emails to professors go unanswered. Connect through verified, in-platform academic request threads for structured research mentorship.
             </motion.p>
@@ -282,27 +283,27 @@ export default function LandingPage() {
         </section>
 
         {/* ══ THE TRUTH ABOUT COLD EMAILS (DARK CALLOUT) ══════════════════ */}
-        <section className="js-fade relative py-28 border-t border-slate-200" style={{ background: "var(--bg-surface-2)" }}>
-          <div className="max-w-4xl mx-auto px-6 text-center flex flex-col items-center">
+        <section className="js-fade relative py-32 border-t border-slate-200" style={{ background: "var(--bg-surface-2)" }}>
+          <div className="max-w-4xl mx-auto px-8 md:px-12 text-center flex flex-col items-center">
             <Label>The truth about academic cold-outreach</Label>
             
-            <h2 className="font-display font-bold text-slate-900 mt-6 mb-12 select-none tracking-tight leading-[1.12]"
+            <h2 className="font-display font-bold text-slate-900 mt-8 mb-14 select-none tracking-tight leading-[1.12]"
               style={{ fontSize: "clamp(2rem, 4.5vw, 3.6rem)" }}>
               Professors delete 90% of student outreach emails<br />
               <span className="italic font-light text-slate-900/35">before finishing the first line.</span>
             </h2>
 
-            <div className="flex flex-col items-center gap-7 text-center max-w-xl w-full mb-12">
+            <div className="flex flex-col items-center gap-5 text-center max-w-xl w-full mb-14">
               {[
                 "Professors ignore generic, template-driven outreach.",
                 "Traditional cold emails lack structured academic context.",
                 "Unverified databases lead to wrong contacts and lost time."
               ].map((reason, i) => (
-                <div key={i} className="flex flex-col items-center gap-4 p-8 rounded-xl border border-slate-200 bg-slate-50 w-full">
-                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-400 text-xs font-bold font-sans">
+                <div key={i} className="flex flex-col items-center gap-4 w-full" style={{ padding: "2rem 2.5rem", borderRadius: "16px", border: "1px solid rgba(203,213,225,1)", background: "rgba(248,250,252,1)" }}>
+                  <span className="flex-shrink-0 w-7 h-7 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-400 text-xs font-bold font-sans">
                     ✕
                   </span>
-                  <span className="text-slate-600 text-sm leading-relaxed">{reason}</span>
+                  <span className="text-slate-600 text-sm leading-loose">{reason}</span>
                 </div>
               ))}
             </div>
@@ -314,23 +315,23 @@ export default function LandingPage() {
 
 
         {/* ══ VS TABLE SECTION (Traditional Databases vs Schollective) ══════════════════ */}
-        <section className="js-fade py-28 relative">
-          <div className="max-w-[64rem] mx-auto px-6">
-            <div className="text-center mb-16">
+        <section className="js-fade py-32 relative">
+          <div className="max-w-[64rem] mx-auto px-8 md:px-12">
+            <div className="text-center mb-20">
               <Label>Comparing Platforms</Label>
-              <h2 className="font-display font-bold text-3xl md:text-5xl text-slate-900 mt-4 tracking-tight">
+              <h2 className="font-display font-bold text-3xl md:text-5xl text-slate-900 mt-6 mb-4 tracking-tight">
                 Why not just use traditional databases?
               </h2>
             </div>
 
-            <div className="glass-refraction" style={{ padding: "40px" }}>
-              <div className="grid grid-cols-2 border-b border-slate-200 pb-6 mb-6">
-                <div className="pr-6">
+            <div className="glass-refraction" style={{ padding: "48px 52px" }}>
+              <div className="grid grid-cols-2 border-b border-slate-200 pb-7 mb-7">
+                <div className="pr-8">
                   <span className="font-sans text-[0.68rem] font-bold tracking-wider text-slate-900/30 uppercase">
                     Traditional Cold Databases
                   </span>
                 </div>
-                <div className="pl-6 border-l border-slate-200">
+                <div className="pl-8 border-l border-slate-200">
                   <span className="font-sans text-[0.68rem] font-bold tracking-wider text-blue-600 uppercase">
                     Schollective
                   </span>
@@ -351,14 +352,14 @@ export default function LandingPage() {
                   good: "Provides a unified, real-time messaging hub to track requests, acceptances, and discussions."
                 }
               ].map((row, i) => (
-                <div key={i} className="grid grid-cols-2 py-6 border-b border-slate-200 last:border-none">
-                  <div className="pr-6 flex gap-8 items-start">
-                    <span className="text-red-500 font-bold font-sans text-xs pt-1 select-none">✕</span>
-                    <p className="text-slate-600 text-sm leading-relaxed">{row.bad}</p>
+                <div key={i} className="grid grid-cols-2 py-8 border-b border-slate-200 last:border-none">
+                  <div className="pr-8 flex gap-6 items-start">
+                    <span className="text-red-500 font-bold font-sans text-xs pt-1 select-none flex-shrink-0">✕</span>
+                    <p className="text-slate-600 text-sm leading-loose">{row.bad}</p>
                   </div>
-                  <div className="pl-6 border-l border-slate-200 flex gap-8 items-start">
-                    <span className="text-blue-600 font-bold font-sans text-xs pt-1 select-none">✓</span>
-                    <p className="text-slate-900 text-sm leading-relaxed font-medium">{row.good}</p>
+                  <div className="pl-8 border-l border-slate-200 flex gap-6 items-start">
+                    <span className="text-blue-600 font-bold font-sans text-xs pt-1 select-none flex-shrink-0">✓</span>
+                    <p className="text-slate-900 text-sm leading-loose font-medium">{row.good}</p>
                   </div>
                 </div>
               ))}
@@ -367,22 +368,22 @@ export default function LandingPage() {
         </section>
 
         {/* ══ FEATURES BLOCK (With Custom High-Fidelity UI Mockups) ═══════ */}
-        <section className="py-28 flex flex-col gap-32">
-          <div className="max-w-[80rem] mx-auto px-6 w-full flex flex-col items-center">
+        <section className="py-32 flex flex-col gap-36">
+          <div className="max-w-[80rem] mx-auto px-8 md:px-12 w-full flex flex-col items-center">
             <Label>The Platform</Label>
           </div>
 
           {/* Feature 01 */}
-          <div className="js-fade max-w-[80rem] mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <div className="js-fade max-w-[80rem] mx-auto px-8 md:px-12 w-full grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
             <div className="flex flex-col items-start text-left">
-              <span className="font-sans text-2xl text-blue-600/45 mb-4">01</span>
-              <h3 className="font-display font-bold text-3xl md:text-4xl text-slate-900 tracking-tight mb-6">
+              <span className="font-sans text-2xl text-blue-600/45 mb-6">01</span>
+              <h3 className="font-display font-bold text-3xl md:text-4xl text-slate-900 tracking-tight mb-7">
                 Search any research interest.
               </h3>
-              <p className="text-slate-600 leading-relaxed text-base mb-8 max-w-md">
+              <p className="text-slate-600 leading-loose text-base mb-10 max-w-md">
                 Type what you care about: quantum computing, cognitive neuroscience, or climate policy. We surface top professors publishing in that exact space, ranked by impact.
               </p>
-              <Link href="/signup" className="font-sans text-xs uppercase tracking-wider text-blue-600 border-b border-blue-600/20 pb-1 hover:border-blue-600/80 transition-colors">
+              <Link href="/signup" className="font-sans text-xs uppercase tracking-wider text-blue-600 border-b border-blue-600/20 pb-1.5 hover:border-blue-600/80 transition-colors">
                 Try a search →
               </Link>
             </div>
@@ -429,9 +430,9 @@ export default function LandingPage() {
           </div>
 
           {/* Feature 02 */}
-          <div className="js-fade max-w-[80rem] mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <div className="js-fade max-w-[80rem] mx-auto px-8 md:px-12 w-full grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
             {/* Visual Mockup 02 (Left side for desktop layout) */}
-            <div className="order-2 lg:order-1 relative p-8 rounded-3xl border border-slate-200 bg-white shadow-xl shadow-2xl flex flex-col gap-8 w-full text-left">
+            <div className="order-2 lg:order-1 relative p-10 rounded-3xl border border-slate-200 bg-white shadow-xl shadow-2xl flex flex-col gap-8 w-full text-left">
               <div className="flex items-center justify-between border-b border-slate-200 pb-4">
                 <div className="flex items-center gap-1.5">
                   <div className="w-2.5 h-2.5 rounded-full bg-red-500/40" />
@@ -460,30 +461,30 @@ export default function LandingPage() {
             </div>
 
             <div className="order-1 lg:order-2 flex flex-col items-start text-left">
-              <span className="font-sans text-2xl text-blue-600/45 mb-4">02</span>
-              <h3 className="font-display font-bold text-3xl md:text-4xl text-slate-900 tracking-tight mb-6">
+              <span className="font-sans text-2xl text-blue-600/45 mb-6">02</span>
+              <h3 className="font-display font-bold text-3xl md:text-4xl text-slate-900 tracking-tight mb-7">
                 Understand their research in plain English.
               </h3>
-              <p className="text-slate-600 leading-relaxed text-base mb-8 max-w-md">
+              <p className="text-slate-600 leading-loose text-base mb-10 max-w-md">
                 Every professor profile has an AI-synthesized summary of their key findings, written so a high schooler or undergrad can understand it and reference it with precision. No more pretending to read 40-page papers.
               </p>
-              <Link href="/signup" className="font-sans text-xs uppercase tracking-wider text-blue-600 border-b border-blue-600/20 pb-1 hover:border-blue-600/80 transition-colors">
+              <Link href="/signup" className="font-sans text-xs uppercase tracking-wider text-blue-600 border-b border-blue-600/20 pb-1.5 hover:border-blue-600/80 transition-colors">
                 See an example →
               </Link>
             </div>
           </div>
 
           {/* Feature 03 */}
-          <div className="js-fade max-w-[80rem] mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <div className="js-fade max-w-[80rem] mx-auto px-8 md:px-12 w-full grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
             <div className="flex flex-col items-start text-left">
-              <span className="font-sans text-2xl text-blue-600/45 mb-4">03</span>
-              <h3 className="font-display font-bold text-3xl md:text-4xl text-slate-900 tracking-tight mb-6">
+              <span className="font-sans text-2xl text-blue-600/45 mb-6">03</span>
+              <h3 className="font-display font-bold text-3xl md:text-4xl text-slate-900 tracking-tight mb-7">
                 Draft structured requests that get answered.
               </h3>
-              <p className="text-slate-600 leading-relaxed text-base mb-8 max-w-md">
+              <p className="text-slate-600 leading-loose text-base mb-10 max-w-md">
                 Our structured request model, co-designed with research faculty, guides you through describing your understanding, interests, and availability. No more guessing what professors want to hear.
               </p>
-              <Link href="/signup" className="font-sans text-xs uppercase tracking-wider text-blue-600 border-b border-blue-600/20 pb-1 hover:border-blue-600/80 transition-colors">
+              <Link href="/signup" className="font-sans text-xs uppercase tracking-wider text-blue-600 border-b border-blue-600/20 pb-1.5 hover:border-blue-600/80 transition-colors">
                 Try request flow →
               </Link>
             </div>
@@ -543,18 +544,18 @@ export default function LandingPage() {
         </section>
 
         {/* ══ FOUNDER QUOTE SECTION ══════════════════════════════════════ */}
-        <section className="js-fade py-24 relative border-t border-slate-200 bg-slate-50">
-          <div className="max-w-4xl mx-auto px-6 text-center flex flex-col items-center">
-            <span className="font-display text-7xl text-blue-600/20 select-none leading-none -mb-6">“</span>
-            <blockquote className="font-display text-xl md:text-3xl font-light text-slate-900/90 leading-relaxed mb-8 max-w-2xl italic select-none">
+        <section className="js-fade py-32 relative border-t border-slate-200 bg-slate-50">
+          <div className="max-w-4xl mx-auto px-8 md:px-16 text-center flex flex-col items-center">
+            <span className="font-display text-8xl text-blue-600/20 select-none leading-none -mb-4">"</span>
+            <blockquote className="font-display text-xl md:text-3xl font-light text-slate-900/90 leading-loose mb-12 max-w-2xl italic select-none">
               When we were students, we realized how difficult it was to reach out to the right professors. Cold emails went unanswered, and credentials were hard to verify. We built Schollective to establish genuine, verified mentorship.
             </blockquote>
-            <div className="flex flex-col items-center gap-4 mt-4">
-              <div className="w-12 h-12 rounded-full bg-blue-600/15 border border-blue-600/30 flex items-center justify-center font-display font-bold text-blue-600 text-lg">
+            <div className="flex flex-col items-center gap-5 mt-2">
+              <div className="w-14 h-14 rounded-full bg-blue-600/15 border border-blue-600/30 flex items-center justify-center font-display font-bold text-blue-600 text-xl">
                 A
               </div>
-              <div className="text-center">
-                <div className="text-sm font-bold text-slate-900">Aiden & Ayaan</div>
+              <div className="text-center" style={{ marginTop: "0.25rem" }}>
+                <div className="text-sm font-bold text-slate-900 mb-1">Aiden & Ayaan</div>
                 <div className="text-xs text-slate-600/60">Founders, Schollective</div>
               </div>
             </div>
