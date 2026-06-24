@@ -35,13 +35,14 @@ export function PendingActions() {
         {refreshing ? "Checking status..." : "Refresh Application Status"}
       </Button>
       
-      <button 
+      <Button 
         onClick={handleSignOut}
-        className="flex items-center justify-center gap-2 text-[#3a3a3a] hover:text-[#8a8a8a] transition-colors text-sm font-medium py-2 group"
+        variant="ghost"
+        className="w-full gap-2 text-slate-500 hover:border-[rgba(255,80,80,0.4)] hover:text-[#ff6b6b]"
       >
-        <LogOut size={16} className="group-hover:translate-x-[-2px] transition-transform" />
+        <LogOut size={16} className="group-hover:translate-x-[-2px] transition-transform" style={{ marginRight: "0.25rem" }} />
         Sign Out &amp; Return Home
-      </button>
+      </Button>
     </div>
   );
 }
