@@ -1,11 +1,10 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   motion,
   useSpring,
   useMotionValue,
-  useTransform,
   AnimatePresence,
   useMotionValueEvent,
 } from "framer-motion";
@@ -13,18 +12,48 @@ import {
 /* ─── Cursor context types ─────────────────────────────────────────────── */
 type CursorMode = "default" | "hover-link" | "hover-button" | "hover-canvas" | "text" | "hide";
 
+type TargetRect = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  radius: number;
+};
+
 function getMode(target: HTMLElement): CursorMode {
   if (target.closest("[data-cursor-hide]")) return "hide";
   if (target.tagName === "CANVAS") return "hover-canvas";
-  // Check for button first (more specific)
   if (target.tagName === "BUTTON" || target.closest("button")) return "hover-button";
-  if (target.tagName === "A" || target.closest("a") || target.classList.contains("cursor-pointer"))
+  if (
+    target.tagName === "A" ||
+    target.closest("a") ||
+    target.classList.contains("cursor-pointer")
+  )
     return "hover-link";
   if (["P", "SPAN", "H1", "H2", "H3", "H4"].includes(target.tagName)) return "text";
   return "default";
 }
 
-/* ─── Spotlight blob (the buttermax background glow) ───────────────────── */
+function getTargetRect(el: Element): TargetRect {
+  const rect = el.getBoundingClientRect();
+  const computedStyle = window.getComputedStyle(el);
+  const radiusStr = computedStyle.borderRadius;
+  let radius = 8;
+  if (radiusStr && radiusStr.includes("px")) {
+    radius = parseFloat(radiusStr);
+  } else if (radiusStr === "50%") {
+    radius = Math.min(rect.width, rect.height) / 2;
+  }
+  return {
+    x: rect.left + rect.width / 2,
+    y: rect.top + rect.height / 2,
+    width: rect.width,
+    height: rect.height,
+    radius,
+  };
+}
+
+/* ─── Spotlight blob ────────────────────────────────────────────────────── */
 function SpotlightBlob({
   sourceX,
   sourceY,
@@ -59,7 +88,7 @@ function SpotlightBlob({
   );
 }
 
-/* ─── Precision dot at exact cursor position ───────────────────────────── */
+/* ─── Precision dot ─────────────────────────────────────────────────────── */
 function PrecisionDot({
   sourceX,
   sourceY,
@@ -70,10 +99,9 @@ function PrecisionDot({
   mode: CursorMode;
 }) {
   const isText = mode === "text";
-  const isActive = mode === "hover-link";
+  const isButton = mode === "hover-button";
 
-  // Hide dot completely on elements that handle their own cursor
-  if (mode === "hide") return null;
+  if (mode === "hide" || isButton) return null;
 
   return (
     <motion.div
@@ -87,8 +115,8 @@ function PrecisionDot({
         zIndex: 2,
       }}
       animate={{
-        width: isText ? 2 : isActive ? 8 : 5,
-        height: isText ? 20 : isActive ? 8 : 5,
+        width: isText ? 2 : 5,
+        height: isText ? 20 : 5,
         borderRadius: isText ? 1 : 9999,
         opacity: 1,
       }}
@@ -97,7 +125,7 @@ function PrecisionDot({
   );
 }
 
-/* ─── Medium-lag ring — sits between blob and dot ──────────────────────── */
+/* ─── Morphing cursor ring ──────────────────────────────────────────────── */
 function CursorRing({
   sourceX,
   sourceY,
@@ -107,11 +135,14 @@ function CursorRing({
   sourceX: import("framer-motion").MotionValue<number>;
   sourceY: import("framer-motion").MotionValue<number>;
   mode: CursorMode;
-  targetRect: { x: number; y: number; width: number; height: number; radius: number } | null;
+  targetRect: TargetRect | null;
 }) {
+  // We track two separate positions: free-floating (follows mouse with spring)
+  // and locked-to-button (snaps to button center).
   const hoverX = useMotionValue(0);
   const hoverY = useMotionValue(0);
 
+  // Update position based on whether we're locked to a target or following cursor
   useEffect(() => {
     if (targetRect) {
       hoverX.set(targetRect.x);
@@ -122,39 +153,64 @@ function CursorRing({
   useMotionValueEvent(sourceX, "change", (latest: number) => {
     if (!targetRect) hoverX.set(latest);
   });
-
   useMotionValueEvent(sourceY, "change", (latest: number) => {
     if (!targetRect) hoverY.set(latest);
   });
 
-  const x = useSpring(hoverX, { stiffness: 160, damping: 22 });
-  const y = useSpring(hoverY, { stiffness: 160, damping: 22 });
+  // When morphing to button: use stiff spring (snap fast). When free: use looser spring.
+  const stiffness = targetRect ? 280 : 160;
+  const damping = targetRect ? 30 : 22;
+
+  const x = useSpring(hoverX, { stiffness, damping });
+  const y = useSpring(hoverY, { stiffness, damping });
 
   const isText   = mode === "text";
-  const isLink   = mode === "hover-link";
   const isButton = mode === "hover-button";
+  const isLink   = mode === "hover-link";
   const isCanvas = mode === "hover-canvas";
-  const isActive = isLink;
 
-  // Hide ring on elements that handle their own cursor
   if (mode === "hide") return null;
 
-  // Size logic: if targetRect, match its size + padding. Otherwise fallback.
-  const sizeX = targetRect ? targetRect.width + 16 : isText ? 3 : isLink ? 56 : isCanvas ? 48 : 24;
-  const sizeY = targetRect ? targetRect.height + 16 : isText ? 22 : sizeX;
-  const borderRadius = targetRect ? Math.min(targetRect.width + 16, targetRect.height + 16) / 2 : isText ? 2 : sizeX / 2;
+  // --- Geometry ---
+  // Button: match the element's exact dimensions (zero padding so it sits on border)
+  // Others: standard sizes
+  let sizeX: number, sizeY: number, borderRadius: number;
 
-  // Border colour:
+  if (isButton && targetRect) {
+    // Ring merges with button border — exact match, no extra padding
+    sizeX = targetRect.width;
+    sizeY = targetRect.height;
+    borderRadius = targetRect.radius;
+  } else if (targetRect) {
+    // Link with engulf rect
+    sizeX = targetRect.width + 16;
+    sizeY = targetRect.height + 16;
+    borderRadius = Math.min(sizeX, sizeY) / 2;
+  } else {
+    sizeX = isText ? 3 : isLink ? 56 : isCanvas ? 48 : 24;
+    sizeY = isText ? 22 : sizeX;
+    borderRadius = isText ? 2 : sizeX / 2;
+  }
+
+  // --- Colors ---
+  // Purple for button hover, neutral for everything else
   const borderColor = isButton
-    ? "rgba(37, 99, 235, 0.85)"
+    ? "rgba(147, 51, 234, 0.9)"   // purple-600
     : isCanvas
     ? "rgba(15, 23, 42, 0.4)"
     : "rgba(15, 23, 42, 0.5)";
 
+  const boxShadow = isButton
+    ? `0 0 0 1.5px rgba(147, 51, 234, 0.9), 0 0 18px rgba(147, 51, 234, 0.35), inset 0 0 12px rgba(147, 51, 234, 0.08)`
+    : "none";
+
+  const borderWidth = isButton ? "1.5px" : "1px";
+  const border = isText ? "none" : `${borderWidth} solid ${borderColor}`;
+
   return (
     <>
       <motion.div
-        className="absolute pointer-events-none flex items-center justify-center"
+        className="absolute pointer-events-none"
         style={{
           x,
           y,
@@ -165,27 +221,26 @@ function CursorRing({
         animate={{
           width: sizeX,
           height: sizeY,
-          borderRadius: borderRadius,
-          // Always keep background transparent — never fill
+          borderRadius,
           backgroundColor: "transparent",
-          // Border: thicker + dashed style for button to make it distinctive
-          border: isButton
-            ? `1.5px solid ${borderColor}`
-            : isText
-            ? "none"
-            : `1px solid ${borderColor}`,
+          border,
+          boxShadow,
           opacity: isText ? 0.7 : 1,
-          // Inner dot / cross for button mode
-          boxShadow: isButton
-            ? `0 0 12px rgba(37, 99, 235, 0.35), inset 0 0 8px rgba(37, 99, 235, 0.08)`
-            : "none",
         }}
-        transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+        transition={{
+          // Geometry transitions: fast snap when morphing to button
+          width:        { duration: isButton ? 0.22 : 0.28, ease: [0.22, 1, 0.36, 1] },
+          height:       { duration: isButton ? 0.22 : 0.28, ease: [0.22, 1, 0.36, 1] },
+          borderRadius: { duration: isButton ? 0.22 : 0.28, ease: [0.22, 1, 0.36, 1] },
+          border:       { duration: isButton ? 0.18 : 0.28, ease: "easeOut" },
+          boxShadow:    { duration: 0.3, ease: "easeOut" },
+          opacity:      { duration: 0.2 },
+        }}
       />
 
-      {/* Ripple on interactive elements */}
+      {/* Ripple pulse on links */}
       <AnimatePresence>
-        {isActive && (
+        {isLink && !targetRect && (
           <motion.div
             key="ripple"
             className="absolute pointer-events-none"
@@ -194,10 +249,8 @@ function CursorRing({
               y,
               translateX: "-50%",
               translateY: "-50%",
-              border: isButton
-                ? "1px solid var(--accent-glow)"
-                : "1px solid var(--border)",
-              borderRadius: borderRadius,
+              border: "1px solid rgba(15, 23, 42, 0.3)",
+              borderRadius: sizeX / 2,
               zIndex: 1,
             }}
             initial={{ width: sizeX, height: sizeY, opacity: 0.6 }}
@@ -219,15 +272,15 @@ export function CustomCursor() {
   const [isTouch, setIsTouch]  = useState(false);
   const [reducedMotion, setRm] = useState(false);
   const [mode, setMode]        = useState<CursorMode>("default");
-  const [targetRect, setTargetRect] = useState<{ x: number; y: number; width: number; height: number; radius: number } | null>(null);
+  const [targetRect, setTargetRect] = useState<TargetRect | null>(null);
 
   const rawX = useMotionValue<number>(-1000);
   const rawY = useMotionValue<number>(-1000);
 
+  // Track currently hovered button for live rect updates on scroll/resize
+  const hoveredEl = useRef<Element | null>(null);
+
   useEffect(() => {
-    // A Chromebook has a touchscreen (maxTouchPoints > 0) AND a trackpad
-    // (pointer: fine). We only want to suppress the custom cursor on
-    // touch-*only* devices (phones/tablets with no fine pointer).
     const hasFinePointer =
       typeof window !== "undefined" &&
       window.matchMedia("(pointer: fine)").matches;
@@ -245,65 +298,66 @@ export function CustomCursor() {
     const onMove = (e: MouseEvent) => {
       rawX.set(e.clientX);
       rawY.set(e.clientY);
+
+      // Live-update rect position on mouse move (handles scroll drift)
+      if (hoveredEl.current) {
+        const rect = getTargetRect(hoveredEl.current);
+        setTargetRect(rect);
+      }
     };
-    
+
     const onOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       const newMode = getMode(target);
       setMode(newMode);
-      
-      if (newMode === "hover-link" || newMode === "hover-button") {
-        const el = target.closest("button, a, .cursor-pointer");
+
+      if (newMode === "hover-button") {
+        const el = target.closest("button, [role='button']");
+        if (el) {
+          hoveredEl.current = el;
+          setTargetRect(getTargetRect(el));
+          return;
+        }
+      } else if (newMode === "hover-link") {
+        const el = target.closest("a, .cursor-pointer");
         if (el && el.closest("[data-cursor-engulf]")) {
-          const rect = el.getBoundingClientRect();
-          const computedStyle = window.getComputedStyle(el);
-          const radiusStr = computedStyle.borderRadius;
-          let radius = 8; // fallback
-          if (radiusStr && radiusStr.includes("px")) {
-             radius = parseFloat(radiusStr);
-          } else if (radiusStr === "50%") {
-             radius = Math.max(rect.width, rect.height);
-          }
-          setTargetRect({
-            x: rect.left + rect.width / 2,
-            y: rect.top + rect.height / 2,
-            width: rect.width,
-            height: rect.height,
-            radius
-          });
+          hoveredEl.current = el;
+          setTargetRect(getTargetRect(el));
           return;
         }
       }
+
+      hoveredEl.current = null;
       setTargetRect(null);
+    };
+
+    const onOut = (e: MouseEvent) => {
+      const related = e.relatedTarget as HTMLElement | null;
+      if (!related || !hoveredEl.current?.contains(related)) {
+        hoveredEl.current = null;
+        setTargetRect(null);
+      }
     };
 
     window.addEventListener("mousemove", onMove, { passive: true });
     window.addEventListener("mouseover", onOver, { passive: true });
+    window.addEventListener("mouseout", onOut, { passive: true });
     setMounted(true);
 
     return () => {
       window.removeEventListener("mousemove", onMove);
       window.removeEventListener("mouseover", onOver);
+      window.removeEventListener("mouseout", onOut);
       mq.removeEventListener("change", mqH);
     };
   }, [rawX, rawY]);
 
-  // Don't render on touch devices or when reduced motion is preferred
-  // Note: we do NOT gate on screen width — a laptop with a small window still
-  // has a fine pointer and should see the cursor. The CSS rule
-  // `@media (pointer: fine) { * { cursor: none } }` handles hiding the
-  // native cursor on any device that has a mouse/trackpad.
   if (!mounted || reducedMotion || isTouch) return null;
 
   return (
     <div className="fixed inset-0 pointer-events-none z-[9999] overflow-hidden">
-      {/* Layer 1: Large spotlight blob (buttermax effect) */}
       <SpotlightBlob sourceX={rawX} sourceY={rawY} mode={mode} />
-
-      {/* Layer 2: Medium-lag ring */}
       <CursorRing sourceX={rawX} sourceY={rawY} mode={mode} targetRect={targetRect} />
-
-      {/* Layer 3: Sharp precision dot at exact position */}
       <PrecisionDot sourceX={rawX} sourceY={rawY} mode={mode} />
     </div>
   );
