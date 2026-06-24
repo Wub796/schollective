@@ -36,7 +36,7 @@ function formatDate(iso: string) {
 
 function FilterPill({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
   return (
-    <button onClick={onClick} className="btn-filter-pill" style={{ padding: "0.35rem 0.85rem", borderRadius: "100px", border: active ? "1px solid rgba(15, 23, 42,0.3)" : "1px solid rgba(15, 23, 42,0.07)", background: active ? "rgba(15, 23, 42,0.08)" : "transparent", color: active ? "var(--text-primary)" : "rgba(15, 23, 42,0.35)", fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", fontFamily: "var(--font-sans)", cursor: "pointer", whiteSpace: "nowrap" }}>
+    <button onClick={onClick} className="btn-filter-pill" style={{ padding: "0.5rem 1.25rem", borderRadius: "100px", border: active ? "1px solid rgba(15, 23, 42,0.3)" : "1px solid rgba(15, 23, 42,0.07)", background: active ? "rgba(15, 23, 42,0.08)" : "transparent", color: active ? "var(--text-primary)" : "rgba(15, 23, 42,0.35)", fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", fontFamily: "var(--font-sans)", cursor: "pointer", whiteSpace: "nowrap" }}>
       {label}
     </button>
   );
@@ -102,11 +102,19 @@ export function AdminProfessorsTable({ professors }: { professors: ProfessorReco
     <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
       <div style={{ display: "flex", flexDirection: "column", gap: "0.85rem" }}>
         <div style={{ position: "relative", maxWidth: "24rem" }}>
-          <Search size={13} style={{ position: "absolute", left: "0.85rem", top: "50%", transform: "translateY(-50%)", color: "rgba(15, 23, 42,0.25)", pointerEvents: "none" }} />
+          <Search size={13} style={{ position: "absolute", left: "1.25rem", top: "50%", transform: "translateY(-50%)", color: "rgba(15, 23, 42,0.25)", pointerEvents: "none" }} />
           <input type="text" placeholder="Search professors…" value={query} onChange={(e) => setQuery(e.target.value)}
-            style={{ width: "100%", padding: "0.6rem 1rem 0.6rem 2.4rem", background: "rgba(15, 23, 42,0.03)", border: "1px solid rgba(15, 23, 42,0.08)", borderRadius: "10px", color: "var(--text-primary)", fontSize: "0.75rem", fontFamily: "var(--font-sans)", outline: "none" }}
-            onFocus={(e) => (e.currentTarget.style.borderColor = "rgba(15, 23, 42,0.2)")}
-            onBlur={(e)  => (e.currentTarget.style.borderColor = "rgba(15, 23, 42,0.08)")} />
+            style={{ width: "100%", height: "2.5rem", padding: "0.5rem 1.5rem 0.5rem 2.75rem", background: "rgba(255,255,255,0.6)", border: "1px solid var(--border)", borderRadius: "100px", color: "var(--text-primary)", fontSize: "0.75rem", fontFamily: "var(--font-sans)", outline: "none", transition: "border-color 0.25s ease, background-0.25s ease, box-shadow 0.25s ease" }}
+            onFocus={(e) => {
+              e.currentTarget.style.borderColor = "var(--accent)";
+              e.currentTarget.style.background = "rgba(255,255,255,0.95)";
+              e.currentTarget.style.boxShadow = "0 0 0 4px rgba(37, 99, 235, 0.08)";
+            }}
+            onBlur={(e)  => {
+              e.currentTarget.style.borderColor = "var(--border)";
+              e.currentTarget.style.background = "rgba(255,255,255,0.6)";
+              e.currentTarget.style.boxShadow = "none";
+            }} />
         </div>
         <div style={{ display: "flex", gap: "0.4rem", flexWrap: "wrap" }}>
           {(["all", "approved", "pending", "rejected", "suspended"] as StatusFilter[]).map((s) => (
@@ -169,7 +177,7 @@ export function AdminProfessorsTable({ professors }: { professors: ProfessorReco
                     <td style={{ padding: "0.9rem 1.1rem", maxWidth: "180px" }}>
                       <div style={{ display: "flex", flexWrap: "wrap", gap: "0.25rem" }}>
                         {(p.expertise_fields ?? []).slice(0, 2).map((f, i) => (
-                          <span key={i} style={{ padding: "0.15rem 0.5rem", borderRadius: "5px", background: "rgba(15, 23, 42,0.04)", border: "1px solid rgba(15, 23, 42,0.06)", fontSize: "0.52rem", color: "rgba(15, 23, 42,0.4)", fontFamily: "var(--font-sans)" }}>{f}</span>
+                          <span key={i} style={{ padding: "0.3rem 0.75rem", borderRadius: "5px", background: "rgba(15, 23, 42,0.04)", border: "1px solid rgba(15, 23, 42,0.06)", fontSize: "0.52rem", color: "rgba(15, 23, 42,0.4)", fontFamily: "var(--font-sans)" }}>{f}</span>
                         ))}
                         {(p.expertise_fields?.length ?? 0) > 2 && <span style={{ fontSize: "0.52rem", color: "rgba(15, 23, 42,0.2)", fontFamily: "var(--font-sans)" }}>+{p.expertise_fields!.length - 2}</span>}
                       </div>
@@ -189,13 +197,13 @@ export function AdminProfessorsTable({ professors }: { professors: ProfessorReco
                         {p.status === "approved" && (
                           <button disabled={isBusy} onClick={() => handleRevoke(p.id)}
                             className="btn-action"
-                            style={{ padding: "0.3rem 0.7rem", borderRadius: "7px", border: "1px solid rgba(250,204,21,0.2)", background: "rgba(250,204,21,0.05)", color: "rgba(250,204,21,0.75)", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", fontFamily: "var(--font-sans)", cursor: isBusy ? "wait" : "pointer", opacity: isBusy ? 0.5 : 1, display: "flex", alignItems: "center", gap: "0.3rem" }}>
+                            style={{ padding: "0.45rem 1.15rem", borderRadius: "100px", border: "1px solid rgba(250,204,21,0.2)", background: "rgba(250,204,21,0.05)", color: "rgba(250,204,21,0.75)", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", fontFamily: "var(--font-sans)", cursor: isBusy ? "wait" : "pointer", opacity: isBusy ? 0.5 : 1, display: "flex", alignItems: "center", gap: "0.3rem" }}>
                             <RotateCcw size={9} />{isBusy ? "…" : "Revoke"}
                           </button>
                         )}
                         <button disabled={isBusy} onClick={() => handleSuspend(p.id, !isSuspended)}
                           className={isSuspended ? "btn-action-success" : "btn-action-danger"}
-                          style={{ padding: "0.3rem 0.7rem", borderRadius: "7px", border: isSuspended ? "1px solid rgba(74,222,128,0.2)" : "1px solid rgba(248,113,113,0.2)", background: isSuspended ? "rgba(74,222,128,0.05)" : "rgba(248,113,113,0.05)", color: isSuspended ? "rgba(74,222,128,0.75)" : "rgba(248,113,113,0.75)", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", fontFamily: "var(--font-sans)", cursor: isBusy ? "wait" : "pointer", opacity: isBusy ? 0.5 : 1, display: "flex", alignItems: "center", gap: "0.3rem" }}>
+                          style={{ padding: "0.45rem 1.15rem", borderRadius: "100px", border: isSuspended ? "1px solid rgba(74,222,128,0.2)" : "1px solid rgba(248,113,113,0.2)", background: isSuspended ? "rgba(74,222,128,0.05)" : "rgba(248,113,113,0.05)", color: isSuspended ? "rgba(74,222,128,0.75)" : "rgba(248,113,113,0.75)", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", fontFamily: "var(--font-sans)", cursor: isBusy ? "wait" : "pointer", opacity: isBusy ? 0.5 : 1, display: "flex", alignItems: "center", gap: "0.3rem" }}>
                           {isSuspended ? <><RotateCcw size={9} />{isBusy ? "…" : "Reactivate"}</> : <><Ban size={9} />{isBusy ? "…" : "Suspend"}</>}
                         </button>
                       </div>
