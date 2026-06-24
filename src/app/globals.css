@@ -34,14 +34,14 @@
   --text-secondary: #475569;  /* slate 600                     */
   --text-tertiary:  #64748b;  /* slate 500                     */
 
-  /* Bright corporate blue accent */
-  --accent:       #1d4ed8;
-  --accent-dim:   rgba(29, 78, 216, 0.08);
-  --accent-glow:  rgba(29, 78, 216, 0.15);
+  /* Bright corporate purple accent */
+  --accent:       #9333ea;
+  --accent-dim:   rgba(147, 51, 234, 0.08);
+  --accent-glow:  rgba(147, 51, 234, 0.15);
 
-  /* Vivid blue mid */
-  --accent-blue:     #2563eb;
-  --accent-blue-dim: rgba(37, 99, 235, 0.12);
+  /* Vivid purple mid */
+  --accent-blue:     #a855f7;
+  --accent-blue-dim: rgba(168, 85, 247, 0.12);
 
   --border:       #e2e8f0;
   --border-hover: #cbd5e1;
