@@ -4,6 +4,7 @@ import React, { useRef } from "react";
 import Link from "next/link";
 import { motion, useInView } from "framer-motion";
 import { PublicNav } from "@/components/ui/PublicNav";
+import { Button } from "@/components/ui/Button";
 
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
@@ -58,34 +59,34 @@ export default function ForProfessorsPage() {
         {/* ── HERO ─────────────────────────────────────── */}
         <FadeIn>
           <Eyebrow>For Professors</Eyebrow>
-          <h1 className="font-display" style={{ fontSize: "clamp(3rem, 7.5vw, 5.5rem)", fontWeight: 900, letterSpacing: "-0.04em", lineHeight: 1.0, marginBottom: "2.5rem", color: "var(--text-primary)" }}>
+          <h1 className="font-display" style={{ fontSize: "clamp(3rem, 7.5vw, 5.5rem)", fontWeight: 900, letterSpacing: "-0.04em", lineHeight: 0.95, marginBottom: "3.5rem", color: "var(--text-primary)" }}>
             Your expertise.<br />
             <em style={{ fontStyle: "italic", color: "var(--accent)" }}>Their breakthrough.</em>
           </h1>
         </FadeIn>
 
         <FadeIn delay={0.15}>
-          <p style={{ fontSize: "clamp(1.05rem, 1.4vw, 1.25rem)", color: "var(--text-secondary)", lineHeight: 1.85, maxWidth: "660px", marginBottom: "3rem" }}>
+          <p style={{ fontSize: "clamp(1.05rem, 1.4vw, 1.25rem)", color: "var(--text-secondary)", lineHeight: 1.85, maxWidth: "660px", marginBottom: "3.5rem" }}>
             Schollective gives professors a structured, low-friction way to mentor motivated students from anywhere in the world —
             without the noise of unsolicited cold emails, on a schedule that respects your time.
           </p>
         </FadeIn>
 
         <FadeIn delay={0.2}>
-          <div style={{ display: "flex", justifyContent: "center", gap: "1rem", flexWrap: "wrap", marginBottom: "7.5rem" }}>
-            <Link href="/signup" className="group relative inline-flex items-center justify-center rounded-full" style={{ textDecoration: "none", padding: "1.1rem 2.5rem", background: "var(--accent)", color: "var(--bg-base)", fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", transition: "background 0.3s" }}>
-              Apply to Join →
-            </Link>
-            <Link href="/about" className="group relative inline-flex items-center justify-center rounded-full" style={{ textDecoration: "none", padding: "1.1rem 2.5rem", border: "1px solid var(--border)", color: "var(--text-secondary)", fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", transition: "border-color 0.3s, color 0.3s" }}>
+          <div style={{ display: "flex", justifyContent: "center", gap: "1.5rem", flexWrap: "wrap", marginBottom: "7.5rem" }}>
+            <Button href="/signup" size="lg">
+              Apply to Join
+            </Button>
+            <Button href="/about" variant="ghost" size="lg">
               Learn About Us
-            </Link>
+            </Button>
           </div>
         </FadeIn>
 
         {/* ── WHY SCHOLLECTIVE ─────────────────────────── */}
         <FadeIn>
           <Eyebrow>Why Professors Join</Eyebrow>
-          <h2 className="font-display" style={{ fontSize: "clamp(2.2rem, 4vw, 3.5rem)", fontWeight: 900, letterSpacing: "-0.04em", lineHeight: 1.0, marginBottom: "4rem", color: "var(--text-primary)" }}>
+          <h2 className="font-display" style={{ fontSize: "clamp(2.2rem, 4vw, 3.5rem)", fontWeight: 900, letterSpacing: "-0.04em", lineHeight: 0.95, marginBottom: "4.5rem", color: "var(--text-primary)" }}>
             Mentorship on<br /><em style={{ fontStyle: "italic", color: "var(--accent)" }}>your terms.</em>
           </h2>
         </FadeIn>
@@ -108,10 +109,10 @@ export default function ForProfessorsPage() {
         {/* ── FIELDS ─────────────────────────────────────── */}
         <FadeIn>
           <Eyebrow>Active Research Fields</Eyebrow>
-          <h2 className="font-display" style={{ fontSize: "clamp(2.2rem, 3vw, 3.2rem)", fontWeight: 900, letterSpacing: "-0.04em", lineHeight: 1.1, marginBottom: "3rem", color: "var(--text-primary)" }}>
+          <h2 className="font-display" style={{ fontSize: "clamp(2.2rem, 3vw, 3.2rem)", fontWeight: 900, letterSpacing: "-0.04em", lineHeight: 0.95, marginBottom: "4rem", color: "var(--text-primary)" }}>
             Students seeking guidance across<br /><em style={{ fontStyle: "italic", color: "var(--accent)" }}>every discipline.</em>
           </h2>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "0.75rem", marginBottom: "7.5rem" }}>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "0.75rem", marginBottom: "7.5rem", justifyContent: "center" }}>
             {FIELDS.map((f) => (
               <span key={f} style={{ padding: "0.6rem 1.25rem", border: "1px solid var(--border)", borderRadius: "100px", fontSize: "0.8rem", color: "var(--text-secondary)", background: "var(--bg-surface-1)", fontFamily: "var(--font-sans)" }}>
                 {f}
@@ -127,7 +128,7 @@ export default function ForProfessorsPage() {
             <h2 className="font-display" style={{ fontSize: "clamp(1.8rem, 2.8vw, 2.4rem)", fontWeight: 900, letterSpacing: "-0.03em", color: "var(--text-primary)", marginBottom: "1.5rem" }}>
               Rigorous by design.
             </h2>
-            <p style={{ fontSize: "0.95rem", color: "var(--text-secondary)", lineHeight: 1.85, maxWidth: "560px", marginBottom: "2.5rem" }}>
+            <p style={{ fontSize: "0.95rem", color: "var(--text-secondary)", lineHeight: 1.85, maxWidth: "560px", marginBottom: "2.5rem", marginLeft: "auto", marginRight: "auto" }}>
               To protect students and maintain the integrity of the platform, every professor application is manually reviewed. We cross-reference university directories, faculty pages, and institutional email addresses before approving any account.
             </p>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1.5rem" }}>
@@ -149,7 +150,7 @@ export default function ForProfessorsPage() {
         {/* ── FAQ ─────────────────────────────────────── */}
         <FadeIn>
           <Eyebrow>Common Questions</Eyebrow>
-          <h2 className="font-display" style={{ fontSize: "clamp(2.2rem, 3.5vw, 3rem)", fontWeight: 900, letterSpacing: "-0.04em", marginBottom: "4rem", color: "var(--text-primary)" }}>
+          <h2 className="font-display" style={{ fontSize: "clamp(2.2rem, 3.5vw, 3rem)", fontWeight: 900, letterSpacing: "-0.04em", lineHeight: 0.95, marginBottom: "4.5rem", color: "var(--text-primary)" }}>
             Everything you need<br /><em style={{ fontStyle: "italic", color: "var(--accent)" }}>to know.</em>
           </h2>
         </FadeIn>
@@ -159,7 +160,7 @@ export default function ForProfessorsPage() {
             <FadeIn key={i} delay={i * 0.05}>
               <div style={{ padding: "2.5rem 0", borderTop: "1px solid var(--border)" }}>
                 <h3 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 800, color: "var(--text-primary)", letterSpacing: "-0.02em", marginBottom: "1rem" }}>{item.q}</h3>
-                <p style={{ fontSize: "0.92rem", color: "var(--text-secondary)", lineHeight: 1.8, maxWidth: "680px" }}>{item.a}</p>
+                <p style={{ fontSize: "0.92rem", color: "var(--text-secondary)", lineHeight: 1.8, maxWidth: "680px", marginLeft: "auto", marginRight: "auto" }}>{item.a}</p>
               </div>
             </FadeIn>
           ))}
@@ -168,7 +169,7 @@ export default function ForProfessorsPage() {
 
         {/* ── QUOTE ─────────────────────────────────────── */}
         <FadeIn>
-          <div style={{ padding: "4rem 0 4rem 3rem", borderLeft: "3px solid var(--accent)", marginBottom: "7.5rem" }}>
+          <div style={{ padding: "4rem 0 4rem 3rem", borderLeft: "3px solid var(--accent)", marginBottom: "7.5rem", textAlign: "left" }}>
             <p className="font-display" style={{ fontSize: "clamp(1.4rem, 2.5vw, 2.2rem)", fontWeight: 700, color: "var(--text-primary)", letterSpacing: "-0.02em", lineHeight: 1.4, marginBottom: "2rem" }}>
               &ldquo;The students who reach out through Schollective are genuinely curious and well-prepared. It's the kind of mentorship interaction I wish was available when I was an undergrad.&rdquo;
             </p>
@@ -180,18 +181,20 @@ export default function ForProfessorsPage() {
 
         {/* ── CTA ─────────────────────────────────────── */}
         <FadeIn>
-          <div style={{ padding: "4.5rem 3rem", border: "1px solid var(--border)", borderRadius: "20px", background: "rgba(99, 102, 241, 0.04)", display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", gap: "3rem" }}>
-            <div>
-              <h2 className="font-display" style={{ fontSize: "clamp(2rem, 3vw, 2.6rem)", fontWeight: 900, letterSpacing: "-0.04em", color: "var(--text-primary)", marginBottom: "1rem" }}>
+          <div style={{ padding: "4.5rem 3rem", border: "1px solid var(--border)", borderRadius: "20px", background: "rgba(99, 102, 241, 0.04)", display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", gap: "3rem", textAlign: "left" }}>
+            <div style={{ flex: "1 1 350px" }}>
+              <h2 className="font-display" style={{ fontSize: "clamp(2rem, 3vw, 2.6rem)", fontWeight: 900, letterSpacing: "-0.04em", lineHeight: 0.95, color: "var(--text-primary)", marginBottom: "1.5rem" }}>
                 Ready to make an impact?
               </h2>
               <p style={{ fontSize: "0.95rem", color: "var(--text-secondary)", maxWidth: "420px", lineHeight: 1.8 }}>
                 Apply today. Manual verification means the students you meet have already been filtered for seriousness of purpose.
               </p>
             </div>
-            <Link href="/signup" className="group relative inline-flex items-center justify-center rounded-full" style={{ textDecoration: "none", padding: "1.1rem 2.5rem", background: "var(--accent)", color: "var(--bg-base)", fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", transition: "background 0.3s", flexShrink: 0 }}>
-              Apply as Professor →
-            </Link>
+            <div style={{ flexShrink: 0 }}>
+              <Button href="/signup" size="lg">
+                Apply as Professor
+              </Button>
+            </div>
           </div>
         </FadeIn>
 

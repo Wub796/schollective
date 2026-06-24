@@ -27,7 +27,7 @@ export default function FeaturesPage() {
               <Cpu size={11} />
               Core Capabilities
             </div>
-            <h1 className="font-display text-5xl lg:text-7xl font-bold text-var(--text-primary) leading-tight mb-8" style={{ fontSize: "clamp(2.6rem, 6vw, 4rem)", letterSpacing: "-0.03em" }}>
+            <h1 className="font-display text-5xl lg:text-7xl font-bold text-var(--text-primary) mb-12" style={{ fontSize: "clamp(2.6rem, 6vw, 4rem)", letterSpacing: "-0.03em", lineHeight: 0.95 }}>
               Engineered for{" "}
               <em className="italic" style={{ fontStyle: "italic", color: "var(--accent)" }}>academic excellence</em>
             </h1>
