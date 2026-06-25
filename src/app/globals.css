@@ -21,31 +21,31 @@
   --z-toast: 40;
   --z-cursor: 50;
 
-  /* ── Light / Spacious / Crisp palette ────── */
-  --bg-base:      #fdfdfd;  /* solid bright white              */
+  /* ── Cream / Off-white base palette ────── */
+  --bg-base:      #faf9f7;  /* warm cream off-white            */
   --bg-surface-1: #ffffff;  /* lifted card surface             */
-  --bg-surface-2: #f8fafc;  /* card hover                      */
-  --bg-surface-3: #f1f5f9;  /* border-level surface            */
+  --bg-surface-2: #f5f3ff;  /* indigo-tinted surface           */
+  --bg-surface-3: #ede9fe;  /* indigo-100                      */
 
   /* Accent section */
-  --bg-accent-section: #f0fdf4;
+  --bg-accent-section: #eef2ff;  /* indigo-50                  */
 
   --text-primary:   #0f172a;  /* slate 900                     */
   --text-secondary: #475569;  /* slate 600                     */
   --text-tertiary:  #64748b;  /* slate 500                     */
 
-  /* Bright corporate purple accent */
-  --accent:       #9333ea;
-  --accent-dim:   rgba(147, 51, 234, 0.08);
-  --accent-glow:  rgba(147, 51, 234, 0.15);
+  /* Vibrant Indigo primary accent — #4f46e5 */
+  --accent:       #4f46e5;
+  --accent-dim:   rgba(79, 70, 229, 0.08);
+  --accent-glow:  rgba(79, 70, 229, 0.15);
 
-  /* Vivid purple mid */
-  --accent-blue:     #a855f7;
-  --accent-blue-dim: rgba(168, 85, 247, 0.12);
+  /* Indigo mid-tone */
+  --accent-blue:     #6366f1;
+  --accent-blue-dim: rgba(99, 102, 241, 0.12);
 
   --border:       #e2e8f0;
   --border-hover: #cbd5e1;
-  --border-focus: #94a3b8;
+  --border-focus: #a5b4fc;  /* indigo-300                      */
 
   --glass-bg:     rgba(255, 255, 255, 0.85);
   --glass-border: rgba(226, 232, 240, 0.8);
@@ -73,7 +73,8 @@ html {
 }
 
 body {
-  background: var(--bg-base);
+  background: linear-gradient(160deg, #faf9f7 0%, #f5f3ff 40%, #faf9f7 70%, #fefce8 100%);
+  background-attachment: fixed;
   color: var(--text-primary);
   font-family: var(--font-sans);
   line-height: 1.75;
@@ -96,16 +97,16 @@ body {
   overflow-x: hidden;
 }
 
-/* Subtle clean glow */
+/* Subtle indigo glow */
 .page-bg::before {
   content: '';
   position: fixed;
   inset: 0;
   pointer-events: none;
   background:
-    radial-gradient(ellipse 70% 50% at 0% 50%,   rgba(37, 99, 235, 0.03) 0%, transparent 70%),
-    radial-gradient(ellipse 70% 50% at 100% 50%,  rgba(37, 99, 235, 0.03) 0%, transparent 70%),
-    radial-gradient(ellipse 100% 40% at 50% 100%, rgba(37, 99, 235, 0.02) 0%, transparent 70%);
+    radial-gradient(ellipse 70% 50% at 0% 50%,   rgba(79, 70, 229, 0.04) 0%, transparent 70%),
+    radial-gradient(ellipse 70% 50% at 100% 50%,  rgba(79, 70, 229, 0.04) 0%, transparent 70%),
+    radial-gradient(ellipse 100% 40% at 50% 100%, rgba(79, 70, 229, 0.03) 0%, transparent 70%);
   z-index: 0;
 }
 
@@ -685,6 +686,28 @@ body::after {
 ::selection {
   background: var(--accent-dim);
   color: var(--text-primary);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   GLOBAL MICRO-INTERACTIONS — focus rings, transitions
+   ═══════════════════════════════════════════════════════════════ */
+
+a, button, [role="button"] {
+  transition-property: color, background-color, border-color, box-shadow, opacity, transform;
+  transition-duration: 200ms;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid rgba(79, 70, 229, 0.7);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+}
+
+a:not([class]):hover {
+  color: var(--accent);
 }
 
 /* ═══════════════════════════════════════════════════════════════
