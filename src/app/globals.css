@@ -4,8 +4,8 @@
    THEME — Tailwind v4 tokens
    ═══════════════════════════════════════════════════════════════ */
 @theme {
-  --font-sans: var(--font-sans), "DM Sans", system-ui, sans-serif;
-  --font-display: var(--font-display), "Playfair Display", Georgia, serif;
+  --font-sans: var(--font-sans), "Geist", "Inter", system-ui, sans-serif;
+  --font-display: var(--font-display), "Cormorant Garamond", "Cormorant", Georgia, serif;
 
   /* App shell dimensions */
   --sidebar-width: 220px;
@@ -76,11 +76,13 @@ body {
   background: var(--bg-base);
   color: var(--text-primary);
   font-family: var(--font-sans);
-  line-height: 1.8;
+  line-height: 1.75;
   overflow-x: hidden;
   isolation: isolate;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
 }
 
 /* ─── Shared page background — matches landing page ────────────
@@ -123,6 +125,20 @@ body {
 /* ── Display font utility ────────────────────────────────────── */
 .font-display {
   font-family: var(--font-display);
+  font-feature-settings: "kern" 1, "liga" 1, "calt" 1, "swsh" 1;
+}
+
+/* ── Public page centering — all public pages are centered ──── */
+.public-page-centered {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* Force centered within max-width public wrappers */
+.public-page-centered > * {
+  width: 100%;
 }
 
 /* ═══════════════════════════════════════════════════════════════
