@@ -70,6 +70,8 @@ const Button = React.forwardRef<HTMLElement, ButtonProps>(
     const isString = typeof children === "string";
     const chars = isString ? (children as string).split("") : [];
 
+    const layer2Color = variant === "primary" ? "#ffffff" : "#4f46e5";
+
     const rollContent = isString ? (
       <>
         {/* Layer 1 — slides up and out (IN NORMAL FLOW) */}
@@ -89,7 +91,7 @@ const Button = React.forwardRef<HTMLElement, ButtonProps>(
         </span>
         
         {/* Layer 2 — slides up and in (ABSOLUTE) */}
-        <span className="flex" style={{ position: "absolute", inset: 0, alignItems: "center", justifyContent: "center", gap: icon ? "0.5rem" : "0", color: "#4f46e5", pointerEvents: "none" }}>
+        <span className="flex" style={{ position: "absolute", inset: 0, alignItems: "center", justifyContent: "center", gap: icon ? "0.5rem" : "0", color: layer2Color, pointerEvents: "none" }}>
           {icon && <span className="flex-shrink-0">{icon}</span>}
           <span className="flex" style={{ overflow: "hidden", padding: "0.1em 0.1em" }}>
             {chars.map((ch, i) => (
@@ -110,7 +112,7 @@ const Button = React.forwardRef<HTMLElement, ButtonProps>(
           {icon && <span className="flex-shrink-0">{icon}</span>}
           <span>{children}</span>
         </span>
-        <span className="flex translate-y-full group-hover:translate-y-0 transition-transform duration-[450ms] ease-[cubic-bezier(0.19,1,0.22,1)]" style={{ position: "absolute", inset: 0, alignItems: "center", justifyContent: "center", gap: icon ? "0.5rem" : "0", color: 'var(--accent)', pointerEvents: "none" }}>
+        <span className="flex translate-y-full group-hover:translate-y-0 transition-transform duration-[450ms] ease-[cubic-bezier(0.19,1,0.22,1)]" style={{ position: "absolute", inset: 0, alignItems: "center", justifyContent: "center", gap: icon ? "0.5rem" : "0", color: layer2Color, pointerEvents: "none" }}>
           {icon && <span className="flex-shrink-0">{icon}</span>}
           <span>{children}</span>
         </span>
