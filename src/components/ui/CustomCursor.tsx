@@ -195,13 +195,13 @@ function CursorRing({
   // --- Colors ---
   // Purple for button hover, neutral for everything else
   const borderColor = isButton
-    ? "rgba(147, 51, 234, 0.9)"   // purple-600
+    ? "rgba(79, 70, 229, 0.9)"   // indigo-600
     : isCanvas
     ? "rgba(15, 23, 42, 0.4)"
     : "rgba(15, 23, 42, 0.5)";
 
   const boxShadow = isButton
-    ? `0 0 0 1.5px rgba(147, 51, 234, 0.9), 0 0 18px rgba(147, 51, 234, 0.35), inset 0 0 12px rgba(147, 51, 234, 0.08)`
+    ? `0 0 0 1.5px rgba(79, 70, 229, 0.9), 0 0 18px rgba(79, 70, 229, 0.35), inset 0 0 12px rgba(79, 70, 229, 0.08)`
     : "none";
 
   const borderWidth = isButton ? "1.5px" : "1px";
