@@ -23,34 +23,7 @@ const Button = React.forwardRef<HTMLElement, ButtonProps>(
     // We need a local ref to attach event listeners if 'ref' is not provided
     const localRef = React.useRef<HTMLElement>(null);
     const resolvedRef = (ref as React.RefObject<HTMLElement>) || localRef;
-    const borderRef = React.useRef<HTMLSpanElement>(null);
 
-    React.useEffect(() => {
-      const el = resolvedRef.current;
-      const dot = borderRef.current;
-      if (!el || !dot) return;
-
-      const enter = () => {
-        const { width, height } = el.getBoundingClientRect();
-        dot.style.width = `${width + 24}px`;
-        dot.style.height = `${height + 18}px`;
-        dot.style.borderRadius = "100px";
-        dot.style.borderColor = variant === 'primary' ? 'rgba(79,70,229,0.6)' : 'rgba(79,70,229,0.8)';
-      };
-      const leave = () => {
-        dot.style.width = "10px";
-        dot.style.height = "10px";
-        dot.style.borderRadius = "50%";
-        dot.style.borderColor = "transparent";
-      };
-
-      el.addEventListener("mouseenter", enter);
-      el.addEventListener("mouseleave", leave);
-      return () => {
-        el.removeEventListener("mouseenter", enter);
-        el.removeEventListener("mouseleave", leave);
-      };
-    }, [resolvedRef, variant]);
 
     const variants = {
       primary: "bg-indigo-600 text-white border-2 border-indigo-600 hover:bg-indigo-700 hover:border-indigo-700 shadow-sm transition-all duration-200",
@@ -131,16 +104,6 @@ const Button = React.forwardRef<HTMLElement, ButtonProps>(
 
     const content = (
       <>
-        <span
-          ref={borderRef}
-          aria-hidden
-          style={{
-            pointerEvents: "none", position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)",
-            width: "10px", height: "10px", borderRadius: "50%", border: "1.5px solid transparent",
-            transition: "width 520ms cubic-bezier(0.19,1,0.22,1), height 520ms cubic-bezier(0.19,1,0.22,1), border-radius 520ms cubic-bezier(0.19,1,0.22,1), border-color 200ms ease",
-            zIndex: 0,
-          }}
-        />
         <span style={{ position: "relative", display: "flex", alignItems: "center", zIndex: 1 }}>
           {rollContent}
         </span>
