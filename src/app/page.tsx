@@ -541,15 +541,9 @@ export default function LandingPage() {
               <span className="italic font-light text-indigo-600">one structured request away.</span>
             </h2>
 
-            <p className="font-sans leading-relaxed tracking-normal text-slate-500 mt-8 mb-12 text-sm">
+            <p className="font-sans leading-relaxed tracking-normal text-slate-500 mt-8 mb-0 text-sm">
               Free to use. No credit card required.
             </p>
-
-            <div className="flex items-center justify-center">
-              <Button href="/signup" variant="primary" size="lg">
-                Create Account →
-              </Button>
-            </div>
           </div>
         </section>
 
