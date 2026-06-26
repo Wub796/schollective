@@ -173,9 +173,7 @@ export default function LandingPage() {
   const pageRef = useRef<HTMLDivElement>(null);
   const [loaderDone, setLoaderDone] = useState(false);
 
-  // Search state
-  const [interest, setInterest] = useState("");
-  const [university, setUniversity] = useState("");
+
 
   useEffect(() => {
     const t = setTimeout(() => setLoaderDone(true), 1400);
@@ -197,11 +195,7 @@ export default function LandingPage() {
     return () => clearTimeout(timer);
   }, []);
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!interest && !university) return;
-    router.push(`/signup?interest=${encodeURIComponent(interest)}&university=${encodeURIComponent(university)}`);
-  };
+
 
   return (
     <>
@@ -266,54 +260,7 @@ export default function LandingPage() {
               Cold emails to professors go unanswered. Connect through verified, in-platform academic request threads for structured research mentorship.
             </motion.p>
 
-            {/* Search Bar Block */}
-            <motion.form
-              onSubmit={handleSearch}
-              initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.9, ease: EASE, delay: 1.3 }}
-              className="w-full max-w-3xl flex flex-col md:flex-row items-stretch p-2.5 rounded-[24px] border border-slate-200 gap-2 md:gap-0"
-              style={{
-                background: "rgba(255, 255, 255, 0.55)",
-                backdropFilter: "blur(24px)",
-                boxShadow: "0 24px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(15, 23, 42, 0.05)",
-              }}
-            >
-              <div className="flex-1 flex flex-col justify-center px-6 py-3 text-left">
-                <label className="font-sans uppercase text-[0.52rem] tracking-wider text-slate-600/60 mb-1">
-                  Research Interest
-                </label>
-                <input
-                  type="text"
-                  placeholder="e.g. machine learning"
-                  value={interest}
-                  onChange={(e) => setInterest(e.target.value)}
-                  className="bg-transparent border-none outline-none font-sans text-sm text-slate-900 placeholder-slate-400 w-full"
-                />
-              </div>
 
-              <div className="hidden md:block w-px bg-slate-100 my-3" />
-
-              <div className="flex-1 flex flex-col justify-center px-6 py-3 text-left">
-                <label className="font-sans uppercase text-[0.52rem] tracking-wider text-slate-600/60 mb-1">
-                  University
-                </label>
-                <input
-                  type="text"
-                  placeholder="e.g. MIT, Stanford..."
-                  value={university}
-                  onChange={(e) => setUniversity(e.target.value)}
-                  className="bg-transparent border-none outline-none font-sans text-sm text-slate-900 placeholder-slate-400 w-full"
-                />
-              </div>
-
-              <button
-                type="submit"
-                className="group relative flex items-center justify-center rounded-full bg-blue-600 text-[var(--bg-base)] font-bold text-xs uppercase tracking-wider px-8 py-4 transition-transform duration-300 hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
-                style={{ fontFamily: "var(--font-sans)", border: "none" }}
-              >
-                <span>Search collective</span>
-              </button>
-            </motion.form>
           </div>
 
           {/* Scroll cue */}
