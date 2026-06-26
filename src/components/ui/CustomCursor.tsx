@@ -18,6 +18,7 @@ type TargetRect = {
   width: number;
   height: number;
   radius: number;
+  isNav?: boolean;
 };
 
 function getMode(target: HTMLElement): CursorMode {
@@ -49,6 +50,7 @@ function getTargetRect(el: Element): TargetRect {
         width: itemRect.width + 12,
         height: height,
         radius,
+        isNav: true,
       };
     }
   }
@@ -210,6 +212,8 @@ function CursorRing({
     borderRadius = isText ? 2 : sizeX / 2;
   }
 
+  const isNav = targetRect?.isNav || false;
+
   // --- Colors ---
   // Purple for button hover, neutral for everything else
   const borderColor = isButton
@@ -218,12 +222,12 @@ function CursorRing({
     ? "rgba(15, 23, 42, 0.4)"
     : "rgba(15, 23, 42, 0.5)";
 
-  const boxShadow = isButton
+  const boxShadow = isButton && isNav
     ? `0 0 0 1.5px rgba(79, 70, 229, 0.9), 0 0 18px rgba(79, 70, 229, 0.35), inset 0 0 12px rgba(79, 70, 229, 0.08)`
     : "none";
 
   const borderWidth = isButton ? "1.5px" : "1px";
-  const border = isText ? "none" : `${borderWidth} solid ${borderColor}`;
+  const border = isText || (isButton && !isNav) ? "none" : `${borderWidth} solid ${borderColor}`;
 
   return (
     <>
