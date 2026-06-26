@@ -236,7 +236,7 @@ export default function LandingPage() {
                   <span className="w-7 h-7 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500 text-xs font-bold font-sans mb-4 mx-auto select-none">
                     ✕
                   </span>
-                  <span className="text-slate-600 text-sm leading-[1.7] max-w-xs">{reason}</span>
+                  <p className="text-slate-600 text-sm leading-relaxed tracking-normal max-w-xs mx-auto">{reason}</p>
                 </div>
               ))}
             </div>
@@ -304,14 +304,14 @@ export default function LandingPage() {
                       <span className="w-6 h-6 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500 text-xs font-bold font-sans select-none">
                         ✕
                       </span>
-                      <p className="text-slate-600 text-sm leading-[1.7] font-sans max-w-sm">{row.bad}</p>
+                      <p className="text-slate-600 text-sm leading-relaxed tracking-normal font-sans max-w-sm mx-auto">{row.bad}</p>
                     </div>
                     {/* Right Column (Schollective) */}
                     <div className="pl-0 md:pl-8 mt-6 md:mt-0 md:border-l md:border-slate-200 flex flex-col items-center text-center gap-3 w-full">
                       <span className="w-6 h-6 rounded-full bg-indigo-600/10 border border-indigo-600/20 flex items-center justify-center text-indigo-600 text-xs font-bold font-sans select-none">
                         ✓
                       </span>
-                      <p className="text-slate-900 text-sm leading-[1.7] font-sans font-medium max-w-sm">{row.good}</p>
+                      <p className="text-slate-900 text-sm leading-relaxed tracking-normal font-sans font-medium max-w-sm mx-auto">{row.good}</p>
                     </div>
                   </div>
                 ))}
@@ -515,7 +515,7 @@ export default function LandingPage() {
             <span className="text-6xl md:text-7xl font-display font-light text-indigo-600 select-none leading-none mb-4">
               “
             </span>
-            <blockquote className="font-display text-xl md:text-2xl font-light text-slate-800 leading-relaxed max-w-2xl italic select-none mb-8">
+            <blockquote className="font-display text-xl md:text-2xl font-light text-slate-800 leading-relaxed max-w-2xl mx-auto italic select-none mb-8">
               When we were students, we realized how difficult it was to reach out to the right professors. Cold emails went unanswered, and credentials were hard to verify. We built Schollective to establish genuine, verified mentorship.
             </blockquote>
             <div className="flex flex-col items-center gap-3">
