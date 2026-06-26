@@ -32,9 +32,9 @@ const Button = React.forwardRef<HTMLElement, ButtonProps>(
     };
 
     const sizes = {
-      sm: "px-7 py-3 text-xs",
-      md: "px-9 py-3.5 text-sm",
-      lg: "px-12 py-5 text-base",
+      sm: "px-4 py-2 text-xs",
+      md: "px-6 py-3 text-sm",
+      lg: "px-8 py-4 text-base",
     };
 
     // Determine rolling content.
