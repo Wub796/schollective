@@ -82,8 +82,8 @@ function FadeIn({ children, delay = 0, className = "" }: { children: React.React
 
 function Label({ children }: { children: React.ReactNode }) {
   return (
-    <div className="inline-flex items-center justify-center rounded-full bg-indigo-600/5 border border-indigo-600/10 py-1.5 px-4 mb-10 select-none">
-      <span className="font-sans uppercase text-indigo-600 tracking-[0.2em] font-bold" style={{ fontSize: "0.62rem" }}>
+    <div className="inline-flex items-center justify-center rounded-full bg-indigo-600/5 border border-indigo-600/10 py-1.5 px-4 mb-10 select-none mx-auto">
+      <span className="font-sans uppercase text-indigo-600 tracking-[0.2em] font-bold text-center" style={{ fontSize: "0.62rem" }}>
         {children}
       </span>
     </div>
@@ -92,14 +92,14 @@ function Label({ children }: { children: React.ReactNode }) {
 
 function MockupChrome({ url, children }: { url: string; children: React.ReactNode }) {
   return (
-    <div className="relative p-6 md:p-10 rounded-3xl border border-slate-200/80 bg-white flex flex-col gap-6 w-full text-left max-w-lg mx-auto">
-      <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+    <div className="relative p-6 md:p-8 rounded-3xl border border-slate-200/80 bg-white flex flex-col gap-6 w-full text-left max-w-lg mx-auto">
+      <div className="flex items-center justify-between border-b border-slate-100 pb-3 w-full">
         <div className="flex items-center gap-1.5">
           <div className="w-2.5 h-2.5 rounded-full bg-red-400/50" />
           <div className="w-2.5 h-2.5 rounded-full bg-yellow-400/50" />
           <div className="w-2.5 h-2.5 rounded-full bg-green-400/50" />
         </div>
-        <span className="font-mono text-[0.55rem] text-slate-300">{url}</span>
+        <span className="font-mono text-[0.55rem] text-slate-300 text-center mx-auto flex-1">{url}</span>
       </div>
       {children}
     </div>
@@ -133,7 +133,7 @@ export default function LandingPage() {
           <AnimatedBackground />
           <div className="relative z-10 w-full max-w-3xl mx-auto flex flex-col items-center text-center">
             <h1
-              className="font-display font-bold text-slate-900 tracking-tighter leading-[1.08] text-center w-full"
+              className="font-display font-bold text-slate-900 tracking-tighter leading-[1.08] text-center w-full mx-auto"
               style={{ fontSize: "clamp(3rem, 6.5vw, 5.2rem)" }}
             >
               Find the mentor<br />
@@ -151,7 +151,7 @@ export default function LandingPage() {
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.9, ease: EASE, delay: 1.1 }}
-              className="flex justify-center"
+              className="flex justify-center w-full mx-auto"
             >
               <Button href="/signup" variant="primary" size="lg">Get Started →</Button>
             </motion.div>
@@ -163,29 +163,29 @@ export default function LandingPage() {
           <div className="w-full max-w-4xl mx-auto flex flex-col items-center text-center">
             <Label>The truth about academic cold-outreach</Label>
             <h2
-              className="font-display font-bold text-slate-900 tracking-tighter leading-[1.1] text-center w-full"
+              className="font-display font-bold text-slate-900 tracking-tighter leading-[1.1] text-center w-full mx-auto"
               style={{ fontSize: "clamp(2rem, 4vw, 3.2rem)" }}
             >
               Professors delete most student outreach emails<br />
               <span className="italic font-light text-slate-400">before finishing the first line.</span>
             </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5 w-full mt-16 mb-16">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5 w-full mt-16 mb-16 mx-auto">
               {[
                 "Professors can spot AI-written emails instantly.",
                 "Generic requests that could go to anyone get ignored.",
                 "Citing papers without understanding them backfires.",
               ].map((reason, i) => (
-                <div key={i} className="flex flex-col items-center text-center p-10 rounded-2xl border border-slate-200/50 bg-[#fdfdfd]">
-                  <span className="w-8 h-8 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500 text-xs font-bold font-sans mb-5 select-none">✕</span>
-                  <p className="text-slate-500 text-sm leading-relaxed">{reason}</p>
+                <div key={i} className="flex flex-col items-center justify-center text-center p-10 rounded-2xl border border-slate-200/50 bg-[#fdfdfd] mx-auto w-full">
+                  <span className="w-8 h-8 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500 text-xs font-bold font-sans mb-5 select-none mx-auto">✕</span>
+                  <p className="text-slate-500 text-sm leading-relaxed text-center mx-auto">{reason}</p>
                 </div>
               ))}
             </div>
 
             <Link
               href="/signup"
-              className="group inline-flex items-center gap-1.5 font-sans text-xs uppercase tracking-widest text-indigo-600 border-b border-indigo-600/20 pb-1.5 hover:border-indigo-600 transition-colors font-bold"
+              className="group inline-flex items-center justify-center gap-1.5 font-sans text-xs uppercase tracking-widest text-indigo-600 border-b border-indigo-600/20 pb-1.5 hover:border-indigo-600 transition-colors font-bold mx-auto text-center"
               style={{ textDecoration: "none" }}
             >
               Send one that gets read <span className="transition-transform group-hover:translate-x-1">→</span>
@@ -198,36 +198,36 @@ export default function LandingPage() {
           <div className="w-full max-w-4xl mx-auto flex flex-col items-center text-center">
             <Label>Comparing Outreach</Label>
             <h2
-              className="font-display font-bold text-slate-900 tracking-tighter leading-[1.1] text-center w-full mb-16"
+              className="font-display font-bold text-slate-900 tracking-tighter leading-[1.1] text-center w-full mb-16 mx-auto"
               style={{ fontSize: "clamp(2rem, 3.5vw, 3rem)" }}
             >
               Why not just use ChatGPT?
             </h2>
 
-            <div className="border border-slate-200/70 rounded-3xl p-8 md:p-12 bg-[#fdfdfd] w-full">
+            <div className="border border-slate-200/70 rounded-3xl p-8 md:p-12 bg-[#fdfdfd] w-full mx-auto">
               {/* Desktop header */}
-              <div className="hidden md:grid grid-cols-2 border-b border-slate-200 pb-6 mb-8">
-                <div className="text-center">
-                  <span className="font-sans text-[0.68rem] font-bold tracking-widest text-slate-400 uppercase">ChatGPT</span>
+              <div className="hidden md:grid grid-cols-2 border-b border-slate-200 pb-6 mb-8 w-full mx-auto">
+                <div className="text-center mx-auto w-full flex justify-center">
+                  <span className="font-sans text-[0.68rem] font-bold tracking-widest text-slate-400 uppercase text-center mx-auto">ChatGPT</span>
                 </div>
-                <div className="text-center border-l border-slate-200">
-                  <span className="font-sans text-[0.68rem] font-bold tracking-widest text-indigo-600 uppercase">Schollective</span>
+                <div className="text-center border-l border-slate-200 mx-auto w-full flex justify-center">
+                  <span className="font-sans text-[0.68rem] font-bold tracking-widest text-indigo-600 uppercase text-center mx-auto">Schollective</span>
                 </div>
               </div>
 
-              <div className="flex flex-col gap-8 md:gap-0">
+              <div className="flex flex-col gap-8 md:gap-0 w-full mx-auto">
                 {[
                   { bad: "Hallucinates professors and fake papers.", good: "Every profile is manually verified and active." },
                   { bad: "Writes your message for you — professors delete those instantly.", good: "Guides you to craft a structured, contextual request in your own voice." },
                   { bad: "Requires 20 back-and-forth prompts to find and understand professors.", good: "One search surfaces professors, research summaries, and a request builder together." },
                 ].map((row, i) => (
-                  <div key={i} className="grid grid-cols-1 md:grid-cols-2 md:py-8 md:border-b md:border-slate-100 md:last:border-none md:last:pb-0">
-                    <div className="flex flex-col items-center text-center pb-8 md:pb-0 border-b border-slate-100 md:border-none gap-4 pr-0 md:pr-10">
-                      <span className="w-7 h-7 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500 text-xs font-bold select-none">✕</span>
+                  <div key={i} className="grid grid-cols-1 md:grid-cols-2 md:py-8 md:border-b md:border-slate-100 md:last:border-none md:last:pb-0 w-full mx-auto">
+                    <div className="flex flex-col items-center justify-center text-center pb-8 md:pb-0 border-b border-slate-100 md:border-none gap-4 pr-0 md:pr-10 w-full mx-auto">
+                      <span className="w-7 h-7 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500 text-xs font-bold select-none mx-auto">✕</span>
                       <p className="text-slate-500 text-sm leading-relaxed max-w-xs mx-auto text-center">{row.bad}</p>
                     </div>
-                    <div className="flex flex-col items-center text-center pt-8 md:pt-0 md:border-l md:border-slate-200 gap-4 pl-0 md:pl-10">
-                      <span className="w-7 h-7 rounded-full bg-indigo-600/10 border border-indigo-600/20 flex items-center justify-center text-indigo-600 text-xs font-bold select-none">✓</span>
+                    <div className="flex flex-col items-center justify-center text-center pt-8 md:pt-0 md:border-l md:border-slate-200 gap-4 pl-0 md:pl-10 w-full mx-auto">
+                      <span className="w-7 h-7 rounded-full bg-indigo-600/10 border border-indigo-600/20 flex items-center justify-center text-indigo-600 text-xs font-bold select-none mx-auto">✓</span>
                       <p className="text-slate-900 text-sm leading-relaxed font-medium max-w-xs mx-auto text-center">{row.good}</p>
                     </div>
                   </div>
@@ -238,79 +238,84 @@ export default function LandingPage() {
         </section>
 
         {/* ══ 3-STEP WALKTHROUGH ══════════════════════════════════════ */}
-        {/* Step 01 */}
         <section className="js-fade relative border-t border-slate-100 min-h-screen flex flex-col items-center justify-center py-24 px-6" style={{ background: "#fdfdfd" }}>
           <div className="w-full max-w-4xl mx-auto flex flex-col items-center text-center mb-16 md:mb-24">
             <Label>How it works</Label>
           </div>
-          <div className="w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
-            <div className="w-full max-w-xl mx-auto flex flex-col items-center text-center">
-              <span className="font-mono text-4xl font-light text-indigo-600/25 mb-8 select-none">01</span>
+
+          {/* Step 01 */}
+          <div className="w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center mb-16 md:mb-24">
+            {/* The fix: Center text column always, stagger comes from grid order */}
+            <div className="flex flex-col items-center justify-center text-center w-full mx-auto">
+              <span className="font-mono text-4xl font-light text-indigo-600/25 mb-8 select-none block w-full text-center">01</span>
               <h3 className="font-display font-bold text-slate-900 tracking-tighter leading-[1.1] text-center w-full" style={{ fontSize: "clamp(1.8rem, 3vw, 2.6rem)" }}>
                 Search any research interest.
               </h3>
               <p className="text-slate-500 leading-relaxed text-sm mt-6 mb-10 max-w-sm mx-auto text-center">
                 Type what you care about: quantum computing, cognitive neuroscience, or climate policy. We surface top professors publishing in that exact space, ranked by impact.
               </p>
-              <Link href="/signup" className="group inline-flex items-center gap-1.5 font-sans text-xs uppercase tracking-widest text-indigo-600 border-b border-indigo-600/20 pb-1.5 hover:border-indigo-600 font-bold transition-colors" style={{ textDecoration: "none" }}>
+              <Link href="/signup" className="group inline-flex items-center justify-center gap-1.5 font-sans text-xs uppercase tracking-widest text-indigo-600 border-b border-indigo-600/20 pb-1.5 hover:border-indigo-600 font-bold transition-colors mx-auto text-center" style={{ textDecoration: "none" }}>
                 Try a search <span className="transition-transform group-hover:translate-x-1">→</span>
               </Link>
             </div>
-            <MockupChrome url="schollective.org/app">
-              <div className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50/60 border border-slate-100 select-none">
-                <span className="px-4 py-2 rounded-lg bg-indigo-600/10 border border-indigo-600/20 text-xs text-indigo-600 font-semibold">neuroscience</span>
-                <span className="px-4 py-2 rounded-lg text-xs text-slate-400">Harvard</span>
-              </div>
-              <div className="flex flex-col gap-3">
-                {[
-                  { name: "Dr. Emily Nakamura", uni: "Harvard Medical School", tag1: "Memory", tag2: "fMRI" },
-                  { name: "Prof. James Miller", uni: "MIT Brain & Cognitive", tag1: "Neural Circuits", tag2: "AI" },
-                  { name: "Dr. Aisha Patel", uni: "Stanford Neuroscience", tag1: "BCI", tag2: "Computation" },
-                ].map((prof, i) => (
-                  <div key={i} className="flex flex-col items-start p-4 rounded-xl border border-slate-100 bg-slate-50/30">
-                    <div className="flex items-center justify-between w-full mb-2">
-                      <span className="font-display font-bold text-xs text-slate-800">{prof.name}</span>
-                      <span className="font-sans text-[0.6rem] text-slate-400">{prof.uni}</span>
+            {/* Right mockup */}
+            <div className="w-full mx-auto flex justify-center">
+              <MockupChrome url="schollective.org/app">
+                <div className="flex items-center justify-center gap-2 p-2.5 rounded-xl bg-slate-50/60 border border-slate-100 select-none">
+                  <span className="px-4 py-2 rounded-lg bg-indigo-600/10 border border-indigo-600/20 text-xs text-indigo-600 font-semibold">neuroscience</span>
+                  <span className="px-4 py-2 rounded-lg text-xs text-slate-400">Harvard</span>
+                </div>
+                <div className="flex flex-col gap-3">
+                  {[
+                    { name: "Dr. Emily Nakamura", uni: "Harvard Medical School", tag1: "Memory", tag2: "fMRI" },
+                    { name: "Prof. James Miller", uni: "MIT Brain & Cognitive", tag1: "Neural Circuits", tag2: "AI" },
+                    { name: "Dr. Aisha Patel", uni: "Stanford Neuroscience", tag1: "BCI", tag2: "Computation" },
+                  ].map((prof, i) => (
+                    <div key={i} className="flex flex-col items-center p-4 rounded-xl border border-slate-100 bg-slate-50/30">
+                      <div className="flex items-center justify-between w-full mb-2">
+                        <span className="font-display font-bold text-xs text-slate-800">{prof.name}</span>
+                        <span className="font-sans text-[0.6rem] text-slate-400">{prof.uni}</span>
+                      </div>
+                      <div className="flex gap-1.5">
+                        <span className="px-2 py-0.5 rounded bg-slate-100 text-[0.55rem] text-slate-500 font-medium">{prof.tag1}</span>
+                        <span className="px-2 py-0.5 rounded bg-indigo-600/5 text-[0.55rem] text-indigo-600 border border-indigo-600/10 font-semibold">{prof.tag2}</span>
+                      </div>
                     </div>
-                    <div className="flex gap-1.5">
-                      <span className="px-2 py-0.5 rounded bg-slate-100 text-[0.55rem] text-slate-500 font-medium">{prof.tag1}</span>
-                      <span className="px-2 py-0.5 rounded bg-indigo-600/5 text-[0.55rem] text-indigo-600 border border-indigo-600/10 font-semibold">{prof.tag2}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </MockupChrome>
+                  ))}
+                </div>
+              </MockupChrome>
+            </div>
           </div>
-        </section>
 
-        {/* Step 02 */}
-        <section className="js-fade relative min-h-screen flex flex-col items-center justify-center py-24 px-6" style={{ background: "#fdfdfd" }}>
-          <div className="w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
-            <div className="w-full max-w-xl mx-auto flex flex-col items-center text-center order-1 lg:order-2">
-              <span className="font-mono text-4xl font-light text-indigo-600/25 mb-8 select-none">02</span>
+          {/* Step 02 */}
+          <div className="w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center mb-16 md:mb-24">
+            {/* The fix: Center text column always, forced to the right via grid order */}
+            <div className="flex flex-col items-center justify-center text-center w-full mx-auto order-1 lg:order-2">
+              <span className="font-mono text-4xl font-light text-indigo-600/25 mb-8 select-none block w-full text-center">02</span>
               <h3 className="font-display font-bold text-slate-900 tracking-tighter leading-[1.1] text-center w-full" style={{ fontSize: "clamp(1.8rem, 3vw, 2.6rem)" }}>
-                Understand their research in plain English.
+                Understand their research.
               </h3>
               <p className="text-slate-500 leading-relaxed text-sm mt-6 mb-10 max-w-sm mx-auto text-center">
                 Every professor profile has an AI-synthesized summary of their key findings, written so a high schooler or undergrad can understand it and reference it with precision. No more pretending to read 40-page papers.
               </p>
-              <Link href="/signup" className="group inline-flex items-center gap-1.5 font-sans text-xs uppercase tracking-widest text-indigo-600 border-b border-indigo-600/20 pb-1.5 hover:border-indigo-600 font-bold transition-colors" style={{ textDecoration: "none" }}>
+              <Link href="/signup" className="group inline-flex items-center justify-center gap-1.5 font-sans text-xs uppercase tracking-widest text-indigo-600 border-b border-indigo-600/20 pb-1.5 hover:border-indigo-600 font-bold transition-colors mx-auto text-center" style={{ textDecoration: "none" }}>
                 See an example <span className="transition-transform group-hover:translate-x-1">→</span>
               </Link>
             </div>
-            <div className="order-2 lg:order-1">
+            {/* Left mockup */}
+            <div className="w-full mx-auto flex justify-center order-2 lg:order-1">
               <MockupChrome url="schollective.org/app">
-                <div className="p-5 rounded-2xl border border-indigo-600/10 bg-[#fdfdfd]">
-                  <div className="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
+                <div className="p-5 rounded-2xl border border-indigo-600/10 bg-[#fdfdfd] flex flex-col items-center text-center">
+                  <div className="flex items-center justify-between mb-4 border-b border-slate-100 pb-3 w-full">
                     <span className="font-display font-bold text-xs text-slate-900">Dr. Emily Nakamura</span>
                     <span className="px-2 py-0.5 rounded bg-indigo-600/10 text-[0.55rem] text-indigo-600 font-bold">2024 PAPER</span>
                   </div>
-                  <p className="text-slate-500 text-xs leading-[1.7] mb-4">
+                  <p className="text-slate-500 text-xs leading-[1.7] mb-4 text-center mx-auto">
                     Studies how memories form and consolidate during sleep using fMRI. Recent work shows neural oscillation patterns predict next-day recall accuracy in elderly patients with early cognitive decline.
                   </p>
-                  <div className="p-4 rounded-xl bg-indigo-600/[0.03] border border-indigo-600/10">
+                  <div className="p-4 rounded-xl bg-indigo-600/[0.03] border border-indigo-600/10 flex flex-col items-center text-center w-full">
                     <span className="font-sans text-[0.52rem] uppercase text-indigo-600 tracking-widest font-bold block mb-1.5">Key Finding</span>
-                    <p className="text-slate-900 text-xs leading-[1.6] font-medium">
+                    <p className="text-slate-900 text-xs leading-[1.6] font-medium text-center mx-auto">
                       Theta oscillations during REM sleep increased memory consolidation by 34%. Published 2024, first-author.
                     </p>
                   </div>
@@ -318,50 +323,52 @@ export default function LandingPage() {
               </MockupChrome>
             </div>
           </div>
-        </section>
 
-        {/* Step 03 */}
-        <section className="js-fade relative min-h-screen flex flex-col items-center justify-center py-24 px-6" style={{ background: "#fdfdfd" }}>
-          <div className="w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
-            <div className="w-full max-w-xl mx-auto flex flex-col items-center text-center">
-              <span className="font-mono text-4xl font-light text-indigo-600/25 mb-8 select-none">03</span>
+          {/* Step 03 */}
+          <div className="w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            {/* The fix: Center text column always */}
+            <div className="flex flex-col items-center justify-center text-center w-full mx-auto">
+              <span className="font-mono text-4xl font-light text-indigo-600/25 mb-8 select-none block w-full text-center">03</span>
               <h3 className="font-display font-bold text-slate-900 tracking-tighter leading-[1.1] text-center w-full" style={{ fontSize: "clamp(1.8rem, 3vw, 2.6rem)" }}>
-                Draft structured requests that get answered.
+                Draft structured requests.
               </h3>
               <p className="text-slate-500 leading-relaxed text-sm mt-6 mb-10 max-w-sm mx-auto text-center">
                 Our structured request model, co-designed with research faculty, guides you through describing your understanding, interests, and availability. No more guessing what professors want to hear.
               </p>
-              <Link href="/signup" className="group inline-flex items-center gap-1.5 font-sans text-xs uppercase tracking-widest text-indigo-600 border-b border-indigo-600/20 pb-1.5 hover:border-indigo-600 font-bold transition-colors" style={{ textDecoration: "none" }}>
+              <Link href="/signup" className="group inline-flex items-center justify-center gap-1.5 font-sans text-xs uppercase tracking-widest text-indigo-600 border-b border-indigo-600/20 pb-1.5 hover:border-indigo-600 font-bold transition-colors mx-auto text-center" style={{ textDecoration: "none" }}>
                 Try request flow <span className="transition-transform group-hover:translate-x-1">→</span>
               </Link>
             </div>
-            <MockupChrome url="schollective.org/editor">
-              <div className="flex flex-col sm:flex-row gap-5">
-                <div className="flex-1 p-5 rounded-xl border border-slate-100 bg-slate-50/50 flex flex-col gap-3">
-                  <span className="font-sans text-[0.52rem] text-slate-400 uppercase tracking-wider font-semibold">Structured Request Flow</span>
-                  <div className="text-xs leading-[1.7] text-slate-500">
-                    <p className="mb-2.5 line-through text-red-400/80 decoration-[#ea580c] decoration-1">I would love to join your lab next semester.</p>
-                    <p className="text-slate-800 border-l-2 border-indigo-600 pl-3 bg-indigo-600/[0.02] py-1.5 font-medium rounded-sm">
-                      I have been analyzing memory consolidation in sleep. Your 2024 theta oscillation findings motivated my question...
-                    </p>
+            {/* Right mockup */}
+            <div className="w-full mx-auto flex justify-center">
+              <MockupChrome url="schollective.org/editor">
+                <div className="flex flex-col gap-5 w-full">
+                  <div className="flex-1 p-5 rounded-xl border border-slate-100 bg-slate-50/50 flex flex-col items-center gap-3 text-center">
+                    <span className="font-sans text-[0.52rem] text-slate-400 uppercase tracking-wider font-semibold">Structured Request Flow</span>
+                    <div className="text-xs leading-[1.7] text-slate-500 flex flex-col items-center">
+                      <p className="mb-2.5 line-through text-red-400/80 decoration-[#ea580c] decoration-1">I would love to join your lab next semester.</p>
+                      <p className="text-slate-800 border-l-2 border-indigo-600 bg-indigo-600/[0.02] py-2 px-4 font-medium rounded-sm text-center">
+                        I have been analyzing memory consolidation in sleep. Your 2024 theta oscillation findings motivated my question...
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex flex-row justify-center gap-2 flex-wrap">
+                    <div className="p-2.5 rounded-lg border border-red-500/10 bg-red-500/[0.02] flex items-center justify-center gap-2">
+                      <span className="text-red-500 text-xs font-bold select-none">✕</span>
+                      <span className="font-sans text-[0.58rem] text-red-500 tracking-wider font-bold">Generic</span>
+                    </div>
+                    <div className="p-2.5 rounded-lg border border-green-500/10 bg-green-500/[0.02] flex items-center justify-center gap-2">
+                      <span className="text-green-500 text-xs font-bold select-none">✓</span>
+                      <span className="font-sans text-[0.58rem] text-green-600 tracking-wider font-bold">Cites Work</span>
+                    </div>
+                    <div className="p-2.5 rounded-lg border border-green-500/10 bg-green-500/[0.02] flex items-center justify-center gap-2">
+                      <span className="text-green-500 text-xs font-bold select-none">✓</span>
+                      <span className="font-sans text-[0.58rem] text-green-600 tracking-wider font-bold">Structured</span>
+                    </div>
                   </div>
                 </div>
-                <div className="w-full sm:w-44 flex flex-col gap-2 flex-shrink-0">
-                  <div className="p-3 rounded-lg border border-red-500/10 bg-red-500/[0.02] flex items-center gap-2">
-                    <span className="text-red-500 text-xs font-bold select-none">✕</span>
-                    <span className="font-sans text-[0.58rem] text-red-500 tracking-wider font-bold">Generic Request</span>
-                  </div>
-                  <div className="p-3 rounded-lg border border-green-500/10 bg-green-500/[0.02] flex items-center gap-2">
-                    <span className="text-green-500 text-xs font-bold select-none">✓</span>
-                    <span className="font-sans text-[0.58rem] text-green-600 tracking-wider font-bold">Cites Work Directly</span>
-                  </div>
-                  <div className="p-3 rounded-lg border border-green-500/10 bg-green-500/[0.02] flex items-center gap-2">
-                    <span className="text-green-500 text-xs font-bold select-none">✓</span>
-                    <span className="font-sans text-[0.58rem] text-green-600 tracking-wider font-bold">Structured Context</span>
-                  </div>
-                </div>
-              </div>
-            </MockupChrome>
+              </MockupChrome>
+            </div>
           </div>
         </section>
 
@@ -369,14 +376,16 @@ export default function LandingPage() {
         <section className="js-fade relative border-t border-slate-100 min-h-screen flex flex-col items-center justify-center py-24 px-6" style={{ background: "#fdfdfd" }}>
           <div className="w-full max-w-2xl mx-auto flex flex-col items-center text-center">
             <h2
-              className="font-display font-bold text-slate-900 tracking-tighter leading-[1.1] text-center w-full"
+              className="font-display font-bold text-slate-900 tracking-tighter leading-[1.1] text-center w-full mx-auto"
               style={{ fontSize: "clamp(2.5rem, 5vw, 4rem)" }}
             >
               Your research mentor is<br />
               <span className="italic font-light text-indigo-600">one structured request away.</span>
             </h2>
-            <p className="font-sans text-slate-400 mt-8 mb-12 text-sm text-center">Free to use. No credit card required.</p>
-            <Button href="/signup" variant="primary" size="lg">Create Account →</Button>
+            <p className="font-sans text-slate-400 mt-8 mb-12 text-sm text-center mx-auto w-full">Free to use. No credit card required.</p>
+            <div className="flex items-center justify-center w-full mx-auto">
+              <Button href="/signup" variant="primary" size="lg">Create Account →</Button>
+            </div>
           </div>
         </section>
 
