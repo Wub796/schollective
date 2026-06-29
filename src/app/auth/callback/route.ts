@@ -83,7 +83,7 @@ export async function GET(request: NextRequest) {
 
   let destination: string
 
-  if (!profile || !profile.first_name) {
+  if (!profile || !profile.first_name || !profile.role) {
     // New Google user or incomplete profile — send to onboarding.
     // We append the original "next" as a query param so onboarding can eventually
     // send them to their intended destination.
