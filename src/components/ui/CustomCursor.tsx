@@ -295,12 +295,37 @@ export function CustomCursor() {
   const [reducedMotion, setRm] = useState(false);
   const [mode, setMode]        = useState<CursorMode>("default");
   const [targetRect, setTargetRect] = useState<TargetRect | null>(null);
+  const [isEnabled, setIsEnabled] = useState(true);
 
   const rawX = useMotionValue<number>(-1000);
   const rawY = useMotionValue<number>(-1000);
 
   // Track currently hovered button for live rect updates on scroll/resize
   const hoveredEl = useRef<Element | null>(null);
+
+  // Sync isEnabled with localStorage and watch for live updates
+  useEffect(() => {
+    const checkPreference = () => {
+      const pref = localStorage.getItem("schollective-custom-cursor");
+      setIsEnabled(pref !== "false");
+    };
+    checkPreference();
+    window.addEventListener("storage", checkPreference);
+    return () => window.removeEventListener("storage", checkPreference);
+  }, []);
+
+  // Dynamically add custom-cursor-active class to HTML document to hide native cursor
+  useEffect(() => {
+    const shouldHide = mounted && !reducedMotion && !isTouch && isEnabled;
+    if (shouldHide) {
+      document.documentElement.classList.add("custom-cursor-active");
+    } else {
+      document.documentElement.classList.remove("custom-cursor-active");
+    }
+    return () => {
+      document.documentElement.classList.remove("custom-cursor-active");
+    };
+  }, [mounted, reducedMotion, isTouch, isEnabled]);
 
   useEffect(() => {
     const hasFinePointer =
@@ -383,7 +408,7 @@ export function CustomCursor() {
     };
   }, [rawX, rawY]);
 
-  if (!mounted || reducedMotion || isTouch) return null;
+  if (!mounted || reducedMotion || isTouch || !isEnabled) return null;
 
   return (
     <div className="fixed inset-0 pointer-events-none z-[9999] overflow-hidden">
