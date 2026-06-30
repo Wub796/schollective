@@ -7,6 +7,7 @@ import { ThreadCard } from "@/components/features/ThreadCard";
 import { RequestQueueCard } from "@/components/features/RequestQueueCard";
 import { AcceptingToggle } from "@/components/features/AcceptingToggle";
 import { Inbox, Clock } from "lucide-react";
+import { Button } from "@/components/ui/Button";
 
 
 export const dynamic = "force-dynamic";
@@ -65,7 +66,7 @@ export default async function ProfessorDashboard() {
     .select(`
       id, status, topic, created_at, updated_at,
       student:student_id ( first_name, last_name, preferred_name, education_level ),
-      messages ( content, created_at )
+      messages ( content, created_at, read_at, sender_id )
     `)
     .eq("professor_id", user.id)
     .order("created_at", { ascending: false });
@@ -106,6 +107,7 @@ export default async function ProfessorDashboard() {
                   new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
               )[0]
             : undefined,
+        hasUnread: req.messages?.some((msg: any) => msg.sender_id !== user.id && !msg.read_at),
       };
     });
 
@@ -128,6 +130,7 @@ export default async function ProfessorDashboard() {
                   new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
               )[0]
             : undefined,
+        hasUnread: req.messages?.some((msg: any) => msg.sender_id !== user.id && !msg.read_at),
       };
     });
 
@@ -167,6 +170,33 @@ export default async function ProfessorDashboard() {
         </p>
       </header>
 
+      {profile.profile_complete === false && (
+        <div style={{
+          padding: "1.75rem 2rem",
+          border: "1px solid rgba(245, 158, 11, 0.2)",
+          borderRadius: "14px",
+          background: "rgba(245, 158, 11, 0.04)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: "2rem",
+          flexWrap: "wrap",
+        }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem", maxWidth: "32rem", textAlign: "left" }}>
+            <h3 className="font-display" style={{ fontSize: "1.1rem", fontWeight: 700, color: "#d97706", display: "flex", alignItems: "center", gap: "0.5rem", margin: 0 }}>
+              <span style={{ display: "inline-block", width: "8px", height: "8px", borderRadius: "50%", background: "#f59e0b" }} />
+              Your Profile is Incomplete
+            </h3>
+            <p style={{ fontSize: "0.82rem", color: "rgba(15, 23, 42, 0.5)", lineHeight: 1.6, fontFamily: "var(--font-sans)", margin: 0 }}>
+              To receive outreach requests from students, you must complete your profile. Please add your first name, last name, institution, and at least one expertise field.
+            </p>
+          </div>
+          <Button href="/profile" variant="outline" size="sm">
+            Complete Profile
+          </Button>
+        </div>
+      )}
+
       {/* ── Stats row ──────────────────────────────────────────── */}
       <div className="dash-stat-grid">
         <StatCard value={allRequests?.length || 0} label="Total Requests" sub="Lifetime" />
@@ -200,11 +230,14 @@ export default async function ProfessorDashboard() {
           {pendingRequests.length === 0 ? (
             <div style={{
               border: "1px dashed rgba(37, 99, 235, 0.1)",
-              borderRadius: "16px", padding: "2.5rem 1.5rem", textAlign: "center",
+              borderRadius: "16px", padding: "3rem 1.5rem", textAlign: "center",
             }}>
-              <Inbox size={20} color="rgba(15, 23, 42, 0.2)" style={{ margin: "0 auto 0.75rem" }} />
-              <p style={{ fontSize: "0.78rem", color: "rgba(15, 23, 42, 0.3)", fontStyle: "italic", fontFamily: "var(--font-sans)" }}>
-                No pending requests
+              <Inbox size={20} color="rgba(120, 220, 120, 0.4)" style={{ margin: "0 auto 0.75rem" }} />
+              <h3 className="font-display" style={{ fontSize: "1rem", fontWeight: 700, color: "rgba(15, 23, 42, 0.7)", margin: "0 0 0.3rem" }}>
+                You&apos;re all caught up!
+              </h3>
+              <p style={{ fontSize: "0.78rem", color: "rgba(15, 23, 42, 0.35)", fontFamily: "var(--font-sans)", margin: 0 }}>
+                No pending mentorship requests in your queue.
               </p>
             </div>
           ) : (
@@ -252,7 +285,7 @@ export default async function ProfessorDashboard() {
           ) : (
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: "1.5rem" }}>
               {activeThreads.map((req) => (
-                <ThreadCard key={req.id} request={req as any} viewerRole="professor" />
+                <ThreadCard key={req.id} request={req as any} viewerRole="professor" hasUnread={req.hasUnread} />
               ))}
             </div>
           )}
@@ -278,7 +311,7 @@ export default async function ProfessorDashboard() {
 
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: "1.5rem", opacity: 0.8 }}>
               {closedRequests.map((req) => (
-                <ThreadCard key={req.id} request={req as any} viewerRole="professor" />
+                <ThreadCard key={req.id} request={req as any} viewerRole="professor" hasUnread={req.hasUnread} />
               ))}
             </div>
           </div>
