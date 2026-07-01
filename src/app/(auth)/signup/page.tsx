@@ -264,6 +264,7 @@ function SignupContent() {
               fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.2em",
               textTransform: "uppercase", color: "#4f46e5",
               fontFamily: "var(--font-sans)",
+              whiteSpace: "nowrap",
             }}>
               Sign In →
             </span>
