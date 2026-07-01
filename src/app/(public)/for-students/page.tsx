@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useRef } from "react";
-import Link from "next/link";
 import { motion, useInView } from "framer-motion";
 import { PublicNav } from "@/components/ui/PublicNav";
 import { Button } from "@/components/ui/Button";
+import { FileText, GraduationCap, Microscope, BookOpen, Users, PenTool } from "lucide-react";
 
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
@@ -20,9 +20,10 @@ function FadeIn({ children, delay = 0, className = "" }: { children: React.React
 
 function Eyebrow({ children }: { children: string }) {
   return (
-    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.75rem", marginBottom: "1.5rem" }}>
-      <span style={{ width: "1.5rem", height: "1px", background: "rgba(79, 70, 229, 0.4)", display: "block", flexShrink: 0 }} />
-      <span style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--accent)", fontFamily: "var(--font-sans)" }}>{children}</span>
+    <div className="flex items-center justify-center gap-3 mb-6">
+      <span className="w-6 h-[1px] bg-indigo-600/40 block flex-shrink-0" />
+      <span className="text-[0.52rem] font-bold tracking-[0.2em] uppercase text-[var(--accent)] font-sans">{children}</span>
+      <span className="w-6 h-[1px] bg-indigo-600/40 block flex-shrink-0" />
     </div>
   );
 }
@@ -35,39 +36,39 @@ const HOW_IT_WORKS = [
 ];
 
 const USE_CASES = [
-  { icon: "📄", title: "Research Paper Guidance", body: "Get feedback on your thesis, methodology, or literature review from a professor in exactly that field." },
-  { icon: "🎓", title: "Graduate School Planning", body: "Ask professors about their programs, what they look for in applicants, and how to strengthen your profile." },
-  { icon: "🔬", title: "Science Fair & Research Projects", body: "High schoolers: get expert perspective on your project before competition season." },
-  { icon: "📚", title: "Understanding Complex Topics", body: "Sometimes textbooks aren't enough. Get a nuanced explanation from someone who has spent a career studying it." },
-  { icon: "🤝", title: "Finding Research Opportunities", body: "Learn about lab openings, summer programs, and internships directly from professors actively seeking students." },
-  { icon: "✏️", title: "Academic Writing Improvement", body: "Get your writing reviewed by academics who publish regularly and know exactly what clarity looks like." },
+  { icon: <FileText className="w-6 h-6 text-indigo-600" />, title: "Research Paper Guidance", body: "Get feedback on your thesis, methodology, or literature review from a professor in exactly that field." },
+  { icon: <GraduationCap className="w-6 h-6 text-indigo-600" />, title: "Graduate School Planning", body: "Ask professors about their programs, what they look for in applicants, and how to strengthen your profile." },
+  { icon: <Microscope className="w-6 h-6 text-indigo-600" />, title: "Science Fair & Research Projects", body: "High schoolers: get expert perspective on your project before competition season." },
+  { icon: <BookOpen className="w-6 h-6 text-indigo-600" />, title: "Understanding Complex Topics", body: "Sometimes textbooks aren't enough. Get a nuanced explanation from someone who has spent a career studying it." },
+  { icon: <Users className="w-6 h-6 text-indigo-600" />, title: "Finding Research Opportunities", body: "Learn about lab openings, summer programs, and internships directly from professors actively seeking students." },
+  { icon: <PenTool className="w-6 h-6 text-indigo-600" />, title: "Academic Writing Improvement", body: "Get your writing reviewed by academics who publish regularly and know exactly what clarity looks like." },
 ];
 
 export default function ForStudentsPage() {
   return (
-    <div style={{ background: "transparent", color: "var(--text-primary)", minHeight: "100vh" }}>
+    <div className="bg-transparent text-[var(--text-primary)] min-h-screen">
       <PublicNav />
 
-      <div style={{ position: "relative", zIndex: 1, maxWidth: "920px", margin: "0 auto", padding: "12rem 2rem 8rem", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
+      <div className="relative z-10 max-w-[920px] mx-auto pt-48 pb-32 px-8 flex flex-col items-center text-center">
 
         {/* ── HERO ─────────────────────────────────────── */}
         <FadeIn>
           <Eyebrow>For Students</Eyebrow>
-          <h1 className="font-display" style={{ fontSize: "clamp(3rem, 7.5vw, 5.5rem)", fontWeight: 900, letterSpacing: "-0.04em", lineHeight: 0.95, marginBottom: "3.5rem", color: "var(--text-primary)" }}>
+          <h1 className="font-display text-[clamp(3rem,7.5vw,5.5rem)] font-black tracking-[-0.04em] leading-[0.95] mb-14 text-[var(--text-primary)]">
             Your questions<br />
-            <em style={{ fontStyle: "italic", color: "var(--accent)" }}>deserve real answers.</em>
+            <em className="italic text-[var(--accent)]">deserve real answers.</em>
           </h1>
         </FadeIn>
 
         <FadeIn delay={0.15}>
-          <p style={{ fontSize: "clamp(1.05rem, 1.4vw, 1.25rem)", color: "var(--text-secondary)", lineHeight: 1.85, maxWidth: "660px", marginBottom: "3rem" }}>
+          <p className="text-[clamp(1.05rem,1.4vw,1.25rem)] text-[var(--text-secondary)] leading-[1.85] max-w-[660px] mb-12">
             Whether you're a high schooler working on a science fair project or an undergrad navigating grad school applications,
             Schollective connects you directly with verified professors who can actually help — for free, with no cold-email anxiety.
           </p>
         </FadeIn>
 
         <FadeIn delay={0.2}>
-          <div style={{ display: "flex", justifyContent: "center", gap: "1.5rem", flexWrap: "wrap", marginBottom: "7.5rem" }}>
+          <div className="flex justify-center gap-6 flex-wrap mb-30">
             <Button href="/signup" variant="primary" size="lg" className="uppercase tracking-widest text-[0.6rem]">
               Join Free
             </Button>
@@ -79,60 +80,57 @@ export default function ForStudentsPage() {
 
         {/* ── HOW IT WORKS ─────────────────────────────── */}
         <FadeIn>
-          <Eyebrow>How It Works</Eyebrow>
-          <h2 className="font-display" style={{ fontSize: "clamp(2.2rem, 4vw, 3.5rem)", fontWeight: 900, letterSpacing: "-0.04em", lineHeight: 1.0, marginBottom: "4rem", color: "var(--text-primary)" }}>
-            From sign-up to<br /><em style={{ fontStyle: "italic", color: "var(--accent)" }}>insight, in four steps.</em>
+          <h2 className="font-display text-[clamp(2.2rem,4vw,3.5rem)] font-black tracking-[-0.04em] leading-none mb-16 text-[var(--text-primary)]">
+            From sign-up to<br /><em className="italic text-[var(--accent)]">insight, in four steps.</em>
           </h2>
         </FadeIn>
 
-        <div style={{ marginBottom: "7.5rem" }}>
+        <div className="mb-30 w-full">
           {HOW_IT_WORKS.map((s, i) => (
             <FadeIn key={s.n} delay={i * 0.06}>
-              <div style={{ display: "grid", gridTemplateColumns: "3.5rem 1fr", gap: "2.5rem", padding: "3rem 0", borderTop: "1px solid var(--border)", alignItems: "start" }}>
-                <span style={{ fontFamily: "monospace", fontSize: "0.55rem", letterSpacing: "0.18em", color: "var(--text-tertiary)", paddingTop: "0.35rem" }}>{s.n}</span>
+              <div className="grid grid-cols-[3.5rem_1fr] gap-10 py-12 border-t border-[var(--border)] text-left items-start">
+                <span className="font-mono text-[0.55rem] tracking-[0.18em] text-[var(--text-tertiary)] pt-1.5">{s.n}</span>
                 <div>
-                  <h3 className="font-display" style={{ fontSize: "1.45rem", fontWeight: 800, color: "var(--text-primary)", letterSpacing: "-0.02em", marginBottom: "0.85rem" }}>{s.title}</h3>
-                  <p style={{ fontSize: "0.95rem", color: "var(--text-secondary)", lineHeight: 1.8 }}>{s.body}</p>
+                  <h3 className="font-display text-[1.45rem] font-bold text-[var(--text-primary)] tracking-[-0.02em] mb-3">{s.title}</h3>
+                  <p className="text-[0.95rem] text-[var(--text-secondary)] leading-1.8">{s.body}</p>
                 </div>
               </div>
             </FadeIn>
           ))}
-          <div style={{ borderTop: "1px solid var(--border)" }} />
+          <div className="border-t border-[var(--border)]" />
         </div>
 
         {/* ── USE CASES ─────────────────────────────────── */}
         <FadeIn>
-          <Eyebrow>What You Can Ask</Eyebrow>
-          <h2 className="font-display" style={{ fontSize: "clamp(2.2rem, 4vw, 3.5rem)", fontWeight: 900, letterSpacing: "-0.04em", lineHeight: 1.0, marginBottom: "4rem", color: "var(--text-primary)" }}>
-            Every serious question<br /><em style={{ fontStyle: "italic", color: "var(--accent)" }}>has a home here.</em>
+          <h2 className="font-display text-[clamp(2.2rem,4vw,3.5rem)] font-black tracking-[-0.04em] leading-none mb-16 text-[var(--text-primary)]">
+            Every serious question<br /><em className="italic text-[var(--accent)]">has a home here.</em>
           </h2>
         </FadeIn>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "2rem", marginBottom: "7.5rem" }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-30 w-full">
           {USE_CASES.map((uc, i) => (
             <FadeIn key={uc.title} delay={i * 0.05}>
-              <div style={{ padding: "2.25rem", border: "1px solid var(--border)", borderRadius: "16px", background: "var(--bg-surface-1)", height: "100%", transition: "all 0.3s" }}>
-                <div style={{ fontSize: "1.8rem", marginBottom: "1.25rem" }}>{uc.icon}</div>
-                <h3 className="font-display" style={{ fontSize: "1.15rem", fontWeight: 800, color: "var(--text-primary)", letterSpacing: "-0.02em", marginBottom: "0.75rem" }}>{uc.title}</h3>
-                <p style={{ fontSize: "0.9rem", color: "var(--text-secondary)", lineHeight: 1.8 }}>{uc.body}</p>
+              <div className="p-9 border border-[var(--border)] rounded-2xl bg-[var(--bg-surface-1)] h-full transition-all duration-300 hover:shadow-md hover:border-[var(--border-hover)] text-left flex flex-col">
+                <div className="mb-5 flex items-center justify-start text-[var(--accent)]">{uc.icon}</div>
+                <h3 className="font-display text-[1.15rem] font-bold text-[var(--text-primary)] tracking-[-0.02em] mb-3">{uc.title}</h3>
+                <p className="text-[0.9rem] text-[var(--text-secondary)] leading-1.8">{uc.body}</p>
               </div>
             </FadeIn>
           ))}
         </div>
 
-
         {/* ── CTA ─────────────────────────────────────── */}
         <FadeIn>
-          <div style={{ padding: "4.5rem 3rem", border: "1px solid var(--border)", borderRadius: "20px", background: "rgba(99, 102, 241, 0.04)", display: "flex", flexWrap: "wrap", justifyContent: "center", alignItems: "center", gap: "3rem", textAlign: "center" }}>
-            <div>
-              <h2 className="font-display" style={{ fontSize: "clamp(2rem, 3vw, 2.6rem)", fontWeight: 900, letterSpacing: "-0.04em", color: "var(--text-primary)", marginBottom: "1rem" }}>
+          <div className="p-12 md:py-18 md:px-12 border border-[var(--border)] rounded-3xl bg-indigo-600/[0.03] flex flex-wrap justify-between items-center gap-12 text-center lg:text-left w-full">
+            <div className="max-w-md">
+              <h2 className="font-display font-black text-[clamp(2rem,3vw,2.6rem)] tracking-[-0.04em] text-[var(--text-primary)] mb-4 leading-tight">
                 Start for free, today.
               </h2>
-              <p style={{ fontSize: "0.95rem", color: "var(--text-secondary)", maxWidth: "420px", lineHeight: 1.8 }}>
+              <p className="text-[0.95rem] text-[var(--text-secondary)] leading-1.8 text-center lg:text-left">
                 No credit card. No waitlist. Just create an account and start connecting with the academics who can change your trajectory.
               </p>
             </div>
-            <Button href="/signup" variant="primary" size="lg" className="uppercase tracking-widest text-[0.6rem] flex-shrink-0">
+            <Button href="/signup" variant="primary" size="lg" className="uppercase tracking-widest text-[0.6rem] flex-shrink-0 mx-auto lg:mx-0">
               Create Student Account
             </Button>
           </div>
