@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { CheckCircle2, Loader2 } from "lucide-react";
-import { closeRequest } from "@/app/(dashboard)/messages/[id]/actions";
+import { closeRequest } from "@/app/messages/[id]/actions";
 import { toast } from "sonner";
 
 interface CloseThreadButtonProps {
