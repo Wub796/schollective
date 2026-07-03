@@ -121,7 +121,8 @@ function OnboardingContent() {
         .single();
 
       // Already onboarded — redirect to the right dashboard
-      if (profile?.first_name) {
+      // Must match middleware's check: both first_name AND role required
+      if (profile?.first_name && profile?.role) {
         if (profile.role === "professor") router.replace("/prof/dashboard");
         else router.replace("/dashboard");
         return;
