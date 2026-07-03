@@ -3,6 +3,7 @@
 import React, { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import { PublicNav } from "@/components/ui/PublicNav";
+import { PublicFooter } from "@/components/ui/PublicFooter";
 import { Button } from "@/components/ui/Button";
 
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
@@ -171,6 +172,7 @@ export default function AboutPage() {
         </div>
       </section>
 
+      <PublicFooter />
     </div>
   );
 }
