@@ -133,3 +133,112 @@ export async function changeUserRole(
   return { success: true };
 }
 
+export async function warnUser(userId: string, warningMessage: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Unauthorized" };
+
+  const { data: admin } = await supabase.from("profiles").select("role").eq("id", user.id).single();
+  if (admin?.role !== "admin") return { error: "Access denied" };
+
+  const { data: request } = await supabase
+    .from("requests")
+    .select("id")
+    .or(`student_id.eq.${userId},professor_id.eq.${userId}`)
+    .order("updated_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (!request) {
+    return { error: "No active threads found for this user to deliver the warning." };
+  }
+
+  const adminClient = createAdminClient();
+  const { error } = await adminClient
+    .from("messages")
+    .insert({
+      request_id: request.id,
+      sender_id: user.id,
+      content: `[SYSTEM WARNING]: ${warningMessage}`
+    });
+
+  if (error) return { error: error.message };
+
+  revalidatePath(`/messages/${request.id}`);
+  return { success: true };
+}
+
+export async function suspendUser(userId: string, reason: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Unauthorized" };
+
+  const { data: admin } = await supabase.from("profiles").select("role").eq("id", user.id).single();
+  if (admin?.role !== "admin") return { error: "Access denied" };
+
+  const adminClient = createAdminClient();
+  const { error } = await adminClient
+    .from("profiles")
+    .update({
+      suspended: true,
+      suspension_reason: reason,
+      updated_at: new Date().toISOString()
+    })
+    .eq("id", userId);
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/admin/dashboard");
+  revalidatePath("/admin/users");
+  return { success: true };
+}
+
+export async function unsuspendUser(userId: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Unauthorized" };
+
+  const { data: admin } = await supabase.from("profiles").select("role").eq("id", user.id).single();
+  if (admin?.role !== "admin") return { error: "Access denied" };
+
+  const adminClient = createAdminClient();
+  const { error } = await adminClient
+    .from("profiles")
+    .update({
+      suspended: false,
+      suspension_reason: null,
+      updated_at: new Date().toISOString()
+    })
+    .eq("id", userId);
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/admin/dashboard");
+  revalidatePath("/admin/users");
+  return { success: true };
+}
+
+export async function softDeleteThread(requestId: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Unauthorized" };
+
+  const { data: admin } = await supabase.from("profiles").select("role").eq("id", user.id).single();
+  if (admin?.role !== "admin") return { error: "Access denied" };
+
+  const adminClient = createAdminClient();
+  const { error } = await adminClient
+    .from("requests")
+    .update({
+      status: "deleted",
+      updated_at: new Date().toISOString()
+    })
+    .eq("id", requestId);
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/admin/dashboard");
+  revalidatePath("/admin/threads");
+  return { success: true };
+}
+
