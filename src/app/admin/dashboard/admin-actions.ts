@@ -180,8 +180,7 @@ export async function suspendUser(userId: string, reason: string) {
   const { error } = await adminClient
     .from("profiles")
     .update({
-      suspended: true,
-      suspension_reason: reason,
+      status: "suspended",
       updated_at: new Date().toISOString()
     })
     .eq("id", userId);
@@ -202,11 +201,13 @@ export async function unsuspendUser(userId: string) {
   if (admin?.role !== "admin") return { error: "Access denied" };
 
   const adminClient = createAdminClient();
+  const { data: target } = await adminClient.from("profiles").select("role").eq("id", userId).single();
+  const newStatus = target?.role === "professor" ? "approved" : "active";
+
   const { error } = await adminClient
     .from("profiles")
     .update({
-      suspended: false,
-      suspension_reason: null,
+      status: newStatus,
       updated_at: new Date().toISOString()
     })
     .eq("id", userId);
