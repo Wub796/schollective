@@ -49,17 +49,17 @@ export default function AboutPage() {
       <PublicNav />
 
       {/* ── HERO ──────────────────────────────────────────── */}
-      <section className="relative z-10 flex flex-col items-center text-center px-8" style={HERO_STYLE}>
-        <div className="w-full max-w-[760px] mx-auto">
-          <FadeIn>
+      <section className="relative z-10 px-8" style={HERO_STYLE}>
+        <div className="w-full max-w-[760px] mx-auto flex flex-col items-center text-center">
+          <FadeIn className="w-full flex flex-col items-center">
             <Eyebrow>Our Story</Eyebrow>
-            <h1 className="font-display text-[clamp(3rem,7.5vw,5.5rem)] font-black tracking-[-0.04em] leading-[0.95] mb-8 text-[var(--text-primary)]">
+            <h1 className="font-display text-[clamp(3rem,7.5vw,5.5rem)] font-black tracking-[-0.04em] leading-[0.95] mb-8 text-[var(--text-primary)] text-center">
               Democratizing<br />
               <em className="italic text-[var(--accent)]">academic mentorship.</em>
             </h1>
           </FadeIn>
-          <FadeIn delay={0.15}>
-            <p className="text-[clamp(1.05rem,1.4vw,1.25rem)] text-[var(--text-secondary)] leading-[1.85] max-w-[620px] mx-auto">
+          <FadeIn delay={0.15} className="w-full flex flex-col items-center">
+            <p style={{ textAlign: "center" }} className="text-[clamp(1.05rem,1.4vw,1.25rem)] text-[var(--text-secondary)] leading-[1.85] max-w-[620px]">
               Schollective was built on a simple belief: students should be able to reach the academics
               who can change their trajectory — without needing to know the right people, attend the right school,
               or send hundreds of cold emails into the void.
