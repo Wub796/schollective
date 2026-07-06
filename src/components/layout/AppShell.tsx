@@ -68,11 +68,16 @@ export function AppShell({ children, role = "student" }: AppShellProps) {
       <header
         className="app-nav"
         style={{
-          background: scrolled ? "rgba(255, 255, 255, 0.97)" : "rgba(255, 255, 255, 0.92)",
+          background: scrolled ? "rgba(255, 255, 255, 0.65)" : "rgba(255, 255, 255, 0.45)",
+          backdropFilter: "blur(24px) saturate(190%)",
+          WebkitBackdropFilter: "blur(24px) saturate(190%)",
           borderBottom: scrolled
-            ? "1px solid var(--border-hover)"
-            : "1px solid var(--border)",
-          transition: "background 0.3s ease, border-color 0.3s ease",
+            ? "1px solid rgba(15, 23, 42, 0.08)"
+            : "1px solid rgba(15, 23, 42, 0.05)",
+          boxShadow: scrolled
+            ? "0 4px 30px -10px rgba(15, 23, 42, 0.08), inset 0 1px 0 0 rgba(255, 255, 255, 0.8)"
+            : "none",
+          transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
         }}
       >
         {/* Hamburger — mobile only */}
