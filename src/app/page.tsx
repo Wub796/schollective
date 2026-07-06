@@ -407,18 +407,22 @@ export default function LandingPage() {
         <TestimonialsSection />
 
         {/* ══ FINAL CTA ════════════════════════════════════════════════ */}
-        <section className="js-fade relative border-t border-slate-100 min-h-screen flex flex-col items-center justify-center py-24 px-6" style={{ background: "#fdfdfd" }}>
-          <div className="w-full max-w-2xl mx-auto flex flex-col items-center text-center">
+        <section className="js-fade relative border-t border-slate-100 min-h-[70vh] flex flex-col items-center justify-center py-32 md:py-44 px-6" style={{ background: "#fdfdfd" }}>
+          <div className="w-full max-w-3xl mx-auto flex flex-col items-center text-center gap-10 md:gap-14">
             <h2
               className="font-display font-bold text-slate-900 tracking-tighter leading-[1.1] text-center w-full mx-auto"
-              style={{ fontSize: "clamp(2.5rem, 5vw, 4rem)" }}
+              style={{ fontSize: "clamp(2.5rem, 5.5vw, 4.2rem)" }}
             >
               Your research mentor is<br />
               <span className="italic font-light text-indigo-600">one structured request away.</span>
             </h2>
-            <p className="font-sans text-slate-400 mt-8 mb-12 text-sm text-center mx-auto w-full">Free to use. No credit card required.</p>
+            <p className="font-sans text-slate-500 text-base md:text-lg text-center mx-auto w-full max-w-lg leading-relaxed">
+              Free to use. No credit card required.
+            </p>
             <div className="flex items-center justify-center w-full mx-auto">
-              <Button href="/signup" variant="primary" size="lg">Create Account →</Button>
+              <Button href="/signup" variant="primary" size="lg" className="px-10 py-5 text-base shadow-lg">
+                Create Account →
+              </Button>
             </div>
           </div>
         </section>
