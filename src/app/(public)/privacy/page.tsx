@@ -53,7 +53,7 @@ export default function PrivacyPage() {
     <div style={{ minHeight: "100vh", background: "transparent", color: "#141005" }}>
       <PublicNav />
 
-      <div style={{ maxWidth: "800px", margin: "0 auto", padding: "8rem 2rem 6rem", display: "flex", flexDirection: "column", gap: "3.5rem" }}>
+      <div style={{ maxWidth: "800px", margin: "0 auto", padding: "8rem 2rem 6rem", display: "flex", flexDirection: "column", gap: "4.5rem" }}>
         {/* Eyebrow */}
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
           <span style={{ width: "1.5rem", height: "2px", background: "#FFC20F", display: "block" }} />
@@ -69,9 +69,9 @@ export default function PrivacyPage() {
           </p>
         </div>
 
-        <div style={{ height: "1px", background: "rgba(161, 197, 209, 0.4)", marginTop: "0.5rem", marginBottom: "0.5rem" }} />
+        <div style={{ height: "1px", background: "rgba(161, 197, 209, 0.4)", marginTop: "1rem", marginBottom: "1rem" }} />
 
-        <div style={{ display: "flex", flexDirection: "column", gap: "2.25rem" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "2.75rem" }}>
           {sections.map(({ title, body }) => (
             <div key={title} style={{ padding: "2rem 2.25rem", border: "1px solid rgba(161, 197, 209, 0.4)", borderRadius: "16px", background: "rgba(255, 255, 255, 0.9)" }}>
               <h2 className="font-display" style={{ fontSize: "1.25rem", fontWeight: 800, color: "#141005", letterSpacing: "-0.015em", marginBottom: "0.75rem" }}>{title}</h2>
