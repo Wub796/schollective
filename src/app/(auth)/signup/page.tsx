@@ -44,7 +44,7 @@ function Field({
           fontWeight: 800,
           letterSpacing: "0.22em",
           textTransform: "uppercase",
-          color: focused ? "#008CBB" : "#141005",
+          color: focused ? "#4f46e5" : "#0f172a",
           marginBottom: "0.55rem",
           transition: "color 0.25s",
           fontFamily: "var(--font-sans)",
@@ -60,15 +60,15 @@ function Field({
         style={{
           width: "100%",
           background: "rgba(255, 255, 255, 0.9)",
-          border: `1.5px solid ${focused ? "#008CBB" : "rgba(161, 197, 209, 0.5)"}`,
+          border: `1.5px solid ${focused ? "#4f46e5" : "rgba(99, 102, 241, 0.5)"}`,
           borderRadius: "100px",
           padding: "1rem 1.75rem",
           fontSize: "0.95rem",
-          color: "#141005",
+          color: "#0f172a",
           outline: "none",
           transition: "all 0.3s cubic-bezier(0.22, 1, 0.36, 1)",
           fontFamily: "var(--font-sans)",
-          boxShadow: focused ? "0 0 0 4px rgba(0, 140, 187, 0.15)" : "none",
+          boxShadow: focused ? "0 0 0 4px rgba(79, 70, 229, 0.15)" : "none",
         }}
       />
     </div>
@@ -82,7 +82,7 @@ function FieldSelect({ id, name, label, children, required }: {
   const [focused, setFocused] = useState(false);
   return (
     <div>
-      <label htmlFor={id} style={{ display: "block", fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: focused ? "#008CBB" : "#141005", marginBottom: "0.55rem", transition: "color 0.25s", fontFamily: "var(--font-sans)" }}>
+      <label htmlFor={id} style={{ display: "block", fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: focused ? "#4f46e5" : "#0f172a", marginBottom: "0.55rem", transition: "color 0.25s", fontFamily: "var(--font-sans)" }}>
         {label}
       </label>
       <select
@@ -91,18 +91,18 @@ function FieldSelect({ id, name, label, children, required }: {
         style={{
           width: "100%",
           background: "rgba(255, 255, 255, 0.9)",
-          border: `1.5px solid ${focused ? "#008CBB" : "rgba(161, 197, 209, 0.5)"}`,
+          border: `1.5px solid ${focused ? "#4f46e5" : "rgba(99, 102, 241, 0.5)"}`,
           borderRadius: "100px",
           padding: "1rem 2.5rem 1rem 1.75rem",
           fontSize: "0.95rem",
-          color: "#141005",
+          color: "#0f172a",
           outline: "none",
           fontFamily: "var(--font-sans)",
           transition: "all 0.3s cubic-bezier(0.22, 1, 0.36, 1)",
           cursor: "pointer",
-          boxShadow: focused ? "0 0 0 4px rgba(0, 140, 187, 0.15)" : "none",
+          boxShadow: focused ? "0 0 0 4px rgba(79, 70, 229, 0.15)" : "none",
           appearance: "none",
-          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%23008CBB' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E")`,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%234f46e5' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E")`,
           backgroundRepeat: "no-repeat",
           backgroundPosition: "right 1.5rem center",
         }}
@@ -248,21 +248,21 @@ function SignupContent() {
           display: "flex", alignItems: "center", gap: "2rem",
           background: "rgba(253, 253, 253, 0.85)",
           backdropFilter: "blur(20px)",
-          border: "1.5px solid rgba(0, 140, 187, 0.15)",
+          border: "1.5px solid rgba(79, 70, 229, 0.15)",
           borderRadius: "100px",
           padding: "0.6rem 1.6rem",
           boxShadow: "0 4px 30px rgba(0, 0, 0, 0.03)",
         }}>
           <Link href="/" style={{ textDecoration: "none" }}>
-            <span className="font-display hover:text-[#008CBB] transition-colors" style={{ fontSize: "0.95rem", fontWeight: 800, color: "var(--text-primary)", letterSpacing: "-0.02em" }}>
+            <span className="font-display hover:text-indigo-600 transition-colors" style={{ fontSize: "0.95rem", fontWeight: 800, color: "var(--text-primary)", letterSpacing: "-0.02em" }}>
               Schollective
             </span>
           </Link>
-          <div style={{ width: "1px", height: "1rem", background: "rgba(0, 140, 187, 0.15)" }} />
+          <div style={{ width: "1px", height: "1rem", background: "rgba(79, 70, 229, 0.15)" }} />
           <Link href="/login" style={{ textDecoration: "none" }}>
-            <span className="hover:text-[#00749b] transition-colors" style={{
+            <span className="hover:text-indigo-700 transition-colors" style={{
               fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.2em",
-              textTransform: "uppercase", color: "#008CBB",
+              textTransform: "uppercase", color: "#4f46e5",
               fontFamily: "var(--font-sans)",
               whiteSpace: "nowrap",
             }}>
@@ -286,10 +286,10 @@ function SignupContent() {
         >
           {/* Eyebrow */}
           <motion.div variants={fadeUp} style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.75rem" }}>
-            <span style={{ width: "1.5rem", height: "1px", background: "rgba(0, 140, 187, 0.4)", display: "block" }} />
+            <span style={{ width: "1.5rem", height: "1px", background: "rgba(79, 70, 229, 0.4)", display: "block" }} />
             <span style={{
               fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.38em",
-              textTransform: "uppercase", color: "rgba(0, 140, 187, 0.7)",
+              textTransform: "uppercase", color: "rgba(79, 70, 229, 0.7)",
               fontFamily: "var(--font-sans)",
             }}>
               Join the Collective
