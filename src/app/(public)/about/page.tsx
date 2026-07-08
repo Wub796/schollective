@@ -70,7 +70,7 @@ export default function AboutPage() {
       </section>
 
       {/* ── THE PROBLEM ──────────────────────────────────── */}
-      <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-[#A1C5D1]/40 py-36 md:py-52">
+      <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-[#A1C5D1]/40" style={{ paddingTop: "9rem", paddingBottom: "9rem" }}>
         <div className="w-full max-w-[920px] mx-auto">
           <FadeIn>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 text-left">
@@ -96,7 +96,7 @@ export default function AboutPage() {
       </section>
 
       {/* ── VALUES ───────────────────────────────────────── */}
-      <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-[#A1C5D1]/40 py-36 md:py-52">
+      <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-[#A1C5D1]/40" style={{ paddingTop: "9rem", paddingBottom: "9rem" }}>
         <div className="w-full max-w-[920px] mx-auto">
           <FadeIn>
             <Eyebrow>What We Stand For</Eyebrow>
@@ -121,7 +121,7 @@ export default function AboutPage() {
       </section>
 
       {/* ── TEAM ─────────────────────────────────────────── */}
-      <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-[#A1C5D1]/40 py-36 md:py-52">
+      <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-[#A1C5D1]/40" style={{ paddingTop: "9rem", paddingBottom: "9rem" }}>
         <div className="w-full max-w-[920px] mx-auto">
           <FadeIn>
             <h2 className="font-display text-[clamp(2.2rem,3.5vw,3rem)] font-black tracking-[-0.04em] leading-[1.05] mb-14 text-[#141005]">
@@ -146,7 +146,7 @@ export default function AboutPage() {
       </section>
 
       {/* ── CTA ──────────────────────────────────────────── */}
-      <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-[#A1C5D1]/40 py-36 md:py-52">
+      <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-[#A1C5D1]/40" style={{ paddingTop: "9rem", paddingBottom: "9rem" }}>
         <div className="w-full max-w-[920px] mx-auto">
           <FadeIn>
             <div className="p-12 md:p-16 border border-[#A1C5D1]/50 rounded-3xl bg-[#A1C5D1]/10 flex flex-col items-center gap-10 text-center w-full">
