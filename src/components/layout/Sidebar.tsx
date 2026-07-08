@@ -104,8 +104,8 @@ function NavLink({
         </div>
         {badge && badge > 0 ? (
           <span style={{
-            background: "rgba(99, 102, 241, 0.15)",
-            color: "#6366f1",
+            background: "rgba(0, 140, 187, 0.15)",
+            color: "#008CBB",
             fontSize: "0.62rem",
             fontWeight: 700,
             padding: "0.15rem 0.45rem",
