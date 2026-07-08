@@ -21,7 +21,7 @@ export default function FeaturesPage() {
       <PublicNav />
 
       <main className="relative z-10 px-6 sm:px-8 py-20 lg:py-28">
-        <div style={{ maxWidth: "960px", margin: "0 auto", display: "flex", flexDirection: "column", gap: "5rem" }}>
+        <div style={{ maxWidth: "960px", margin: "0 auto", display: "flex", flexDirection: "column", gap: "7rem" }}>
           {/* Header */}
           <header className="text-center max-w-3xl mx-auto" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "1.25rem" }}>
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#008CBB]/30 bg-[#008CBB]/10 text-[#008CBB] text-[0.62rem] font-extrabold tracking-widest uppercase mb-2 font-mono">
