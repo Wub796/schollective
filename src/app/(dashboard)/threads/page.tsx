@@ -11,8 +11,8 @@ export const dynamic = "force-dynamic";
 function SectionLabel({ text }: { text: string }) {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-      <span style={{ width: "1rem", height: "2px", background: "#FFC20F", display: "block" }} />
-      <h2 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "#141005", letterSpacing: "-0.025em" }}>
+      <span style={{ width: "1rem", height: "2px", background: "#6366f1", display: "block" }} />
+      <h2 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "#0f172a", letterSpacing: "-0.025em" }}>
         {text}
       </h2>
     </div>
@@ -79,25 +79,25 @@ export default async function ThreadsPage() {
       {/* ── Header ── */}
       <header style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <span style={{ width: "1.5rem", height: "2px", background: "#FFC20F", display: "block" }} />
-          <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: "#008CBB", fontFamily: "var(--font-sans, monospace)" }}>
+          <span style={{ width: "1.5rem", height: "2px", background: "#6366f1", display: "block" }} />
+          <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: "#4f46e5", fontFamily: "var(--font-sans, monospace)" }}>
             Student Portal
           </span>
         </div>
         <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: "2rem", flexWrap: "wrap" }}>
-          <h1 className="font-display" style={{ fontSize: "clamp(2.4rem, 4.5vw, 3.6rem)", fontWeight: 900, color: "#141005", letterSpacing: "-0.035em", lineHeight: 1.1 }}>
+          <h1 className="font-display" style={{ fontSize: "clamp(2.4rem, 4.5vw, 3.6rem)", fontWeight: 900, color: "#0f172a", letterSpacing: "-0.035em", lineHeight: 1.1 }}>
             {displayName}&apos;s{" "}
-            <em style={{ fontStyle: "italic", color: "#008CBB", fontWeight: 300 }}>threads</em>
+            <em style={{ fontStyle: "italic", color: "#4f46e5", fontWeight: 300 }}>threads</em>
           </h1>
           <Link href="/professors" style={{ textDecoration: "none", flexShrink: 0 }}>
             <div style={{
               display: "flex", alignItems: "center", gap: "0.5rem",
               padding: "0.75rem 1.5rem",
-              border: "2px solid #008CBB", background: "#008CBB", borderRadius: "100px",
+              border: "2px solid #4f46e5", background: "#4f46e5", borderRadius: "100px",
               fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.15em",
               textTransform: "uppercase", color: "#ffffff",
               fontFamily: "var(--font-sans)", cursor: "pointer",
-              boxShadow: "0 4px 14px rgba(0, 140, 187, 0.2)",
+              boxShadow: "0 4px 14px rgba(79, 70, 229, 0.2)",
               transition: "all 0.2s cubic-bezier(0.22, 1, 0.36, 1)",
             }}>
               <Search size={14} />
@@ -105,7 +105,7 @@ export default async function ThreadsPage() {
             </div>
           </Link>
         </div>
-        <p style={{ fontSize: "0.95rem", color: "#3b3527", opacity: 0.75, fontWeight: 400, maxWidth: "42rem", lineHeight: 1.8, fontFamily: "var(--font-sans)", marginTop: "0.25rem" }}>
+        <p style={{ fontSize: "0.95rem", color: "#475569", opacity: 0.75, fontWeight: 400, maxWidth: "42rem", lineHeight: 1.8, fontFamily: "var(--font-sans)", marginTop: "0.25rem" }}>
           All your mentorship threads in one place — ongoing dialogues and completed sessions.
         </p>
       </header>
@@ -119,20 +119,20 @@ export default async function ThreadsPage() {
         ].map(({ value, label, sub }) => (
           <div key={label} style={{
             padding: "2.25rem 2.5rem",
-            border: "1px solid rgba(161, 197, 209, 0.45)",
+            border: "1px solid rgba(99, 102, 241, 0.45)",
             borderRadius: "14px",
-            background: "rgba(161, 197, 209, 0.12)",
+            background: "rgba(99, 102, 241, 0.12)",
             display: "flex", flexDirection: "column", gap: "0.5rem",
           }}>
-            <span className="font-display" style={{ fontSize: "2.8rem", fontWeight: 900, color: "#141005", letterSpacing: "-0.04em", lineHeight: 1 }}>
+            <span className="font-display" style={{ fontSize: "2.8rem", fontWeight: 900, color: "#0f172a", letterSpacing: "-0.04em", lineHeight: 1 }}>
               {value}
             </span>
-            <div style={{ fontSize: "0.82rem", fontWeight: 700, color: "#141005", fontFamily: "var(--font-sans)", lineHeight: 1.4 }}>{label}</div>
+            <div style={{ fontSize: "0.82rem", fontWeight: 700, color: "#0f172a", fontFamily: "var(--font-sans)", lineHeight: 1.4 }}>{label}</div>
             <div style={{
               display: "inline-block", fontSize: "0.58rem", fontWeight: 800, letterSpacing: "0.2em",
-              textTransform: "uppercase", color: "#141005", background: "#FFC20F",
+              textTransform: "uppercase", color: "#0f172a", background: "#6366f1",
               padding: "0.25rem 0.75rem", borderRadius: "100px", width: "fit-content", marginTop: "0.5rem",
-              fontFamily: "var(--font-sans, monospace)", border: "1px solid rgba(255, 194, 15, 0.6)"
+              fontFamily: "var(--font-sans, monospace)", border: "1px solid rgba(79, 70, 229, 0.6)"
             }}>
               {sub}
             </div>
@@ -141,39 +141,39 @@ export default async function ThreadsPage() {
       </div>
 
       {/* ── Hairline ── */}
-      <div style={{ height: "1px", background: "rgba(161, 197, 209, 0.4)" }} />
+      <div style={{ height: "1px", background: "rgba(99, 102, 241, 0.4)" }} />
 
       {/* ── Empty state (no threads at all) ── */}
       {processed.length === 0 && (
         <div style={{
-          border: "1px dashed rgba(161, 197, 209, 0.6)", borderRadius: "16px",
+          border: "1px dashed rgba(99, 102, 241, 0.6)", borderRadius: "16px",
           padding: "4rem 2rem", textAlign: "center",
           display: "flex", flexDirection: "column", alignItems: "center", gap: "1.25rem",
           background: "rgba(255, 255, 255, 0.7)",
         }}>
           <div style={{
             width: "3.5rem", height: "3.5rem", borderRadius: "50%",
-            background: "rgba(255, 194, 15, 0.25)", border: "1px solid rgba(255, 194, 15, 0.5)",
+            background: "rgba(79, 70, 229, 0.25)", border: "1px solid rgba(79, 70, 229, 0.5)",
             display: "flex", alignItems: "center", justifyContent: "center",
           }}>
-            <BookOpen size={20} style={{ color: "#141005" }} />
+            <BookOpen size={20} style={{ color: "#0f172a" }} />
           </div>
           <div>
-            <h3 className="font-display" style={{ fontSize: "1.25rem", fontWeight: 700, color: "#141005", marginBottom: "0.5rem", letterSpacing: "-0.02em" }}>
+            <h3 className="font-display" style={{ fontSize: "1.25rem", fontWeight: 700, color: "#0f172a", marginBottom: "0.5rem", letterSpacing: "-0.02em" }}>
               No threads yet
             </h3>
-            <p style={{ fontSize: "0.82rem", color: "#3b3527", opacity: 0.75, maxWidth: "26rem", lineHeight: 1.7, fontFamily: "var(--font-sans)" }}>
+            <p style={{ fontSize: "0.82rem", color: "#475569", opacity: 0.75, maxWidth: "26rem", lineHeight: 1.7, fontFamily: "var(--font-sans)" }}>
               Threads appear here once a professor accepts your mentorship request.
               Start by finding a mentor in the directory.
             </p>
           </div>
           <Link href="/professors" style={{ textDecoration: "none" }}>
             <div style={{
-              padding: "0.8rem 2rem", border: "2px solid #008CBB", background: "#008CBB",
+              padding: "0.8rem 2rem", border: "2px solid #4f46e5", background: "#4f46e5",
               borderRadius: "100px", fontSize: "0.62rem", fontWeight: 800,
               letterSpacing: "0.18em", textTransform: "uppercase",
               color: "#ffffff", fontFamily: "var(--font-sans)", cursor: "pointer",
-              boxShadow: "0 4px 14px rgba(0, 140, 187, 0.25)",
+              boxShadow: "0 4px 14px rgba(79, 70, 229, 0.25)",
             }}>
               Browse Professors
             </div>
@@ -188,7 +188,7 @@ export default async function ThreadsPage() {
             <SectionLabel text="Ongoing" />
             <span style={{
               marginLeft: "auto", fontSize: "0.6rem", fontWeight: 800, letterSpacing: "0.22em",
-              textTransform: "uppercase", color: "#141005", background: "rgba(255, 194, 15, 0.35)",
+              textTransform: "uppercase", color: "#0f172a", background: "rgba(79, 70, 229, 0.35)",
               padding: "0.3rem 0.8rem", borderRadius: "100px", fontFamily: "var(--font-sans, monospace)"
             }}>
               {ongoing.length} thread{ongoing.length !== 1 ? "s" : ""}
@@ -207,12 +207,12 @@ export default async function ThreadsPage() {
         <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-              <span style={{ width: "1rem", height: "2px", background: "#A1C5D1", display: "block" }} />
-              <h2 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "#141005", opacity: 0.6, letterSpacing: "-0.025em" }}>
+              <span style={{ width: "1rem", height: "2px", background: "#818cf8", display: "block" }} />
+              <h2 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "#0f172a", opacity: 0.6, letterSpacing: "-0.025em" }}>
                 Past Sessions
               </h2>
             </div>
-            <span style={{ marginLeft: "auto", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "#3b3527", opacity: 0.5, fontFamily: "var(--font-sans, monospace)" }}>
+            <span style={{ marginLeft: "auto", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "#475569", opacity: 0.5, fontFamily: "var(--font-sans, monospace)" }}>
               {past.length} completed
             </span>
           </div>
