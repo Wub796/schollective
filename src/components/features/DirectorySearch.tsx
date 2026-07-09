@@ -131,7 +131,7 @@ export function DirectorySearch({ institutions, expertiseAreas }: DirectorySearc
               onFocus={(e) => {
                 e.currentTarget.style.borderColor = "var(--accent)";
                 e.currentTarget.style.background = "rgba(255, 255, 255, 0.95)";
-                e.currentTarget.style.boxShadow = "0 0 0 4px rgba(37, 99, 235, 0.08)";
+                e.currentTarget.style.boxShadow = "0 0 0 4px rgba(79, 70, 229, 0.08)";
               }}
               onBlur={(e) => {
                 e.currentTarget.style.borderColor = "var(--border)";
@@ -177,7 +177,7 @@ export function DirectorySearch({ institutions, expertiseAreas }: DirectorySearc
               paddingRight: "1.5rem",
               fontSize: "0.875rem",
               background: isDropdownOpen ? "rgba(15, 23, 42, 0.04)" : "rgba(15, 23, 42, 0.02)",
-              border: `1px solid ${isDropdownOpen ? "rgba(147, 51, 234, 0.4)" : "rgba(15, 23, 42, 0.08)"}`,
+              border: `1px solid ${isDropdownOpen ? "rgba(79, 70, 229, 0.4)" : "rgba(15, 23, 42, 0.08)"}`,
               color: "var(--text-primary)",
               cursor: "pointer",
               transition: "all 0.25s ease",
@@ -249,16 +249,16 @@ export function DirectorySearch({ institutions, expertiseAreas }: DirectorySearc
                             borderRadius: "8px",
                             fontSize: "0.8rem",
                             cursor: "pointer",
-                            background: isChecked ? "rgba(147, 51, 234, 0.05)" : "transparent",
+                            background: isChecked ? "rgba(79, 70, 229, 0.05)" : "transparent",
                             transition: "background 0.2s",
                           }}
-                          onMouseEnter={(e) => (e.currentTarget.style.background = isChecked ? "rgba(147, 51, 234, 0.08)" : "rgba(15, 23, 42, 0.03)")}
-                          onMouseLeave={(e) => (e.currentTarget.style.background = isChecked ? "rgba(147, 51, 234, 0.05)" : "transparent")}
+                          onMouseEnter={(e) => (e.currentTarget.style.background = isChecked ? "rgba(79, 70, 229, 0.08)" : "rgba(15, 23, 42, 0.03)")}
+                          onMouseLeave={(e) => (e.currentTarget.style.background = isChecked ? "rgba(79, 70, 229, 0.05)" : "transparent")}
                         >
-                          <span style={{ color: isChecked ? "rgb(147, 51, 234)" : "rgba(15, 23, 42, 0.8)", fontWeight: isChecked ? 600 : 400 }}>
+                          <span style={{ color: isChecked ? "rgb(79, 70, 229)" : "rgba(15, 23, 42, 0.8)", fontWeight: isChecked ? 600 : 400 }}>
                             {area}
                           </span>
-                          {isChecked && <Check size={12} color="rgb(147, 51, 234)" />}
+                          {isChecked && <Check size={12} color="rgb(79, 70, 229)" />}
                         </div>
                       );
                     })
@@ -522,13 +522,13 @@ export function DirectorySearch({ institutions, expertiseAreas }: DirectorySearc
                           borderRadius: "8px",
                           fontSize: "0.78rem",
                           cursor: "pointer",
-                          background: isChecked ? "rgba(147, 51, 234, 0.05)" : "transparent",
+                          background: isChecked ? "rgba(79, 70, 229, 0.05)" : "transparent",
                         }}
                       >
-                        <span style={{ color: isChecked ? "rgb(147, 51, 234)" : "rgba(15, 23, 42, 0.7)", fontWeight: isChecked ? 600 : 400 }}>
+                        <span style={{ color: isChecked ? "rgb(79, 70, 229)" : "rgba(15, 23, 42, 0.7)", fontWeight: isChecked ? 600 : 400 }}>
                           {area}
                         </span>
-                        {isChecked && <Check size={12} color="rgb(147, 51, 234)" />}
+                        {isChecked && <Check size={12} color="rgb(79, 70, 229)" />}
                       </div>
                     );
                   })}
