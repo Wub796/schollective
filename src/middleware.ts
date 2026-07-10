@@ -57,6 +57,10 @@ export async function middleware(request: NextRequest) {
       if (!profile || !profile.role || !profile.first_name) {
         return Response.redirect(new URL('/onboarding', request.url))
       }
+
+      if (isProfessorRoute && profile.role === 'professor' && !path.startsWith('/prof/pending') && profile.status !== 'approved') {
+        return Response.redirect(new URL('/prof/pending', request.url))
+      }
     }
   }
 
