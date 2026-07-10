@@ -1,6 +1,7 @@
 import React from "react";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
+import { createAdminClient } from "@/utils/supabase/admin";
 import { AdminShell } from "@/components/ui/AdminShell";
 import { AdminProfessorsTable } from "@/components/features/AdminProfessorsTable";
 
@@ -18,15 +19,25 @@ export default async function AdminProfessorsPage() {
     redirect(profile?.role === "professor" ? "/prof/dashboard" : "/dashboard");
   }
 
-  const { data: professors } = await supabase
+  // Use service-role client to read ALL professor profiles (bypasses RLS)
+  const adminClient = createAdminClient();
+  const { data: professors } = await adminClient
     .from("profiles")
     .select("id, first_name, last_name, preferred_name, email, status, institution, expertise_fields, ai_score, ai_level, created_at")
     .eq("role", "professor")
     .order("created_at", { ascending: false });
 
-  const approved  = professors?.filter((p) => p.status === "approved").length ?? 0;
-  const pending   = professors?.filter((p) => p.status === "pending").length  ?? 0;
-  const rejected  = professors?.filter((p) => p.status === "rejected").length ?? 0;
+  const getEffectiveStatus = (status: string | null) => {
+    if (status === "approved") return "approved";
+    if (status === "rejected") return "rejected";
+    if (status === "suspended") return "suspended";
+    return "pending";
+  };
+
+  const approved  = professors?.filter((p) => getEffectiveStatus(p.status) === "approved").length  ?? 0;
+  const pending   = professors?.filter((p) => getEffectiveStatus(p.status) === "pending").length   ?? 0;
+  const rejected  = professors?.filter((p) => getEffectiveStatus(p.status) === "rejected").length  ?? 0;
+  const suspended = professors?.filter((p) => getEffectiveStatus(p.status) === "suspended").length ?? 0;
 
   return (
     <AdminShell>

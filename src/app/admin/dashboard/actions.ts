@@ -82,6 +82,7 @@ export async function updateProfessorStatus(profileId: string, newStatus: 'appro
 
     // 3. Sync State
     revalidatePath("/admin/dashboard");
+    revalidatePath("/admin/professors");
     return { success: true };
   } catch (err: any) {
     return { error: err.message || "Failed to update professor status." };
