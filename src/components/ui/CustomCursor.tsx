@@ -188,9 +188,9 @@ function CursorRing({
   const x = useSpring(hoverX, { stiffness, damping });
   const y = useSpring(hoverY, { stiffness, damping });
 
-  const isText   = mode === "text";
+  const isText = mode === "text";
   const isButton = mode === "hover-button";
-  const isLink   = mode === "hover-link";
+  const isLink = mode === "hover-link";
   const isCanvas = mode === "hover-canvas";
 
   if (mode === "hide") return null;
@@ -222,8 +222,8 @@ function CursorRing({
   const borderColor = isButton
     ? "rgba(79, 70, 229, 0.9)"
     : isCanvas
-    ? "rgba(15, 23, 42, 0.4)"
-    : "rgba(15, 23, 42, 0.5)";
+      ? "rgba(15, 23, 42, 0.4)"
+      : "rgba(15, 23, 42, 0.5)";
 
   const boxShadow = isButton && isNav
     ? `0 0 0 1.5px rgba(79, 70, 229, 0.9), 0 0 18px rgba(79, 70, 229, 0.35), inset 0 0 12px rgba(79, 70, 229, 0.08)`
@@ -254,12 +254,12 @@ function CursorRing({
         }}
         transition={{
           // Geometry transitions: fast snap when morphing to button
-          width:        { duration: isButton ? 0.22 : 0.28, ease: [0.22, 1, 0.36, 1] },
-          height:       { duration: isButton ? 0.22 : 0.28, ease: [0.22, 1, 0.36, 1] },
+          width: { duration: isButton ? 0.22 : 0.28, ease: [0.22, 1, 0.36, 1] },
+          height: { duration: isButton ? 0.22 : 0.28, ease: [0.22, 1, 0.36, 1] },
           borderRadius: { duration: isButton ? 0.22 : 0.28, ease: [0.22, 1, 0.36, 1] },
-          border:       { duration: isButton ? 0.18 : 0.28, ease: "easeOut" },
-          boxShadow:    { duration: 0.3, ease: "easeOut" },
-          opacity:      { duration: 0.2 },
+          border: { duration: isButton ? 0.18 : 0.28, ease: "easeOut" },
+          boxShadow: { duration: 0.3, ease: "easeOut" },
+          opacity: { duration: 0.2 },
         }}
       />
 
@@ -293,10 +293,10 @@ function CursorRing({
    MAIN EXPORT
 ═══════════════════════════════════════════════════════════════════════ */
 export function CustomCursor() {
-  const [mounted, setMounted]  = useState(false);
-  const [isTouch, setIsTouch]  = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [isTouch, setIsTouch] = useState(false);
   const [reducedMotion, setRm] = useState(false);
-  const [mode, setMode]        = useState<CursorMode>("default");
+  const [mode, setMode] = useState<CursorMode>("default");
   const [targetRect, setTargetRect] = useState<TargetRect | null>(null);
   const [isEnabled, setIsEnabled] = useState(true);
 
@@ -358,6 +358,14 @@ export function CustomCursor() {
 
     const onOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
+
+      // Skip morphing/snapping cursor ring if target is inside a data-no-morph container
+      if (target.closest("[data-no-morph]")) {
+        setMode(getMode(target));
+        hoveredEl.current = null;
+        setTargetRect(null);
+        return;
+      }
 
       const navEl = target.closest("[data-nav-item]");
       if (navEl) {
