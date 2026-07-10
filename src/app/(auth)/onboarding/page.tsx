@@ -64,6 +64,61 @@ function Field({
   );
 }
 
+function TextArea({
+  id, name, label, placeholder, maxLength = 280, required = false,
+}: {
+  id: string; name: string; label: string;
+  placeholder: string; maxLength?: number; required?: boolean;
+}) {
+  const [focused, setFocused] = useState(false);
+  const [charCount, setCharCount] = useState(0);
+  return (
+    <div style={{ position: "relative" }}>
+      <label htmlFor={id} style={{
+        display: "flex", justifyContent: "space-between", alignItems: "baseline",
+        fontSize: "0.6rem", fontWeight: 600,
+        letterSpacing: "0.22em", textTransform: "uppercase",
+        color: focused ? "rgba(15, 23, 42, 0.65)" : "rgba(15, 23, 42, 0.3)",
+        marginBottom: "0.55rem", transition: "color 0.25s",
+        fontFamily: "var(--font-sans)",
+      }}>
+        <span>{label}</span>
+        <span style={{
+          fontSize: "0.52rem", fontWeight: 500, letterSpacing: "0.05em",
+          textTransform: "none",
+          color: charCount > maxLength ? "#ef4444" : "rgba(15, 23, 42, 0.2)",
+        }}>
+          {charCount}/{maxLength}
+        </span>
+      </label>
+      <textarea
+        id={id} name={name}
+        placeholder={placeholder} required={required}
+        maxLength={maxLength}
+        rows={3}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
+        onChange={(e) => setCharCount(e.target.value.length)}
+        style={{
+          width: "100%",
+          background: "rgba(15, 23, 42, 0.02)",
+          border: `1px solid ${focused ? "rgba(79, 70, 229, 0.4)" : "rgba(99, 102, 241, 0.15)"}`,
+          borderRadius: "20px",
+          padding: "1rem 1.5rem",
+          fontSize: "0.92rem",
+          color: "var(--text-primary)",
+          outline: "none",
+          transition: "all 0.3s cubic-bezier(0.22, 1, 0.36, 1)",
+          fontFamily: "var(--font-sans)",
+          boxShadow: focused ? "0 0 0 3px rgba(79, 70, 229, 0.1)" : "none",
+          resize: "none",
+          lineHeight: 1.7,
+        }}
+      />
+    </div>
+  );
+}
+
 function OnboardingContent() {
   const router       = useRouter();
   const searchParams = useSearchParams();
@@ -116,15 +171,18 @@ function OnboardingContent() {
 
       const { data: profile } = await supabase
         .from("profiles")
-        .select("first_name, role")
+        .select("first_name, role, status")
         .eq("id", user.id)
         .single();
 
       // Already onboarded — redirect to the right dashboard
       // Must match middleware's check: both first_name AND role required
       if (profile?.first_name && profile?.role) {
-        if (profile.role === "professor") router.replace("/prof/dashboard");
-        else router.replace("/dashboard");
+        if (profile.role === "professor") {
+          router.replace(profile.status === "approved" ? "/prof/dashboard" : "/prof/pending");
+        } else {
+          router.replace("/dashboard");
+        }
         return;
       }
 
@@ -158,6 +216,15 @@ function OnboardingContent() {
 
     if (role === "student") {
       payload.education_level = fd.get("education_level") as string;
+      payload.bio = (fd.get("bio") as string ?? "").trim();
+      const interestsRaw = fd.get("academic_interests") as string;
+      payload.academic_interests = interestsRaw
+        ? interestsRaw.split(",").map((s) => s.trim()).filter(Boolean)
+        : [];
+      const extrasRaw = fd.get("extracurriculars") as string;
+      payload.extracurriculars = extrasRaw
+        ? extrasRaw.split(",").map((s) => s.trim()).filter(Boolean)
+        : [];
     }
     if (role === "professor") {
       const raw = fd.get("expertise") as string;
@@ -307,18 +374,19 @@ function OnboardingContent() {
                       <select id="education_level" name="education_level" required
                         style={{
                           width: "100%",
-                          background: "rgba(15, 23, 42, 0.02)",
-                          border: "1px solid rgba(15, 23, 42, 0.08)",
+                          background: "rgba(255, 255, 255, 0.95)",
+                          border: "1px solid rgba(99, 102, 241, 0.22)",
                           borderRadius: "100px",
-                          padding: "0.95rem 2.5rem 0.95rem 1.75rem",
+                          padding: "1rem 3rem 1rem 1.85rem",
                           fontSize: "0.95rem",
                           color: "var(--text-primary)",
                           outline: "none",
                           fontFamily: "var(--font-sans)",
                           cursor: "pointer",
                           transition: "all 0.3s cubic-bezier(0.22, 1, 0.36, 1)",
+                          boxShadow: "0 2px 8px rgba(0, 0, 0, 0.02)",
                           appearance: "none",
-                          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='rgba(15, 23, 42,0.3)' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E")`,
+                          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%234f46e5' stroke-width='2.2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E")`,
                           backgroundRepeat: "no-repeat",
                           backgroundPosition: "right 1.5rem center",
                         }}>
@@ -331,6 +399,28 @@ function OnboardingContent() {
                       id="institution" name="institution"
                       label="School (optional)"
                       placeholder="e.g. Lincoln High School, MIT, …"
+                    />
+
+                    {/* ── Student profile fields ── */}
+                    <div style={{ height: "1px", background: "rgba(15, 23, 42, 0.06)", margin: "0.25rem 0" }} />
+
+                    <TextArea
+                      id="bio" name="bio"
+                      label="Short Bio (optional)"
+                      placeholder="Tell professors a bit about yourself — what drives your curiosity?"
+                      maxLength={280}
+                    />
+
+                    <Field
+                      id="academic_interests" name="academic_interests"
+                      label="Academic Interests (optional)"
+                      placeholder="e.g. Quantum Computing, Marine Biology, AI Ethics"
+                    />
+
+                    <Field
+                      id="extracurriculars" name="extracurriculars"
+                      label="Extracurriculars (optional)"
+                      placeholder="e.g. Debate Club, Science Olympiad, Volunteering"
                     />
                   </div>
                 </motion.div>
