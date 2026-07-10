@@ -58,9 +58,14 @@ const STATUS_COLOUR: Record<string, string> = {
 };
 
 function effectiveStatus(u: UserRecord): string {
-  const raw = u.status ?? (u.role === "student" ? "active" : "active");
-  // Normalise DB value "approved" → "active" so filters and display agree
-  return raw === "approved" ? "active" : raw;
+  if (u.role === "professor") {
+    if (u.status === "approved") return "approved";
+    if (u.status === "rejected") return "rejected";
+    if (u.status === "suspended") return "suspended";
+    return "pending";
+  }
+  if (u.status === "suspended") return "suspended";
+  return u.status || "active";
 }
 
 function formatDate(iso: string): string {
@@ -86,13 +91,13 @@ function FilterPill({
       onClick={onClick}
       className="btn-filter-pill"
       style={{
-        padding: "0.5rem 1.25rem",
+        padding: "0.55rem 1.4rem",
         borderRadius: "100px",
         border: active
-          ? "1px solid rgba(15, 23, 42, 0.3)"
-          : "1px solid rgba(15, 23, 42, 0.07)",
-        background: active ? "rgba(15, 23, 42, 0.08)" : "transparent",
-        color: active ? "var(--text-primary)" : "rgba(15, 23, 42, 0.35)",
+          ? "1px solid rgba(79, 70, 229, 0.35)"
+          : "1px solid rgba(99, 102, 241, 0.15)",
+        background: active ? "rgba(79, 70, 229, 0.1)" : "rgba(255, 255, 255, 0.6)",
+        color: active ? "#4f46e5" : "rgba(15, 23, 42, 0.55)",
         fontSize: "0.6rem",
         fontWeight: 700,
         letterSpacing: "0.18em",
@@ -447,22 +452,23 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
                             value={u.role}
                             onChange={(e) => handleRoleChange(u.id, e.target.value as any)}
                             style={{
-                              padding: "0.45rem 1.75rem 0.45rem 1rem",
+                              padding: "0.55rem 2.25rem 0.55rem 1.25rem",
                               borderRadius: "100px",
-                              border: "1px solid var(--border)",
-                              background: "rgba(255, 255, 255, 0.6)",
-                              color: changingRole === u.id ? "rgba(15, 23, 42,0.3)" : "rgba(15, 23, 42,0.75)",
-                              fontSize: "0.6rem",
-                              fontWeight: 700,
-                              letterSpacing: "0.08em",
+                              border: "1px solid rgba(99, 102, 241, 0.2)",
+                              background: "rgba(255, 255, 255, 0.95)",
+                              color: changingRole === u.id ? "rgba(15, 23, 42,0.3)" : "rgba(15, 23, 42,0.8)",
+                              fontSize: "0.68rem",
+                              fontWeight: 600,
+                              letterSpacing: "0.04em",
                               textTransform: "capitalize",
                               fontFamily: "var(--font-sans)",
                               cursor: changingRole === u.id ? "wait" : "pointer",
                               outline: "none",
                               appearance: "none",
-                              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='rgba(15, 23, 42,0.3)' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E")`,
+                              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%234f46e5' stroke-width='2.2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E")`,
                               backgroundRepeat: "no-repeat",
-                              backgroundPosition: "right 0.6rem center",
+                              backgroundPosition: "right 0.8rem center",
+                              boxShadow: "0 2px 6px rgba(0,0,0,0.02)",
                             }}
                           >
                             <option value="student">Student</option>
@@ -615,21 +621,22 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
                   value={u.role}
                   onChange={(e) => handleRoleChange(u.id, e.target.value as any)}
                   style={{
-                    padding: "0.45rem 1.75rem 0.45rem 1rem",
+                    padding: "0.55rem 2.25rem 0.55rem 1.25rem",
                     borderRadius: "100px",
-                    border: "1px solid var(--border)",
-                    background: "rgba(255, 255, 255, 0.6)",
-                    color: "rgba(15, 23, 42,0.75)",
-                    fontSize: "0.6rem",
-                    fontWeight: 700,
-                    letterSpacing: "0.08em",
+                    border: "1px solid rgba(99, 102, 241, 0.2)",
+                    background: "rgba(255, 255, 255, 0.95)",
+                    color: changingRole === u.id ? "rgba(15, 23, 42,0.3)" : "rgba(15, 23, 42,0.8)",
+                    fontSize: "0.68rem",
+                    fontWeight: 600,
+                    letterSpacing: "0.04em",
                     fontFamily: "var(--font-sans)",
                     cursor: changingRole === u.id ? "wait" : "pointer",
                     outline: "none",
                     appearance: "none",
-                    backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='rgba(15, 23, 42,0.3)' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E")`,
+                    backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%234f46e5' stroke-width='2.2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E")`,
                     backgroundRepeat: "no-repeat",
-                    backgroundPosition: "right 0.6rem center",
+                    backgroundPosition: "right 0.8rem center",
+                    boxShadow: "0 2px 6px rgba(0,0,0,0.02)",
                   }}
                 >
                   <option value="student">Student</option>
