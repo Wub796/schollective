@@ -81,31 +81,42 @@ export default async function ProfessorsPage({ searchParams }: ProfessorsPagePro
   ).sort();
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "3.5rem" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "4.5rem", paddingBottom: "4rem" }}>
       {/* Header */}
-      <header style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+      <header style={{ display: "flex", flexDirection: "column", gap: "1.75rem" }}>
         <Link
           href="/dashboard"
-          style={{ display: "inline-flex", alignItems: "center", gap: "0.6rem", textDecoration: "none", width: "fit-content", padding: "0.4rem 0.8rem", borderRadius: "100px", background: "rgba(79, 70, 229, 0.08)", border: "1px solid rgba(79, 70, 229, 0.2)" }}
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "0.6rem",
+            textDecoration: "none",
+            width: "fit-content",
+            padding: "0.5rem 1rem",
+            borderRadius: "100px",
+            background: "rgba(79, 70, 229, 0.08)",
+            border: "1px solid rgba(79, 70, 229, 0.25)",
+            transition: "all 0.2s ease",
+          }}
         >
-          <ArrowLeft size={12} style={{ color: "#4f46e5" }} />
-          <span style={{ fontSize: "0.58rem", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: "#4f46e5", fontFamily: "var(--font-sans, monospace)" }}>
+          <ArrowLeft size={13} style={{ color: "#4f46e5" }} />
+          <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: "#4f46e5", fontFamily: "var(--font-sans, monospace)" }}>
             Back to Dashboard
           </span>
         </Link>
 
-        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <span style={{ width: "1.5rem", height: "2px", background: "#6366f1", display: "block" }} />
-          <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: "#4f46e5", fontFamily: "var(--font-sans, monospace)" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.85rem", marginTop: "0.25rem" }}>
+          <span style={{ width: "2rem", height: "2px", background: "#6366f1", display: "block" }} />
+          <span style={{ fontSize: "0.65rem", fontWeight: 800, letterSpacing: "0.24em", textTransform: "uppercase", color: "#4f46e5", fontFamily: "var(--font-sans, monospace)" }}>
             Academic Directory
           </span>
         </div>
 
-        <h1 className="font-display" style={{ fontSize: "clamp(2.4rem, 4.5vw, 3.6rem)", fontWeight: 900, color: "#0f172a", letterSpacing: "-0.035em", lineHeight: 1.1 }}>
+        <h1 className="font-display" style={{ fontSize: "clamp(2.5rem, 5vw, 4rem)", fontWeight: 900, color: "#0f172a", letterSpacing: "-0.035em", lineHeight: 1.12 }}>
           Discover your{" "}
           <em style={{ fontStyle: "italic", color: "#4f46e5", fontWeight: 300 }}>intellectual mentor</em>
         </h1>
-        <p style={{ fontSize: "0.95rem", color: "#475569", opacity: 0.75, fontWeight: 400, maxWidth: "42rem", lineHeight: 1.8, fontFamily: "var(--font-sans)", marginTop: "0.25rem" }}>
+        <p style={{ fontSize: "1.02rem", color: "#475569", opacity: 0.8, fontWeight: 400, maxWidth: "46rem", lineHeight: 1.85, fontFamily: "var(--font-sans)", marginTop: "0.35rem" }}>
           Connect with verified experts across all academic disciplines. Every professor
           is manually approved via institutional credentials.
         </p>
@@ -117,24 +128,24 @@ export default async function ProfessorsPage({ searchParams }: ProfessorsPagePro
       />
 
       {professors && professors.length > 0 ? (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "1.5rem" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: "2.25rem" }}>
           {professors.map((prof) => (
             <ProfessorCard key={prof.id} professor={prof as any} />
           ))}
         </div>
       ) : (
-        <div style={{ border: "1px dashed rgba(99, 102, 241, 0.6)", borderRadius: "16px", padding: "4rem 2rem", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: "1.25rem", background: "rgba(255, 255, 255, 0.7)" }}>
-          <h3 className="font-display" style={{ fontSize: "1.3rem", fontWeight: 700, color: "#0f172a", letterSpacing: "-0.02em" }}>
+        <div style={{ border: "1px dashed rgba(99, 102, 241, 0.6)", borderRadius: "24px", padding: "5rem 2.5rem", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: "1.5rem", background: "rgba(255, 255, 255, 0.85)", backdropFilter: "blur(12px)" }}>
+          <h3 className="font-display" style={{ fontSize: "1.4rem", fontWeight: 700, color: "#0f172a", letterSpacing: "-0.02em" }}>
             No mentors found
           </h3>
-          <p style={{ fontSize: "0.82rem", color: "#475569", opacity: 0.75, maxWidth: "24rem", lineHeight: 1.7, fontFamily: "var(--font-sans)", marginBottom: "0.5rem" }}>
+          <p style={{ fontSize: "0.88rem", color: "#475569", opacity: 0.8, maxWidth: "26rem", lineHeight: 1.75, fontFamily: "var(--font-sans)", marginBottom: "0.75rem" }}>
             Try broadening your search or resetting your filters. Or, explore these popular research fields:
           </p>
           
-          <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", justifyContent: "center", marginBottom: "1rem" }}>
+          <div style={{ display: "flex", gap: "0.6rem", flexWrap: "wrap", justifyContent: "center", marginBottom: "1.25rem" }}>
             {["Machine Learning", "Bio-Ethics", "Computer Science"].map((field) => (
               <Link key={field} href={`/professors?expertise=${encodeURIComponent(field)}`} style={{ textDecoration: "none" }}>
-                <span style={{ padding: "0.4rem 0.9rem", border: "1px solid rgba(79, 70, 229, 0.3)", background: "rgba(79, 70, 229, 0.08)", borderRadius: "100px", fontSize: "0.72rem", fontWeight: 600, color: "#4f46e5" }}>
+                <span style={{ padding: "0.5rem 1.1rem", border: "1px solid rgba(79, 70, 229, 0.3)", background: "rgba(79, 70, 229, 0.08)", borderRadius: "100px", fontSize: "0.75rem", fontWeight: 600, color: "#4f46e5" }}>
                   {field}
                 </span>
               </Link>
@@ -142,7 +153,7 @@ export default async function ProfessorsPage({ searchParams }: ProfessorsPagePro
           </div>
 
           <Link href="/professors" style={{ textDecoration: "none" }}>
-            <div style={{ padding: "0.75rem 1.75rem", border: "2px solid #4f46e5", background: "#4f46e5", borderRadius: "100px", fontSize: "0.6rem", fontWeight: 800, letterSpacing: "0.18em", textTransform: "uppercase", color: "#ffffff", fontFamily: "var(--font-sans)", cursor: "pointer", boxShadow: "0 4px 14px rgba(79, 70, 229, 0.2)" }}>
+            <div style={{ padding: "0.85rem 2rem", border: "2px solid #4f46e5", background: "#4f46e5", borderRadius: "100px", fontSize: "0.65rem", fontWeight: 800, letterSpacing: "0.18em", textTransform: "uppercase", color: "#ffffff", fontFamily: "var(--font-sans)", cursor: "pointer", boxShadow: "0 4px 14px rgba(79, 70, 229, 0.25)" }}>
               Reset Filters
             </div>
           </Link>
