@@ -218,12 +218,23 @@ export function AdminReviewTable({ applicants }: AdminReviewTableProps) {
                     </td>
                     <td style={{ padding: "1rem 1.25rem", textAlign: "right" }}>
                       <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.5rem" }}>
-                        <Button size="sm" onClick={() => handleStatusChange(prof.id, "approved")} disabled={isProcessing}>
-                          {isProcessing ? <Loader2 size={12} className="animate-spin" /> : <CheckCircle size={12} />}
+                        <Button
+                          size="sm"
+                          icon={isProcessing ? <Loader2 size={12} className="animate-spin" /> : <CheckCircle size={12} />}
+                          onClick={() => handleStatusChange(prof.id, "approved")}
+                          disabled={isProcessing}
+                          className="bg-emerald-600 border-emerald-600 hover:bg-emerald-700 hover:border-emerald-700 text-white"
+                        >
                           Approve
                         </Button>
-                        <Button variant="ghost" size="sm" onClick={() => handleStatusChange(prof.id, "rejected")} disabled={isProcessing}>
-                          {isProcessing ? <Loader2 size={12} className="animate-spin" /> : <XCircle size={12} />}
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          icon={isProcessing ? <Loader2 size={12} className="animate-spin" /> : <XCircle size={12} />}
+                          onClick={() => handleStatusChange(prof.id, "rejected")}
+                          disabled={isProcessing}
+                          className="bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100 hover:border-rose-300 hover:text-rose-800"
+                        >
                           Reject
                         </Button>
                       </div>
@@ -264,12 +275,23 @@ export function AdminReviewTable({ applicants }: AdminReviewTableProps) {
                 <ScoreBadge prof={prof} />
               </div>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.6rem" }}>
-                <Button size="sm" onClick={() => handleStatusChange(prof.id, "approved")} disabled={isProcessing}>
-                  {isProcessing ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle size={14} />}
+                <Button
+                  size="sm"
+                  icon={isProcessing ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle size={14} />}
+                  onClick={() => handleStatusChange(prof.id, "approved")}
+                  disabled={isProcessing}
+                  className="bg-emerald-600 border-emerald-600 hover:bg-emerald-700 hover:border-emerald-700 text-white w-full"
+                >
                   Approve
                 </Button>
-                <Button variant="ghost" size="sm" onClick={() => handleStatusChange(prof.id, "rejected")} disabled={isProcessing}>
-                  {isProcessing ? <Loader2 size={14} className="animate-spin" /> : <XCircle size={14} />}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  icon={isProcessing ? <Loader2 size={14} className="animate-spin" /> : <XCircle size={14} />}
+                  onClick={() => handleStatusChange(prof.id, "rejected")}
+                  disabled={isProcessing}
+                  className="bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100 hover:border-rose-300 hover:text-rose-800 w-full"
+                >
                   Reject
                 </Button>
               </div>
