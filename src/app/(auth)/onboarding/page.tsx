@@ -129,6 +129,7 @@ function OnboardingContent() {
   const initialRole: Role = roleParam === "professor" ? "professor" : "student";
 
   const [role, setRole]               = useState<Role>(initialRole);
+  const [hasFixedRole, setHasFixedRole] = useState<boolean>(!!roleParam);
   const [loading, setLoading]         = useState(false);
   const [checking, setChecking]       = useState(true);
   const [userName, setUserName]       = useState("");
@@ -150,12 +151,13 @@ function OnboardingContent() {
     };
   }, [isDirty]);
 
-  // Verify the user is logged in; if profile is already complete, skip onboarding
+  // Verify the user is logged in; detect role and enforce role-based onboarding view
   useEffect(() => {
     // Read role from localStorage (set by signup page before Google OAuth redirect)
     const storedRole = localStorage.getItem("signup_role");
     if (storedRole === "professor" || storedRole === "student") {
       setRole(storedRole);
+      setHasFixedRole(true);
     }
     // Clear it so it doesn't persist for future visits
     localStorage.removeItem("signup_role");
@@ -169,11 +171,21 @@ function OnboardingContent() {
       if (meta?.full_name) setUserName(meta.full_name);
       else if (meta?.name) setUserName(meta.name);
 
+      if (meta?.role === "professor" || meta?.role === "student") {
+        setRole(meta.role);
+        setHasFixedRole(true);
+      }
+
       const { data: profile } = await supabase
         .from("profiles")
         .select("first_name, role, status")
         .eq("id", user.id)
         .single();
+
+      if (profile?.role === "professor" || profile?.role === "student") {
+        setRole(profile.role);
+        setHasFixedRole(true);
+      }
 
       // Already onboarded — redirect to the right dashboard
       // Must match middleware's check: both first_name AND role required
@@ -344,23 +356,38 @@ function OnboardingContent() {
           Tell us a bit about yourself so we can connect you with the right people.
         </motion.p>
 
-        {/* Role selector */}
-        <motion.div variants={fadeUp} style={{
-          display: "flex", gap: "0.5rem", marginBottom: "2.5rem",
-          padding: "0.3rem", background: "rgba(15, 23, 42, 0.04)",
-          borderRadius: "100px", border: "1px solid rgba(15, 23, 42, 0.07)",
-        }}>
-          {(["student", "professor"] as Role[]).map((r) => (
-            <Button
-              key={r} type="button" onClick={() => { setRole(r); setIsDirty(true); }}
-              variant={role === r ? "primary" : "ghost"}
-              size="md"
-              className={`flex-1 ${role !== r && 'border-transparent text-slate-400'}`}
-            >
-              {r === "student" ? "Student" : "Professor"}
-            </Button>
-          ))}
-        </motion.div>
+        {/* Role indicator */}
+        {hasFixedRole ? (
+          <motion.div variants={fadeUp} style={{ marginBottom: "2.5rem" }}>
+            <div style={{
+              display: "inline-flex", alignItems: "center", gap: "0.5rem",
+              padding: "0.5rem 1.25rem", borderRadius: "100px",
+              background: "rgba(79, 70, 229, 0.08)", border: "1px solid rgba(79, 70, 229, 0.25)",
+              fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.2em", textTransform: "uppercase",
+              color: "#4f46e5", fontFamily: "var(--font-sans, monospace)",
+            }}>
+              <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#4f46e5" }} />
+              {role === "student" ? "Scholar / Student Setup" : "Faculty / Professor Setup"}
+            </div>
+          </motion.div>
+        ) : (
+          <motion.div variants={fadeUp} style={{
+            display: "flex", gap: "0.5rem", marginBottom: "2.5rem",
+            padding: "0.3rem", background: "rgba(15, 23, 42, 0.04)",
+            borderRadius: "100px", border: "1px solid rgba(15, 23, 42, 0.07)",
+          }}>
+            {(["student", "professor"] as Role[]).map((r) => (
+              <Button
+                key={r} type="button" onClick={() => { setRole(r); setIsDirty(true); }}
+                variant={role === r ? "primary" : "ghost"}
+                size="md"
+                className={`flex-1 ${role !== r && 'border-transparent text-slate-400'}`}
+              >
+                {r === "student" ? "Student" : "Professor"}
+              </Button>
+            ))}
+          </motion.div>
+        )}
 
         <form onSubmit={handleSubmit} onChange={() => setIsDirty(true)}>
           <motion.div variants={fadeUp} style={{ display: "flex", flexDirection: "column", gap: "3rem" }}>
