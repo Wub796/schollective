@@ -17,29 +17,29 @@ import {
 
 export default function FeaturesPage() {
   return (
-    <div className="page-bg" style={{ minHeight: "100vh", background: "transparent", color: "var(--text-primary)" }}>
+    <div className="page-bg" style={{ minHeight: "100vh", background: "transparent", color: "#141005" }}>
       <PublicNav />
 
-      <main className="relative z-10 px-6 sm:px-8 py-32 lg:py-40">
-        <div style={{ maxWidth: "960px", margin: "0 auto" }}>
+      <main className="relative z-10 px-6 sm:px-8 py-20 lg:py-28">
+        <div style={{ maxWidth: "960px", margin: "0 auto", display: "flex", flexDirection: "column", gap: "3.5rem" }}>
           {/* Header */}
-          <header className="mb-24 text-center max-w-3xl mx-auto" style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[rgba(37, 99, 235,0.15)] bg-[rgba(37, 99, 235,0.04)] text-var(--accent) text-[0.62rem] font-bold tracking-wider uppercase mb-6" style={{ fontFamily: "var(--font-sans)", color: "var(--accent)" }}>
-              <Cpu size={11} />
+          <header className="text-center max-w-3xl mx-auto" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "1.25rem" }}>
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#008CBB]/30 bg-[#008CBB]/10 text-[#008CBB] text-[0.62rem] font-extrabold tracking-widest uppercase mb-2 font-mono">
+              <Cpu size={12} />
               Core Capabilities
             </div>
-            <h1 className="font-display text-5xl lg:text-7xl font-bold text-var(--text-primary) mb-12" style={{ fontSize: "clamp(2.6rem, 6vw, 4rem)", letterSpacing: "-0.03em", lineHeight: 0.95 }}>
+            <h1 className="font-display font-black text-[#141005]" style={{ fontSize: "clamp(2.6rem, 5.5vw, 4rem)", letterSpacing: "-0.035em", lineHeight: 1.05 }}>
               Engineered for{" "}
-              <em className="italic" style={{ fontStyle: "italic", color: "var(--accent)" }}>academic excellence</em>
+              <em className="italic font-light text-[#008CBB]">academic excellence</em>
             </h1>
-            <p className="text-var(--text-secondary) text-lg font-light leading-relaxed max-w-2xl" style={{ color: "var(--text-secondary)", lineHeight: 1.8 }}>
+            <p className="text-[#3b3527]/80 text-lg font-normal leading-relaxed max-w-2xl font-sans">
               We&apos;ve built a focused set of tools designed to remove the friction from intellectual
               mentorship while maintaining the highest standards of safety and integrity.
             </p>
           </header>
 
           {/* Feature Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-32">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {[
               {
                 i: Lock,
@@ -74,54 +74,49 @@ export default function FeaturesPage() {
             ].map((f, i) => (
               <div
                 key={i}
-                className="p-8 lg:p-10 flex flex-col group transition-all duration-300"
-                style={{
-                  background: "var(--bg-surface-1)",
-                  border: "1px solid var(--border)",
-                  borderRadius: "16px",
-                }}
+                className="p-8 lg:p-10 flex flex-col group transition-all duration-300 bg-white border border-[#A1C5D1]/40 rounded-2xl shadow-xs hover:border-[#008CBB] hover:shadow-md"
               >
-                <div className="w-11 h-11 rounded-xl bg-[rgba(37, 99, 235,0.05)] border border-[rgba(37, 99, 235,0.12)] flex items-center justify-center mb-8 text-var(--text-secondary) group-hover:text-var(--accent) transition-colors duration-300">
-                  <f.i size={20} strokeWidth={1.5} style={{ color: "var(--accent)" }} />
+                <div className="w-12 h-12 rounded-xl bg-[#008CBB]/10 border border-[#008CBB]/25 flex items-center justify-center mb-6">
+                  <f.i size={20} style={{ color: "#008CBB" }} />
                 </div>
-                <h3 className="font-display text-2xl text-var(--text-primary) mb-4 font-semibold leading-tight" style={{ fontSize: "1.3rem", letterSpacing: "-0.01em" }}>
+                <h3 className="font-display text-2xl text-[#141005] mb-3 font-bold leading-tight" style={{ fontSize: "1.3rem", letterSpacing: "-0.01em" }}>
                   {f.t}
                 </h3>
-                <p className="text-base text-var(--text-secondary) font-light leading-relaxed" style={{ fontSize: "0.92rem", lineHeight: 1.75 }}>{f.d}</p>
+                <p className="text-[0.92rem] text-[#3b3527]/80 leading-relaxed font-sans mt-auto">{f.d}</p>
               </div>
             ))}
           </div>
 
           {/* Security section */}
-          <section className="border border-var(--border) rounded-2xl p-10 lg:p-16 mb-32 overflow-hidden relative" style={{ background: "var(--bg-surface-1)", border: "1px solid var(--border)" }}>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-              <div className="space-y-8" style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
+          <section className="border border-[#A1C5D1]/50 rounded-3xl p-10 lg:p-14 overflow-hidden relative bg-white/90 shadow-sm">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              <div className="space-y-8" style={{ display: "flex", flexDirection: "column", gap: "1.75rem" }}>
                 <div>
-                  <div className="text-[0.55rem] font-bold tracking-[0.38em] text-var(--accent) uppercase mb-4" style={{ fontFamily: "var(--font-sans)", color: "var(--accent)", opacity: 0.8 }}>
+                  <div className="inline-block text-[0.58rem] font-extrabold tracking-[0.22em] text-[#008CBB] uppercase mb-3 font-mono bg-[#008CBB]/10 px-3 py-1 rounded-full">
                     Security Infrastructure
                   </div>
-                  <h2 className="font-display text-4xl lg:text-5xl font-bold text-var(--text-primary) leading-tight mb-6" style={{ fontSize: "clamp(2rem, 3.5vw, 2.6rem)", letterSpacing: "-0.03em" }}>
-                    Safety by <em className="italic" style={{ fontStyle: "italic", color: "var(--accent)" }}>Design</em>
+                  <h2 className="font-display text-4xl lg:text-5xl font-black text-[#141005] leading-tight mb-4" style={{ fontSize: "clamp(1.8rem, 3.2vw, 2.5rem)", letterSpacing: "-0.03em" }}>
+                    Safety by <em className="italic font-light text-[#008CBB]">Design</em>
                   </h2>
-                  <p className="text-base text-var(--text-secondary) font-light leading-relaxed" style={{ fontSize: "0.95rem", lineHeight: 1.8 }}>
+                  <p className="text-[#3b3527]/80 text-[0.95rem] font-normal leading-relaxed font-sans">
                     Schollective isn&apos;t just a directory; it&apos;s a controlled environment. We implement
                     Row Level Security (RLS) at the database layer to ensure your data and conversations
                     are strictly private and authorized.
                   </p>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-                  <div className="p-7 rounded-xl" style={{ background: "var(--bg-base)", border: "1px solid var(--border)" }}>
-                    <ShieldCheck className="text-var(--accent) mb-4" size={20} style={{ color: "var(--accent)" }} />
-                    <h4 className="font-display text-base text-var(--text-primary) mb-2 font-semibold" style={{ fontSize: "1rem" }}>Edge Guards</h4>
-                    <p className="text-xs text-var(--text-secondary) font-light leading-relaxed" style={{ fontSize: "0.8rem", lineHeight: 1.7 }}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div className="p-7 rounded-2xl bg-[#fafbfc] border border-[#A1C5D1]/40 flex flex-col gap-2">
+                    <ShieldCheck size={22} style={{ color: "#008CBB" }} />
+                    <h4 className="font-display text-base text-[#141005] font-bold" style={{ fontSize: "1rem" }}>Edge Guards</h4>
+                    <p className="text-xs text-[#3b3527]/80 leading-relaxed font-sans">
                       Global routing guards enforce authentication at the edge before data loads.
                     </p>
                   </div>
-                  <div className="p-7 rounded-xl" style={{ background: "var(--bg-base)", border: "1px solid var(--border)" }}>
-                    <Lock className="text-var(--accent) mb-4" size={20} style={{ color: "var(--accent)" }} />
-                    <h4 className="font-display text-base text-var(--text-primary) mb-2 font-semibold" style={{ fontSize: "1rem" }}>JWT Integrity</h4>
-                    <p className="text-xs text-var(--text-secondary) font-light leading-relaxed" style={{ fontSize: "0.8rem", lineHeight: 1.7 }}>
+                  <div className="p-7 rounded-2xl bg-[#fafbfc] border border-[#A1C5D1]/40 flex flex-col gap-2">
+                    <Lock size={22} style={{ color: "#008CBB" }} />
+                    <h4 className="font-display text-base text-[#141005] font-bold" style={{ fontSize: "1rem" }}>JWT Integrity</h4>
+                    <p className="text-xs text-[#3b3527]/80 leading-relaxed font-sans">
                       Role-based metadata is encrypted within sessions to prevent privilege escalation.
                     </p>
                   </div>
@@ -130,26 +125,26 @@ export default function FeaturesPage() {
 
               {/* Abstract visual */}
               <div className="relative aspect-square lg:block hidden">
-                <div className="absolute inset-0 rounded-full border border-var(--border)" style={{ border: "1px solid var(--border)", opacity: 0.5 }} />
-                <div className="absolute inset-10 border border-var(--border) rounded-full border-dashed animate-[spin_40s_linear_infinite]" style={{ border: "1px dashed var(--border)", opacity: 0.3 }} />
-                <div className="absolute inset-20 border border-var(--border) rounded-full flex items-center justify-center shadow-2xl" style={{ background: "var(--bg-base)", border: "1px solid var(--border)" }}>
-                  <ShieldCheck size={80} strokeWidth={0.8} style={{ color: "var(--accent)", opacity: 0.25 }} />
+                <div className="absolute inset-0 rounded-full border border-[#A1C5D1]/40" />
+                <div className="absolute inset-10 border border-[#008CBB]/30 rounded-full border-dashed animate-[spin_40s_linear_infinite]" />
+                <div className="absolute inset-20 border border-[#A1C5D1]/60 rounded-full flex items-center justify-center shadow-xl bg-white">
+                  <ShieldCheck size={80} strokeWidth={1} style={{ color: "#008CBB" }} />
                 </div>
               </div>
             </div>
           </section>
 
           {/* CTA */}
-          <section className="text-center py-20 border rounded-2xl" style={{ border: "1px solid var(--border)", background: "rgba(99, 102, 241, 0.04)" }}>
-            <h2 className="font-display text-4xl lg:text-5xl font-bold text-var(--text-primary) mb-8 leading-tight" style={{ fontSize: "clamp(2rem, 3.5vw, 2.8rem)", letterSpacing: "-0.03em" }}>
-              Ready to experience <em className="italic" style={{ fontStyle: "italic", color: "var(--accent)" }}>Schollective?</em>
+          <section className="text-center p-12 lg:p-16 border border-[#A1C5D1]/50 rounded-3xl bg-[#A1C5D1]/10 flex flex-col items-center gap-8">
+            <h2 className="font-display font-black text-[#141005] leading-tight" style={{ fontSize: "clamp(2rem, 3.5vw, 2.8rem)", letterSpacing: "-0.03em" }}>
+              Ready to experience <em className="italic font-light text-[#008CBB]">Schollective?</em>
             </h2>
-            <div className="flex flex-col sm:flex-row justify-center items-center gap-8">
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
               <Link href="/signup" style={{ textDecoration: "none" }}>
-                <Button size="lg" className="px-10 py-4" style={{ borderRadius: "100px", padding: "1rem 2.5rem", background: "var(--accent)", color: "var(--bg-base)", fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase" }}>Get Started Free</Button>
+                <Button size="lg" variant="primary">Get Started Free →</Button>
               </Link>
               <Link href="/professors" style={{ textDecoration: "none" }}>
-                <Button variant="ghost" size="lg" className="px-10 py-4" style={{ borderRadius: "100px", padding: "1rem 2.5rem", border: "1px solid var(--border)", color: "var(--text-secondary)", fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase" }}>Explore Mentors</Button>
+                <Button variant="ghost" size="lg">Explore Mentors</Button>
               </Link>
             </div>
           </section>
