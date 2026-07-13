@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { Camera, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Select } from "@/components/ui/Select";
+import { AiProfileReviewerCard } from "@/components/features/AiProfileReviewerCard";
 
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
@@ -416,6 +417,13 @@ export default function ProfilePage() {
 
       {/* ── Hairline ── */}
       <motion.div variants={fadeUp} style={{ height: "1px", background: "rgba(15, 23, 42, 0.07)" }} />
+
+      {/* ── AI Profile Reviewer Card ── */}
+      {profile?.role === "student" && (
+        <motion.div variants={fadeUp}>
+          <AiProfileReviewerCard profileData={profile} />
+        </motion.div>
+      )}
 
       {/* ── Edit form ── */}
       <motion.div variants={fadeUp}>

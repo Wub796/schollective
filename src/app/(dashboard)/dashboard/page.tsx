@@ -5,6 +5,7 @@ import { cookies } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
 import { ThreadCard } from "@/components/features/ThreadCard";
 import { FeedbackPrompt } from "@/components/features/FeedbackPrompt";
+import { AiProfessorRecommendations } from "@/components/features/AiProfessorRecommendations";
 import { PlusCircle, BookOpen, MessageSquare, Search, ArrowRight, User } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -274,8 +275,11 @@ export default async function StudentDashboard() {
           </div>
         </div>
 
-        {/* Right: threads */}
+        {/* Right: recommendations & threads */}
         <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+          {/* AI Recommended Professors */}
+          <AiProfessorRecommendations />
+
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
               <span style={{ width: "1rem", height: "2px", background: "#6366f1", display: "block" }} />
