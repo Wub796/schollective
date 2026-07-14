@@ -13,16 +13,15 @@ export interface StudentProfileData {
   bio?: string | null;
   academic_interests?: string[] | string | null;
   extracurriculars?: string[] | string | null;
-  expertise_fields?: string[] | string | null; // professor field compatibility
+  expertise_fields?: string[] | string | null;
 }
 
 /**
- * Reviews a student profile using Gemini AI (or rule-based fallback) matching Schollective's exact form fields.
+ * Reviews a student profile using Gemini AI with strict factual grounding & safety parameters.
  */
 export async function reviewStudentProfile(
   profile: StudentProfileData
 ): Promise<ProfileReviewResult> {
-  // Normalize interests and extracurriculars arrays/strings
   const interestsList = Array.isArray(profile.academic_interests)
     ? profile.academic_interests.join(", ")
     : typeof profile.academic_interests === "string"
@@ -37,7 +36,6 @@ export async function reviewStudentProfile(
     ? profile.extracurriculars
     : "";
 
-  // Check TTL cache to save token costs
   const profileKey = `${profile.id || profile.email || "anon"}_${profile.bio || ""}_${interestsList}_${profile.education_level || ""}`;
   const cacheKey = `profile_review_${profileKey}`;
   const cached = getCachedAiResult<ProfileReviewResult>(cacheKey);
@@ -55,28 +53,33 @@ export async function reviewStudentProfile(
       const safeInterests = truncatePromptText(interestsList, 150);
       const safeExtras = truncatePromptText(extrasList, 150);
 
-      const prompt = `You are an academic advisor reviewing a student profile on Schollective.
-The student can update these EXACT fields on their profile page:
-1. Institution: "${safeInst || "Not specified"}"
-2. Education Level: "${safeLevel || "Not specified"}"
-3. Short Bio: "${safeBio || "Empty"}"
-4. Academic Interests: "${safeInterests || "Empty"}"
-5. Extracurriculars: "${safeExtras || "Empty"}"
+      const prompt = `You are a factual academic advisor evaluating a student profile on Schollective.
+CRITICAL INSTRUCTIONS:
+- Base your analysis STRICTLY AND FACTUALLY on the provided fields.
+- Do NOT assume or invent external facts, degrees, publications, or credentials not mentioned in the input.
+- Keep feedback constructive, safe, and academically grounded.
 
-Analyze the profile for outreach readiness to professors and return a JSON object with this exact schema:
+STUDENT PROFILE DATA:
+- Institution: "${safeInst || "Not specified"}"
+- Education Level: "${safeLevel || "Not specified"}"
+- Short Bio: "${safeBio || "Empty"}"
+- Academic Interests: "${safeInterests || "Empty"}"
+- Extracurriculars: "${safeExtras || "Empty"}"
+
+Return ONLY a valid JSON object following this exact schema:
 {
   "overallScore": number (0-100),
   "clarityScore": number (0-100),
   "academicToneScore": number (0-100),
   "alignmentScore": number (0-100),
   "completenessScore": number (0-100),
-  "summary": "1-2 sentence overall feedback",
-  "strengths": ["2-3 specific strengths based on their actual inputs"],
+  "summary": "1-2 sentence factual evaluation based strictly on input",
+  "strengths": ["2-3 specific strengths based strictly on provided inputs"],
   "improvements": [
     {
       "field": "Short Bio | Academic Interests | Extracurriculars | Institution | Education Level",
-      "issue": "What is weak or missing in this specific input field",
-      "suggestion": "Actionable advice on what text/keywords the student should type into this field"
+      "issue": "Factual gap in provided field",
+      "suggestion": "Actionable advice on what text or keywords to add"
     }
   ],
   "outreachReadiness": "ready" | "needs_work" | "incomplete"
@@ -88,21 +91,30 @@ Analyze the profile for outreach readiness to professors and return a JSON objec
         config: {
           responseMimeType: "application/json",
           maxOutputTokens: 500,
+          temperature: 0.2, // Low temperature for high factual consistency
         },
       });
 
       const text = response.text;
       if (text) {
-        const parsed = JSON.parse(text) as ProfileReviewResult;
+        const cleanedText = text.replace(/```json\n?|\n?```/g, "").trim();
+        const parsed = JSON.parse(cleanedText) as ProfileReviewResult;
+        
+        // Defensive bounds validation
+        parsed.overallScore = Math.max(0, Math.min(100, parsed.overallScore || 50));
+        parsed.clarityScore = Math.max(0, Math.min(100, parsed.clarityScore || 50));
+        parsed.academicToneScore = Math.max(0, Math.min(100, parsed.academicToneScore || 50));
+        parsed.alignmentScore = Math.max(0, Math.min(100, parsed.alignmentScore || 50));
+        parsed.completenessScore = Math.max(0, Math.min(100, parsed.completenessScore || 50));
+
         setCachedAiResult(cacheKey, parsed, 15 * 60 * 1000);
         return parsed;
       }
     } catch (err) {
-      console.warn("[reviewStudentProfile] Gemini API call failed or unconfigured, using fallback:", err);
+      console.warn("[reviewStudentProfile] Gemini AI evaluation failed or unconfigured, returning factual fallback:", err);
     }
   }
 
-  // Fallback Rule-Based Scoring Engine tailored to Schollective student fields
   const result = generateRuleBasedProfileReview(profile, interestsList, extrasList);
   setCachedAiResult(cacheKey, result, 15 * 60 * 1000);
   return result;
@@ -126,7 +138,6 @@ function generateRuleBasedProfileReview(
   const strengths: string[] = [];
   const improvements: ProfileReviewResult["improvements"] = [];
 
-  // 1. Completeness Score
   let completeness = 0;
   if (inst) {
     completeness += 20;
@@ -182,13 +193,11 @@ function generateRuleBasedProfileReview(
     });
   }
 
-  // 2. Clarity Score
   let clarity = 60;
   if (bio.length > 60) clarity += 20;
   if (interests.length >= 3) clarity += 20;
   clarity = Math.min(100, clarity);
 
-  // 3. Academic Tone Score
   let academicTone = 65;
   const keywords = ["research", "study", "analysis", "science", "data", "engineering", "lab", "project", "algorithm", "biology", "computing"];
   const textCombined = `${bio} ${interestsStr}`.toLowerCase();
@@ -198,7 +207,6 @@ function generateRuleBasedProfileReview(
   }
   academicTone = Math.min(100, academicTone);
 
-  // 4. Alignment Score
   let alignment = interests.length >= 2 ? 85 : 50;
 
   const overall = Math.round((completeness * 0.4) + (clarity * 0.25) + (academicTone * 0.25) + (alignment * 0.1));

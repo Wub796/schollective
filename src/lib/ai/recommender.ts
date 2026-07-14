@@ -15,7 +15,7 @@ export interface ProfessorCandidate {
 }
 
 /**
- * Recommends top matching professors for a given student profile with token guardrails.
+ * Recommends top matching professors with strict factual grounding & token guardrails.
  */
 export async function recommendProfessors(
   student: StudentProfileData,
@@ -29,8 +29,7 @@ export async function recommendProfessors(
     };
   }
 
-  // Check TTL Cache to prevent burning tokens on page reloads
-  const cacheKey = `rec_${student.id || student.email || "anon"}_${student.major || ""}_${student.expertise_fields || ""}`;
+  const cacheKey = `rec_${student.id || student.email || "anon"}_${student.education_level || ""}_${student.academic_interests || ""}`;
   const cached = getCachedAiResult<RecommenderResult>(cacheKey);
   if (cached) {
     return cached;
@@ -40,7 +39,6 @@ export async function recommendProfessors(
 
   if (gemini) {
     try {
-      // Limit to top 10 candidates and truncate text fields to restrict prompt token budget
       const truncatedCandidates = candidates.slice(0, 10).map((c) => ({
         id: c.id,
         name: `${c.first_name || ""} ${c.last_name || ""}`.trim(),
@@ -50,20 +48,29 @@ export async function recommendProfessors(
         accepting: c.is_accepting_requests ?? true,
       }));
 
-      const prompt = `You are an academic matchmaker on Schollective.
-STUDENT: Major: ${truncatePromptText(student.major, 40)}, Fields: ${Array.isArray(student.expertise_fields) ? student.expertise_fields.join(", ") : truncatePromptText(student.expertise_fields, 80)}, Bio: "${truncatePromptText(student.bio, 200)}"
+      const prompt = `You are a factual academic matchmaker on Schollective.
+CRITICAL INSTRUCTIONS:
+- Match student ONLY against the provided candidate list.
+- DO NOT invent external faculty names, fake departments, or fake publications.
+- Base match score strictly on overlap between student interests/bio and candidate expertise/department.
 
-PROFESSOR CANDIDATES:
+STUDENT DATA:
+- Education Level: ${truncatePromptText(student.education_level, 40)}
+- Institution: ${truncatePromptText(student.institution, 50)}
+- Academic Interests: ${Array.isArray(student.academic_interests) ? student.academic_interests.join(", ") : truncatePromptText(student.academic_interests, 80)}
+- Bio: "${truncatePromptText(student.bio, 200)}"
+
+PROFESSOR CANDIDATE LIST:
 ${JSON.stringify(truncatedCandidates)}
 
-Return a JSON array of up to 5 top matching professors:
+Return ONLY a JSON array matching this schema (sorted by matchScore descending, max 5 items):
 [
   {
-    "professorId": "string",
+    "professorId": "exact id from candidate list",
     "matchScore": number (50-98),
-    "matchReasons": ["2 short reasons"],
-    "keyOverlaps": ["shared fields"],
-    "suggestedOutreachAngle": "1 sentence advice"
+    "matchReasons": ["2 concise factual match reasons"],
+    "keyOverlaps": ["array of overlapping topics from expertise/department"],
+    "suggestedOutreachAngle": "1 sentence advice based strictly on shared fields"
   }
 ]`;
 
@@ -72,27 +79,39 @@ Return a JSON array of up to 5 top matching professors:
         contents: prompt,
         config: {
           responseMimeType: "application/json",
-          maxOutputTokens: 600, // Token Safety Guard
+          maxOutputTokens: 600,
+          temperature: 0.2, // Low temperature for factual precision
         },
       });
 
       const text = response.text;
       if (text) {
-        const matches = JSON.parse(text) as ProfessorMatch[];
+        const cleanedText = text.replace(/```json\n?|\n?```/g, "").trim();
+        const matches = JSON.parse(cleanedText) as ProfessorMatch[];
+        
+        // Filter out any invalid professor IDs not present in candidate list
+        const validIds = new Set(candidates.map((c) => c.id));
+        const validMatches = matches
+          .filter((m) => validIds.has(m.professorId))
+          .map((m) => ({
+            ...m,
+            matchScore: Math.max(40, Math.min(98, m.matchScore || 50)),
+          }));
+
         const result: RecommenderResult = {
-          recommendations: matches,
+          recommendations: validMatches,
           generatedAt: new Date().toISOString(),
           totalEvaluated: candidates.length,
         };
-        setCachedAiResult(cacheKey, result, 10 * 60 * 1000); // 10 min cache
+
+        setCachedAiResult(cacheKey, result, 10 * 60 * 1000);
         return result;
       }
     } catch (err) {
-      console.warn("[recommendProfessors] Gemini call failed or unconfigured, using fallback:", err);
+      console.warn("[recommendProfessors] Gemini AI matching failed or unconfigured, using rule-based fallback:", err);
     }
   }
 
-  // Fallback Semantic Keyword Matching Engine (0 tokens spent)
   const matches = computeRuleBasedProfessorMatches(student, candidates);
   const result: RecommenderResult = {
     recommendations: matches,
@@ -111,13 +130,13 @@ function computeRuleBasedProfessorMatches(
   candidates: ProfessorCandidate[]
 ): ProfessorMatch[] {
   let studentFields: string[] = [];
-  if (Array.isArray(student.expertise_fields)) studentFields = student.expertise_fields;
-  else if (typeof student.expertise_fields === "string") {
-    studentFields = student.expertise_fields.split(",").map((s) => s.trim()).filter(Boolean);
+  if (Array.isArray(student.academic_interests)) studentFields = student.academic_interests;
+  else if (typeof student.academic_interests === "string") {
+    studentFields = student.academic_interests.split(",").map((s) => s.trim()).filter(Boolean);
   }
 
   const studentTokens = new Set([
-    ...(student.major || "").toLowerCase().split(/\s+/),
+    ...(student.education_level || "").toLowerCase().split(/\s+/),
     ...(student.bio || "").toLowerCase().split(/\s+/),
     ...studentFields.map((f) => f.toLowerCase()),
   ].filter((w) => w.length > 3));
@@ -168,11 +187,11 @@ function computeRuleBasedProfessorMatches(
       professorId: candidate.id,
       matchScore: score,
       matchReasons: [
-        `Strong alignment in ${mainOverlap}`,
+        `Factual research alignment in ${mainOverlap}`,
         candidate.is_accepting_requests ? "Currently accepting student research requests" : "Active faculty member",
       ],
       keyOverlaps: overlaps.length > 0 ? overlaps : [candidate.department || "Academic Research"],
-      suggestedOutreachAngle: `Mention your interest in ${mainOverlap} and how your background in ${student.major || "this field"} connects to their lab focus.`,
+      suggestedOutreachAngle: `Highlight your interest in ${mainOverlap} and how your background connects to their department research focus.`,
     };
   });
 }

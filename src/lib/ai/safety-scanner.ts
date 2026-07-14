@@ -1,6 +1,6 @@
 import { getGeminiClient } from "./client";
 import { SafetyCheckResult } from "./types";
-import { filterMessage, scoreProfessorApplication } from "../validators";
+import { filterMessage } from "../validators";
 
 export interface ScanContentOptions {
   userRole?: "student" | "professor" | "admin";
@@ -10,7 +10,7 @@ export interface ScanContentOptions {
 }
 
 /**
- * Scans content (messages, profile text, outreach requests) for bots, toxicity, and academic scams.
+ * Scans content for safety with strict factual accuracy & zero false positive blocks on academic dialogue.
  */
 export async function scanContentForSafety(
   content: string,
@@ -18,7 +18,7 @@ export async function scanContentForSafety(
 ): Promise<SafetyCheckResult> {
   const text = (content || "").trim();
 
-  // 1. Instant heuristic layer from validators engine
+  // 1. Fast Heuristic Filter Layer
   const filterRes = filterMessage(text, {
     recentMessageCount: options?.recentCountInLastMinute,
     rateLimit: 10,
@@ -40,21 +40,19 @@ export async function scanContentForSafety(
     };
   }
 
-  // 2. Gemini AI Deep Content Safety Layer
+  // 2. Gemini AI Deep Content Moderation
   const gemini = getGeminiClient();
   if (gemini && text.length > 15) {
     try {
-      const prompt = `You are an automated Trust & Safety AI monitoring an academic platform (Schollective).
-Analyze the following text for:
-1. Bot / Automated Script activity (robotic text, generic spam patterns).
-2. Toxic / Abusive language or Harassment.
-3. Commercial Spam or Phishing.
-4. Academic Scams (contract cheating, selling essays/theses, grade manipulation).
+      const prompt = `You are a Trust & Safety AI monitoring an academic platform (Schollective).
+EVALUATION PRINCIPLES:
+- Allow all normal academic dialogue, scientific references, paper URLs, and student outreach.
+- Flag ONLY explicit harassment, hate speech, commercial phishing spam, or contract cheating / essay selling scams.
 
 TEXT TO EVALUATE:
 "${text}"
 
-Return a strictly formatted JSON object:
+Return ONLY a valid JSON object matching this schema:
 {
   "allowed": boolean,
   "flagged": boolean,
@@ -65,7 +63,7 @@ Return a strictly formatted JSON object:
     "spam": boolean,
     "academicScam": boolean
   },
-  "reasons": ["array of human readable violation explanations if flagged"],
+  "reasons": ["factual explanations of violations if flagged"],
   "actionTaken": "pass" | "warn" | "flag" | "block"
 }`;
 
@@ -74,19 +72,23 @@ Return a strictly formatted JSON object:
         contents: prompt,
         config: {
           responseMimeType: "application/json",
+          maxOutputTokens: 300,
+          temperature: 0.1, // Very low temperature for safety evaluation consistency
         },
       });
 
       const resText = response.text;
       if (resText) {
-        return JSON.parse(resText) as SafetyCheckResult;
+        const cleanedText = resText.replace(/```json\n?|\n?```/g, "").trim();
+        const parsed = JSON.parse(cleanedText) as SafetyCheckResult;
+        parsed.riskScore = Math.max(0, Math.min(100, parsed.riskScore || 0));
+        return parsed;
       }
     } catch (err) {
-      console.warn("[scanContentForSafety] Gemini API call failed or unconfigured, returning heuristic result:", err);
+      console.warn("[scanContentForSafety] Gemini safety check failed or unconfigured, returning heuristic result:", err);
     }
   }
 
-  // Fallback Rule-Based Safety Response
   const warning = filterRes.warning || false;
   return {
     allowed: true,
@@ -120,13 +122,11 @@ export function scanProfileForBotBehavior(profile: {
   const firstName = (profile.first_name || "").trim();
   const lastName = (profile.last_name || "").trim();
 
-  // Check email domain
   if (!email) {
     botConfidence += 40;
     flags.push("Missing email address");
   }
 
-  // Check name patterns (e.g. random strings like "asdfgh" or numbers in names)
   if (/\d+/.test(firstName) || /\d+/.test(lastName)) {
     botConfidence += 35;
     flags.push("Numeric characters in name fields");
@@ -137,7 +137,6 @@ export function scanProfileForBotBehavior(profile: {
     flags.push("Identical first and last name");
   }
 
-  // Random string character distribution test
   if (firstName.length > 8 && !/[aeiouy]/i.test(firstName)) {
     botConfidence += 45;
     flags.push("Name lacks vowels (gibberish pattern)");
