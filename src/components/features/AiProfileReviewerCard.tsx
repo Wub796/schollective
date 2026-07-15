@@ -62,6 +62,14 @@ export function AiProfileReviewerCard({ profileData }: Props) {
       interestsEl.dispatchEvent(new Event("change", { bubbles: true }));
       toast.success(`Added "${tag}" to Academic Interests!`);
     }
+
+    // Immediately remove the added tag from the current scan suggestions
+    if (review && review.suggestedInterests) {
+      setReview({
+        ...review,
+        suggestedInterests: review.suggestedInterests.filter((t) => t !== tag),
+      });
+    }
   };
 
   return (
@@ -162,7 +170,7 @@ export function AiProfileReviewerCard({ profileData }: Props) {
                 <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem" }}>
                   {review.suggestedInterests.map((tag, i) => (
                     <button
-                      key={i}
+                      key={tag || i}
                       type="button"
                       onClick={() => addInterestTag(tag)}
                       style={{
