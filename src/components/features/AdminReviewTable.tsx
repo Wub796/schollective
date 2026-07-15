@@ -3,8 +3,8 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
-import { updateProfessorStatus, scoreApplication } from "@/app/admin/dashboard/actions";
-import { CheckCircle, XCircle, Loader2, Mail, GraduationCap, RefreshCw } from "lucide-react";
+import { updateProfessorStatus, scoreApplication, autoReviewAllPendingProfessors } from "@/app/admin/dashboard/actions";
+import { CheckCircle, XCircle, Loader2, Mail, GraduationCap, RefreshCw, Sparkles, ShieldAlert } from "lucide-react";
 import { scoreProfessorApplication, scoreLabel } from "@/lib/validators";
 
 import { toast } from "sonner";
@@ -117,6 +117,7 @@ function ScoreBadge({ prof }: { prof: PendingProfessor }) {
 export function AdminReviewTable({ applicants }: AdminReviewTableProps) {
   const router = useRouter();
   const [processingId, setProcessingId] = useState<string | null>(null);
+  const [batchProcessing, setBatchProcessing] = useState(false);
   const [list, setList] = useState(applicants);
 
   useEffect(() => {
@@ -132,6 +133,26 @@ export function AdminReviewTable({ applicants }: AdminReviewTableProps) {
       router.refresh();
     })();
   }, []);
+
+  const handleBatchAiReview = async () => {
+    setBatchProcessing(true);
+    try {
+      const res = await autoReviewAllPendingProfessors();
+      if (res?.error) {
+        toast.error(res.error);
+      } else {
+        toast.success(
+          `AI Review Complete: ${res.autoApprovedCount} verified application(s) auto-approved! ${res.flaggedCount} application(s) marked for manual review.`
+        );
+        router.refresh();
+      }
+    } catch (err: any) {
+      console.error(err);
+      toast.error("Failed to run AI batch review.");
+    } finally {
+      setBatchProcessing(false);
+    }
+  };
 
   const handleStatusChange = async (id: string, status: "approved" | "rejected") => {
     setProcessingId(id);
@@ -170,6 +191,59 @@ export function AdminReviewTable({ applicants }: AdminReviewTableProps) {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+      {/* AI Automated Review Bar */}
+      <div
+        style={{
+          background: "rgba(99, 102, 241, 0.06)",
+          border: "1px solid rgba(99, 102, 241, 0.18)",
+          borderRadius: "14px",
+          padding: "1rem 1.35rem",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          flexWrap: "wrap",
+          gap: "1rem",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <div style={{ background: "#4f46e5", borderRadius: "8px", padding: "0.4rem", color: "#ffffff" }}>
+            <Sparkles size={16} />
+          </div>
+          <div>
+            <div style={{ fontSize: "0.85rem", fontWeight: 800, color: "#0f172a" }}>
+              Automated AI Application Reviewer
+            </div>
+            <div style={{ fontSize: "0.75rem", color: "#475569" }}>
+              Auto-approves legitimate verified faculty applications. Suspicious applications are kept in queue and flagged for manual admin inspection (never auto-rejected).
+            </div>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={handleBatchAiReview}
+          disabled={batchProcessing}
+          style={{
+            background: "#4f46e5",
+            color: "#ffffff",
+            border: "1px solid rgba(79, 70, 229, 0.5)",
+            borderRadius: "100px",
+            padding: "0.5rem 1.25rem",
+            fontSize: "0.78rem",
+            fontWeight: 800,
+            cursor: batchProcessing ? "not-allowed" : "pointer",
+            display: "flex",
+            alignItems: "center",
+            gap: "0.4rem",
+            boxShadow: "0 2px 8px rgba(79, 70, 229, 0.25)",
+            transition: "all 0.2s ease",
+          }}
+        >
+          {batchProcessing ? <Loader2 size={14} className="animate-spin" /> : <Sparkles size={14} />}
+          {batchProcessing ? "AI Reviewing..." : "Auto-Approve Verified Applications"}
+        </button>
+      </div>
+
       {/* Desktop Table */}
       <div className="hidden lg:block" style={{ border: "1px solid rgba(15,23,42,0.06)", borderRadius: "14px", overflow: "hidden", background: "rgba(15,23,42,0.015)" }}>
         <div style={{ overflowX: "auto" }}>
