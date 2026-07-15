@@ -15,9 +15,7 @@ export interface ProfileReviewResult {
     issue: string;
     suggestion: string;
   }>;
-  suggestedBioRewrite?: string;        // 1-click AI polished bio
-  suggestedInterests?: string[];       // Recommended academic interest tags
-  outreachTip?: string;               // Level-specific advice for reaching out to faculty
+  suggestedInterests?: string[];       // Recommended academic interest tags to explore
   outreachReadiness: "ready" | "needs_work" | "incomplete";
 }
 
@@ -28,8 +26,6 @@ export interface ProfessorMatch {
   matchReasons: string[];
   keyOverlaps: string[];
   suggestedOutreachAngle: string;
-  outreachSubjectLine?: string;       // Custom email/message subject line
-  conversationStarter?: string;       // Specific opener for the research request
 }
 
 export interface RecommenderResult {

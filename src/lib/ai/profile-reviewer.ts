@@ -17,7 +17,7 @@ export interface StudentProfileData {
 }
 
 /**
- * Reviews a student profile with Gemini AI generating 1-click bio rewrites & interest suggestions.
+ * Reviews a student profile using Gemini AI (or rule-based fallback) purely for recommendation & evaluation.
  */
 export async function reviewStudentProfile(
   profile: StudentProfileData
@@ -37,7 +37,7 @@ export async function reviewStudentProfile(
     : "";
 
   const profileKey = `${profile.id || profile.email || "anon"}_${profile.bio || ""}_${interestsList}_${profile.education_level || ""}`;
-  const cacheKey = `profile_review_v2_${profileKey}`;
+  const cacheKey = `profile_review_v3_${profileKey}`;
   const cached = getCachedAiResult<ProfileReviewResult>(cacheKey);
   if (cached) {
     return cached;
@@ -55,10 +55,9 @@ export async function reviewStudentProfile(
 
       const prompt = `You are an academic advisor reviewing a student profile on Schollective.
 CRITICAL INSTRUCTIONS:
-- Base evaluation strictly on provided fields.
-- Generate a professional 1-2 sentence "suggestedBioRewrite" that polishes their bio for faculty review.
-- Suggest 3-4 specific "suggestedInterests" tags (e.g. ["Deep Learning", "Neural Networks", "Computer Vision"]) based on their background.
-- Provide a concise 1-sentence "outreachTip" for contacting professors.
+- Do NOT write or generate bio text for the student.
+- Evaluate the student's existing inputs for completeness, clarity, and academic tone.
+- Recommend 3-4 specific "suggestedInterests" tags to explore.
 
 STUDENT PROFILE DATA:
 - Institution: "${safeInst || "Not specified"}"
@@ -74,18 +73,16 @@ Return ONLY a valid JSON object matching this schema:
   "academicToneScore": number (0-100),
   "alignmentScore": number (0-100),
   "completenessScore": number (0-100),
-  "summary": "1-2 sentence overall evaluation",
+  "summary": "1-2 sentence evaluation",
   "strengths": ["2-3 specific strengths"],
   "improvements": [
     {
       "field": "Short Bio | Academic Interests | Extracurriculars | Institution | Education Level",
       "issue": "Specific weakness or gap",
-      "suggestion": "Actionable advice"
+      "suggestion": "Actionable advice on what the student should add"
     }
   ],
-  "suggestedBioRewrite": "A polished 1-2 sentence professional bio ready to use",
-  "suggestedInterests": ["3-4 relevant academic interest tags"],
-  "outreachTip": "Personalized advice on reaching out to professors for this education level",
+  "suggestedInterests": ["3-4 relevant academic interest topic recommendations"],
   "outreachReadiness": "ready" | "needs_work" | "incomplete"
 }`;
 
@@ -94,7 +91,7 @@ Return ONLY a valid JSON object matching this schema:
         contents: prompt,
         config: {
           responseMimeType: "application/json",
-          maxOutputTokens: 600,
+          maxOutputTokens: 500,
           temperature: 0.2,
         },
       });
@@ -114,7 +111,7 @@ Return ONLY a valid JSON object matching this schema:
         return parsed;
       }
     } catch (err) {
-      console.warn("[reviewStudentProfile] Gemini evaluation failed, returning enriched fallback:", err);
+      console.warn("[reviewStudentProfile] Gemini evaluation failed, returning fallback:", err);
     }
   }
 
@@ -124,7 +121,7 @@ Return ONLY a valid JSON object matching this schema:
 }
 
 /**
- * Enhanced deterministic fallback algorithm matching Schollective student fields.
+ * Deterministic fallback scoring algorithm matching Schollective student fields.
  */
 function generateRuleBasedProfileReview(
   profile: StudentProfileData,
@@ -222,18 +219,9 @@ function generateRuleBasedProfileReview(
     ? "Your profile is well-crafted and ready for professor outreach. Your academic interests and bio provide clear context for faculty."
     : "Your profile gives a good start, but filling in your Short Bio and Academic Interests will significantly improve your outreach response rate.";
 
-  const mainTopic = interests[0] || "academic research";
-  const suggestedBioRewrite = bio
-    ? `${bio} Focused on advancing research in ${mainTopic} with a strong foundation at ${inst || "my university"}.`
-    : `Dedicated ${level} student at ${inst || "my university"} pursuing research in ${mainTopic} and exploring mentorship opportunities.`;
-
   const suggestedInterests = interests.length >= 2
     ? [`${interests[0]} Research`, `${interests[1]} Analysis`, "Data Modeling", "Methodology"]
     : ["Machine Learning", "Data Analysis", "Research Methods", "Interdisciplinary Science"];
-
-  const outreachTip = level.includes("undergrad")
-    ? "Professors appreciate undergraduates who mention 1-2 specific projects or techniques they want to learn in the professor's lab."
-    : "Be concise in your outreach: introduce your background, state your research alignment, and ask for a brief 15-minute introductory chat.";
 
   return {
     overallScore: overall,
@@ -244,9 +232,7 @@ function generateRuleBasedProfileReview(
     summary,
     strengths: strengths.length > 0 ? strengths : ["Basic account details configured."],
     improvements: improvements.slice(0, 4),
-    suggestedBioRewrite,
     suggestedInterests,
-    outreachTip,
     outreachReadiness: readiness,
   };
 }
