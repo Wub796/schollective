@@ -15,7 +15,7 @@ export interface ProfessorCandidate {
 }
 
 /**
- * Recommends top matching professors with strict factual grounding & token guardrails.
+ * Recommends top matching professors with custom subject lines and conversation starters.
  */
 export async function recommendProfessors(
   student: StudentProfileData,
@@ -29,7 +29,7 @@ export async function recommendProfessors(
     };
   }
 
-  const cacheKey = `rec_${student.id || student.email || "anon"}_${student.education_level || ""}_${student.academic_interests || ""}`;
+  const cacheKey = `rec_v2_${student.id || student.email || "anon"}_${student.education_level || ""}_${student.academic_interests || ""}`;
   const cached = getCachedAiResult<RecommenderResult>(cacheKey);
   if (cached) {
     return cached;
@@ -41,18 +41,19 @@ export async function recommendProfessors(
     try {
       const truncatedCandidates = candidates.slice(0, 10).map((c) => ({
         id: c.id,
-        name: `${c.first_name || ""} ${c.last_name || ""}`.trim(),
+        name: `Prof. ${c.first_name || ""} ${c.last_name || ""}`.trim(),
         institution: truncatePromptText(c.institution, 50),
         department: truncatePromptText(c.department, 50),
         expertise: Array.isArray(c.expertise_fields) ? c.expertise_fields.join(", ") : truncatePromptText(c.expertise_fields, 100),
         accepting: c.is_accepting_requests ?? true,
       }));
 
-      const prompt = `You are a factual academic matchmaker on Schollective.
+      const prompt = `You are an academic matchmaker on Schollective.
 CRITICAL INSTRUCTIONS:
 - Match student ONLY against the provided candidate list.
-- DO NOT invent external faculty names, fake departments, or fake publications.
-- Base match score strictly on overlap between student interests/bio and candidate expertise/department.
+- Generate a tailored "outreachSubjectLine" for contacting each professor (e.g. "Research Opportunity Inquiry: [Topic]").
+- Generate a 1-sentence "conversationStarter" pre-drafted for the student.
+- Assign "matchTier": "Best Fit" (score>=88) | "Strong Match" (score>=75) | "Potential Alignment" (<75).
 
 STUDENT DATA:
 - Education Level: ${truncatePromptText(student.education_level, 40)}
@@ -68,9 +69,12 @@ Return ONLY a JSON array matching this schema (sorted by matchScore descending, 
   {
     "professorId": "exact id from candidate list",
     "matchScore": number (50-98),
+    "matchTier": "Best Fit" | "Strong Match" | "Potential Alignment",
     "matchReasons": ["2 concise factual match reasons"],
-    "keyOverlaps": ["array of overlapping topics from expertise/department"],
-    "suggestedOutreachAngle": "1 sentence advice based strictly on shared fields"
+    "keyOverlaps": ["array of overlapping topics"],
+    "suggestedOutreachAngle": "1 sentence advice on framing the message",
+    "outreachSubjectLine": "Specific outreach email subject line",
+    "conversationStarter": "1 sentence opening paragraph for the student's message"
   }
 ]`;
 
@@ -79,8 +83,8 @@ Return ONLY a JSON array matching this schema (sorted by matchScore descending, 
         contents: prompt,
         config: {
           responseMimeType: "application/json",
-          maxOutputTokens: 600,
-          temperature: 0.2, // Low temperature for factual precision
+          maxOutputTokens: 750,
+          temperature: 0.2,
         },
       });
 
@@ -88,15 +92,19 @@ Return ONLY a JSON array matching this schema (sorted by matchScore descending, 
       if (text) {
         const cleanedText = text.replace(/```json\n?|\n?```/g, "").trim();
         const matches = JSON.parse(cleanedText) as ProfessorMatch[];
-        
-        // Filter out any invalid professor IDs not present in candidate list
+
         const validIds = new Set(candidates.map((c) => c.id));
         const validMatches = matches
           .filter((m) => validIds.has(m.professorId))
-          .map((m) => ({
-            ...m,
-            matchScore: Math.max(40, Math.min(98, m.matchScore || 50)),
-          }));
+          .map((m) => {
+            const score = Math.max(40, Math.min(98, m.matchScore || 50));
+            const tier: ProfessorMatch["matchTier"] = score >= 88 ? "Best Fit" : score >= 75 ? "Strong Match" : "Potential Alignment";
+            return {
+              ...m,
+              matchScore: score,
+              matchTier: m.matchTier || tier,
+            };
+          });
 
         const result: RecommenderResult = {
           recommendations: validMatches,
@@ -108,7 +116,7 @@ Return ONLY a JSON array matching this schema (sorted by matchScore descending, 
         return result;
       }
     } catch (err) {
-      console.warn("[recommendProfessors] Gemini AI matching failed or unconfigured, using rule-based fallback:", err);
+      console.warn("[recommendProfessors] Gemini AI matching failed or unconfigured, using fallback:", err);
     }
   }
 
@@ -123,7 +131,7 @@ Return ONLY a JSON array matching this schema (sorted by matchScore descending, 
 }
 
 /**
- * Intelligent rule-based matching engine when AI model is offline.
+ * Enhanced rule-based matching engine when AI model is offline.
  */
 function computeRuleBasedProfessorMatches(
   student: StudentProfileData,
@@ -181,17 +189,23 @@ function computeRuleBasedProfessorMatches(
   scored.sort((a, b) => b.score - a.score);
 
   return scored.slice(0, 5).map(({ candidate, score, overlaps }) => {
-    const mainOverlap = overlaps[0] || candidate.department || "shared academic discipline";
-    
+    const mainOverlap = overlaps[0] || candidate.department || "shared academic research";
+    const profLastName = candidate.last_name || "Faculty";
+    const tier: ProfessorMatch["matchTier"] = score >= 88 ? "Best Fit" : score >= 75 ? "Strong Match" : "Potential Alignment";
+    const studentLevel = student.education_level ? student.education_level.split(" ")[0] : "Student";
+
     return {
       professorId: candidate.id,
       matchScore: score,
+      matchTier: tier,
       matchReasons: [
-        `Factual research alignment in ${mainOverlap}`,
+        `Strong research alignment in ${mainOverlap}`,
         candidate.is_accepting_requests ? "Currently accepting student research requests" : "Active faculty member",
       ],
       keyOverlaps: overlaps.length > 0 ? overlaps : [candidate.department || "Academic Research"],
-      suggestedOutreachAngle: `Highlight your interest in ${mainOverlap} and how your background connects to their department research focus.`,
+      suggestedOutreachAngle: `Highlight your interest in ${mainOverlap} and how your background connects to their lab focus.`,
+      outreachSubjectLine: `${studentLevel} Research Inquiry: ${mainOverlap}`,
+      conversationStarter: `Dear Dr. ${profLastName}, I am writing to express my strong interest in your work on ${mainOverlap} and to inquire about mentorship opportunities.`,
     };
   });
 }
