@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, CheckCircle2, AlertTriangle, RefreshCw, ShieldCheck } from "lucide-react";
+import { Sparkles, CheckCircle2, AlertTriangle, RefreshCw, ShieldCheck, Copy, Plus, Lightbulb } from "lucide-react";
 import { ProfileReviewResult } from "@/lib/ai/types";
 import { toast } from "sonner";
 
@@ -13,11 +13,12 @@ interface Props {
 export function AiProfileReviewerCard({ profileData }: Props) {
   const [loading, setLoading] = useState(false);
   const [review, setReview] = useState<ProfileReviewResult | null>(null);
+  const [appliedBio, setAppliedBio] = useState(false);
 
   const handleReview = async () => {
     setLoading(true);
+    setAppliedBio(false);
     try {
-      // Read active form values directly from the DOM so unsaved edits are evaluated!
       const bioEl = typeof document !== "undefined" ? (document.getElementById("bio") as HTMLTextAreaElement) : null;
       const instEl = typeof document !== "undefined" ? (document.getElementById("institution") as HTMLInputElement) : null;
       const levelEl = typeof document !== "undefined" ? (document.getElementById("education_level") as HTMLSelectElement) : null;
@@ -51,6 +52,28 @@ export function AiProfileReviewerCard({ profileData }: Props) {
       toast.error(err.message || "Failed to analyze profile.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const applySuggestedBio = () => {
+    if (!review?.suggestedBioRewrite) return;
+    const bioEl = document.getElementById("bio") as HTMLTextAreaElement;
+    if (bioEl) {
+      bioEl.value = review.suggestedBioRewrite;
+      bioEl.dispatchEvent(new Event("change", { bubbles: true }));
+      setAppliedBio(true);
+      toast.success("AI polished bio applied to your profile!");
+    }
+  };
+
+  const addInterestTag = (tag: string) => {
+    const interestsEl = document.getElementById("academic_interests") as HTMLInputElement;
+    if (interestsEl) {
+      const current = interestsEl.value.trim();
+      const newInterests = current ? `${current}, ${tag}` : tag;
+      interestsEl.value = newInterests;
+      interestsEl.dispatchEvent(new Event("change", { bubbles: true }));
+      toast.success(`Added "${tag}" to Academic Interests!`);
     }
   };
 
@@ -143,6 +166,84 @@ export function AiProfileReviewerCard({ profileData }: Props) {
               <ScoreBadge label="Alignment" score={review.alignmentScore} />
             </div>
 
+            {/* 1-Click AI Bio Polish Box */}
+            {review.suggestedBioRewrite && (
+              <div
+                style={{
+                  background: "#ffffff",
+                  borderRadius: "14px",
+                  padding: "1.1rem 1.25rem",
+                  border: "1px solid rgba(99, 102, 241, 0.25)",
+                  marginBottom: "1.25rem",
+                  boxShadow: "0 4px 16px rgba(99, 102, 241, 0.06)",
+                }}
+              >
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
+                  <span style={{ fontSize: "0.75rem", fontWeight: 800, color: "#4f46e5", display: "flex", alignItems: "center", gap: "0.35rem" }}>
+                    <Sparkles size={14} /> AI Polished Bio Suggestion
+                  </span>
+                  <button
+                    type="button"
+                    onClick={applySuggestedBio}
+                    disabled={appliedBio}
+                    style={{
+                      background: appliedBio ? "rgba(16, 185, 129, 0.1)" : "#4f46e5",
+                      color: appliedBio ? "#10b981" : "#ffffff",
+                      border: "none",
+                      borderRadius: "100px",
+                      padding: "0.35rem 0.75rem",
+                      fontSize: "0.72rem",
+                      fontWeight: 800,
+                      cursor: appliedBio ? "default" : "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.3rem",
+                    }}
+                  >
+                    {appliedBio ? <CheckCircle2 size={13} /> : <Copy size={13} />}
+                    {appliedBio ? "Bio Applied" : "1-Click Apply Bio"}
+                  </button>
+                </div>
+                <p style={{ fontSize: "0.85rem", color: "#334155", fontStyle: "italic", margin: 0, lineHeight: 1.6 }}>
+                  "{review.suggestedBioRewrite}"
+                </p>
+              </div>
+            )}
+
+            {/* Suggested Academic Interest Tags */}
+            {review.suggestedInterests && review.suggestedInterests.length > 0 && (
+              <div style={{ marginBottom: "1.25rem" }}>
+                <span style={{ fontSize: "0.72rem", fontWeight: 800, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.08em", display: "block", marginBottom: "0.4rem" }}>
+                  Suggested Academic Interest Tags (Click to add)
+                </span>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem" }}>
+                  {review.suggestedInterests.map((tag, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() => addInterestTag(tag)}
+                      style={{
+                        background: "#ffffff",
+                        border: "1px solid rgba(99, 102, 241, 0.3)",
+                        color: "#4f46e5",
+                        borderRadius: "100px",
+                        padding: "0.25rem 0.65rem",
+                        fontSize: "0.75rem",
+                        fontWeight: 700,
+                        cursor: "pointer",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "0.25rem",
+                        transition: "all 0.2s ease",
+                      }}
+                    >
+                      <Plus size={12} /> {tag}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Summary Banner */}
             <div
               style={{
@@ -164,6 +265,11 @@ export function AiProfileReviewerCard({ profileData }: Props) {
                 </span>
               </div>
               <p style={{ fontSize: "0.85rem", color: "#475569", margin: 0, lineHeight: 1.6 }}>{review.summary}</p>
+              {review.outreachTip && (
+                <div style={{ marginTop: "0.6rem", paddingTop: "0.6rem", borderTop: "1px solid #f1f5f9", fontSize: "0.78rem", color: "#4f46e5", display: "flex", alignItems: "center", gap: "0.35rem" }}>
+                  <Lightbulb size={14} color="#4f46e5" /> <strong>Outreach Advice:</strong> {review.outreachTip}
+                </div>
+              )}
             </div>
 
             {/* Strengths & Improvements */}
