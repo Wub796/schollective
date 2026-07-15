@@ -57,19 +57,26 @@ export function AiProfileReviewerCard({ profileData }: Props) {
     const interestsEl = document.getElementById("academic_interests") as HTMLInputElement;
     if (interestsEl) {
       const current = interestsEl.value.trim();
-      const newInterests = current ? `${current}, ${tag}` : tag;
-      interestsEl.value = newInterests;
-      interestsEl.dispatchEvent(new Event("change", { bubbles: true }));
-      toast.success(`Added "${tag}" to Academic Interests!`);
+      const existing = current ? current.split(",").map((s) => s.trim()) : [];
+      if (!existing.includes(tag)) {
+        const newInterests = current ? `${current}, ${tag}` : tag;
+        interestsEl.value = newInterests;
+        interestsEl.dispatchEvent(new Event("input", { bubbles: true }));
+        interestsEl.dispatchEvent(new Event("change", { bubbles: true }));
+      }
     }
 
-    // Immediately remove the added tag from the current scan suggestions
-    if (review && review.suggestedInterests) {
-      setReview({
-        ...review,
-        suggestedInterests: review.suggestedInterests.filter((t) => t !== tag),
-      });
-    }
+    // Dismiss duplicate toasts and show single clean notification
+    toast.success(`Added "${tag}" to Academic Interests!`, { id: `tag-${tag}` });
+
+    // Safely update state without triggering re-render loops
+    setReview((prev) => {
+      if (!prev || !prev.suggestedInterests) return prev;
+      return {
+        ...prev,
+        suggestedInterests: prev.suggestedInterests.filter((t) => t !== tag),
+      };
+    });
   };
 
   return (
