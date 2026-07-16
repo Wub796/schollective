@@ -106,35 +106,89 @@ function ProfessorDetail({
 
       {/* Details grid */}
       <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
-        {/* Institution */}
-        {professor.institution && (
-          <div style={{ display: "flex", gap: "1rem", alignItems: "flex-start" }}>
-            <div style={{ width: "2rem", height: "2rem", borderRadius: "8px", border: "1px solid rgba(15, 23, 42, 0.08)", background: "rgba(15, 23, 42, 0.03)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: "2px" }}>
-              <Building2 size={12} color="rgba(15, 23, 42, 0.4)" />
+        {/* Academic Title & Department & Institution */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "1.25rem" }}>
+          {professor.academic_title && (
+            <div style={{ background: "#ffffff", padding: "1rem 1.25rem", borderRadius: "12px", border: "1px solid rgba(99, 102, 241, 0.15)" }}>
+              <div style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase", color: "#4f46e5", marginBottom: "0.35rem" }}>Position</div>
+              <div style={{ fontSize: "0.9rem", fontWeight: 700, color: "#0f172a" }}>{professor.academic_title}</div>
             </div>
-            <div>
-              <div style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.25)", fontFamily: "var(--font-sans, monospace)", marginBottom: "0.35rem" }}>Institution</div>
-              <div style={{ fontSize: "0.95rem", fontWeight: 500, color: "rgba(15, 23, 42, 0.8)", fontFamily: "var(--font-sans)" }}>{professor.institution}</div>
+          )}
+          {professor.department && (
+            <div style={{ background: "#ffffff", padding: "1rem 1.25rem", borderRadius: "12px", border: "1px solid rgba(99, 102, 241, 0.15)" }}>
+              <div style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase", color: "#4f46e5", marginBottom: "0.35rem" }}>Department</div>
+              <div style={{ fontSize: "0.9rem", fontWeight: 700, color: "#0f172a" }}>{professor.department}</div>
+            </div>
+          )}
+          {professor.institution && (
+            <div style={{ background: "#ffffff", padding: "1rem 1.25rem", borderRadius: "12px", border: "1px solid rgba(99, 102, 241, 0.15)" }}>
+              <div style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase", color: "#4f46e5", marginBottom: "0.35rem" }}>Institution</div>
+              <div style={{ fontSize: "0.9rem", fontWeight: 700, color: "#0f172a" }}>{professor.institution}</div>
+            </div>
+          )}
+        </div>
+
+        {/* Research Overview & Bio */}
+        {professor.bio && (
+          <div style={{ background: "#ffffff", padding: "1.5rem", borderRadius: "14px", border: "1px solid rgba(99, 102, 241, 0.15)" }}>
+            <div style={{ fontSize: "0.68rem", fontWeight: 800, letterSpacing: "0.18em", textTransform: "uppercase", color: "#4f46e5", marginBottom: "0.65rem" }}>Research Overview & Lab Philosophy</div>
+            <p style={{ fontSize: "0.9rem", color: "#334155", lineHeight: 1.65, margin: 0 }}>{professor.bio}</p>
+          </div>
+        )}
+
+        {/* Research Focus Areas */}
+        {professor.expertise_fields && professor.expertise_fields.length > 0 && (
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.65rem" }}>
+            <div style={{ fontSize: "0.68rem", fontWeight: 800, letterSpacing: "0.18em", textTransform: "uppercase", color: "#4f46e5" }}>Research Focus Areas</div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
+              {professor.expertise_fields.map((field: string) => (
+                <span key={field} style={{ padding: "0.4rem 0.9rem", border: "1px solid rgba(99, 102, 241, 0.25)", borderRadius: "100px", background: "rgba(99, 102, 241, 0.08)", fontSize: "0.78rem", fontWeight: 700, color: "#4f46e5" }}>
+                  {field}
+                </span>
+              ))}
             </div>
           </div>
         )}
 
-        {/* Expertise */}
-        {professor.expertise_fields && professor.expertise_fields.length > 0 && (
-          <div style={{ display: "flex", gap: "1rem", alignItems: "flex-start" }}>
-            <div style={{ width: "2rem", height: "2rem", borderRadius: "8px", border: "1px solid rgba(15, 23, 42, 0.08)", background: "rgba(15, 23, 42, 0.03)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: "2px" }}>
-              <BookOpen size={12} color="rgba(15, 23, 42, 0.4)" />
-            </div>
-            <div>
-              <div style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.25)", fontFamily: "var(--font-sans, monospace)", marginBottom: "0.75rem" }}>Research Areas</div>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
-                {professor.expertise_fields.map((field: string) => (
-                  <span key={field} style={{ padding: "0.35rem 0.85rem", border: "1px solid rgba(15, 23, 42, 0.1)", borderRadius: "100px", fontSize: "0.72rem", fontWeight: 500, color: "rgba(15, 23, 42, 0.6)", fontFamily: "var(--font-sans)" }}>
-                    {field}
+        {/* Mentee Levels & Office Hours */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "1.25rem" }}>
+          {professor.accepting_student_types && professor.accepting_student_types.length > 0 && (
+            <div style={{ background: "#f8fafc", padding: "1rem 1.25rem", borderRadius: "12px", border: "1px solid #e2e8f0" }}>
+              <div style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase", color: "#64748b", marginBottom: "0.45rem" }}>Accepted Mentee Levels</div>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem" }}>
+                {professor.accepting_student_types.map((st: string, idx: number) => (
+                  <span key={idx} style={{ background: "#ffffff", border: "1px solid #cbd5e1", color: "#334155", padding: "0.2rem 0.6rem", borderRadius: "6px", fontSize: "0.75rem", fontWeight: 600 }}>
+                    {st}
                   </span>
                 ))}
               </div>
             </div>
+          )}
+          {professor.office_hours && (
+            <div style={{ background: "#f8fafc", padding: "1rem 1.25rem", borderRadius: "12px", border: "1px solid #e2e8f0" }}>
+              <div style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase", color: "#64748b", marginBottom: "0.45rem" }}>Office Hours & Availability</div>
+              <div style={{ fontSize: "0.85rem", fontWeight: 700, color: "#0f172a" }}>{professor.office_hours}</div>
+            </div>
+          )}
+          {professor.lab_website && (
+            <div style={{ background: "#f8fafc", padding: "1rem 1.25rem", borderRadius: "12px", border: "1px solid #e2e8f0" }}>
+              <div style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase", color: "#64748b", marginBottom: "0.45rem" }}>Lab / Faculty Website</div>
+              <a href={professor.lab_website.startsWith("http") ? professor.lab_website : `https://${professor.lab_website}`} target="_blank" rel="noopener noreferrer" style={{ fontSize: "0.85rem", fontWeight: 700, color: "#4f46e5" }}>
+                {professor.lab_website}
+              </a>
+            </div>
+          )}
+        </div>
+
+        {/* Featured Publications */}
+        {professor.publications && professor.publications.length > 0 && (
+          <div style={{ background: "#ffffff", padding: "1.25rem 1.5rem", borderRadius: "14px", border: "1px solid rgba(99, 102, 241, 0.15)" }}>
+            <div style={{ fontSize: "0.68rem", fontWeight: 800, letterSpacing: "0.18em", textTransform: "uppercase", color: "#4f46e5", marginBottom: "0.65rem" }}>Featured Publications</div>
+            <ul style={{ margin: 0, paddingLeft: "1.25rem", fontSize: "0.85rem", color: "#334155", lineHeight: 1.6 }}>
+              {professor.publications.map((pub: string, idx: number) => (
+                <li key={idx} style={{ marginBottom: "0.35rem" }}>{pub}</li>
+              ))}
+            </ul>
           </div>
         )}
       </div>
