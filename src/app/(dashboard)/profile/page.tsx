@@ -293,7 +293,7 @@ export default function ProfilePage() {
 
   if (profile?.role === "professor") {
     return (
-      <div style={{ display: "flex", flexDirection: "column", gap: "2rem", maxWidth: "900px" }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: "2rem", maxWidth: "900px", paddingBottom: "6rem" }}>
         <header style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
             <span style={{ width: "1.5rem", height: "2px", background: "#6366f1", display: "block" }} />
@@ -323,7 +323,7 @@ export default function ProfilePage() {
   return (
     <motion.div
       variants={stagger} initial="hidden" animate="show"
-      style={{ display: "flex", flexDirection: "column", gap: "5rem", maxWidth: "640px" }}
+      style={{ display: "flex", flexDirection: "column", gap: "5rem", maxWidth: "640px", paddingBottom: "6rem" }}
     >
       {/* ── Header ── */}
       <motion.header variants={fadeUp} style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
