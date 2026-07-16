@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, ArrowUpRight, RefreshCw, CheckCircle, Mail, MessageSquare, ChevronDown, ChevronUp } from "lucide-react";
+import { motion } from "framer-motion";
+import { Sparkles, ArrowUpRight, RefreshCw, CheckCircle } from "lucide-react";
 import Link from "next/link";
 
 interface ProfessorMatchEnriched {
@@ -12,8 +12,6 @@ interface ProfessorMatchEnriched {
   matchReasons: string[];
   keyOverlaps: string[];
   suggestedOutreachAngle: string;
-  outreachSubjectLine?: string;
-  conversationStarter?: string;
   professor?: {
     id: string;
     name: string;
@@ -28,7 +26,6 @@ export function AiProfessorRecommendations() {
   const [loading, setLoading] = useState(true);
   const [recommendations, setRecommendations] = useState<ProfessorMatchEnriched[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const fetchRecommendations = async () => {
     setLoading(true);
@@ -51,10 +48,6 @@ export function AiProfessorRecommendations() {
   useEffect(() => {
     fetchRecommendations();
   }, []);
-
-  const toggleExpand = (id: string) => {
-    setExpandedId((prev) => (prev === id ? null : id));
-  };
 
   return (
     <div style={{ marginBottom: "2.5rem" }}>
@@ -121,7 +114,6 @@ export function AiProfessorRecommendations() {
           {recommendations.map((rec, idx) => {
             const prof = rec.professor;
             if (!prof) return null;
-            const isExpanded = expandedId === prof.id;
 
             return (
               <motion.div
@@ -141,7 +133,7 @@ export function AiProfessorRecommendations() {
                 }}
               >
                 <div>
-                  {/* Top Bar: Tier Badge & Acceptance */}
+                  {/* Top Bar: Match Score & Tier */}
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.75rem" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
                       <span
@@ -207,70 +199,9 @@ export function AiProfessorRecommendations() {
                     </div>
                   )}
 
-                  <p style={{ fontSize: "0.76rem", color: "#475569", lineHeight: 1.5, fontStyle: "italic", margin: "0 0 0.75rem 0" }}>
+                  <p style={{ fontSize: "0.76rem", color: "#475569", lineHeight: 1.5, fontStyle: "italic", margin: "0 0 1rem 0" }}>
                     "{rec.suggestedOutreachAngle}"
                   </p>
-
-                  {/* Expandable Outreach Details */}
-                  <button
-                    type="button"
-                    onClick={() => toggleExpand(prof.id)}
-                    style={{
-                      background: "none",
-                      border: "none",
-                      color: "#4f46e5",
-                      fontSize: "0.74rem",
-                      fontWeight: 800,
-                      cursor: "pointer",
-                      padding: 0,
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "0.25rem",
-                      marginBottom: "0.75rem",
-                    }}
-                  >
-                    {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-                    {isExpanded ? "Hide AI Outreach Kit" : "Show AI Outreach Kit"}
-                  </button>
-
-                  <AnimatePresence>
-                    {isExpanded && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.2 }}
-                        style={{
-                          background: "#f8fafc",
-                          borderRadius: "10px",
-                          padding: "0.85rem",
-                          marginBottom: "1rem",
-                          border: "1px solid #e2e8f0",
-                        }}
-                      >
-                        {rec.outreachSubjectLine && (
-                          <div style={{ marginBottom: "0.5rem" }}>
-                            <span style={{ fontSize: "0.68rem", fontWeight: 800, color: "#64748b", textTransform: "uppercase", display: "flex", alignItems: "center", gap: "0.25rem" }}>
-                              <Mail size={12} color="#4f46e5" /> Subject Idea:
-                            </span>
-                            <span style={{ fontSize: "0.76rem", fontWeight: 700, color: "#0f172a" }}>
-                              {rec.outreachSubjectLine}
-                            </span>
-                          </div>
-                        )}
-                        {rec.conversationStarter && (
-                          <div>
-                            <span style={{ fontSize: "0.68rem", fontWeight: 800, color: "#64748b", textTransform: "uppercase", display: "flex", alignItems: "center", gap: "0.25rem" }}>
-                              <MessageSquare size={12} color="#4f46e5" /> Opening Sentence:
-                            </span>
-                            <span style={{ fontSize: "0.75rem", color: "#334155", fontStyle: "italic" }}>
-                              "{rec.conversationStarter}"
-                            </span>
-                          </div>
-                        )}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
                 </div>
 
                 <Link
@@ -293,7 +224,7 @@ export function AiProfessorRecommendations() {
                     transition: "all 0.2s ease",
                   }}
                 >
-                  View Profile & Reach Out <ArrowUpRight size={14} />
+                  View Profile <ArrowUpRight size={14} />
                 </Link>
               </motion.div>
             );
