@@ -131,7 +131,7 @@ export function AdminReviewTable({ applicants }: AdminReviewTableProps) {
       await Promise.all(unscored.map((a) => scoreApplication(a.id)));
       router.refresh();
     })();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleStatusChange = async (id: string, status: "approved" | "rejected") => {
     setProcessingId(id);
