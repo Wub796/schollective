@@ -5,6 +5,7 @@ import {
   getCachedAiResult,
   setCachedAiResult,
   executeAiWithFallback,
+  executeHybridAiWithFallback,
 } from "./guardrails";
 
 export interface StudentProfileData {
