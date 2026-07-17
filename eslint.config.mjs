@@ -14,6 +14,9 @@ const compat = new FlatCompat({
  * We explicitly break down the extensions to avoid recursion.
  */
 const eslintConfig = [
+  {
+    ignores: [".next/"],
+  },
   ...compat.extends("next/core-web-vitals"),
   {
     // Specific overrides for our MVP structure

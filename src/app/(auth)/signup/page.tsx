@@ -178,6 +178,7 @@ function SignupContent() {
         email: fd.get("email") as string,
         password: fd.get("password") as string,
         options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
           data: {
             role,
             first_name: fd.get("first_name") as string,
@@ -185,8 +186,12 @@ function SignupContent() {
             last_name: fd.get("last_name") as string,
             education_level: fd.get("education_level") as string,
             institution: institution || fd.get("institution") as string,
-
-            expertise: fd.get("expertise") as string,
+            expertise_fields: fd.get("expertise")
+              ? (fd.get("expertise") as string)
+                  .split(",")
+                  .map((s) => s.trim())
+                  .filter(Boolean)
+              : [],
           },
         },
       });
