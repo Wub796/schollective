@@ -130,8 +130,8 @@ Return ONLY a valid JSON object matching this schema:
   };
 
   return executeHybridAiWithFallback(
-    async () => callModel("gemini-2.5-pro"),
-    async () => callModel("gemini-2.5-flash"),
+    async () => callModel("gemini-3.6-flash"),
+    async () => callModel("gemini-3.5-flash-lite"),
     () => {
       const fallbackResult = generateRuleBasedProfileReview(profile, sanitizedInterests, sanitizedExtras);
       setCachedAiResult(cacheKey, fallbackResult, 15 * 60 * 1000);
