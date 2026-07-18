@@ -151,9 +151,9 @@ export function ProfProfileForm({ profile: initialProfile }: Props) {
           bio,
           lab_website: labSite,
           office_hours: officeHrs,
-          expertise_fields: expertise.split(",").map((s) => s.trim()).filter(Boolean),
-          accepting_student_types: studentTypes.split(",").map((s) => s.trim()).filter(Boolean),
-          publications: publications.split("\n").map((s) => s.trim()).filter(Boolean),
+          expertise_fields: expertise.split(",").map((s: string) => s.trim()).filter(Boolean),
+          accepting_student_types: studentTypes.split(",").map((s: string) => s.trim()).filter(Boolean),
+          publications: publications.split("\n").map((s: string) => s.trim()).filter(Boolean),
           is_accepting_requests: isAccepting,
         }));
       }
@@ -167,9 +167,9 @@ export function ProfProfileForm({ profile: initialProfile }: Props) {
 
   const displayName = preferredName || firstName || "Professor";
   const initials = `${firstName?.[0] ?? ""}${lastName?.[0] ?? ""}`.toUpperCase() || "P";
-  const expertiseArray = expertise.split(",").map((s) => s.trim()).filter(Boolean);
-  const studentTypesArray = studentTypes.split(",").map((s) => s.trim()).filter(Boolean);
-  const publicationsArray = publications.split("\n").map((s) => s.trim()).filter(Boolean);
+  const expertiseArray = expertise.split(",").map((s: string) => s.trim()).filter(Boolean);
+  const studentTypesArray = studentTypes.split(",").map((s: string) => s.trim()).filter(Boolean);
+  const publicationsArray = publications.split("\n").map((s: string) => s.trim()).filter(Boolean);
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }}>
@@ -503,7 +503,7 @@ export function ProfProfileForm({ profile: initialProfile }: Props) {
                 Research Focus Areas
               </span>
               <div style={{ display: "flex", flexWrap: "wrap", gap: "0.45rem" }}>
-                {expertiseArray.map((exp, i) => (
+                {expertiseArray.map((exp: string, i: number) => (
                   <span key={i} style={{ background: "rgba(99, 102, 241, 0.08)", border: "1px solid rgba(99, 102, 241, 0.25)", color: "#4f46e5", padding: "0.3rem 0.75rem", borderRadius: "100px", fontSize: "0.78rem", fontWeight: 700 }}>
                     {exp}
                   </span>
@@ -519,7 +519,7 @@ export function ProfProfileForm({ profile: initialProfile }: Props) {
                 Accepted Mentee Levels
               </span>
               <div style={{ display: "flex", flexWrap: "wrap", gap: "0.45rem" }}>
-                {studentTypesArray.map((st, i) => (
+                {studentTypesArray.map((st: string, i: number) => (
                   <span key={i} style={{ background: "#f8fafc", border: "1px solid #cbd5e1", color: "#334155", padding: "0.25rem 0.65rem", borderRadius: "8px", fontSize: "0.75rem", fontWeight: 600 }}>
                     {st}
                   </span>
@@ -557,7 +557,7 @@ export function ProfProfileForm({ profile: initialProfile }: Props) {
                 Featured Publications
               </span>
               <ul style={{ margin: 0, paddingLeft: "1.25rem", fontSize: "0.82rem", color: "#475569", lineHeight: 1.6 }}>
-                {publicationsArray.map((pub, i) => (
+                {publicationsArray.map((pub: string, i: number) => (
                   <li key={i} style={{ marginBottom: "0.3rem" }}>{pub}</li>
                 ))}
               </ul>
