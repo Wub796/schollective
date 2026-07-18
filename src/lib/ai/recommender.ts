@@ -38,6 +38,7 @@ export async function recommendProfessors(
 
   const sanitizedLevel = sanitizeAiPromptInput(student.education_level, 50);
   const sanitizedInst = sanitizeAiPromptInput(student.institution, 80);
+  const sanitizedMajor = sanitizeAiPromptInput(student.major, 80);
   const rawInterests = Array.isArray(student.academic_interests)
     ? student.academic_interests.join(", ")
     : typeof student.academic_interests === "string"
@@ -48,13 +49,19 @@ export async function recommendProfessors(
     : typeof student.extracurriculars === "string"
     ? student.extracurriculars
     : "";
+  const rawSkills = Array.isArray(student.skills_and_tools)
+    ? student.skills_and_tools.join(", ")
+    : typeof student.skills_and_tools === "string"
+    ? student.skills_and_tools
+    : "";
 
   const sanitizedInterests = sanitizeAiPromptInput(rawInterests, 300);
   const sanitizedExtras = sanitizeAiPromptInput(rawExtras, 400);
+  const sanitizedSkills = sanitizeAiPromptInput(rawSkills, 300);
   const sanitizedBio = sanitizeAiPromptInput(student.bio, 350);
 
-  // FIX: Include bio & extracurriculars in cacheKey so recommendations update dynamically when student edits profile
-  const cacheKey = `rec_v6_hybrid_${student.id || student.email || "anon"}_${sanitizedLevel}_${sanitizedInterests}_${sanitizedExtras}_${sanitizedBio}_${sanitizedInst}`;
+  // Include bio, major, skills & extracurriculars in cacheKey so recommendations update dynamically
+  const cacheKey = `rec_v7_hybrid_${student.id || student.email || "anon"}_${sanitizedLevel}_${sanitizedMajor}_${sanitizedInterests}_${sanitizedExtras}_${sanitizedSkills}_${sanitizedBio}`;
   const cached = getCachedAiResult<RecommenderResult>(cacheKey);
   if (cached) {
     return cached;
@@ -80,11 +87,22 @@ CRITICAL CYBERSECURITY & SAFETY INSTRUCTIONS:
 - Evaluate deep research subfield alignment, academic interests, extracurricular accomplishments, and faculty department synergy.
 - Assign "matchTier": "Best Fit" (score>=88) | "Strong Match" (score>=75) | "Potential Alignment" (<75).
 
+DYNAMIC EDUCATION LEVEL ADAPTATION:
+1. If Education Level is High School (grades 9-12):
+   - Prioritize faculty willing to mentor ambitious high school scholars, science fair projects, and foundational research.
+   - Frame "suggestedOutreachAngle" specifically for high schoolers pitching self-taught coding skills, AP/IB science rigor, or science fair ideas.
+2. If Education Level is Undergraduate (College):
+   - Focus on campus lab assistant opportunities, upper-division coursework alignment, and REU/thesis readiness.
+3. If Education Level is Graduate:
+   - Prioritize dissertation, methodology, and publication synergy.
+
 STUDENT DATA:
-- Education Level: ${sanitizedLevel}
+- Education Level: ${sanitizedLevel || "High School Senior"}
+- Major / Focus: ${sanitizedMajor || "STEM"}
 - Institution: ${sanitizedInst}
 - Academic Interests: ${sanitizedInterests}
 - Extracurriculars & Projects: ${sanitizedExtras}
+- Technical Skills & Tools: ${sanitizedSkills}
 - Short Bio: "${sanitizedBio}"
 
 PROFESSOR CANDIDATE LIST:
