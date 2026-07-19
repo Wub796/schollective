@@ -82,13 +82,13 @@ const Button = React.forwardRef<HTMLElement, ButtonProps>(
       </>
     ) : (
       <>
-        <span className="flex transition-transform duration-[450ms] ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:-translate-y-full" style={{ alignItems: "center", justifyContent: "center", gap: icon ? "0.5rem" : "0" }}>
+        <span className="flex transition-transform duration-[450ms] ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:-translate-y-full" style={{ alignItems: "center", justifyContent: "center", gap: "0.5rem" }}>
           {icon && <span className="flex-shrink-0">{icon}</span>}
-          <span>{children}</span>
+          <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}>{children}</span>
         </span>
-        <span className="flex translate-y-full group-hover:translate-y-0 transition-transform duration-[450ms] ease-[cubic-bezier(0.19,1,0.22,1)]" style={{ position: "absolute", inset: 0, alignItems: "center", justifyContent: "center", gap: icon ? "0.5rem" : "0", color: layer2Color, pointerEvents: "none" }}>
+        <span className="flex translate-y-full group-hover:translate-y-0 transition-transform duration-[450ms] ease-[cubic-bezier(0.19,1,0.22,1)]" style={{ position: "absolute", inset: 0, alignItems: "center", justifyContent: "center", gap: "0.5rem", pointerEvents: "none" }}>
           {icon && <span className="flex-shrink-0">{icon}</span>}
-          <span>{children}</span>
+          <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}>{children}</span>
         </span>
       </>
     );
