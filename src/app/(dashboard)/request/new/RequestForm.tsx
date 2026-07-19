@@ -172,23 +172,23 @@ export function RequestForm({ professor, requestsToday }: RequestFormProps) {
         <FormField
           id="topic"
           name="topic"
-          label="Mentorship Topic / Focus Area"
-          placeholder="e.g. Research Methodology for Quantum Computing"
+          label="Mentorship Topic / Research Focus"
+          placeholder="e.g. Science Fair Guidance in Machine Learning & Bioengineering"
           required
         />
         <FormField
           id="background"
           name="background"
-          label="Academic Background & Current Progress"
-          placeholder="Describe your current level of understanding and what you've explored so far…"
+          label="Academic Background & Current Progress (AP/IB/Coursework, Skills, Projects)"
+          placeholder="e.g. High School Senior (12th Grade). Completed AP Computer Science A & AP Physics C. Built a custom neural net for image classification. Seeking guidance on paper structure and research methodology..."
           required
           type="textarea"
         />
         <FormField
           id="goals"
           name="goals"
-          label="Specific Mentorship Goals"
-          placeholder="What specifically are you hoping to achieve through this mentorship?"
+          label="Specific Mentorship Goals (Science Fair, College Prep Portfolio, REU/Lab Skills)"
+          placeholder="e.g. Seeking expert feedback on my science fair project design, research paper draft, or advice on university lab research..."
           required
           type="textarea"
         />
