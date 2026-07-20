@@ -127,6 +127,8 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
   // Custom Cursor Preference (OFF by default)
   const [customCursor, setCustomCursor] = useState(() => {
     if (typeof window !== "undefined") {
+      const isUserToggled = localStorage.getItem("schollective-custom-cursor-user-toggled") === "true";
+      if (!isUserToggled) return false;
       return localStorage.getItem("schollective-custom-cursor") === "true";
     }
     return false;
@@ -135,6 +137,7 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
   const handleToggleCursor = () => {
     const newVal = !customCursor;
     setCustomCursor(newVal);
+    localStorage.setItem("schollective-custom-cursor-user-toggled", "true");
     localStorage.setItem("schollective-custom-cursor", String(newVal));
     window.dispatchEvent(new Event("storage"));
   };
