@@ -33,9 +33,9 @@ function Field({
   return (
     <div style={{ position: "relative" }}>
       <label htmlFor={id} style={{
-        display: "block", fontSize: "0.6rem", fontWeight: 600,
+        display: "block", fontSize: "0.62rem", fontWeight: 800,
         letterSpacing: "0.22em", textTransform: "uppercase",
-        color: focused ? "rgba(15, 23, 42, 0.65)" : "rgba(15, 23, 42, 0.3)",
+        color: focused ? "#4f46e5" : "#0f172a",
         marginBottom: "0.55rem", transition: "color 0.25s",
         fontFamily: "var(--font-sans)",
       }}>
@@ -49,12 +49,12 @@ function Field({
         onBlur={() => setFocused(false)}
         style={{
           width: "100%",
-          background: "rgba(15, 23, 42, 0.02)",
-          border: `1px solid ${focused ? "rgba(79, 70, 229, 0.4)" : "rgba(15, 23, 42, 0.08)"}`,
+          background: "rgba(255, 255, 255, 0.9)",
+          border: `1.5px solid ${focused ? "#4f46e5" : "rgba(99, 102, 241, 0.5)"}`,
           borderRadius: "100px",
-          padding: "0.95rem 1.75rem",
+          padding: "1rem 1.75rem",
           fontSize: "0.95rem",
-          color: "var(--text-primary)",
+          color: "#0f172a",
           outline: "none",
           transition: "all 0.3s cubic-bezier(0.22, 1, 0.36, 1)",
           fontFamily: "var(--font-sans)",
@@ -77,9 +77,9 @@ function TextArea({
     <div style={{ position: "relative" }}>
       <label htmlFor={id} style={{
         display: "flex", justifyContent: "space-between", alignItems: "baseline",
-        fontSize: "0.6rem", fontWeight: 600,
+        fontSize: "0.62rem", fontWeight: 800,
         letterSpacing: "0.22em", textTransform: "uppercase",
-        color: focused ? "rgba(15, 23, 42, 0.65)" : "rgba(15, 23, 42, 0.3)",
+        color: focused ? "#4f46e5" : "#0f172a",
         marginBottom: "0.55rem", transition: "color 0.25s",
         fontFamily: "var(--font-sans)",
       }}>
@@ -87,7 +87,7 @@ function TextArea({
         <span style={{
           fontSize: "0.52rem", fontWeight: 500, letterSpacing: "0.05em",
           textTransform: "none",
-          color: charCount > maxLength ? "#ef4444" : "rgba(15, 23, 42, 0.2)",
+          color: charCount > maxLength ? "#ef4444" : "rgba(15, 23, 42, 0.4)",
         }}>
           {charCount}/{maxLength}
         </span>
@@ -102,12 +102,12 @@ function TextArea({
         onChange={(e) => setCharCount(e.target.value.length)}
         style={{
           width: "100%",
-          background: "rgba(15, 23, 42, 0.02)",
-          border: `1px solid ${focused ? "rgba(79, 70, 229, 0.4)" : "rgba(99, 102, 241, 0.15)"}`,
+          background: "rgba(255, 255, 255, 0.9)",
+          border: `1.5px solid ${focused ? "#4f46e5" : "rgba(99, 102, 241, 0.5)"}`,
           borderRadius: "20px",
           padding: "1rem 1.5rem",
           fontSize: "0.92rem",
-          color: "var(--text-primary)",
+          color: "#0f172a",
           outline: "none",
           transition: "all 0.3s cubic-bezier(0.22, 1, 0.36, 1)",
           fontFamily: "var(--font-sans)",
@@ -428,18 +428,18 @@ function OnboardingContent() {
                 <motion.div key="student" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.25 }}>
                   <div style={{ display: "flex", flexDirection: "column", gap: "2.25rem" }}>
                     <div>
-                      <label htmlFor="education_level" style={{ display: "block", fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.3)", marginBottom: "0.55rem", fontFamily: "var(--font-sans)" }}>
+                      <label htmlFor="education_level" style={{ display: "block", fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: "#0f172a", marginBottom: "0.55rem", fontFamily: "var(--font-sans)" }}>
                         Education Level
                       </label>
                       <select id="education_level" name="education_level" required
                         style={{
                           width: "100%",
-                          background: "rgba(255, 255, 255, 0.95)",
-                          border: "1px solid rgba(99, 102, 241, 0.22)",
+                          background: "rgba(255, 255, 255, 0.9)",
+                          border: "1.5px solid rgba(99, 102, 241, 0.5)",
                           borderRadius: "100px",
                           padding: "1rem 3rem 1rem 1.85rem",
                           fontSize: "0.95rem",
-                          color: "var(--text-primary)",
+                          color: "#0f172a",
                           outline: "none",
                           fontFamily: "var(--font-sans)",
                           cursor: "pointer",
@@ -491,9 +491,9 @@ function OnboardingContent() {
                   <div style={{ display: "flex", flexDirection: "column", gap: "2.25rem" }}>
                     <div>
                       <label htmlFor="institution" style={{
-                        display: "block", fontSize: "0.6rem", fontWeight: 600,
-                        letterSpacing: "0.18em", textTransform: "uppercase",
-                        color: "rgba(15, 23, 42, 0.3)", marginBottom: "0.55rem",
+                        display: "block", fontSize: "0.62rem", fontWeight: 800,
+                        letterSpacing: "0.22em", textTransform: "uppercase",
+                        color: "#0f172a", marginBottom: "0.55rem",
                         fontFamily: "var(--font-sans)",
                       }}>
                         Institution
