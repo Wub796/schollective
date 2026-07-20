@@ -37,7 +37,12 @@ interface Props {
 
 export function getEducationLevelConfig(level: string) {
   const isHighSchool = (level || "").includes("high-school");
-  const isGraduate = (level || "").includes("graduate") || (level || "").includes("doctoral") || (level || "").includes("postdoctoral");
+  const isUndergrad = (level || "").includes("undergraduate") || (level || "").includes("college");
+  const isGraduate = !isUndergrad && !isHighSchool && (
+    (level || "").includes("graduate") ||
+    (level || "").includes("doctoral") ||
+    (level || "").includes("postdoctoral")
+  );
 
   if (isHighSchool) {
     return {
