@@ -134,25 +134,25 @@ export function AccountSecuritySettings({ profile }: AccountSecuritySettingsProp
             )}
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.3rem" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
-              <h2 style={{ fontSize: "1.3rem", fontWeight: 800, color: "#0f172a", margin: 0 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem", minWidth: 0 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", flexWrap: "wrap" }}>
+              <h2 style={{ fontSize: "1.3rem", fontWeight: 800, color: "#0f172a", margin: 0, wordBreak: "break-word" }}>
                 {displayName} {profile?.last_name || ""}
               </h2>
               <span style={{
                 fontSize: "0.65rem", fontWeight: 800, textTransform: "uppercase",
                 letterSpacing: "0.15em", padding: "0.2rem 0.65rem", borderRadius: "100px",
                 background: "rgba(99, 102, 241, 0.1)", color: "#4f46e5",
-                border: "1px solid rgba(99, 102, 241, 0.25)",
+                border: "1px solid rgba(99, 102, 241, 0.25)", flexShrink: 0,
               }}>
                 {profile?.role === "professor" ? "Faculty" : profile?.role === "admin" ? "Admin" : "Student"}
               </span>
             </div>
 
-            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.85rem", color: "#475569", fontWeight: 500 }}>
-              <Mail size={14} color="#6366f1" />
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.85rem", color: "#475569", fontWeight: 500, flexWrap: "wrap", wordBreak: "break-all" }}>
+              <Mail size={14} color="#6366f1" style={{ flexShrink: 0 }} />
               <span>{profile?.email || "No email linked"}</span>
-              <span style={{ display: "inline-flex", alignItems: "center", gap: "0.2rem", fontSize: "0.7rem", color: "#16a34a", fontWeight: 700, background: "rgba(22, 163, 74, 0.08)", padding: "0.1rem 0.5rem", borderRadius: "100px" }}>
+              <span style={{ display: "inline-flex", alignItems: "center", gap: "0.2rem", fontSize: "0.7rem", color: "#16a34a", fontWeight: 700, background: "rgba(22, 163, 74, 0.08)", padding: "0.1rem 0.5rem", borderRadius: "100px", flexShrink: 0 }}>
                 <CheckCircle2 size={11} /> Verified
               </span>
             </div>

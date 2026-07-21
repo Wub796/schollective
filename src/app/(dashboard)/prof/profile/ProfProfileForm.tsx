@@ -299,6 +299,8 @@ export function ProfProfileForm({ profile: initialProfile }: Props) {
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
+              gap: "1rem",
+              flexWrap: "wrap",
               boxShadow: "0 4px 16px rgba(99, 102, 241, 0.05)",
             }}
           >
