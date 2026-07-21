@@ -175,7 +175,7 @@ export function ProfProfileForm({ profile: initialProfile }: Props) {
   const publicationsArray = publications.split("\n").map((s: string) => s.trim()).filter(Boolean);
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }}>
+    <div data-tour="tour-prof-profile-editor" style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }}>
       {/* Header Avatar Row */}
       <div style={{ display: "flex", alignItems: "center", gap: "1.5rem", flexWrap: "wrap" }}>
         <div style={{ position: "relative" }}>
