@@ -134,8 +134,14 @@ export function InteractiveOnboardingTour({ role, steps }: InteractiveOnboarding
     setIsOpen(true);
   };
 
-  // ─── Replay Button (shown after tour is completed) ────────────
-  if (!isOpen && typeof window !== "undefined" && localStorage.getItem(tourKey) === "completed") {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // ─── Replay Button (shown whenever tour is closed) ────────────
+  if (!isOpen && mounted) {
     return (
       <motion.button
         initial={{ opacity: 0, scale: 0.9 }}
