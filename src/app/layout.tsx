@@ -3,6 +3,7 @@ import { Mulish, Arima } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
 import { CustomCursor } from "@/components/ui/CustomCursor";
+import { ThemeProvider } from "@/components/ui/ThemeProvider";
 
 const mulish = Mulish({
   subsets: ["latin"],
@@ -93,37 +94,38 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${mulish.variable} ${arima.variable}`} suppressHydrationWarning>
       <body className="min-h-screen scroll-smooth" style={{ background: 'var(--bg-base)', color: 'var(--text-primary)' }} suppressHydrationWarning>
+        <ThemeProvider>
+          {/* ── Layer 0: Film-grain noise ──────────────────────────
+              Fixed, pointer-events-none. z-index: 0 via .noise-overlay
+          ─────────────────────────────────────────────────────── */}
+          <div className="noise-overlay" aria-hidden="true" />
 
-        {/* ── Layer 0: Film-grain noise ──────────────────────────
-            Fixed, pointer-events-none. z-index: 0 via .noise-overlay
-        ─────────────────────────────────────────────────────── */}
-        <div className="noise-overlay" aria-hidden="true" />
+          {/* ── Layer 50: Custom cursor ─────────────────────────── */}
+          <CustomCursor />
 
-        {/* ── Layer 50: Custom cursor ─────────────────────────── */}
-        <CustomCursor />
+          {/* ── Layer 10: Page content ──────────────────────────── */}
+          <div className="relative z-[10]">
+            {children}
+          </div>
 
-        {/* ── Layer 10: Page content ──────────────────────────── */}
-        <div className="relative z-[10]">
-          {children}
-        </div>
-
-        {/* ── Layer 40: Toasts ────────────────────────────────── */}
-        <Toaster
-          position="top-right"
-          toastOptions={{
-            style: {
-              background: "rgba(11, 18, 36, 0.96)",
-              backdropFilter: "blur(20px)",
-              border: "1px solid rgba(79, 70, 229, 0.18)",
-              color: "#e8f0ff",
-              borderRadius: "10px",
-              boxShadow: "0 24px 48px rgba(0,0,0,0.55)",
-              fontFamily: "var(--font-sans)",
-              fontSize: "0.875rem",
-              zIndex: "var(--z-toast, 40)" as string,
-            },
-          }}
-        />
+          {/* ── Layer 40: Toasts ────────────────────────────────── */}
+          <Toaster
+            position="top-right"
+            toastOptions={{
+              style: {
+                background: "rgba(11, 18, 36, 0.96)",
+                backdropFilter: "blur(20px)",
+                border: "1px solid rgba(79, 70, 229, 0.18)",
+                color: "#e8f0ff",
+                borderRadius: "10px",
+                boxShadow: "0 24px 48px rgba(0,0,0,0.55)",
+                fontFamily: "var(--font-sans)",
+                fontSize: "0.875rem",
+                zIndex: "var(--z-toast, 40)" as string,
+              },
+            }}
+          />
+        </ThemeProvider>
       </body>
     </html>
   );
