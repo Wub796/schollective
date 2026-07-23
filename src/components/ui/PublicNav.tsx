@@ -7,6 +7,7 @@ import { SchollectiveLogo } from "@/components/ui/SchollectiveLogo";
 import { Button } from "@/components/ui/Button";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 const NAV_LINKS = [
   { label: "About", href: "/about" },
@@ -164,8 +165,9 @@ export function PublicNav() {
             </nav>
           </div>
 
-          {/* COLUMN 3: RIGHT (Log In + Mobile Hamburger) */}
-          <div className="flex items-center justify-end pr-8 sm:pr-12 lg:pr-16">
+          {/* COLUMN 3: RIGHT (Log In + Mobile Hamburger + Theme Toggle) */}
+          <div className="flex items-center justify-end pr-8 sm:pr-12 lg:pr-16 gap-3">
+            <ThemeToggle />
             <div className="hidden lg:flex items-center">
               <NavItem label="Log In" href="/login" active={pathname === "/login"} />
             </div>
@@ -173,7 +175,7 @@ export function PublicNav() {
             {/* Hamburger toggle button */}
             <button
               onClick={() => setMenuOpen(!menuOpen)}
-              className="lg:hidden flex items-center justify-center text-slate-900 hover:text-indigo-600 transition-colors"
+              className="lg:hidden flex items-center justify-center text-slate-900 dark:text-slate-100 hover:text-indigo-600 transition-colors"
               style={{ background: "transparent", border: "none", cursor: "pointer" }}
               aria-label="Toggle menu"
             >
