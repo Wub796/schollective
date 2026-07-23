@@ -136,9 +136,9 @@ export function PublicNav() {
         {/* Main Glass Nav Bar */}
         <div
           data-menu-bar="true"
-          className={`flex-1 rounded-full border flex justify-between lg:grid lg:grid-cols-3 items-center transition-all duration-500 ease-out overflow-hidden hover:bg-white/70 ${scrolled
-              ? "h-[3.8rem] bg-white/60 backdrop-blur-2xl backdrop-saturate-[190%] border-white/50 shadow-[0_12px_40px_rgba(15,23,42,0.08),_inset_0_1px_1px_rgba(255,255,255,0.9),_0_1px_3px_rgba(99,102,241,0.08)]"
-              : "h-[4.4rem] bg-white/40 backdrop-blur-xl backdrop-saturate-[180%] border-white/30 shadow-[0_8px_32px_rgba(15,23,42,0.04),_inset_0_1px_1px_rgba(255,255,255,0.7),_0_1px_2px_rgba(99,102,241,0.03)]"
+          className={`flex-1 rounded-full border flex justify-between lg:grid lg:grid-cols-3 items-center transition-all duration-500 ease-out overflow-hidden hover:bg-white/70 dark:hover:bg-slate-900/75 ${scrolled
+              ? "h-[3.8rem] bg-white/60 dark:bg-slate-900/70 backdrop-blur-2xl backdrop-saturate-[190%] border-white/50 dark:border-slate-800/80 shadow-[0_12px_40px_rgba(15,23,42,0.08),_inset_0_1px_1px_rgba(255,255,255,0.9),_0_1px_3px_rgba(99,102,241,0.08)]"
+              : "h-[4.4rem] bg-white/40 dark:bg-slate-900/50 backdrop-blur-xl backdrop-saturate-[180%] border-white/30 dark:border-slate-800/60 shadow-[0_8px_32px_rgba(15,23,42,0.04),_inset_0_1px_1px_rgba(255,255,255,0.7),_0_1px_2px_rgba(99,102,241,0.03)]"
             }`}
         >
           {/* COLUMN 1: LEFT (Logo) */}
@@ -150,7 +150,7 @@ export function PublicNav() {
               className="group select-none"
             >
               <SchollectiveLogo size={30} />
-              <span className="font-display font-bold text-slate-900 tracking-tight transition-colors group-hover:text-indigo-600" style={{ fontSize: "1.1rem" }}>
+              <span className="font-display font-bold text-slate-900 dark:text-slate-100 tracking-tight transition-colors group-hover:text-indigo-600" style={{ fontSize: "1.1rem" }}>
                 Schollective
               </span>
             </Link>
