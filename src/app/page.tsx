@@ -404,8 +404,6 @@ export default function LandingPage() {
           </motion.div>
         </section>
 
-        {/* ══ TESTIMONIALS ══════════════════════════════════════════════ */}
-        <TestimonialsSection />
 
         {/* ══ FINAL CTA ════════════════════════════════════════════════ */}
         <section className="js-fade relative border-t border-slate-100 min-h-[70vh] flex flex-col items-center justify-center py-32 md:py-44 px-6" style={{ background: "#fdfdfd" }}>
