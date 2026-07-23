@@ -774,8 +774,8 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
               <span style={{ fontSize: "0.72rem", fontWeight: 800, color: "#64748b", textTransform: "uppercase", display: "block", marginBottom: "0.4rem" }}>
                 Portfolio & Links
               </span>
-              <a href={portfolioUrl.startsWith("http") ? portfolioUrl : `https://${portfolioUrl}`} target="_blank" rel="noopener noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", color: "#4f46e5", fontWeight: 700, fontSize: "0.85rem", textDecoration: "underline" }}>
-                <ExternalLink size={14} /> {portfolioUrl}
+              <a href={portfolioUrl.startsWith("http") ? portfolioUrl : `https://${portfolioUrl}`} target="_blank" rel="noopener noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", color: "#4f46e5", fontWeight: 700, fontSize: "0.85rem", textDecoration: "underline", wordBreak: "break-all", overflowWrap: "break-word", maxWidth: "100%" }}>
+                <ExternalLink size={14} style={{ flexShrink: 0 }} /> {portfolioUrl}
               </a>
             </div>
           )}

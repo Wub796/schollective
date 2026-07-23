@@ -194,19 +194,26 @@ export function InteractiveOnboardingTour({ role, steps }: InteractiveOnboarding
 
   if (rect && isTouring) {
     const isMobile = typeof window !== "undefined" && window.innerWidth < 640;
+    const windowH = typeof window !== "undefined" ? window.innerHeight : 800;
+    const windowW = typeof window !== "undefined" ? window.innerWidth : 1200;
+
     if (isMobile) {
       popoverLeft = 16;
-      popoverTop = Math.max(16, Math.min(rect.bottom + 16, window.innerHeight - 280));
+      popoverTop = Math.max(16, Math.min(rect.bottom + 16, windowH - 280));
     } else {
-      popoverLeft = Math.max(20, Math.min(rect.left, window.innerWidth - popoverWidth - 20));
-      if (rect.bottom + 280 < window.innerHeight) {
+      popoverLeft = Math.max(20, Math.min(rect.left, windowW - popoverWidth - 20));
+      if (rect.bottom + 280 < windowH) {
         popoverTop = rect.bottom + 16;
-      } else if (rect.top - 260 > 0) {
-        popoverTop = rect.top - 260;
+      } else if (rect.top - 270 > 20) {
+        popoverTop = rect.top - 270;
       } else {
-        popoverTop = Math.max(20, rect.top);
+        popoverTop = Math.max(20, Math.min(rect.bottom + 16, windowH - 280));
       }
     }
+
+    // Explicit boundary clamp to guarantee the popover is always 100% visible inside the screen
+    popoverTop = Math.max(16, Math.min(popoverTop, windowH - 280));
+    popoverLeft = Math.max(16, Math.min(popoverLeft, windowW - (isMobile ? 32 : popoverWidth) - 16));
   }
 
   const roleLabel = role === "student" ? "Scholar" : "Faculty";
