@@ -2,14 +2,14 @@ import Link from "next/link";
 import { SchollectiveLogo } from "@/components/ui/SchollectiveLogo";
 
 const FOOTER_LINKS = [
-  { label: "Home",           href: "/" },
-  { label: "About",          href: "/about" },
-  { label: "Features",       href: "/features" },
-  { label: "For Students",   href: "/for-students" },
-  { label: "For Professors", href: "/for-professors" },
-  { label: "Browse Mentors", href: "/professors" },
-  { label: "Privacy",        href: "/privacy" },
-  { label: "Terms",          href: "/terms" },
+  { label: "Home",        href: "/" },
+  { label: "About",       href: "/about" },
+  { label: "Features",    href: "/features" },
+  { label: "Students",    href: "/for-students" },
+  { label: "Professors",  href: "/for-professors" },
+  { label: "Mentors",     href: "/professors" },
+  { label: "Privacy",     href: "/privacy" },
+  { label: "Terms",       href: "/terms" },
 ];
 
 export function PublicFooter() {
@@ -33,9 +33,9 @@ export function PublicFooter() {
           ))}
         </div>
 
-        {/* Tagline Copy */}
+        {/* Quote Copy */}
         <div className="lp-footer-copy">
-          Built for the student who reaches out.
+          Every question deserves a real answer.
         </div>
       </div>
     </footer>
