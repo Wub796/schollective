@@ -129,13 +129,14 @@ export function PublicNav() {
   return (
     <>
       <header
-        className={`fixed left-1/2 -translate-x-1/2 z-[999] w-[calc(100%-2.5rem)] max-w-[76rem] transition-all duration-500 ease-out ${
+        className={`fixed left-1/2 -translate-x-1/2 z-[999] w-[calc(100%-2.5rem)] max-w-[76rem] flex items-center gap-3 transition-all duration-500 ease-out ${
           scrolled ? "top-3" : "top-5"
         }`}
       >
+        {/* Main Glass Nav Bar */}
         <div
           data-menu-bar="true"
-          className={`w-full rounded-full border flex justify-between lg:grid lg:grid-cols-3 items-center transition-all duration-500 ease-out overflow-hidden hover:bg-white/70 ${
+          className={`flex-1 rounded-full border flex justify-between lg:grid lg:grid-cols-3 items-center transition-all duration-500 ease-out overflow-hidden hover:bg-white/70 ${
             scrolled
               ? "h-[3.8rem] bg-white/60 backdrop-blur-2xl backdrop-saturate-[190%] border-white/50 shadow-[0_12px_40px_rgba(15,23,42,0.08),_inset_0_1px_1px_rgba(255,255,255,0.9),_0_1px_3px_rgba(99,102,241,0.08)]"
               : "h-[4.4rem] bg-white/40 backdrop-blur-xl backdrop-saturate-[180%] border-white/30 shadow-[0_8px_32px_rgba(15,23,42,0.04),_inset_0_1px_1px_rgba(255,255,255,0.7),_0_1px_2px_rgba(99,102,241,0.03)]"
@@ -165,31 +166,36 @@ export function PublicNav() {
             </nav>
           </div>
 
-          {/* COLUMN 3: RIGHT (Log In + CTA Button) */}
-          <div className="flex items-center justify-end pr-3 lg:pr-3">
-            <div className="hidden lg:flex items-center gap-4">
+          {/* COLUMN 3: RIGHT (Log In + Mobile Hamburger) */}
+          <div className="flex items-center justify-end pr-6">
+            <div className="hidden lg:flex items-center">
               <NavItem label="Log In" href="/login" active={pathname === "/login"} />
-              <Button
-                href="/signup"
-                variant="primary"
-                size="sm"
-                data-nav-item="true"
-                className="rounded-full px-6 py-2.5 text-[0.65rem] font-bold tracking-widest uppercase shadow-sm hover:shadow-md transition-all"
-              >
-                Get Started →
-              </Button>
             </div>
 
             {/* Hamburger toggle button */}
             <button
               onClick={() => setMenuOpen(!menuOpen)}
               className="lg:hidden flex items-center justify-center text-slate-700 hover:text-indigo-600 transition-colors"
-              style={{ background: "transparent", border: "none", cursor: "pointer", marginRight: "1.25rem" }}
+              style={{ background: "transparent", border: "none", cursor: "pointer" }}
               aria-label="Toggle menu"
             >
               {menuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
           </div>
+        </div>
+
+        {/* Separate "Get Started" Pill Button (Matches main bar height dynamically) */}
+        <div className="hidden lg:block flex-shrink-0">
+          <Button
+            href="/signup"
+            variant="primary"
+            data-nav-item="true"
+            className={`rounded-full px-8 flex items-center justify-center uppercase tracking-widest text-[0.65rem] font-bold border-none shadow-[0_8px_25px_rgba(79,70,229,0.3)] hover:shadow-[0_12px_32px_rgba(79,70,229,0.4)] transition-all duration-500 ease-out ${
+              scrolled ? "h-[3.8rem]" : "h-[4.4rem]"
+            }`}
+          >
+            Get Started →
+          </Button>
         </div>
       </header>
 
