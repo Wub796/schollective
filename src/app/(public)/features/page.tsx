@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { PublicNav } from "@/components/ui/PublicNav";
+import { PublicFooter } from "@/components/ui/PublicFooter";
 import {
   Lock,
   MessageSquare,
@@ -156,12 +157,7 @@ export default function FeaturesPage() {
       </main>
 
       {/* Footer */}
-      <footer className="py-12 border-t text-center" style={{ borderTop: "1px solid var(--border)" }}>
-        <div className="font-display text-xl text-var(--text-primary) mb-3 font-bold" style={{ fontSize: "1.2rem", letterSpacing: "-0.02em" }}>Schollective</div>
-        <p className="text-[0.62rem] text-var(--text-tertiary) uppercase tracking-wider font-bold" style={{ color: "var(--text-tertiary)" }}>
-          Connecting Aspiration with Expertise Since 2025
-        </p>
-      </footer>
+      <PublicFooter />
     </div>
   );
 }

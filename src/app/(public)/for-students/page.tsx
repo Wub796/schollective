@@ -3,6 +3,7 @@
 import React, { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import { PublicNav } from "@/components/ui/PublicNav";
+import { PublicFooter } from "@/components/ui/PublicFooter";
 import { Button } from "@/components/ui/Button";
 import { FileText, GraduationCap, Microscope, BookOpen, Users, PenTool } from "lucide-react";
 
@@ -149,6 +150,7 @@ export default function ForStudentsPage() {
         </div>
       </section>
 
+      <PublicFooter />
     </div>
   );
 }
