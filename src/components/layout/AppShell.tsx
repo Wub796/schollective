@@ -44,23 +44,6 @@ export function AppShell({ children, role = "student" }: AppShellProps) {
   const openSidebar  = useCallback(() => setSidebarOpen(true),  []);
   const closeSidebar = useCallback(() => setSidebarOpen(false), []);
 
-  const navItems = role === "professor"
-    ? [
-        { href: "/prof/dashboard", label: "Dashboard"       },
-        { href: "/prof/students",  label: "My Students"     },
-        { href: "/prof/profile",   label: "Profile Preview" },
-      ]
-    : [
-        { href: "/dashboard",  label: "Dashboard"      },
-        { href: "/professors", label: "Browse Mentors" },
-        { href: "/threads",    label: "My Threads"     },
-      ];
-
-  const isActive = (href: string) => {
-    const exact = ["/dashboard", "/prof/dashboard"];
-    if (exact.includes(href)) return pathname === href;
-    return pathname.startsWith(href);
-  };
 
   return (
     <>
@@ -102,53 +85,6 @@ export function AppShell({ children, role = "student" }: AppShellProps) {
             Schollective
           </span>
         </Link>
-
-        {/* Desktop nav links — pill-style */}
-        <nav
-          className="hidden lg:flex"
-          style={{
-            display: "flex", alignItems: "center", gap: "0.15rem",
-            padding: "0.3rem",
-            background: "rgba(15, 23, 42, 0.03)",
-            border: "1px solid rgba(15, 23, 42, 0.08)",
-            borderRadius: "100px",
-          }}
-          aria-label="Main navigation"
-        >
-          {navItems.map(({ href, label }) => {
-            const active = isActive(href);
-            return (
-              <Link
-                key={href}
-                href={href}
-                style={{
-                  display: "block",
-                  padding: "0.4rem 1rem",
-                  borderRadius: "100px",
-                  textDecoration: "none",
-                  fontSize: "0.58rem",
-                  fontWeight: active ? 700 : 500,
-                  letterSpacing: "0.22em",
-                  textTransform: "uppercase",
-                  fontFamily: "var(--font-sans)",
-                  color: active ? "var(--accent)" : "var(--text-secondary)",
-                  background: active ? "var(--accent-dim)" : "transparent",
-                  border: active ? "1px solid rgba(37, 99, 235, 0.2)" : "1px solid transparent",
-                  transition: "all 0.2s cubic-bezier(0.22, 1, 0.36, 1)",
-                  whiteSpace: "nowrap",
-                }}
-                onMouseEnter={(e) => {
-                  if (!active) (e.currentTarget as HTMLElement).style.color = "var(--text-primary)";
-                }}
-                onMouseLeave={(e) => {
-                  if (!active) (e.currentTarget as HTMLElement).style.color = "var(--text-secondary)";
-                }}
-              >
-                {label}
-              </Link>
-            );
-          })}
-        </nav>
 
         {/* Right: notification + account */}
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexShrink: 0 }}>
