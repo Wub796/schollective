@@ -362,53 +362,6 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           </span>
         </div>
 
-        {/* Desktop nav links — pill-style */}
-        <nav
-          className="hidden lg:flex"
-          style={{
-            alignItems: "center", gap: "0.15rem",
-            padding: "0.3rem",
-            background: "rgba(15, 23, 42, 0.03)",
-            border: "1px solid rgba(15, 23, 42, 0.08)",
-            borderRadius: "100px",
-          }}
-          aria-label="Admin navigation"
-        >
-          {NAV.map(({ href, label }) => {
-            const active = pathname === href || pathname.startsWith(href + "/");
-            return (
-              <Link
-                key={href}
-                href={href}
-                style={{
-                  display: "block",
-                  padding: "0.4rem 1rem",
-                  borderRadius: "100px",
-                  textDecoration: "none",
-                  fontSize: "0.58rem",
-                  fontWeight: active ? 700 : 500,
-                  letterSpacing: "0.22em",
-                  textTransform: "uppercase",
-                  fontFamily: "var(--font-sans)",
-                  color: active ? "var(--accent)" : "var(--text-secondary)",
-                  background: active ? "var(--accent-dim)" : "transparent",
-                  border: active ? "1px solid rgba(79, 70, 229, 0.2)" : "1px solid transparent",
-                  transition: "all 0.2s cubic-bezier(0.22, 1, 0.36, 1)",
-                  whiteSpace: "nowrap",
-                }}
-                onMouseEnter={(e) => {
-                  if (!active) (e.currentTarget as HTMLElement).style.color = "var(--text-primary)";
-                }}
-                onMouseLeave={(e) => {
-                  if (!active) (e.currentTarget as HTMLElement).style.color = "var(--text-secondary)";
-                }}
-              >
-                {label}
-              </Link>
-            );
-          })}
-        </nav>
-
         {/* Right: back to site */}
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexShrink: 0 }}>
           <Link href="/dashboard" style={{ textDecoration: "none" }}>
