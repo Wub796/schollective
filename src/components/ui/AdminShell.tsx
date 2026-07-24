@@ -18,6 +18,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { setAdminViewAs } from "@/app/admin/dashboard/admin-actions";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 /* ─── Nav items ──────────────────────────────────────────────────────────── */
 const NAV = [
@@ -510,8 +511,9 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           </button>
         </div>
 
-        {/* Right: back to site */}
+        {/* Right: theme toggle + back to site */}
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexShrink: 0 }}>
+          <ThemeToggle />
           <Link href="/dashboard" style={{ textDecoration: "none" }}>
             <div
               style={{
