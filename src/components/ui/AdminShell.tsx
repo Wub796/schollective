@@ -423,7 +423,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
-            className="content-container py-12 sm:py-16"
+            className="content-container pt-20 pb-28 sm:pt-24 sm:pb-36"
           >
             {children}
           </motion.div>
