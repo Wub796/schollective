@@ -55,7 +55,7 @@ export function ThreadCard({ request, viewerRole, hasUnread }: ThreadCardProps) 
           backdropFilter: "blur(12px)",
           border: request.status === "active" ? "1px solid rgba(79, 70, 229, 0.25)" : "1px solid rgba(37, 99, 235, 0.08)",
           borderRadius: "16px",
-          padding: "1.75rem",
+          padding: "2rem",
           display: "flex",
           flexDirection: "column",
           height: "100%",

@@ -1,22 +1,21 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Cormorant_Garamond } from "next/font/google";
+import { Mulish, Arima } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
 import { CustomCursor } from "@/components/ui/CustomCursor";
 
-const geist = Geist({
+const mulish = Mulish({
   subsets: ["latin"],
   variable: "--font-sans",
   display: "swap",
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
 });
 
-const cormorant = Cormorant_Garamond({
+const arima = Arima({
   subsets: ["latin"],
   variable: "--font-display",
   display: "swap",
   weight: ["300", "400", "500", "600", "700"],
-  style: ["normal", "italic"],
 });
 
 export const metadata: Metadata = {
@@ -40,7 +39,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${geist.variable} ${cormorant.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${mulish.variable} ${arima.variable}`} suppressHydrationWarning>
       <body className="min-h-screen scroll-smooth" style={{background: 'var(--bg-base)', color: 'var(--text-primary)'}} suppressHydrationWarning>
 
         {/* ── Layer 0: Film-grain noise ──────────────────────────

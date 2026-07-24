@@ -55,7 +55,7 @@ export function RequestQueueCard({ request }: RequestQueueCardProps) {
         backdropFilter: "blur(12px)",
         border: "1px solid rgba(37, 99, 235, 0.08)",
         borderRadius: "16px",
-        padding: "1.5rem",
+        padding: "2rem",
         boxShadow: "0 4px 12px rgba(0, 0, 0, 0.02)",
         transition: "all 0.3s cubic-bezier(0.22, 1, 0.36, 1)",
       }}

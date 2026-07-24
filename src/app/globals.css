@@ -4,8 +4,8 @@
    THEME — Tailwind v4 tokens
    ═══════════════════════════════════════════════════════════════ */
 @theme {
-  --font-sans: var(--font-sans), "Geist", "Inter", system-ui, sans-serif;
-  --font-display: var(--font-display), "Cormorant Garamond", "Cormorant", Georgia, serif;
+  --font-sans: var(--font-sans), "Mulish", system-ui, sans-serif;
+  --font-display: var(--font-display), "Arima", "Arima Madurai", Georgia, serif;
 
   /* App shell dimensions */
   --sidebar-width: 220px;
