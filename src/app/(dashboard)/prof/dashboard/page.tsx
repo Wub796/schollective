@@ -15,7 +15,7 @@ export const dynamic = "force-dynamic";
 function StatCard({ value, label, sub }: { value: string | number; label: string; sub: string }) {
   return (
     <div style={{
-      padding: "2rem",
+      padding: "2.25rem 2.5rem",
       border: "1px solid rgba(37, 99, 235, 0.08)",
       borderRadius: "14px",
       background: "rgba(37, 99, 235, 0.03)",
