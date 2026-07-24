@@ -142,7 +142,7 @@ export function PublicNav() {
           }`}
         >
           {/* COLUMN 1: LEFT (Logo) */}
-          <div className="flex items-center justify-start pl-6 lg:pl-0">
+          <div className="flex items-center justify-start pl-6">
             <Link
               href="/"
               data-nav-item="true"
@@ -166,15 +166,15 @@ export function PublicNav() {
           </div>
 
           {/* COLUMN 3: RIGHT (Log In + CTA Button) */}
-          <div className="flex items-center justify-end pr-6 lg:pr-0 h-full">
-            <div className="hidden lg:flex items-center gap-6 h-full">
+          <div className="flex items-center justify-end pr-3 lg:pr-3">
+            <div className="hidden lg:flex items-center gap-4">
               <NavItem label="Log In" href="/login" active={pathname === "/login"} />
               <Button
                 href="/signup"
                 variant="primary"
+                size="sm"
                 data-nav-item="true"
-                className="!py-3 px-8 rounded-l-full rounded-r-none border-none flex items-center justify-center uppercase tracking-widest text-[0.65rem] transition-colors duration-200"
-                style={{ borderRadius: "9999px 0 0 9999px" }}
+                className="rounded-full px-6 py-2.5 text-[0.65rem] font-bold tracking-widest uppercase shadow-sm hover:shadow-md transition-all"
               >
                 Get Started →
               </Button>
