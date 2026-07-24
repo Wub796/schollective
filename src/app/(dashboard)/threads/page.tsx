@@ -11,8 +11,8 @@ export const dynamic = "force-dynamic";
 function SectionLabel({ text }: { text: string }) {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-      <span style={{ width: "1rem", height: "1px", background: "rgba(15, 23, 42, 0.2)", display: "block" }} />
-      <h2 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "rgba(15, 23, 42, 0.85)", letterSpacing: "-0.025em" }}>
+      <span style={{ width: "1rem", height: "2px", background: "#FFC20F", display: "block" }} />
+      <h2 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "#141005", letterSpacing: "-0.025em" }}>
         {text}
       </h2>
     </div>
@@ -74,96 +74,106 @@ export default async function ThreadsPage() {
   const displayName = profile.preferred_name || profile.first_name || "Scholar";
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "5rem" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "3.5rem" }}>
 
       {/* ── Header ── */}
       <header style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <span style={{ width: "1.5rem", height: "1px", background: "rgba(15, 23, 42, 0.2)", display: "block" }} />
-          <span style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.3)", fontFamily: "var(--font-sans, monospace)" }}>
+          <span style={{ width: "1.5rem", height: "2px", background: "#FFC20F", display: "block" }} />
+          <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: "#008CBB", fontFamily: "var(--font-sans, monospace)" }}>
             Student Portal
           </span>
         </div>
         <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: "2rem", flexWrap: "wrap" }}>
-          <h1 className="font-display" style={{ fontSize: "clamp(2.6rem, 5vw, 4rem)", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.035em", lineHeight: 1.05 }}>
+          <h1 className="font-display" style={{ fontSize: "clamp(2.4rem, 4.5vw, 3.6rem)", fontWeight: 900, color: "#141005", letterSpacing: "-0.035em", lineHeight: 1.1 }}>
             {displayName}&apos;s{" "}
-            <em style={{ fontStyle: "italic", color: "rgba(15, 23, 42, 0.35)" }}>threads</em>
+            <em style={{ fontStyle: "italic", color: "#008CBB", fontWeight: 300 }}>threads</em>
           </h1>
           <Link href="/professors" style={{ textDecoration: "none", flexShrink: 0 }}>
             <div style={{
               display: "flex", alignItems: "center", gap: "0.5rem",
-              padding: "0.65rem 1.35rem",
-              border: "1px solid rgba(15, 23, 42, 0.12)", borderRadius: "100px",
-              fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.1em",
-              textTransform: "uppercase", color: "rgba(15, 23, 42, 0.55)",
+              padding: "0.75rem 1.5rem",
+              border: "2px solid #008CBB", background: "#008CBB", borderRadius: "100px",
+              fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.15em",
+              textTransform: "uppercase", color: "#ffffff",
               fontFamily: "var(--font-sans)", cursor: "pointer",
-              transition: "border-color 0.2s, color 0.2s",
+              boxShadow: "0 4px 14px rgba(0, 140, 187, 0.2)",
+              transition: "all 0.2s cubic-bezier(0.22, 1, 0.36, 1)",
             }}>
-              <Search size={11} />
+              <Search size={14} />
               Find a Mentor
             </div>
           </Link>
         </div>
-        <p style={{ fontSize: "0.95rem", color: "rgba(15, 23, 42, 0.4)", fontWeight: 300, maxWidth: "42rem", lineHeight: 1.8, fontFamily: "var(--font-sans)", marginTop: "0.25rem" }}>
+        <p style={{ fontSize: "0.95rem", color: "#3b3527", opacity: 0.75, fontWeight: 400, maxWidth: "42rem", lineHeight: 1.8, fontFamily: "var(--font-sans)", marginTop: "0.25rem" }}>
           All your mentorship threads in one place — ongoing dialogues and completed sessions.
         </p>
       </header>
 
       {/* ── Stats strip ── */}
-      <div style={{ display: "flex", gap: "1.5rem", flexWrap: "wrap" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1.25rem" }}>
         {[
           { value: processed.length, label: "Total Threads", sub: "Lifetime" },
           { value: ongoing.length,   label: "Ongoing",        sub: "Active + Pending" },
           { value: past.length,      label: "Completed",      sub: "Past Sessions" },
         ].map(({ value, label, sub }) => (
           <div key={label} style={{
-            padding: "1.25rem 1.75rem",
-            border: "1px solid rgba(37, 99, 235, 0.08)",
+            padding: "2.25rem 2.5rem",
+            border: "1px solid rgba(161, 197, 209, 0.45)",
             borderRadius: "14px",
-            background: "rgba(37, 99, 235, 0.03)",
-            display: "flex", flexDirection: "column", gap: "0.35rem", minWidth: "9rem",
+            background: "rgba(161, 197, 209, 0.12)",
+            display: "flex", flexDirection: "column", gap: "0.5rem",
           }}>
-            <span className="font-display" style={{ fontSize: "2.4rem", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.04em", lineHeight: 1 }}>
+            <span className="font-display" style={{ fontSize: "2.8rem", fontWeight: 900, color: "#141005", letterSpacing: "-0.04em", lineHeight: 1 }}>
               {value}
             </span>
-            <div style={{ fontSize: "0.75rem", fontWeight: 600, color: "rgba(15, 23, 42, 0.6)", fontFamily: "var(--font-sans)" }}>{label}</div>
-            <div style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(37, 99, 235, 0.3)", fontFamily: "var(--font-sans, monospace)" }}>{sub}</div>
+            <div style={{ fontSize: "0.82rem", fontWeight: 700, color: "#141005", fontFamily: "var(--font-sans)", lineHeight: 1.4 }}>{label}</div>
+            <div style={{
+              display: "inline-block", fontSize: "0.58rem", fontWeight: 800, letterSpacing: "0.2em",
+              textTransform: "uppercase", color: "#141005", background: "#FFC20F",
+              padding: "0.25rem 0.75rem", borderRadius: "100px", width: "fit-content", marginTop: "0.5rem",
+              fontFamily: "var(--font-sans, monospace)", border: "1px solid rgba(255, 194, 15, 0.6)"
+            }}>
+              {sub}
+            </div>
           </div>
         ))}
       </div>
 
       {/* ── Hairline ── */}
-      <div style={{ height: "1px", background: "rgba(15, 23, 42, 0.06)" }} />
+      <div style={{ height: "1px", background: "rgba(161, 197, 209, 0.4)" }} />
 
       {/* ── Empty state (no threads at all) ── */}
       {processed.length === 0 && (
         <div style={{
-          border: "1px dashed rgba(15, 23, 42, 0.08)", borderRadius: "16px",
-          padding: "5rem 2rem", textAlign: "center",
-          display: "flex", flexDirection: "column", alignItems: "center", gap: "1.5rem",
+          border: "1px dashed rgba(161, 197, 209, 0.6)", borderRadius: "16px",
+          padding: "4rem 2rem", textAlign: "center",
+          display: "flex", flexDirection: "column", alignItems: "center", gap: "1.25rem",
+          background: "rgba(255, 255, 255, 0.7)",
         }}>
           <div style={{
             width: "3.5rem", height: "3.5rem", borderRadius: "50%",
-            background: "rgba(15, 23, 42, 0.04)", border: "1px solid rgba(15, 23, 42, 0.08)",
+            background: "rgba(255, 194, 15, 0.25)", border: "1px solid rgba(255, 194, 15, 0.5)",
             display: "flex", alignItems: "center", justifyContent: "center",
           }}>
-            <BookOpen size={20} color="rgba(15, 23, 42, 0.3)" />
+            <BookOpen size={20} style={{ color: "#141005" }} />
           </div>
           <div>
-            <h3 className="font-display" style={{ fontSize: "1.3rem", fontWeight: 700, color: "rgba(15, 23, 42, 0.7)", marginBottom: "0.5rem", letterSpacing: "-0.02em" }}>
+            <h3 className="font-display" style={{ fontSize: "1.25rem", fontWeight: 700, color: "#141005", marginBottom: "0.5rem", letterSpacing: "-0.02em" }}>
               No threads yet
             </h3>
-            <p style={{ fontSize: "0.82rem", color: "rgba(15, 23, 42, 0.32)", maxWidth: "26rem", lineHeight: 1.7, fontFamily: "var(--font-sans)" }}>
+            <p style={{ fontSize: "0.82rem", color: "#3b3527", opacity: 0.75, maxWidth: "26rem", lineHeight: 1.7, fontFamily: "var(--font-sans)" }}>
               Threads appear here once a professor accepts your mentorship request.
               Start by finding a mentor in the directory.
             </p>
           </div>
           <Link href="/professors" style={{ textDecoration: "none" }}>
             <div style={{
-              padding: "0.8rem 1.85rem", border: "1px solid rgba(15, 23, 42, 0.15)",
-              borderRadius: "100px", fontSize: "0.58rem", fontWeight: 700,
-              letterSpacing: "0.22em", textTransform: "uppercase",
-              color: "rgba(15, 23, 42, 0.7)", fontFamily: "var(--font-sans)", cursor: "pointer",
+              padding: "0.8rem 2rem", border: "2px solid #008CBB", background: "#008CBB",
+              borderRadius: "100px", fontSize: "0.62rem", fontWeight: 800,
+              letterSpacing: "0.18em", textTransform: "uppercase",
+              color: "#ffffff", fontFamily: "var(--font-sans)", cursor: "pointer",
+              boxShadow: "0 4px 14px rgba(0, 140, 187, 0.25)",
             }}>
               Browse Professors
             </div>
@@ -176,7 +186,11 @@ export default async function ThreadsPage() {
         <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
             <SectionLabel text="Ongoing" />
-            <span style={{ marginLeft: "auto", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.25)", fontFamily: "var(--font-sans, monospace)" }}>
+            <span style={{
+              marginLeft: "auto", fontSize: "0.6rem", fontWeight: 800, letterSpacing: "0.22em",
+              textTransform: "uppercase", color: "#141005", background: "rgba(255, 194, 15, 0.35)",
+              padding: "0.3rem 0.8rem", borderRadius: "100px", fontFamily: "var(--font-sans, monospace)"
+            }}>
               {ongoing.length} thread{ongoing.length !== 1 ? "s" : ""}
             </span>
           </div>
@@ -193,16 +207,16 @@ export default async function ThreadsPage() {
         <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-              <span style={{ width: "1rem", height: "1px", background: "rgba(15, 23, 42, 0.2)", display: "block" }} />
-              <h2 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "rgba(15, 23, 42, 0.45)", letterSpacing: "-0.025em" }}>
+              <span style={{ width: "1rem", height: "2px", background: "#A1C5D1", display: "block" }} />
+              <h2 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "#141005", opacity: 0.6, letterSpacing: "-0.025em" }}>
                 Past Sessions
               </h2>
             </div>
-            <span style={{ marginLeft: "auto", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.15)", fontFamily: "var(--font-sans, monospace)" }}>
+            <span style={{ marginLeft: "auto", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "#3b3527", opacity: 0.5, fontFamily: "var(--font-sans, monospace)" }}>
               {past.length} completed
             </span>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "1.5rem", opacity: 0.75 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "1.5rem", opacity: 0.8 }}>
             {past.map((req: any) => (
               <ThreadCard key={req.id} request={req} viewerRole="student" hasUnread={req.hasUnread} />
             ))}

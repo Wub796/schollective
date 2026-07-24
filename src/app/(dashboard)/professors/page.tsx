@@ -81,31 +81,31 @@ export default async function ProfessorsPage({ searchParams }: ProfessorsPagePro
   ).sort();
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "5rem" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "3.5rem" }}>
       {/* Header */}
       <header style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
         <Link
           href="/dashboard"
-          style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", textDecoration: "none", width: "fit-content" }}
+          style={{ display: "inline-flex", alignItems: "center", gap: "0.6rem", textDecoration: "none", width: "fit-content", padding: "0.4rem 0.8rem", borderRadius: "100px", background: "rgba(0, 140, 187, 0.08)", border: "1px solid rgba(0, 140, 187, 0.2)" }}
         >
-          <ArrowLeft size={12} style={{ color: "rgba(15, 23, 42, 0.3)" }} />
-          <span style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.3)", fontFamily: "var(--font-sans, monospace)" }}>
+          <ArrowLeft size={12} style={{ color: "#008CBB" }} />
+          <span style={{ fontSize: "0.58rem", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: "#008CBB", fontFamily: "var(--font-sans, monospace)" }}>
             Back to Dashboard
           </span>
         </Link>
 
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <span style={{ width: "1.5rem", height: "1px", background: "rgba(15, 23, 42, 0.2)", display: "block" }} />
-          <span style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.3)", fontFamily: "var(--font-sans, monospace)" }}>
-            Academic Bridge
+          <span style={{ width: "1.5rem", height: "2px", background: "#FFC20F", display: "block" }} />
+          <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: "#008CBB", fontFamily: "var(--font-sans, monospace)" }}>
+            Academic Directory
           </span>
         </div>
 
-        <h1 className="font-display" style={{ fontSize: "clamp(2.6rem, 5vw, 4rem)", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.035em", lineHeight: 1.05 }}>
+        <h1 className="font-display" style={{ fontSize: "clamp(2.4rem, 4.5vw, 3.6rem)", fontWeight: 900, color: "#141005", letterSpacing: "-0.035em", lineHeight: 1.1 }}>
           Discover your{" "}
-          <em style={{ fontStyle: "italic", color: "rgba(15, 23, 42, 0.35)" }}>intellectual mentor</em>
+          <em style={{ fontStyle: "italic", color: "#008CBB", fontWeight: 300 }}>intellectual mentor</em>
         </h1>
-        <p style={{ fontSize: "0.95rem", color: "rgba(15, 23, 42, 0.4)", fontWeight: 300, maxWidth: "42rem", lineHeight: 1.8, fontFamily: "var(--font-sans)", marginTop: "0.25rem" }}>
+        <p style={{ fontSize: "0.95rem", color: "#3b3527", opacity: 0.75, fontWeight: 400, maxWidth: "42rem", lineHeight: 1.8, fontFamily: "var(--font-sans)", marginTop: "0.25rem" }}>
           Connect with verified experts across all academic disciplines. Every professor
           is manually approved via institutional credentials.
         </p>
@@ -123,18 +123,18 @@ export default async function ProfessorsPage({ searchParams }: ProfessorsPagePro
           ))}
         </div>
       ) : (
-        <div style={{ border: "1px dashed rgba(15, 23, 42, 0.08)", borderRadius: "16px", padding: "5rem 2rem", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: "1.25rem" }}>
-          <h3 className="font-display" style={{ fontSize: "1.4rem", fontWeight: 700, color: "rgba(15, 23, 42, 0.7)", letterSpacing: "-0.02em" }}>
+        <div style={{ border: "1px dashed rgba(161, 197, 209, 0.6)", borderRadius: "16px", padding: "4rem 2rem", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: "1.25rem", background: "rgba(255, 255, 255, 0.7)" }}>
+          <h3 className="font-display" style={{ fontSize: "1.3rem", fontWeight: 700, color: "#141005", letterSpacing: "-0.02em" }}>
             No mentors found
           </h3>
-          <p style={{ fontSize: "0.82rem", color: "rgba(15, 23, 42, 0.35)", maxWidth: "24rem", lineHeight: 1.7, fontFamily: "var(--font-sans)", marginBottom: "0.5rem" }}>
+          <p style={{ fontSize: "0.82rem", color: "#3b3527", opacity: 0.75, maxWidth: "24rem", lineHeight: 1.7, fontFamily: "var(--font-sans)", marginBottom: "0.5rem" }}>
             Try broadening your search or resetting your filters. Or, explore these popular research fields:
           </p>
           
           <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", justifyContent: "center", marginBottom: "1rem" }}>
             {["Machine Learning", "Bio-Ethics", "Computer Science"].map((field) => (
               <Link key={field} href={`/professors?expertise=${encodeURIComponent(field)}`} style={{ textDecoration: "none" }}>
-                <span style={{ padding: "0.35rem 0.85rem", border: "1px solid rgba(37, 99, 235, 0.15)", background: "rgba(37, 99, 235, 0.03)", borderRadius: "100px", fontSize: "0.7rem", fontWeight: 500, color: "var(--accent)" }}>
+                <span style={{ padding: "0.4rem 0.9rem", border: "1px solid rgba(0, 140, 187, 0.3)", background: "rgba(0, 140, 187, 0.08)", borderRadius: "100px", fontSize: "0.72rem", fontWeight: 600, color: "#008CBB" }}>
                   {field}
                 </span>
               </Link>
@@ -142,7 +142,7 @@ export default async function ProfessorsPage({ searchParams }: ProfessorsPagePro
           </div>
 
           <Link href="/professors" style={{ textDecoration: "none" }}>
-            <div style={{ padding: "0.75rem 1.75rem", border: "1px solid rgba(15, 23, 42, 0.15)", borderRadius: "100px", fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.7)", fontFamily: "var(--font-sans)", cursor: "pointer" }}>
+            <div style={{ padding: "0.75rem 1.75rem", border: "2px solid #008CBB", background: "#008CBB", borderRadius: "100px", fontSize: "0.6rem", fontWeight: 800, letterSpacing: "0.18em", textTransform: "uppercase", color: "#ffffff", fontFamily: "var(--font-sans)", cursor: "pointer", boxShadow: "0 4px 14px rgba(0, 140, 187, 0.2)" }}>
               Reset Filters
             </div>
           </Link>
