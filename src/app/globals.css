@@ -1162,3 +1162,72 @@ body {
   transform: scale(0.97) translateY(0);
   box-shadow: none;
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   LP FOOTER STYLING
+   ═══════════════════════════════════════════════════════════════ */
+.lp-footer {
+  width: 100%;
+  border-top: 1px solid var(--border);
+  background: var(--bg-base);
+  padding: 2.75rem 1.5rem;
+}
+
+.lp-footer-inner {
+  max-width: 80rem;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+  .lp-footer-inner {
+    flex-direction: row;
+  }
+}
+
+.lp-footer-logo {
+  display: flex;
+  align-items: center;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+}
+
+.lp-footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem 1.75rem;
+}
+
+.lp-footer-links a {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-decoration: none;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.lp-footer-links a:hover {
+  color: var(--accent);
+}
+
+.lp-footer-copy {
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 400;
+  color: var(--text-tertiary);
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
