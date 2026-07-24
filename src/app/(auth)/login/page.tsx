@@ -35,11 +35,11 @@ function Field({
         htmlFor={id}
         style={{
           display: "block",
-          fontSize: "0.6rem",
-          fontWeight: 700,
+          fontSize: "0.62rem",
+          fontWeight: 800,
           letterSpacing: "0.22em",
           textTransform: "uppercase",
-          color: focused ? "rgba(15, 23, 42, 0.65)" : "rgba(15, 23, 42, 0.3)",
+          color: focused ? "#008CBB" : "#141005",
           marginBottom: "0.6rem",
           transition: "color 0.25s",
           fontFamily: "var(--font-sans)",
@@ -58,17 +58,17 @@ function Field({
           onBlur={() => setFocused(false)}
           style={{
             width: "100%",
-            background: "rgba(15, 23, 42, 0.02)",
-            border: `1px solid ${focused ? "rgba(79, 70, 229, 0.5)" : "rgba(15, 23, 42, 0.1)"}`,
+            background: "rgba(255, 255, 255, 0.9)",
+            border: `1.5px solid ${focused ? "#008CBB" : "rgba(161, 197, 209, 0.5)"}`,
             borderRadius: "100px",
-            padding: "0.95rem 1.75rem",
+            padding: "1rem 1.75rem",
             fontSize: "0.95rem",
-            color: "var(--text-primary)",
+            color: "#141005",
             outline: "none",
             transition: "all 0.3s cubic-bezier(0.22, 1, 0.36, 1)",
             fontFamily: "var(--font-sans)",
             letterSpacing: "0.01em",
-            boxShadow: focused ? "0 0 0 3px rgba(79, 70, 229, 0.12)" : "none",
+            boxShadow: focused ? "0 0 0 4px rgba(0, 140, 187, 0.15)" : "none",
           }}
         />
         {suffix && (

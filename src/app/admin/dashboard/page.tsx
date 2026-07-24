@@ -19,24 +19,29 @@ function StatCard({
   return (
     <div
       style={{
-        padding: "2rem",
-        border: `1px solid ${accent ? `${accent}18` : "rgba(15, 23, 42,0.07)"}`,
+        padding: "2.25rem 2.5rem",
+        border: "1px solid rgba(161, 197, 209, 0.45)",
         borderRadius: "14px",
-        background: accent ? `${accent}06` : "rgba(15, 23, 42,0.025)",
+        background: "rgba(161, 197, 209, 0.12)",
         display: "flex", flexDirection: "column", gap: "0.5rem",
       }}
     >
       <span
         className="font-display"
-        style={{ fontSize: "2.8rem", fontWeight: 900, color: accent ?? "var(--text-primary)", letterSpacing: "-0.04em", lineHeight: 1 }}
+        style={{ fontSize: "2.8rem", fontWeight: 900, color: "#141005", letterSpacing: "-0.04em", lineHeight: 1 }}
       >
         {value}
       </span>
       <div>
-        <div style={{ fontSize: "0.78rem", fontWeight: 600, color: "rgba(15, 23, 42,0.7)", fontFamily: "var(--font-sans)" }}>
+        <div style={{ fontSize: "0.82rem", fontWeight: 700, color: "#141005", fontFamily: "var(--font-sans)", lineHeight: 1.4 }}>
           {label}
         </div>
-        <div style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(15, 23, 42,0.22)", fontFamily: "var(--font-sans, monospace)", marginTop: "0.2rem" }}>
+        <div style={{
+          display: "inline-block", fontSize: "0.58rem", fontWeight: 800, letterSpacing: "0.2em",
+          textTransform: "uppercase", color: "#141005", background: "#FFC20F",
+          padding: "0.25rem 0.75rem", borderRadius: "100px", width: "fit-content", marginTop: "0.5rem",
+          fontFamily: "var(--font-sans, monospace)", border: "1px solid rgba(255, 194, 15, 0.6)"
+        }}>
           {sub}
         </div>
       </div>
@@ -84,55 +89,61 @@ export default async function AdminDashboard() {
 
   return (
     <AdminShell>
-      {/* ── Page header ── */}
-      <div style={{ marginBottom: "2.5rem" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", marginBottom: "0.75rem" }}>
-          <span style={{ width: "1.25rem", height: "1px", background: "rgba(15, 23, 42,0.2)", display: "block" }} />
-          <span style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(15, 23, 42,0.3)", fontFamily: "var(--font-sans, monospace)" }}>
-            Internal Systems
-          </span>
-        </div>
-        <h1 className="font-display" style={{ fontSize: "clamp(2.6rem, 4vw, 3.5rem)", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.035em", lineHeight: 1.05 }}>
-          Admin <em style={{ fontStyle: "italic", color: "rgba(15, 23, 42,0.3)" }}>Overview</em>
-        </h1>
-        <p style={{ fontSize: "0.95rem", color: "rgba(15, 23, 42,0.38)", fontWeight: 300, maxWidth: "38rem", lineHeight: 1.8, fontFamily: "var(--font-sans)", marginTop: "0.5rem" }}>
-          Platform health at a glance. Manage the verification queue, user accounts, and mentorship activity.
-        </p>
-        <AdminPreviewControls />
-      </div>
-
-      {/* ── Stats ── */}
-      <div className="dash-stat-grid" style={{ marginBottom: "2.5rem" }}>
-        <StatCard value={totalActive}              label="Active Accounts" sub="Students + Faculty" accent="#4ade80" />
-        <StatCard value={studentCount ?? 0}        label="Students"        sub="Registered"          accent="var(--accent)" />
-        <StatCard value={facultyCount ?? 0}        label="Faculty"         sub="Verified"            accent="#60a5fa" />
-        <StatCard value={activeThreadsCount ?? 0}  label="Active Threads"  sub="System-wide"         accent="#a78bfa" />
-      </div>
-
-      {/* ── Hairline ── */}
-      <div style={{ height: "1px", background: "rgba(15, 23, 42,0.06)", marginBottom: "2.5rem" }} />
-
-      {/* ── Verification queue ── */}
-      <section style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "0.65rem" }}>
-          <span style={{ width: "1rem", height: "1px", background: "rgba(15, 23, 42,0.2)", display: "block" }} />
-          <h2 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "rgba(15, 23, 42,0.85)", letterSpacing: "-0.025em" }}>
-            Verification Queue
-          </h2>
-          <span style={{ marginLeft: "auto", fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(15, 23, 42,0.25)", fontFamily: "var(--font-sans, monospace)" }}>
-            {pendingProfessors?.length ?? 0} pending
-          </span>
-        </div>
-        {(pendingProfessors?.length ?? 0) === 0 ? (
-          <div style={{ padding: "2.5rem 1.5rem", borderRadius: "12px", border: "1px solid rgba(15, 23, 42,0.05)", background: "rgba(15, 23, 42,0.01)", textAlign: "center" }}>
-            <div style={{ fontSize: "0.7rem", color: "rgba(15, 23, 42,0.2)", fontFamily: "var(--font-sans)", letterSpacing: "0.05em" }}>
-              All caught up — no pending reviews.
-            </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: "3.5rem" }}>
+        {/* ── Page header ── */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+            <span style={{ width: "1.5rem", height: "2px", background: "#FFC20F", display: "block" }} />
+            <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: "#008CBB", fontFamily: "var(--font-sans, monospace)" }}>
+              Internal Systems
+            </span>
           </div>
-        ) : (
-          <AdminReviewTable applicants={(pendingProfessors ?? []) as any} />
-        )}
-      </section>
+          <h1 className="font-display" style={{ fontSize: "clamp(2.4rem, 4.5vw, 3.6rem)", fontWeight: 900, color: "#141005", letterSpacing: "-0.035em", lineHeight: 1.1 }}>
+            Admin <em style={{ fontStyle: "italic", color: "#008CBB", fontWeight: 300 }}>Overview</em>
+          </h1>
+          <p style={{ fontSize: "0.95rem", color: "#3b3527", opacity: 0.75, fontWeight: 400, maxWidth: "38rem", lineHeight: 1.8, fontFamily: "var(--font-sans)", marginTop: "0.25rem" }}>
+            Platform health at a glance. Manage the verification queue, user accounts, and mentorship activity.
+          </p>
+          <AdminPreviewControls />
+        </div>
+
+        {/* ── Stats ── */}
+        <div className="dash-stat-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1.25rem" }}>
+          <StatCard value={totalActive}              label="Active Accounts" sub="Students + Faculty" accent="#008CBB" />
+          <StatCard value={studentCount ?? 0}        label="Students"        sub="Registered"          accent="#008CBB" />
+          <StatCard value={facultyCount ?? 0}        label="Faculty"         sub="Verified"            accent="#008CBB" />
+          <StatCard value={activeThreadsCount ?? 0}  label="Active Threads"  sub="System-wide"         accent="#008CBB" />
+        </div>
+
+        {/* ── Hairline ── */}
+        <div style={{ height: "1px", background: "rgba(161, 197, 209, 0.4)" }} />
+
+        {/* ── Verification queue ── */}
+        <section style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+            <span style={{ width: "1rem", height: "2px", background: "#FFC20F", display: "block" }} />
+            <h2 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "#141005", letterSpacing: "-0.025em" }}>
+              Verification Queue
+            </h2>
+            <span style={{
+              marginLeft: "auto", fontSize: "0.6rem", fontWeight: 800, letterSpacing: "0.22em",
+              textTransform: "uppercase", color: "#141005", background: "rgba(255, 194, 15, 0.35)",
+              padding: "0.3rem 0.8rem", borderRadius: "100px", fontFamily: "var(--font-sans, monospace)"
+            }}>
+              {pendingProfessors?.length ?? 0} pending
+            </span>
+          </div>
+          {(pendingProfessors?.length ?? 0) === 0 ? (
+            <div style={{ padding: "3rem 2rem", borderRadius: "16px", border: "1px dashed rgba(161, 197, 209, 0.6)", background: "rgba(255, 255, 255, 0.7)", textAlign: "center" }}>
+              <div style={{ fontSize: "0.85rem", color: "#3b3527", opacity: 0.75, fontFamily: "var(--font-sans)", letterSpacing: "0.02em" }}>
+                All caught up — no pending reviews.
+              </div>
+            </div>
+          ) : (
+            <AdminReviewTable applicants={(pendingProfessors ?? []) as any} />
+          )}
+        </section>
+      </div>
     </AdminShell>
   );
 }

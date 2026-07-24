@@ -57,44 +57,51 @@ export default async function ProfStudentsPage() {
   const pastStudents   = (allRequests || []).filter((r) => r.status === "closed").map(process);
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "5rem" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "3.5rem" }}>
 
       {/* ── Header ── */}
       <header style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <span style={{ width: "1.5rem", height: "1px", background: "rgba(15, 23, 42, 0.2)", display: "block" }} />
-          <span style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.3)", fontFamily: "var(--font-sans, monospace)" }}>
+          <span style={{ width: "1.5rem", height: "2px", background: "#FFC20F", display: "block" }} />
+          <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: "#008CBB", fontFamily: "var(--font-sans, monospace)" }}>
             Faculty Portal
           </span>
         </div>
-        <h1 className="font-display" style={{ fontSize: "clamp(2.6rem, 5vw, 4rem)", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.035em", lineHeight: 1.05 }}>
+        <h1 className="font-display" style={{ fontSize: "clamp(2.4rem, 4.5vw, 3.6rem)", fontWeight: 900, color: "#141005", letterSpacing: "-0.035em", lineHeight: 1.1 }}>
           Dr. {displayName}&apos;s{" "}
-          <em style={{ fontStyle: "italic", color: "rgba(15, 23, 42, 0.35)" }}>students</em>
+          <em style={{ fontStyle: "italic", color: "#008CBB", fontWeight: 300 }}>students</em>
         </h1>
-        <p style={{ fontSize: "0.95rem", color: "rgba(15, 23, 42, 0.4)", fontWeight: 300, maxWidth: "42rem", lineHeight: 1.8, fontFamily: "var(--font-sans)", marginTop: "0.25rem" }}>
+        <p style={{ fontSize: "0.95rem", color: "#3b3527", opacity: 0.75, fontWeight: 400, maxWidth: "42rem", lineHeight: 1.8, fontFamily: "var(--font-sans)", marginTop: "0.25rem" }}>
           An overview of every student you&apos;re currently mentoring and those you&apos;ve guided in the past.
         </p>
       </header>
 
       {/* ── Stats strip ── */}
-      <div style={{ display: "flex", gap: "1.5rem", flexWrap: "wrap" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1.25rem" }}>
         {[
           { value: activeStudents.length + pastStudents.length, label: "Total Students", sub: "All Time" },
           { value: activeStudents.length, label: "Active",  sub: "Currently Mentoring" },
           { value: pastStudents.length,   label: "Alumni",  sub: "Completed Sessions" },
         ].map(({ value, label, sub }) => (
           <div key={label} style={{
-            padding: "1.25rem 1.75rem",
-            border: "1px solid rgba(15, 23, 42, 0.07)",
+            padding: "2.25rem 2.5rem",
+            border: "1px solid rgba(161, 197, 209, 0.45)",
             borderRadius: "14px",
-            background: "rgba(15, 23, 42, 0.025)",
-            display: "flex", flexDirection: "column", gap: "0.35rem", minWidth: "9rem",
+            background: "rgba(161, 197, 209, 0.12)",
+            display: "flex", flexDirection: "column", gap: "0.5rem",
           }}>
-            <span className="font-display" style={{ fontSize: "2.4rem", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.04em", lineHeight: 1 }}>
+            <span className="font-display" style={{ fontSize: "2.8rem", fontWeight: 900, color: "#141005", letterSpacing: "-0.04em", lineHeight: 1 }}>
               {value}
             </span>
-            <div style={{ fontSize: "0.75rem", fontWeight: 600, color: "rgba(15, 23, 42, 0.65)", fontFamily: "var(--font-sans)" }}>{label}</div>
-            <div style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.22)", fontFamily: "var(--font-sans, monospace)" }}>{sub}</div>
+            <div style={{ fontSize: "0.82rem", fontWeight: 700, color: "#141005", fontFamily: "var(--font-sans)", lineHeight: 1.4 }}>{label}</div>
+            <div style={{
+              display: "inline-block", fontSize: "0.58rem", fontWeight: 800, letterSpacing: "0.2em",
+              textTransform: "uppercase", color: "#141005", background: "#FFC20F",
+              padding: "0.25rem 0.75rem", borderRadius: "100px", width: "fit-content", marginTop: "0.5rem",
+              fontFamily: "var(--font-sans, monospace)", border: "1px solid rgba(255, 194, 15, 0.6)"
+            }}>
+              {sub}
+            </div>
           </div>
         ))}
       </div>
