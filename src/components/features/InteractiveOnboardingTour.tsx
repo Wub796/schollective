@@ -262,176 +262,325 @@ export function InteractiveOnboardingTour({ role, steps }: InteractiveOnboarding
         />
       )}
 
-      {/* ─── Welcome Splash Card (Anchored high & fits fully on screen) ────── */}
+      {/* ─── Welcome Splash Card (Centered) ───────────────────────── */}
       <AnimatePresence>
         {isWelcome && (
-          <motion.div
-            key="tour-welcome-card"
-            initial={{ opacity: 0, scale: 0.96 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.96 }}
-            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+          <div
             style={{
               position: "fixed",
-              top: "clamp(2rem, 8vh, 4.5rem)",
-              left: "50%",
-              transform: "translateX(-50%)",
-              width: "calc(100vw - 32px)",
-              maxWidth: "430px",
-              maxHeight: "calc(100vh - 4rem)",
-              overflowY: "auto",
-              background: "#ffffff",
-              borderRadius: "20px",
-              padding: "1.75rem 1.75rem 1.5rem",
-              boxShadow:
-                "0 25px 60px rgba(15, 23, 42, 0.35), 0 0 0 1px rgba(99, 102, 241, 0.2)",
+              inset: 0,
               display: "flex",
-              flexDirection: "column",
               alignItems: "center",
-              gap: "1rem",
+              justifyContent: "center",
+              padding: "1.5rem",
               zIndex: 10000,
-              textAlign: "center",
-              fontFamily: "var(--font-sans)",
+              pointerEvents: "none",
             }}
           >
-            {/* Top accent */}
-            <div
+            <motion.div
+              key="tour-welcome-card"
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.96 }}
+              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
               style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                right: 0,
-                height: "4px",
-                background: "linear-gradient(90deg, #4f46e5, #6366f1, #818cf8, #6366f1, #4f46e5)",
-                borderRadius: "20px 20px 0 0",
-              }}
-            />
-
-            {/* Skip button */}
-            <button
-              type="button"
-              onClick={handleSkip}
-              style={{
-                position: "absolute",
-                top: "0.85rem",
-                right: "0.85rem",
-                background: "none",
-                border: "none",
-                color: "#94a3b8",
-                cursor: "pointer",
-                padding: "0.3rem",
-                borderRadius: "6px",
+                pointerEvents: "auto",
+                width: "100%",
+                maxWidth: "430px",
+                maxHeight: "calc(100vh - 3rem)",
+                overflowY: "auto",
+                background: "#ffffff",
+                borderRadius: "20px",
+                padding: "2rem 1.75rem 1.75rem",
+                boxShadow:
+                  "0 25px 60px rgba(15, 23, 42, 0.35), 0 0 0 1px rgba(99, 102, 241, 0.2)",
                 display: "flex",
+                flexDirection: "column",
                 alignItems: "center",
-                justifyContent: "center",
-              }}
-              title="Skip Tour"
-            >
-              <X size={18} />
-            </button>
-
-            {/* Static Rocket Icon */}
-            <div
-              style={{
-                width: "50px",
-                height: "50px",
-                borderRadius: "14px",
-                background: "#4f46e5",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                marginTop: "0.25rem",
+                gap: "1rem",
+                textAlign: "center",
+                fontFamily: "var(--font-sans)",
+                position: "relative",
               }}
             >
-              <Rocket size={24} color="#ffffff" />
-            </div>
-
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}>
-              <span
+              {/* Top accent */}
+              <div
                 style={{
-                  fontSize: "0.58rem",
-                  fontWeight: 800,
-                  letterSpacing: "0.2em",
-                  textTransform: "uppercase",
-                  color: "#4f46e5",
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: "4px",
+                  background: "linear-gradient(90deg, #4f46e5, #6366f1, #818cf8, #6366f1, #4f46e5)",
+                  borderRadius: "20px 20px 0 0",
                 }}
-              >
-                {roleEmoji} {roleLabel} Quickstart Tour
-              </span>
-              <h2
-                className="font-display"
-                style={{
-                  fontSize: "1.45rem",
-                  fontWeight: 900,
-                  color: "#0f172a",
-                  letterSpacing: "-0.03em",
-                  lineHeight: 1.2,
-                  margin: 0,
-                }}
-              >
-                Welcome to Schollective
-              </h2>
-            </div>
+              />
 
-            <p
-              style={{
-                fontSize: "0.84rem",
-                color: "#475569",
-                lineHeight: 1.55,
-                margin: 0,
-                maxWidth: "340px",
-              }}
-            >
-              {role === "student"
-                ? "Let's take a quick tour of your dashboard. We'll show you how to build your profile, preview the faculty view, and connect with mentors."
-                : "Let's walk through your faculty dashboard. We'll cover student requests, setting availability, and customizing your research focus."}
-            </p>
-
-            {/* Step count badge */}
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "0.35rem",
-                fontSize: "0.7rem",
-                color: "#64748b",
-                fontWeight: 600,
-              }}
-            >
-              <Sparkles size={13} color="#4f46e5" />
-              <span>{steps.length} interactive steps · ~1 min</span>
-            </div>
-
-            {/* Action buttons */}
-            <div style={{ display: "flex", gap: "0.65rem", marginTop: "0.25rem", width: "100%" }}>
+              {/* Skip button */}
               <button
                 type="button"
                 onClick={handleSkip}
                 style={{
-                  flex: 1,
-                  padding: "0.65rem",
-                  borderRadius: "8px",
-                  border: "1px solid #cbd5e1",
-                  background: "#ffffff",
-                  fontSize: "0.8rem",
-                  fontWeight: 600,
-                  color: "#475569",
+                  position: "absolute",
+                  top: "0.85rem",
+                  right: "0.85rem",
+                  background: "none",
+                  border: "none",
+                  color: "#94a3b8",
                   cursor: "pointer",
-                  fontFamily: "var(--font-sans)",
+                  padding: "0.3rem",
+                  borderRadius: "6px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+                title="Skip Tour"
+              >
+                <X size={18} />
+              </button>
+
+              {/* Static Rocket Icon */}
+              <div
+                style={{
+                  width: "50px",
+                  height: "50px",
+                  borderRadius: "14px",
+                  background: "#4f46e5",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginTop: "0.25rem",
                 }}
               >
-                Skip for now
-              </button>
+                <Rocket size={24} color="#ffffff" />
+              </div>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}>
+                <span
+                  style={{
+                    fontSize: "0.58rem",
+                    fontWeight: 800,
+                    letterSpacing: "0.2em",
+                    textTransform: "uppercase",
+                    color: "#4f46e5",
+                  }}
+                >
+                  {roleEmoji} {roleLabel} Quickstart Tour
+                </span>
+                <h2
+                  className="font-display"
+                  style={{
+                    fontSize: "1.45rem",
+                    fontWeight: 900,
+                    color: "#0f172a",
+                    letterSpacing: "-0.03em",
+                    lineHeight: 1.2,
+                    margin: 0,
+                  }}
+                >
+                  Welcome to Schollective
+                </h2>
+              </div>
+
+              <p
+                style={{
+                  fontSize: "0.84rem",
+                  color: "#475569",
+                  lineHeight: 1.55,
+                  margin: 0,
+                  maxWidth: "340px",
+                }}
+              >
+                {role === "student"
+                  ? "Let's take a quick tour of your dashboard. We'll show you how to build your profile, preview the faculty view, and connect with mentors."
+                  : "Let's walk through your faculty dashboard. We'll cover student requests, setting availability, and customizing your research focus."}
+              </p>
+
+              {/* Step count badge */}
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.35rem",
+                  fontSize: "0.7rem",
+                  color: "#64748b",
+                  fontWeight: 600,
+                }}
+              >
+                <Sparkles size={13} color="#4f46e5" />
+                <span>{steps.length} interactive steps · ~1 min</span>
+              </div>
+
+              {/* Action buttons */}
+              <div style={{ display: "flex", gap: "0.65rem", marginTop: "0.25rem", width: "100%" }}>
+                <button
+                  type="button"
+                  onClick={handleSkip}
+                  style={{
+                    flex: 1,
+                    padding: "0.65rem",
+                    borderRadius: "8px",
+                    border: "1px solid #cbd5e1",
+                    background: "#ffffff",
+                    fontSize: "0.8rem",
+                    fontWeight: 600,
+                    color: "#475569",
+                    cursor: "pointer",
+                    fontFamily: "var(--font-sans)",
+                  }}
+                >
+                  Skip for now
+                </button>
+                <button
+                  type="button"
+                  onClick={handleNext}
+                  style={{
+                    flex: 1.4,
+                    padding: "0.65rem",
+                    borderRadius: "8px",
+                    border: "none",
+                    background: "#4f46e5",
+                    fontSize: "0.8rem",
+                    fontWeight: 700,
+                    color: "#ffffff",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "0.45rem",
+                    fontFamily: "var(--font-sans)",
+                  }}
+                >
+                  Start Tour <ArrowRight size={14} />
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* ─── Completion Screen (Centered) ─────────────────────────── */}
+      <AnimatePresence>
+        {isComplete && (
+          <div
+            style={{
+              position: "fixed",
+              inset: 0,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: "1.5rem",
+              zIndex: 10000,
+              pointerEvents: "none",
+            }}
+          >
+            <motion.div
+              key="tour-complete-card"
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.96 }}
+              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+              style={{
+                pointerEvents: "auto",
+                width: "100%",
+                maxWidth: "430px",
+                maxHeight: "calc(100vh - 3rem)",
+                overflowY: "auto",
+                background: "#ffffff",
+                borderRadius: "20px",
+                padding: "2rem 1.75rem 1.75rem",
+                boxShadow:
+                  "0 25px 60px rgba(15, 23, 42, 0.35), 0 0 0 1px rgba(16, 185, 129, 0.25)",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: "1rem",
+                textAlign: "center",
+                fontFamily: "var(--font-sans)",
+                position: "relative",
+              }}
+            >
+              {/* Top accent */}
+              <div
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: "4px",
+                  background: "linear-gradient(90deg, #10b981, #34d399, #6ee7b7, #34d399, #10b981)",
+                  borderRadius: "20px 20px 0 0",
+                }}
+              />
+
+              {/* Static Party Popper Icon */}
+              <div
+                style={{
+                  width: "50px",
+                  height: "50px",
+                  borderRadius: "14px",
+                  background: "#10b981",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginTop: "0.25rem",
+                }}
+              >
+                <PartyPopper size={24} color="#ffffff" />
+              </div>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}>
+                <span
+                  style={{
+                    fontSize: "0.58rem",
+                    fontWeight: 800,
+                    letterSpacing: "0.2em",
+                    textTransform: "uppercase",
+                    color: "#10b981",
+                  }}
+                >
+                  🎉 Tour Complete!
+                </span>
+                <h2
+                  className="font-display"
+                  style={{
+                    fontSize: "1.45rem",
+                    fontWeight: 900,
+                    color: "#0f172a",
+                    letterSpacing: "-0.03em",
+                    lineHeight: 1.2,
+                    margin: 0,
+                  }}
+                >
+                  You&apos;re All Set!
+                </h2>
+              </div>
+
+              <p
+                style={{
+                  fontSize: "0.84rem",
+                  color: "#475569",
+                  lineHeight: 1.55,
+                  margin: 0,
+                  maxWidth: "340px",
+                }}
+              >
+                {role === "student"
+                  ? "Your dashboard is ready. Complete your research profile, use AI review for feedback, and start reaching out to professors!"
+                  : "Your faculty dashboard is ready. Set your availability, review incoming requests, and fine-tune your research profile!"}
+              </p>
+
+              {/* Action button */}
               <button
                 type="button"
-                onClick={handleNext}
+                onClick={handleComplete}
                 style={{
-                  flex: 1.4,
-                  padding: "0.65rem",
+                  width: "100%",
+                  padding: "0.75rem",
                   borderRadius: "8px",
                   border: "none",
-                  background: "#4f46e5",
-                  fontSize: "0.8rem",
+                  background: "#10b981",
+                  fontSize: "0.85rem",
                   fontWeight: 700,
                   color: "#ffffff",
                   cursor: "pointer",
@@ -442,139 +591,10 @@ export function InteractiveOnboardingTour({ role, steps }: InteractiveOnboarding
                   fontFamily: "var(--font-sans)",
                 }}
               >
-                Start Tour <ArrowRight size={14} />
+                <Check size={16} /> Let&apos;s Go!
               </button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* ─── Completion Screen (Anchored high & fits fully on screen) ──────── */}
-      <AnimatePresence>
-        {isComplete && (
-          <motion.div
-            key="tour-complete-card"
-            initial={{ opacity: 0, scale: 0.96 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.96 }}
-            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-            style={{
-              position: "fixed",
-              top: "clamp(2rem, 8vh, 4.5rem)",
-              left: "50%",
-              transform: "translateX(-50%)",
-              width: "calc(100vw - 32px)",
-              maxWidth: "430px",
-              maxHeight: "calc(100vh - 4rem)",
-              overflowY: "auto",
-              background: "#ffffff",
-              borderRadius: "20px",
-              padding: "1.75rem 1.75rem 1.5rem",
-              boxShadow:
-                "0 25px 60px rgba(15, 23, 42, 0.35), 0 0 0 1px rgba(16, 185, 129, 0.25)",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              gap: "1rem",
-              zIndex: 10000,
-              textAlign: "center",
-              fontFamily: "var(--font-sans)",
-            }}
-          >
-            {/* Top accent */}
-            <div
-              style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                right: 0,
-                height: "4px",
-                background: "linear-gradient(90deg, #10b981, #34d399, #6ee7b7, #34d399, #10b981)",
-                borderRadius: "20px 20px 0 0",
-              }}
-            />
-
-            {/* Static Party Popper Icon */}
-            <div
-              style={{
-                width: "50px",
-                height: "50px",
-                borderRadius: "14px",
-                background: "#10b981",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                marginTop: "0.25rem",
-              }}
-            >
-              <PartyPopper size={24} color="#ffffff" />
-            </div>
-
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}>
-              <span
-                style={{
-                  fontSize: "0.58rem",
-                  fontWeight: 800,
-                  letterSpacing: "0.2em",
-                  textTransform: "uppercase",
-                  color: "#10b981",
-                }}
-              >
-                🎉 Tour Complete!
-              </span>
-              <h2
-                className="font-display"
-                style={{
-                  fontSize: "1.45rem",
-                  fontWeight: 900,
-                  color: "#0f172a",
-                  letterSpacing: "-0.03em",
-                  lineHeight: 1.2,
-                  margin: 0,
-                }}
-              >
-                You&apos;re All Set!
-              </h2>
-            </div>
-
-            <p
-              style={{
-                fontSize: "0.84rem",
-                color: "#475569",
-                lineHeight: 1.55,
-                margin: 0,
-                maxWidth: "340px",
-              }}
-            >
-              {role === "student"
-                ? "Your dashboard is ready. Complete your research profile, use AI review for feedback, and start reaching out to professors!"
-                : "Your faculty dashboard is ready. Set your availability, review incoming requests, and fine-tune your research profile!"}
-            </p>
-
-            {/* Action button */}
-            <button
-              type="button"
-              onClick={handleComplete}
-              style={{
-                width: "100%",
-                padding: "0.75rem",
-                borderRadius: "8px",
-                border: "none",
-                background: "#10b981",
-                fontSize: "0.85rem",
-                fontWeight: 700,
-                color: "#ffffff",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "0.45rem",
-                fontFamily: "var(--font-sans)",
-              }}
-            >
-              <Check size={16} /> Let&apos;s Go!
-            </button>
-          </motion.div>
+            </motion.div>
+          </div>
         )}
       </AnimatePresence>
 
