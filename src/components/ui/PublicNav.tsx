@@ -151,7 +151,7 @@ export function PublicNav() {
               className="group select-none"
             >
               <SchollectiveLogo size={30} />
-              <span className="font-display font-bold text-slate-900 tracking-tight transition-colors group-hover:text-indigo-600" style={{ fontSize: "1.1rem" }}>
+              <span className="font-display font-bold text-[#141005] tracking-tight transition-colors group-hover:text-[#008CBB]" style={{ fontSize: "1.1rem" }}>
                 Schollective
               </span>
             </Link>
@@ -175,7 +175,7 @@ export function PublicNav() {
             {/* Hamburger toggle button */}
             <button
               onClick={() => setMenuOpen(!menuOpen)}
-              className="lg:hidden flex items-center justify-center text-slate-700 hover:text-indigo-600 transition-colors"
+              className="lg:hidden flex items-center justify-center text-[#141005] hover:text-[#008CBB] transition-colors"
               style={{ background: "transparent", border: "none", cursor: "pointer" }}
               aria-label="Toggle menu"
             >
@@ -190,7 +190,7 @@ export function PublicNav() {
             href="/signup"
             variant="primary"
             data-nav-item="true"
-            className={`rounded-full px-8 flex items-center justify-center uppercase tracking-widest text-[0.65rem] font-bold border-none shadow-[0_8px_25px_rgba(79,70,229,0.3)] hover:shadow-[0_12px_32px_rgba(79,70,229,0.4)] transition-all duration-500 ease-out ${
+            className={`rounded-full px-8 flex items-center justify-center uppercase tracking-widest text-[0.65rem] font-bold border-none shadow-[0_8px_25px_rgba(0,140,187,0.3)] hover:shadow-[0_12px_32px_rgba(0,140,187,0.4)] transition-all duration-500 ease-out ${
               scrolled ? "h-[3.8rem]" : "h-[4.4rem]"
             }`}
           >
