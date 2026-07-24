@@ -40,11 +40,11 @@ function Field({
         htmlFor={id}
         style={{
           display: "block",
-          fontSize: "0.6rem",
-          fontWeight: 600,
+          fontSize: "0.62rem",
+          fontWeight: 800,
           letterSpacing: "0.22em",
           textTransform: "uppercase",
-          color: focused ? "rgba(15, 23, 42, 0.65)" : "rgba(15, 23, 42, 0.3)",
+          color: focused ? "#008CBB" : "#141005",
           marginBottom: "0.55rem",
           transition: "color 0.25s",
           fontFamily: "var(--font-sans)",
@@ -59,16 +59,16 @@ function Field({
         onBlur={() => setFocused(false)}
         style={{
           width: "100%",
-          background: "rgba(15, 23, 42, 0.02)",
-          border: `1px solid ${focused ? "rgba(79, 70, 229, 0.4)" : "rgba(15, 23, 42, 0.08)"}`,
+          background: "rgba(255, 255, 255, 0.9)",
+          border: `1.5px solid ${focused ? "#008CBB" : "rgba(161, 197, 209, 0.5)"}`,
           borderRadius: "100px",
-          padding: "0.95rem 1.75rem",
+          padding: "1rem 1.75rem",
           fontSize: "0.95rem",
-          color: "var(--text-primary)",
+          color: "#141005",
           outline: "none",
           transition: "all 0.3s cubic-bezier(0.22, 1, 0.36, 1)",
           fontFamily: "var(--font-sans)",
-          boxShadow: focused ? "0 0 0 3px rgba(79, 70, 229, 0.1)" : "none",
+          boxShadow: focused ? "0 0 0 4px rgba(0, 140, 187, 0.15)" : "none",
         }}
       />
     </div>
@@ -82,7 +82,7 @@ function FieldSelect({ id, name, label, children, required }: {
   const [focused, setFocused] = useState(false);
   return (
     <div>
-      <label htmlFor={id} style={{ display: "block", fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.22em", textTransform: "uppercase", color: focused ? "rgba(15, 23, 42, 0.65)" : "rgba(15, 23, 42, 0.3)", marginBottom: "0.55rem", transition: "color 0.25s", fontFamily: "var(--font-sans)" }}>
+      <label htmlFor={id} style={{ display: "block", fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: focused ? "#008CBB" : "#141005", marginBottom: "0.55rem", transition: "color 0.25s", fontFamily: "var(--font-sans)" }}>
         {label}
       </label>
       <select
@@ -90,19 +90,19 @@ function FieldSelect({ id, name, label, children, required }: {
         onFocus={() => setFocused(true)} onBlur={() => setFocused(false)}
         style={{
           width: "100%",
-          background: "rgba(15, 23, 42, 0.02)",
-          border: `1px solid ${focused ? "rgba(79, 70, 229, 0.4)" : "rgba(15, 23, 42, 0.08)"}`,
+          background: "rgba(255, 255, 255, 0.9)",
+          border: `1.5px solid ${focused ? "#008CBB" : "rgba(161, 197, 209, 0.5)"}`,
           borderRadius: "100px",
-          padding: "0.95rem 2.5rem 0.95rem 1.75rem",
+          padding: "1rem 2.5rem 1rem 1.75rem",
           fontSize: "0.95rem",
-          color: "var(--text-primary)",
+          color: "#141005",
           outline: "none",
           fontFamily: "var(--font-sans)",
           transition: "all 0.3s cubic-bezier(0.22, 1, 0.36, 1)",
           cursor: "pointer",
-          boxShadow: focused ? "0 0 0 3px rgba(79, 70, 229, 0.1)" : "none",
+          boxShadow: focused ? "0 0 0 4px rgba(0, 140, 187, 0.15)" : "none",
           appearance: "none",
-          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='rgba(15, 23, 42,0.3)' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E")`,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%23008CBB' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E")`,
           backgroundRepeat: "no-repeat",
           backgroundPosition: "right 1.5rem center",
         }}

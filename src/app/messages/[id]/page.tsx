@@ -56,13 +56,13 @@ export default async function MessagePage({ params }: MessagePageProps) {
 
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100vh", background: "var(--bg-base)", overflow: "hidden" }}>
+    <div style={{ display: "flex", flexDirection: "column", height: "100vh", background: "transparent", overflow: "hidden" }}>
       {/* Header */}
       <header style={{
         display: "flex", alignItems: "center", justifyContent: "space-between",
-        padding: "0 1.75rem", height: "60px",
-        background: "rgba(255, 255, 255, 0.96)",
-        borderBottom: "1px solid rgba(37, 99, 235, 0.08)",
+        padding: "0 2rem", height: "70px",
+        background: "rgba(255, 255, 255, 0.95)",
+        borderBottom: "1.5px solid rgba(161, 197, 209, 0.5)",
         backdropFilter: "blur(24px)",
         flexShrink: 0, gap: "1rem",
       }}>
@@ -72,10 +72,10 @@ export default async function MessagePage({ params }: MessagePageProps) {
             href={isProfessor ? "/prof/dashboard" : "/dashboard"}
             style={{
               display: "flex", alignItems: "center", justifyContent: "center",
-              width: "2rem", height: "2rem", borderRadius: "8px", flexShrink: 0,
-              border: "1px solid rgba(37, 99, 235, 0.1)",
-              background: "rgba(37, 99, 235, 0.04)",
-              color: "rgba(15, 23, 42, 0.4)",
+              width: "2.2rem", height: "2.2rem", borderRadius: "100px", flexShrink: 0,
+              border: "1px solid rgba(0, 140, 187, 0.3)",
+              background: "rgba(0, 140, 187, 0.08)",
+              color: "#008CBB",
               textDecoration: "none", transition: "all 0.2s",
             }}
           >
@@ -83,23 +83,23 @@ export default async function MessagePage({ params }: MessagePageProps) {
           </Link>
           <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", minWidth: 0 }}>
             <div style={{
-              width: "2rem", height: "2rem", borderRadius: "8px", flexShrink: 0,
-              background: "rgba(37, 99, 235, 0.08)",
-              border: "1px solid rgba(37, 99, 235, 0.18)",
+              width: "2.4rem", height: "2.4rem", borderRadius: "50%", flexShrink: 0,
+              background: "rgba(0, 140, 187, 0.1)",
+              border: "1px solid rgba(0, 140, 187, 0.25)",
               display: "flex", alignItems: "center", justifyContent: "center",
-              fontSize: "0.72rem", fontWeight: 700, color: "rgba(37, 99, 235, 0.9)",
+              fontSize: "0.82rem", fontWeight: 800, color: "#008CBB",
               fontFamily: "var(--font-sans)",
             }}>
               {participant.first_name?.[0] ?? "?"}{participant.last_name?.[0] ?? ""}
             </div>
             <div style={{ minWidth: 0 }}>
               <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
-                <span className="font-display" style={{ fontSize: "0.9rem", fontWeight: 700, color: "var(--text-primary)", letterSpacing: "-0.015em", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                <span className="font-display" style={{ fontSize: "0.95rem", fontWeight: 800, color: "#141005", letterSpacing: "-0.015em", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                   {participantTitle}
                 </span>
-                {participant.role === "professor" && <ShieldCheck size={10} style={{ color: "rgba(37, 99, 235, 0.5)", flexShrink: 0 }} />}
+                {participant.role === "professor" && <ShieldCheck size={12} style={{ color: "#008CBB", flexShrink: 0 }} />}
               </div>
-              <div style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(37, 99, 235, 0.4)", fontFamily: "var(--font-sans, monospace)" }}>
+              <div style={{ fontSize: "0.58rem", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: "#008CBB", fontFamily: "var(--font-sans, monospace)" }}>
                 {participant.role === "professor" ? (participant as any).expertise : "Student"}
               </div>
             </div>
@@ -107,19 +107,19 @@ export default async function MessagePage({ params }: MessagePageProps) {
         </div>
 
         {/* Right: topic + status + close */}
-        <div style={{ display: "flex", alignItems: "center", gap: "0.875rem", flexShrink: 0 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "1rem", flexShrink: 0 }}>
           <div className="hidden md:block" style={{ textAlign: "right" }}>
-            <div style={{ fontSize: "0.48rem", color: "rgba(37, 99, 235, 0.3)", textTransform: "uppercase", letterSpacing: "0.2em", fontWeight: 700, fontFamily: "var(--font-sans, monospace)", marginBottom: "0.15rem" }}>Thread</div>
-            <div className="font-display" style={{ fontSize: "0.78rem", color: "rgba(15, 23, 42, 0.55)", fontStyle: "italic", maxWidth: "240px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+            <div style={{ fontSize: "0.52rem", color: "#008CBB", textTransform: "uppercase", letterSpacing: "0.22em", fontWeight: 800, fontFamily: "var(--font-sans, monospace)", marginBottom: "0.15rem" }}>Topic</div>
+            <div className="font-display" style={{ fontSize: "0.85rem", color: "#141005", fontStyle: "italic", maxWidth: "240px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
               &ldquo;{request.topic}&rdquo;
             </div>
           </div>
           <div style={{
-            padding: "0.2rem 0.65rem", borderRadius: "100px",
-            border: `1px solid ${request.status === "active" ? "rgba(37, 99, 235,0.2)" : "rgba(15, 23, 42,0.07)"}`,
-            background: request.status === "active" ? "rgba(37, 99, 235,0.06)" : "transparent",
-            fontSize: "0.48rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase" as const,
-            color: request.status === "active" ? "rgba(37, 99, 235,0.7)" : "rgba(15, 23, 42,0.25)",
+            padding: "0.3rem 0.85rem", borderRadius: "100px",
+            border: `1px solid ${request.status === "active" ? "rgba(255, 194, 15, 0.6)" : "rgba(20, 16, 5, 0.15)"}`,
+            background: request.status === "active" ? "#FFC20F" : "rgba(20, 16, 5, 0.05)",
+            fontSize: "0.58rem", fontWeight: 800, letterSpacing: "0.2em", textTransform: "uppercase" as const,
+            color: "#141005",
             fontFamily: "var(--font-sans, monospace)",
           }}>
             {request.status}
@@ -128,7 +128,7 @@ export default async function MessagePage({ params }: MessagePageProps) {
         </div>
       </header>
 
-      {/* Chat — fills remaining height, no max-width centering */}
+      {/* Chat — fills remaining height */}
       <main style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column" }}>
         <ChatThread
           requestId={requestId}
