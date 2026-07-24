@@ -50,30 +50,32 @@ export default function TermsPage() {
   ];
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--bg-base)", color: "var(--text-primary)" }}>
+    <div style={{ minHeight: "100vh", background: "transparent", color: "#141005" }}>
       <PublicNav />
 
-      <div style={{ maxWidth: "760px", margin: "0 auto", padding: "12rem 2rem 8rem" }}>
+      <div style={{ maxWidth: "800px", margin: "0 auto", padding: "8rem 2rem 6rem", display: "flex", flexDirection: "column", gap: "2.5rem" }}>
         {/* Eyebrow */}
-        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.75rem" }}>
-          <span style={{ width: "1.5rem", height: "1px", background: "var(--border)", display: "block" }} />
-          <span style={{ fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.38em", textTransform: "uppercase", color: "var(--accent)", fontFamily: "var(--font-sans)" }}>Legal</span>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <span style={{ width: "1.5rem", height: "2px", background: "#FFC20F", display: "block" }} />
+          <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: "#008CBB", fontFamily: "var(--font-sans)" }}>Legal</span>
         </div>
 
-        <h1 className="font-display" style={{ fontSize: "clamp(2.4rem, 5vw, 3.8rem)", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.04em", lineHeight: 0.95, marginBottom: "2rem" }}>
-          Terms of <em style={{ fontStyle: "italic", color: "var(--accent)" }}>Service</em>
-        </h1>
-        <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)", fontFamily: "var(--font-sans)", marginBottom: "4.5rem" }}>
-          Last updated: May 2025
-        </p>
+        <div>
+          <h1 className="font-display" style={{ fontSize: "clamp(2.4rem, 5vw, 3.8rem)", fontWeight: 900, color: "#141005", letterSpacing: "-0.04em", lineHeight: 1.05, marginBottom: "0.75rem" }}>
+            Terms of <em style={{ fontStyle: "italic", color: "#008CBB", fontWeight: 300 }}>Service</em>
+          </h1>
+          <p style={{ fontSize: "0.88rem", color: "#3b3527", opacity: 0.75, fontFamily: "var(--font-sans)" }}>
+            Last updated: May 2025
+          </p>
+        </div>
 
-        <div style={{ height: "1px", background: "var(--border)", marginBottom: "4rem" }} />
+        <div style={{ height: "1px", background: "rgba(161, 197, 209, 0.4)" }} />
 
-        <div style={{ display: "flex", flexDirection: "column", gap: "3.5rem" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "1.75rem" }}>
           {sections.map(({ title, body }) => (
-            <div key={title}>
-              <h2 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 800, color: "var(--text-primary)", letterSpacing: "-0.015em", marginBottom: "1rem" }}>{title}</h2>
-              <p style={{ fontSize: "0.95rem", color: "var(--text-secondary)", lineHeight: 1.85, fontFamily: "var(--font-sans)" }}>{body}</p>
+            <div key={title} style={{ padding: "2rem 2.25rem", border: "1px solid rgba(161, 197, 209, 0.4)", borderRadius: "16px", background: "rgba(255, 255, 255, 0.9)" }}>
+              <h2 className="font-display" style={{ fontSize: "1.25rem", fontWeight: 800, color: "#141005", letterSpacing: "-0.015em", marginBottom: "0.75rem" }}>{title}</h2>
+              <p style={{ fontSize: "0.95rem", color: "#3b3527", opacity: 0.8, lineHeight: 1.8, fontFamily: "var(--font-sans)" }}>{body}</p>
             </div>
           ))}
         </div>
