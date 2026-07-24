@@ -173,7 +173,7 @@ export function PublicNav() {
                 href="/signup"
                 variant="primary"
                 data-nav-item="true"
-                className="h-full !py-0 px-8 rounded-l-full rounded-r-none border-none flex items-center justify-center uppercase tracking-widest text-[0.65rem] transition-colors duration-200"
+                className="!py-3 px-8 rounded-l-full rounded-r-none border-none flex items-center justify-center uppercase tracking-widest text-[0.65rem] transition-colors duration-200"
                 style={{ borderRadius: "9999px 0 0 9999px" }}
               >
                 Get Started →

@@ -3,6 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { PublicNav } from "@/components/ui/PublicNav";
+import { PublicFooter } from "@/components/ui/PublicFooter";
 
 export default function PrivacyPage() {
   const sections = [
@@ -76,12 +77,9 @@ export default function PrivacyPage() {
             </div>
           ))}
         </div>
-
-        <div style={{ height: "1px", background: "var(--border)", marginTop: "5rem", marginBottom: "2rem" }} />
-        <p style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--text-tertiary)", fontFamily: "var(--font-sans)" }}>
-          © 2025 Schollective · <Link href="/terms" style={{ color: "var(--accent)", textDecoration: "none" }}>Terms of Service</Link>
-        </p>
       </div>
+
+      <PublicFooter />
     </div>
   );
 }
