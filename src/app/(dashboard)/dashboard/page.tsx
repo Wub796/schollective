@@ -13,7 +13,7 @@ export const dynamic = "force-dynamic";
 
 function StatCard({ value, label, sub }: { value: string | number; label: string; sub: string }) {
   return (
-    <div className="p-8 border border-blue-600/8 rounded-[14px] bg-blue-600/[0.03] flex flex-col gap-2">
+    <div className="px-10 py-9 border border-blue-600/8 rounded-[14px] bg-blue-600/[0.03] flex flex-col gap-2">
       <span className="font-display text-[2.8rem] font-black text-[var(--text-primary)] tracking-[-0.04em] leading-none">
         {value}
       </span>
