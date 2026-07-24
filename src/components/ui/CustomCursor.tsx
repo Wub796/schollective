@@ -24,7 +24,11 @@ type TargetRect = {
 function getMode(target: HTMLElement): CursorMode {
   if (target.closest("[data-cursor-hide]")) return "hide";
   if (target.tagName === "CANVAS") return "hover-canvas";
-  if (target.tagName === "BUTTON" || target.closest("button")) return "hover-button";
+  if (
+    target.tagName === "BUTTON" ||
+    target.closest("button, [role='button'], [data-cursor-engulf]")
+  )
+    return "hover-button";
   if (
     target.tagName === "A" ||
     target.closest("a") ||
@@ -368,7 +372,7 @@ export function CustomCursor() {
       setMode(newMode);
 
       if (newMode === "hover-button") {
-        const el = target.closest("button, [role='button']");
+        const el = target.closest("button, [role='button'], [data-cursor-engulf]");
         if (el) {
           hoveredEl.current = el;
           setTargetRect(getTargetRect(el));
