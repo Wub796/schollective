@@ -191,7 +191,7 @@ export default function ForProfessorsPage() {
                 <h2 className="font-display font-black text-[clamp(2rem,3vw,2.8rem)] tracking-[-0.04em] text-[#141005] leading-tight">
                   Ready to make an impact?
                 </h2>
-                <p className="text-[1rem] text-[#3b3527]/80 leading-relaxed max-w-[480px] mx-auto font-sans">
+                <p className="text-[1rem] text-[#3b3527]/80 leading-relaxed max-w-[480px] mx-auto font-sans text-center">
                   Apply today. Manual verification means the students you meet have already been filtered for seriousness of purpose.
                 </p>
               </div>

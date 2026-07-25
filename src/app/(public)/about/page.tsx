@@ -154,7 +154,7 @@ export default function AboutPage() {
                 <h2 className="font-display font-black text-[clamp(2rem,3vw,2.8rem)] tracking-[-0.04em] text-[#141005] leading-tight">
                   Ready to connect?
                 </h2>
-                <p className="text-[1rem] text-[#3b3527]/80 leading-relaxed max-w-[480px] mx-auto font-sans">
+                <p className="text-[1rem] text-[#3b3527]/80 leading-relaxed max-w-[480px] mx-auto font-sans text-center">
                   Join the platform where serious students meet verified professors.
                 </p>
               </div>
