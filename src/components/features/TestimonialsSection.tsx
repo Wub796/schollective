@@ -107,8 +107,8 @@ export function TestimonialsSection() {
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = "translateY(-4px)";
-                e.currentTarget.style.borderColor = "rgba(99, 102, 241, 0.2)";
-                e.currentTarget.style.boxShadow = "0 12px 30px rgba(99, 102, 241, 0.05)";
+                e.currentTarget.style.borderColor = "rgba(0, 140, 187, 0.2)";
+                e.currentTarget.style.boxShadow = "0 12px 30px rgba(0, 140, 187, 0.05)";
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = "none";

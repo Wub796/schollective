@@ -148,9 +148,9 @@ function ProfessorDetail({
           /* Logged out: Sign up CTA */
           <div style={{
             padding: "2.5rem 2rem",
-            border: "1px solid rgba(99, 102, 241, 0.15)",
+            border: "1px solid rgba(0, 140, 187, 0.15)",
             borderRadius: "16px",
-            background: "rgba(99, 102, 241, 0.02)",
+            background: "rgba(0, 140, 187, 0.02)",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",

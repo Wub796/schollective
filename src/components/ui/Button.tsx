@@ -44,7 +44,7 @@ const Button = React.forwardRef<HTMLElement, ButtonProps>(
     const isString = typeof children === "string";
     const chars = isString ? (children as string).split("") : [];
 
-    const layer2Color = variant === "primary" ? "#ffffff" : "#4f46e5";
+    const layer2Color = variant === "primary" ? "#ffffff" : "#008CBB";
 
     const rollContent = isString ? (
       <>
