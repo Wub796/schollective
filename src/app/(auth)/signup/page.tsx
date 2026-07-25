@@ -248,21 +248,21 @@ function SignupContent() {
           display: "flex", alignItems: "center", gap: "2rem",
           background: "rgba(253, 253, 253, 0.85)",
           backdropFilter: "blur(20px)",
-          border: "1.5px solid rgba(79, 70, 229, 0.15)",
+          border: "1.5px solid rgba(0, 140, 187, 0.15)",
           borderRadius: "100px",
           padding: "0.6rem 1.6rem",
           boxShadow: "0 4px 30px rgba(0, 0, 0, 0.03)",
         }}>
           <Link href="/" style={{ textDecoration: "none" }}>
-            <span className="font-display hover:text-indigo-600 transition-colors" style={{ fontSize: "0.95rem", fontWeight: 800, color: "var(--text-primary)", letterSpacing: "-0.02em" }}>
+            <span className="font-display hover:text-[#008CBB] transition-colors" style={{ fontSize: "0.95rem", fontWeight: 800, color: "var(--text-primary)", letterSpacing: "-0.02em" }}>
               Schollective
             </span>
           </Link>
-          <div style={{ width: "1px", height: "1rem", background: "rgba(79, 70, 229, 0.15)" }} />
+          <div style={{ width: "1px", height: "1rem", background: "rgba(0, 140, 187, 0.15)" }} />
           <Link href="/login" style={{ textDecoration: "none" }}>
-            <span className="hover:text-indigo-700 transition-colors" style={{
+            <span className="hover:text-[#00749b] transition-colors" style={{
               fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.2em",
-              textTransform: "uppercase", color: "#4f46e5",
+              textTransform: "uppercase", color: "#008CBB",
               fontFamily: "var(--font-sans)",
               whiteSpace: "nowrap",
             }}>
@@ -286,10 +286,10 @@ function SignupContent() {
         >
           {/* Eyebrow */}
           <motion.div variants={fadeUp} style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.75rem" }}>
-            <span style={{ width: "1.5rem", height: "1px", background: "rgba(79, 70, 229, 0.4)", display: "block" }} />
+            <span style={{ width: "1.5rem", height: "1px", background: "rgba(0, 140, 187, 0.4)", display: "block" }} />
             <span style={{
               fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.38em",
-              textTransform: "uppercase", color: "rgba(79, 70, 229, 0.7)",
+              textTransform: "uppercase", color: "rgba(0, 140, 187, 0.7)",
               fontFamily: "var(--font-sans)",
             }}>
               Join the Collective
