@@ -137,7 +137,7 @@ export default function ForStudentsPage() {
                 <h2 className="font-display font-black text-[clamp(2rem,3vw,2.8rem)] tracking-[-0.04em] text-[#141005] leading-tight">
                   Start for free, today.
                 </h2>
-                <p className="text-[1rem] text-[#3b3527]/80 leading-relaxed max-w-[480px] mx-auto font-sans">
+                <p className="text-[1rem] text-[#3b3527]/80 leading-relaxed max-w-[480px] mx-auto font-sans text-center">
                   Join thousands of students getting real guidance from verified professors.
                 </p>
               </div>
