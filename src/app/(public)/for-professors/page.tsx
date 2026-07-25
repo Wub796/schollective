@@ -87,7 +87,7 @@ export default function ForProfessorsPage() {
       </section>
 
       {/* ── WHY SCHOLLECTIVE ─────────────────────────────── */}
-      <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-[#A1C5D1]/40 py-36 md:py-52">
+      <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-[#A1C5D1]/40" style={{ paddingTop: "9rem", paddingBottom: "9rem" }}>
         <div className="w-full max-w-[920px] mx-auto">
           <FadeIn>
             <h2 className="font-display text-[clamp(2.2rem,4vw,3.5rem)] font-black tracking-[-0.04em] leading-[1.05] mb-14 text-[#141005]">
@@ -111,7 +111,7 @@ export default function ForProfessorsPage() {
       </section>
 
       {/* ── FIELDS ───────────────────────────────────────── */}
-      <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-[#A1C5D1]/40 py-36 md:py-52">
+      <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-[#A1C5D1]/40" style={{ paddingTop: "9rem", paddingBottom: "9rem" }}>
         <div className="w-full max-w-[920px] mx-auto">
           <FadeIn>
             <h2 className="font-display text-[clamp(2.2rem,3vw,3.2rem)] font-black tracking-[-0.04em] leading-[1.05] mb-12 text-[#141005]">
@@ -129,7 +129,7 @@ export default function ForProfessorsPage() {
       </section>
 
       {/* ── VERIFICATION ─────────────────────────────────── */}
-      <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-[#A1C5D1]/40 py-36 md:py-52">
+      <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-[#A1C5D1]/40" style={{ paddingTop: "9rem", paddingBottom: "9rem" }}>
         <div className="w-full max-w-[920px] mx-auto">
           <FadeIn>
             <div className="p-12 md:p-16 border border-[#A1C5D1]/50 rounded-3xl bg-white/90 shadow-sm w-full">
@@ -162,7 +162,7 @@ export default function ForProfessorsPage() {
       </section>
 
       {/* ── FAQ ──────────────────────────────────────────── */}
-      <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-[#A1C5D1]/40 py-36 md:py-52">
+      <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-[#A1C5D1]/40" style={{ paddingTop: "9rem", paddingBottom: "9rem" }}>
         <div className="w-full max-w-[920px] mx-auto">
           <FadeIn>
             <h2 className="font-display text-[clamp(2.2rem,3.5vw,3rem)] font-black tracking-[-0.04em] leading-[1.05] mb-14 text-[#141005]">
@@ -183,7 +183,7 @@ export default function ForProfessorsPage() {
       </section>
 
       {/* ── CTA ──────────────────────────────────────────── */}
-      <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-[#A1C5D1]/40 py-36 md:py-52">
+      <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-[#A1C5D1]/40" style={{ paddingTop: "9rem", paddingBottom: "9rem" }}>
         <div className="w-full max-w-[920px] mx-auto">
           <FadeIn>
             <div className="p-12 md:p-16 border border-[#A1C5D1]/50 rounded-3xl bg-[#A1C5D1]/10 flex flex-col items-center gap-10 text-center w-full">
