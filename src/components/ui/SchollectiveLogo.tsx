@@ -1,6 +1,6 @@
 /**
  * SchollectiveLogo — inline SVG logo mark
- * Transparent background, indigo (var(--accent)) accents on dark navy circle.
+ * Transparent background, accent blue (var(--accent)) accents on dark navy circle.
  * No image file needed — zero artifacts, exact theme colors.
  */
 export function SchollectiveLogo({ size = 36 }: { size?: number }) {
