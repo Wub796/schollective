@@ -7,7 +7,6 @@ const FOOTER_LINKS = [
   { label: "Features",    href: "/features" },
   { label: "Students",    href: "/for-students" },
   { label: "Professors",  href: "/for-professors" },
-  { label: "Mentors",     href: "/professors" },
   { label: "Privacy",     href: "/privacy" },
   { label: "Terms",       href: "/terms" },
 ];
