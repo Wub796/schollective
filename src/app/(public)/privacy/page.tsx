@@ -50,32 +50,32 @@ export default function PrivacyPage() {
   ];
 
   return (
-    <div style={{ minHeight: "100vh", background: "transparent", color: "#0f172a" }}>
+    <div className="min-h-screen bg-transparent text-slate-900 dark:text-slate-100">
       <PublicNav />
 
-      <div style={{ maxWidth: "800px", margin: "0 auto", padding: "8rem 2rem 6rem", display: "flex", flexDirection: "column", gap: "4.5rem" }}>
+      <div className="max-w-4xl mx-auto px-6 py-32 flex flex-col gap-12">
         {/* Eyebrow */}
-        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <span style={{ width: "1.5rem", height: "2px", background: "#6366f1", display: "block" }} />
-          <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: "#4f46e5", fontFamily: "var(--font-sans)" }}>Legal</span>
+        <div className="flex items-center gap-3">
+          <span className="w-6 h-[2px] bg-indigo-500 block" />
+          <span className="text-[0.62rem] font-extrabold tracking-[0.22em] uppercase text-indigo-600 dark:text-indigo-400 font-sans">Legal</span>
         </div>
 
         <div>
-          <h1 className="font-display" style={{ fontSize: "clamp(2.4rem, 5vw, 3.8rem)", fontWeight: 900, color: "#0f172a", letterSpacing: "-0.04em", lineHeight: 1.05, marginBottom: "0.75rem" }}>
-            Privacy <em style={{ fontStyle: "italic", color: "#4f46e5", fontWeight: 300 }}>Policy</em>
+          <h1 className="font-display text-[clamp(2.4rem,5vw,3.8rem)] font-black tracking-[-0.04em] leading-[1.05] text-slate-900 dark:text-slate-100 mb-3">
+            Privacy <em className="italic font-light text-indigo-600 dark:text-indigo-400">Policy</em>
           </h1>
-          <p style={{ fontSize: "0.88rem", color: "#475569", opacity: 0.75, fontFamily: "var(--font-sans)" }}>
+          <p className="text-sm text-slate-500 dark:text-slate-400 font-sans">
             Last updated: May 2025
           </p>
         </div>
 
-        <div style={{ height: "1px", background: "rgba(99, 102, 241, 0.4)", marginTop: "1rem", marginBottom: "1rem" }} />
+        <div className="h-px bg-slate-200/80 dark:bg-slate-800 my-2" />
 
-        <div style={{ display: "flex", flexDirection: "column", gap: "2.75rem" }}>
+        <div className="flex flex-col gap-8">
           {sections.map(({ title, body }) => (
-            <div key={title} style={{ padding: "2rem 2.25rem", border: "1px solid rgba(99, 102, 241, 0.4)", borderRadius: "16px", background: "rgba(255, 255, 255, 0.9)" }}>
-              <h2 className="font-display" style={{ fontSize: "1.25rem", fontWeight: 800, color: "#0f172a", letterSpacing: "-0.015em", marginBottom: "0.75rem" }}>{title}</h2>
-              <p style={{ fontSize: "0.95rem", color: "#475569", opacity: 0.8, lineHeight: 1.8, fontFamily: "var(--font-sans)" }}>{body}</p>
+            <div key={title} className="p-8 md:p-9 border border-slate-200/70 dark:border-slate-800 rounded-2xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-xs">
+              <h2 className="font-display text-xl font-bold text-slate-900 dark:text-slate-100 tracking-[-0.015em] mb-3">{title}</h2>
+              <p className="text-base text-slate-600 dark:text-slate-300 leading-relaxed font-sans">{body}</p>
             </div>
           ))}
         </div>
