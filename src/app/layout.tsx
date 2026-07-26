@@ -20,11 +20,66 @@ const arima = Arima({
 
 export const metadata: Metadata = {
   title: {
-    default: "Schollective — Academic Mentorship, Democratized",
+    default: "Schollective — Academic Mentorship for High School Students",
     template: "%s — Schollective",
   },
   description:
-    "Connecting students with verified professors for structured guidance and research mentorship.",
+    "Schollective helps high school students connect with professors and research mentors through structured academic outreach. Find verified faculty, understand their research, and send requests that get read.",
+  keywords: [
+    "research mentorship",
+    "high school research",
+    "professor outreach",
+    "academic mentorship",
+    "student research opportunities",
+    "science fair mentors",
+    "college research prep",
+    "find research mentor",
+    "cold email professors",
+    "structured academic outreach",
+    "undergraduate research",
+    "Schollective",
+  ],
+  authors: [{ name: "Schollective" }],
+  creator: "Schollective",
+  metadataBase: new URL("https://schollective.org"),
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://schollective.org",
+    siteName: "Schollective",
+    title: "Schollective — Academic Mentorship for High School Students",
+    description:
+      "Find verified professors and research mentors. Send structured requests that actually get read.",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Schollective — Academic Mentorship Platform",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Schollective — Academic Mentorship for High School Students",
+    description:
+      "Connect with professors and research mentors through structured academic outreach.",
+    images: ["/og-image.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
 };
 
 export const viewport: Viewport = {
