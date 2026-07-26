@@ -41,14 +41,14 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "Schollective" }],
   creator: "Schollective",
-  metadataBase: new URL("https://schollective.org"),
+  metadataBase: new URL("https://schollective.vercel.app"),
   alternates: {
     canonical: "/",
   },
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://schollective.org",
+    url: "https://schollective.vercel.app",
     siteName: "Schollective",
     title: "Schollective — Academic Mentorship for High School Students",
     description:
