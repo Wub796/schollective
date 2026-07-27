@@ -1,24 +1,54 @@
 "use client";
 
-import React from "react";
-import { motion, useScroll, useSpring } from "framer-motion";
+import { useEffect, useRef } from "react";
 
+/**
+ * ScrollProgress — a hairline reading indicator pinned to the top of the page.
+ *
+ * Previously this subscribed to `scroll` on both `window` and `document` *and*
+ * ran a 60ms `setInterval`, so it recomputed position ~17 times a second even
+ * when nothing had scrolled, then wrote `style.width` (a layout-triggering
+ * property) on a 3px bar with a two-layer glow. One listener and a transform
+ * gets the same result without the layout work or the polling.
+ */
 export function ScrollProgress() {
-  const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 30,
-    restDelta: 0.001,
-  });
+  const barRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    let frame = 0;
+
+    const update = () => {
+      frame = 0;
+      const doc = document.documentElement;
+      const max = doc.scrollHeight - window.innerHeight;
+      const progress = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+      if (barRef.current) {
+        barRef.current.style.transform = `scaleX(${progress})`;
+      }
+    };
+
+    const onScroll = () => {
+      if (frame) return;
+      frame = window.requestAnimationFrame(update);
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    update();
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (frame) window.cancelAnimationFrame(frame);
+    };
+  }, []);
 
   return (
-    <motion.div
-      className="fixed top-0 left-0 right-0 h-[2.5px] z-[9999] origin-left pointer-events-none"
-      style={{
-        scaleX,
-        background: "linear-gradient(90deg, #4f46e5 0%, #818cf8 50%, #06b6d4 100%)",
-        boxShadow: "0 0 10px rgba(99, 102, 241, 0.6)",
-      }}
+    <div
+      ref={barRef}
+      aria-hidden="true"
+      className="fixed inset-x-0 top-0 h-0.5 origin-left bg-accent"
+      style={{ transform: "scaleX(0)", zIndex: "var(--z-toast)" } as React.CSSProperties}
     />
   );
 }
