@@ -8,9 +8,8 @@ import { createClient } from "@/utils/supabase/client";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/Button";
 import { InstitutionInput } from "@/components/ui/InstitutionInput";
-import { SchollectiveLogo } from "@/components/ui/SchollectiveLogo";
-import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { validateEmail, type EmailValidationResult } from "@/lib/validators-client";
+
 
 export const dynamic = "force-dynamic";
 
@@ -45,7 +44,7 @@ function Field({
           fontWeight: 800,
           letterSpacing: "0.22em",
           textTransform: "uppercase",
-          color: focused ? "var(--accent)" : "var(--text-primary)",
+          color: focused ? "#4f46e5" : "#0f172a",
           marginBottom: "0.55rem",
           transition: "color 0.25s",
           fontFamily: "var(--font-sans)",
@@ -60,16 +59,16 @@ function Field({
         onBlur={() => setFocused(false)}
         style={{
           width: "100%",
-          background: "var(--bg-surface-1)",
-          border: `1.5px solid ${focused ? "var(--accent)" : "var(--border)"}`,
+          background: "rgba(255, 255, 255, 0.9)",
+          border: `1.5px solid ${focused ? "#4f46e5" : "rgba(99, 102, 241, 0.5)"}`,
           borderRadius: "100px",
           padding: "1rem 1.75rem",
           fontSize: "0.95rem",
-          color: "var(--text-primary)",
+          color: "#0f172a",
           outline: "none",
           transition: "all 0.3s cubic-bezier(0.22, 1, 0.36, 1)",
           fontFamily: "var(--font-sans)",
-          boxShadow: focused ? "0 0 0 4px var(--accent-dim)" : "none",
+          boxShadow: focused ? "0 0 0 4px rgba(79, 70, 229, 0.15)" : "none",
         }}
       />
     </div>
@@ -83,7 +82,7 @@ function FieldSelect({ id, name, label, children, required }: {
   const [focused, setFocused] = useState(false);
   return (
     <div>
-      <label htmlFor={id} style={{ display: "block", fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: focused ? "var(--accent)" : "var(--text-primary)", marginBottom: "0.55rem", transition: "color 0.25s", fontFamily: "var(--font-sans)" }}>
+      <label htmlFor={id} style={{ display: "block", fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: focused ? "#4f46e5" : "#0f172a", marginBottom: "0.55rem", transition: "color 0.25s", fontFamily: "var(--font-sans)" }}>
         {label}
       </label>
       <select
@@ -91,17 +90,17 @@ function FieldSelect({ id, name, label, children, required }: {
         onFocus={() => setFocused(true)} onBlur={() => setFocused(false)}
         style={{
           width: "100%",
-          background: "var(--bg-surface-1)",
-          border: `1.5px solid ${focused ? "var(--accent)" : "var(--border)"}`,
+          background: "rgba(255, 255, 255, 0.95)",
+          border: `1px solid ${focused ? "rgba(79, 70, 229, 0.5)" : "rgba(99, 102, 241, 0.22)"}`,
           borderRadius: "100px",
           padding: "1rem 3rem 1rem 1.85rem",
           fontSize: "0.95rem",
-          color: "var(--text-primary)",
+          color: "#0f172a",
           outline: "none",
           fontFamily: "var(--font-sans)",
           transition: "all 0.3s cubic-bezier(0.22, 1, 0.36, 1)",
           cursor: "pointer",
-          boxShadow: focused ? "0 0 0 4px var(--accent-dim)" : "none",
+          boxShadow: focused ? "0 0 0 4px rgba(79, 70, 229, 0.12)" : "0 2px 8px rgba(0, 0, 0, 0.02)",
           appearance: "none",
           backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%234f46e5' stroke-width='2.2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E")`,
           backgroundRepeat: "no-repeat",
@@ -119,89 +118,85 @@ function SignupContent() {
   const searchParams = useSearchParams();
   const supabase = createClient();
   const [role, setRole] = useState<Role>("student");
-  const [institution, setInstitution] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Email validation state
-  const [emailVal, setEmailVal] = useState<EmailValidationResult | null>(null);
-  const [emailDirty, setEmailDirty] = useState(false);
-
+  // If there's an error in the URL (e.g. from OAuth callback), show it
   useEffect(() => {
-    const roleParam = searchParams.get("role");
-    if (roleParam === "professor" || roleParam === "student") {
-      setRole(roleParam);
+    const errorParam = searchParams.get("error");
+    if (errorParam) {
+      if (errorParam === "oauth_exchange_failed") {
+        setError("Failed to exchange Google account information. Please try again.");
+      } else if (errorParam === "oauth_missing_code") {
+        setError("The authentication code is missing. Please try again.");
+      } else {
+        setError("An error occurred during sign up with Google.");
+      }
     }
   }, [searchParams]);
 
-  const handleRoleChange = (newRole: Role) => {
-    setRole(newRole);
-    setEmailVal(null);
-    setEmailDirty(false);
-  };
+  const [institution, setInstitution] = useState("");
+  const [emailVal, setEmailVal] = useState<EmailValidationResult | null>(null);
+  const [emailDirty, setEmailDirty] = useState(false);
 
   const handleEmailBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    const email = e.target.value.trim();
-    if (!email) return;
+    const val = e.target.value;
+    if (!val) { setEmailVal(null); return; }
     setEmailDirty(true);
-    const result = validateEmail(email, role);
-    setEmailVal(result);
+    setEmailVal(validateEmail(val, role));
   };
+
+  // Re-validate when role changes (professor → stricter)
+  const handleRoleChange = (r: Role) => {
+    setRole(r);
+    if (emailDirty) {
+      const emailEl = document.getElementById("email") as HTMLInputElement | null;
+      if (emailEl?.value) setEmailVal(validateEmail(emailEl.value, r));
+    }
+  };
+
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-
     const fd = new FormData(e.currentTarget);
-    const email = (fd.get("email") as string).trim();
-    const password = fd.get("password") as string;
-    const first_name = (fd.get("first_name") as string).trim();
-    const last_name = (fd.get("last_name") as string)?.trim() || "";
-    const preferred_name = (fd.get("preferred_name") as string)?.trim() || "";
-    const education_level = fd.get("education_level") as string || "";
-    const expertise = (fd.get("expertise") as string)?.trim() || "";
 
-    const valResult = validateEmail(email, role);
-    if (!valResult.ok) {
-      setError(valResult.message);
+    // Run validation on submit in case the user never blurred the field
+    const emailInput = fd.get("email") as string;
+    const finalValidation = validateEmail(emailInput, role);
+    setEmailVal(finalValidation);
+    setEmailDirty(true);
+    if (!finalValidation.ok) {
+      setError(finalValidation.message);
       setLoading(false);
       return;
     }
 
     try {
       const { data, error: signUpError } = await supabase.auth.signUp({
-        email,
-        password,
+        email: fd.get("email") as string,
+        password: fd.get("password") as string,
         options: {
           data: {
-            first_name,
-            last_name,
-            preferred_name,
             role,
-            institution: role === "professor" ? institution : "",
-            education_level: role === "student" ? education_level : "",
-            expertise: role === "professor" ? expertise : "",
+            first_name: fd.get("first_name") as string,
+            preferred_name: fd.get("preferred_name") as string,
+            last_name: fd.get("last_name") as string,
+            education_level: fd.get("education_level") as string,
+            institution: institution || fd.get("institution") as string,
+
+            expertise: fd.get("expertise") as string,
           },
         },
       });
-
       if (signUpError) throw signUpError;
 
-      if (data.session) {
-        if (role === "professor") {
-          toast.success("Application submitted for verification.");
-          router.push("/prof/pending");
-        } else {
-          toast.success("Welcome to Schollective.");
-          router.push("/dashboard");
-        }
-      } else {
-        toast.success("Check your email for the confirmation link.");
-        router.push("/verify-email");
-      }
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Sign up failed";
+      toast.success("Account created! Please check your email to verify your address.");
+      router.refresh();
+      router.push("/verify-email");
+    } catch (err: any) {
+      const msg = err instanceof Error ? err.message : "An error occurred during signup.";
       setError(msg);
       toast.error(msg);
     } finally {
@@ -211,6 +206,8 @@ function SignupContent() {
 
   const handleGoogleSignIn = async () => {
     try {
+      // Store the selected role in localStorage so the onboarding page
+      // can read it after the OAuth redirect.
       localStorage.setItem("signup_role", role);
 
       const next = searchParams.get("next") || "/dashboard";
@@ -224,50 +221,48 @@ function SignupContent() {
         },
       });
       if (error) throw error;
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Failed to sign up with Google.";
-      toast.error(msg);
+    } catch (err: any) {
+      toast.error(err.message || "Failed to sign up with Google.");
     }
   };
 
   return (
     <div
-      className="page-bg"
       style={{
         minHeight: "100vh",
+        background: "transparent",
         display: "flex",
         flexDirection: "column",
         position: "relative",
         overflow: "hidden",
       }}
     >
+      {/* Removed local background glow */}
+
       {/* ── Pill Nav ─────────────────────────────────────────── */}
       <div style={{
         position: "fixed", top: "1.5rem", left: "50%", transform: "translateX(-50%)",
         zIndex: 50, display: "flex", alignItems: "center",
       }}>
         <div style={{
-          display: "flex", alignItems: "center", gap: "1.25rem",
-          background: "var(--glass-bg)",
+          display: "flex", alignItems: "center", gap: "2rem",
+          background: "rgba(253, 253, 253, 0.85)",
           backdropFilter: "blur(20px)",
-          border: "1px solid var(--border)",
+          border: "1.5px solid rgba(79, 70, 229, 0.15)",
           borderRadius: "100px",
-          padding: "0.5rem 1.25rem",
-          boxShadow: "0 4px 30px rgba(0, 0, 0, 0.05)",
+          padding: "0.6rem 1.6rem",
+          boxShadow: "0 4px 30px rgba(0, 0, 0, 0.03)",
         }}>
-          <Link href="/" style={{ display: "flex", alignItems: "center", gap: "0.5rem", textDecoration: "none" }}>
-            <SchollectiveLogo size={18} />
+          <Link href="/" style={{ textDecoration: "none" }}>
             <span className="font-display hover:text-indigo-600 transition-colors" style={{ fontSize: "0.95rem", fontWeight: 800, color: "var(--text-primary)", letterSpacing: "-0.02em" }}>
               Schollective
             </span>
           </Link>
-          <div style={{ width: "1px", height: "1rem", background: "var(--border)" }} />
-          <ThemeToggle />
-          <div style={{ width: "1px", height: "1rem", background: "var(--border)" }} />
+          <div style={{ width: "1px", height: "1rem", background: "rgba(79, 70, 229, 0.15)" }} />
           <Link href="/login" style={{ textDecoration: "none" }}>
             <span className="hover:text-indigo-700 transition-colors" style={{
               fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.2em",
-              textTransform: "uppercase", color: "var(--accent)",
+              textTransform: "uppercase", color: "#4f46e5",
               fontFamily: "var(--font-sans)",
               whiteSpace: "nowrap",
             }}>
@@ -291,10 +286,10 @@ function SignupContent() {
         >
           {/* Eyebrow */}
           <motion.div variants={fadeUp} style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.75rem" }}>
-            <span style={{ width: "1.5rem", height: "1px", background: "var(--accent)", display: "block" }} />
+            <span style={{ width: "1.5rem", height: "1px", background: "rgba(79, 70, 229, 0.4)", display: "block" }} />
             <span style={{
               fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.38em",
-              textTransform: "uppercase", color: "var(--accent)",
+              textTransform: "uppercase", color: "rgba(79, 70, 229, 0.7)",
               fontFamily: "var(--font-sans)",
             }}>
               Join the Collective
@@ -304,11 +299,11 @@ function SignupContent() {
           {/* Headline */}
           <motion.h1 variants={fadeUp} className="font-display" style={{ fontSize: "clamp(2.6rem, 6vw, 3.8rem)", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.035em", lineHeight: 0.95, marginBottom: "3.5rem" }}>
             Create your<br />
-            <em style={{ fontStyle: "italic", color: "var(--text-tertiary)" }}>account.</em>
+            <em style={{ fontStyle: "italic", color: "rgba(15, 23, 42, 0.38)" }}>account.</em>
           </motion.h1>
 
           {/* Role selector — pill tabs */}
-          <motion.div variants={fadeUp} style={{ display: "flex", gap: "0.5rem", marginBottom: "2.5rem", padding: "0.3rem", background: "var(--bg-surface-2)", borderRadius: "100px", border: "1px solid var(--border)", width: "100%" }}>
+          <motion.div variants={fadeUp} style={{ display: "flex", gap: "0.5rem", marginBottom: "2.5rem", padding: "0.3rem", background: "rgba(15, 23, 42, 0.04)", borderRadius: "100px", border: "1px solid rgba(15, 23, 42, 0.07)", width: "100%" }}>
             {(["student", "professor"] as Role[]).map(r => (
               <Button
                 key={r}
@@ -316,7 +311,7 @@ function SignupContent() {
                 onClick={() => handleRoleChange(r)}
                 variant={role === r ? "primary" : "ghost"}
                 size="md"
-                className={`flex-1 ${role !== r && 'border-transparent text-slate-500 dark:text-slate-400'}`}
+                className={`flex-1 ${role !== r && 'border-transparent text-slate-400'}`}
               >
                 {r === "student" ? "Student" : "Professor"}
               </Button>
@@ -324,10 +319,10 @@ function SignupContent() {
           </motion.div>
 
           <form onSubmit={handleSubmit}>
-            <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "3rem" }}>
 
               {/* Name row */}
-              <motion.div variants={fadeUp} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <motion.div variants={fadeUp} className="grid-2" style={{ gap: "1.5rem" }}>
                 <Field id="first_name" name="first_name" label="First Name" placeholder="Jane" required />
                 <Field id="last_name" name="last_name" label="Last Name" placeholder="Doe" required={role === "professor"} />
               </motion.div>
@@ -344,10 +339,10 @@ function SignupContent() {
                     style={{
                       display: "block", fontSize: "0.62rem", fontWeight: 800,
                       letterSpacing: "0.22em", textTransform: "uppercase",
-                      color: emailVal?.state === "error" ? "#ef4444"
-                        : emailVal?.state === "warn" ? "#f59e0b"
-                          : emailVal?.state === "valid" ? "#10b981"
-                            : "var(--text-primary)",
+                      color: emailVal?.state === "error" ? "rgba(255,100,100,0.8)"
+                        : emailVal?.state === "warn" ? "rgba(255,190,80,0.8)"
+                          : emailVal?.state === "valid" ? "rgba(120,220,120,0.8)"
+                            : "#0f172a",
                       marginBottom: "0.55rem", transition: "color 0.25s",
                       fontFamily: "var(--font-sans)",
                     }}
@@ -361,16 +356,16 @@ function SignupContent() {
                     onChange={() => { if (emailDirty) setEmailVal(null); }}
                     style={{
                       width: "100%",
-                      background: "var(--bg-surface-1)",
-                      border: `1.5px solid ${emailVal?.state === "error" ? "#ef4444"
-                          : emailVal?.state === "warn" ? "#f59e0b"
-                            : emailVal?.state === "valid" ? "#10b981"
-                              : "var(--border)"
+                      background: "rgba(255, 255, 255, 0.9)",
+                      border: `1.5px solid ${emailVal?.state === "error" ? "rgba(255,100,100,0.6)"
+                          : emailVal?.state === "warn" ? "rgba(255,190,80,0.6)"
+                            : emailVal?.state === "valid" ? "rgba(120,220,120,0.5)"
+                              : "rgba(99, 102, 241, 0.5)"
                         }`,
                       borderRadius: "100px",
                       padding: "1rem 1.75rem",
                       fontSize: "0.95rem",
-                      color: "var(--text-primary)",
+                      color: "#0f172a",
                       outline: "none",
                       transition: "all 0.3s cubic-bezier(0.22, 1, 0.36, 1)",
                       fontFamily: "var(--font-sans)",
@@ -391,15 +386,15 @@ function SignupContent() {
                           padding: "0.2rem 0.65rem", borderRadius: "100px",
                           fontSize: "0.55rem", fontWeight: 600, letterSpacing: "0.12em",
                           fontFamily: "var(--font-sans)",
-                          background: emailVal.state === "error" ? "rgba(239, 68, 68, 0.1)"
-                            : emailVal.state === "warn" ? "rgba(245, 158, 11, 0.1)"
-                              : "rgba(16, 185, 129, 0.1)",
-                          color: emailVal.state === "error" ? "#ef4444"
-                            : emailVal.state === "warn" ? "#f59e0b"
-                              : "#10b981",
-                          border: `1px solid ${emailVal.state === "error" ? "rgba(239, 68, 68, 0.3)"
-                              : emailVal.state === "warn" ? "rgba(245, 158, 11, 0.3)"
-                                : "rgba(16, 185, 129, 0.3)"
+                          background: emailVal.state === "error" ? "rgba(255,80,80,0.1)"
+                            : emailVal.state === "warn" ? "rgba(255,190,80,0.1)"
+                              : "rgba(80,220,120,0.1)",
+                          color: emailVal.state === "error" ? "rgba(255,110,110,0.9)"
+                            : emailVal.state === "warn" ? "rgba(255,200,90,0.9)"
+                              : "rgba(100,220,130,0.9)",
+                          border: `1px solid ${emailVal.state === "error" ? "rgba(255,80,80,0.25)"
+                              : emailVal.state === "warn" ? "rgba(255,190,80,0.25)"
+                                : "rgba(80,220,120,0.25)"
                             }`,
                         }}
                       >
@@ -436,7 +431,7 @@ function SignupContent() {
                           fontWeight: 800,
                           letterSpacing: "0.22em",
                           textTransform: "uppercase",
-                          color: "var(--text-primary)",
+                          color: "#0f172a",
                           marginBottom: "0.55rem",
                           fontFamily: "var(--font-sans)",
                         }}
@@ -466,7 +461,7 @@ function SignupContent() {
               </motion.div>
 
               {error && (
-                <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} style={{ fontSize: "0.78rem", color: "#ef4444", fontFamily: "var(--font-sans)" }}>
+                <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} style={{ fontSize: "0.78rem", color: "#ff7070", fontFamily: "var(--font-sans)" }}>
                   {error}
                 </motion.p>
               )}
@@ -483,9 +478,9 @@ function SignupContent() {
                 </Button>
 
                 <div style={{ display: "flex", alignItems: "center", gap: "1rem", margin: "0.5rem 0" }}>
-                  <div style={{ flex: 1, height: "1px", background: "var(--border)" }} />
-                  <span style={{ fontSize: "0.55rem", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--text-tertiary)", fontFamily: "var(--font-sans)" }}>Or</span>
-                  <div style={{ flex: 1, height: "1px", background: "var(--border)" }} />
+                  <div style={{ flex: 1, height: "1px", background: "rgba(15, 23, 42, 0.1)" }} />
+                  <span style={{ fontSize: "0.55rem", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.3)", fontFamily: "var(--font-sans)" }}>Or</span>
+                  <div style={{ flex: 1, height: "1px", background: "rgba(15, 23, 42, 0.1)" }} />
                 </div>
 
                 <Button
@@ -507,9 +502,9 @@ function SignupContent() {
                 </Button>
               </motion.div>
 
-              <motion.p variants={fadeUp} style={{ textAlign: "center", fontSize: "0.55rem", fontWeight: 600, letterSpacing: "0.1em", color: "var(--text-secondary)", fontFamily: "var(--font-sans)" }}>
+              <motion.p variants={fadeUp} style={{ textAlign: "center", fontSize: "0.55rem", fontWeight: 600, letterSpacing: "0.1em", color: "rgba(15, 23, 42, 0.22)", fontFamily: "var(--font-sans)" }}>
                 Already have an account?{" "}
-                <Link href="/login" style={{ color: "var(--accent)", textDecoration: "none" }}>
+                <Link href="/login" style={{ color: "rgba(15, 23, 42, 0.55)", textDecoration: "none" }}>
                   Sign in →
                 </Link>
               </motion.p>
@@ -520,7 +515,7 @@ function SignupContent() {
 
       {/* Footer note */}
       <div style={{ position: "relative", zIndex: 1, textAlign: "center", padding: "1.5rem" }}>
-        <span style={{ fontSize: "0.5rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--text-tertiary)", fontFamily: "var(--font-sans)" }}>
+        <span style={{ fontSize: "0.5rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.14)", fontFamily: "var(--font-sans)" }}>
           Manually verified · Institutionally credentialed · © 2025 Schollective
         </span>
       </div>
@@ -533,8 +528,8 @@ export default function SignupPage() {
     <Suspense fallback={
       <div style={{ minHeight: "100vh", background: "var(--bg-base)", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <div style={{ width: "1.5rem", height: "1px", background: "var(--accent)" }} />
-          <span style={{ fontSize: "0.55rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "var(--text-secondary)", fontFamily: "var(--font-sans)" }}>
+          <div style={{ width: "1.5rem", height: "1px", background: "rgba(15, 23, 42, 0.2)" }} />
+          <span style={{ fontSize: "0.55rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.3)", fontFamily: "var(--font-sans)" }}>
             Loading…
           </span>
         </div>
