@@ -1,36 +1,26 @@
 export default function LoadingDashboard() {
   return (
-    <div className="py-12 flex flex-col gap-12 max-w-5xl mx-auto w-full">
+    <div style={{ padding: "3rem 0", display: "flex", flexDirection: "column", gap: "3rem" }}>
       {/* Header skeleton */}
-      <div className="flex flex-col gap-3">
-        <div className="w-20 h-2 rounded bg-slate-200/70 dark:bg-slate-800 animate-pulse" />
-        <div className="w-80 max-w-[80%] h-11 rounded-lg bg-slate-200/60 dark:bg-slate-800/90 animate-pulse" />
-        <div className="w-60 max-w-[60%] h-4 rounded bg-slate-200/50 dark:bg-slate-800/60 animate-pulse" />
+      <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        <div style={{ width: "80px", height: "8px", borderRadius: "4px", background: "rgba(15, 23, 42, 0.06)", animation: "pulse 1.5s ease-in-out infinite" }} />
+        <div style={{ width: "320px", maxWidth: "80%", height: "44px", borderRadius: "8px", background: "rgba(15, 23, 42, 0.05)", animation: "pulse 1.5s ease-in-out infinite" }} />
+        <div style={{ width: "240px", maxWidth: "60%", height: "16px", borderRadius: "4px", background: "rgba(15, 23, 42, 0.04)", animation: "pulse 1.5s ease-in-out infinite" }} />
       </div>
-
       {/* Stat cards skeleton */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+      <div className="dash-stat-grid">
         {[1, 2, 3].map((i) => (
-          <div
-            key={i}
-            className="p-6 rounded-2xl border border-slate-200/70 dark:border-slate-800 bg-white/70 dark:bg-slate-900/70 backdrop-blur-md flex flex-col gap-3"
-          >
-            <div className="w-16 h-9 rounded-md bg-slate-200/70 dark:bg-slate-800 animate-pulse" />
-            <div className="w-20 h-2.5 rounded bg-slate-200/50 dark:bg-slate-800/60 animate-pulse" />
+          <div key={i} style={{ padding: "1.5rem", border: "1px solid rgba(15, 23, 42, 0.05)", borderRadius: "14px", background: "rgba(15, 23, 42, 0.02)", display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+            <div style={{ width: "60px", height: "36px", borderRadius: "6px", background: "rgba(15, 23, 42, 0.05)", animation: "pulse 1.5s ease-in-out infinite" }} />
+            <div style={{ width: "80px", height: "10px", borderRadius: "4px", background: "rgba(15, 23, 42, 0.04)", animation: "pulse 1.5s ease-in-out infinite" }} />
           </div>
         ))}
       </div>
-
-      {/* Divider */}
-      <div className="h-px bg-slate-200/60 dark:bg-slate-800" />
-
-      {/* Content cards skeleton */}
-      <div className="flex flex-col gap-4">
+      {/* Content skeleton */}
+      <div style={{ height: "1px", background: "rgba(15, 23, 42, 0.04)" }} />
+      <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
         {[1, 2, 3].map((i) => (
-          <div
-            key={i}
-            className="h-24 rounded-2xl border border-slate-200/70 dark:border-slate-800 bg-white/70 dark:bg-slate-900/70 backdrop-blur-md animate-pulse"
-          />
+          <div key={i} style={{ height: "96px", borderRadius: "14px", border: "1px solid rgba(15, 23, 42, 0.05)", background: "rgba(15, 23, 42, 0.02)", animation: "pulse 1.5s ease-in-out infinite" }} />
         ))}
       </div>
     </div>
