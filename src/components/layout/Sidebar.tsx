@@ -42,35 +42,78 @@ function NavLink({
     <Link
       href={href}
       onClick={onClose}
-      className={`group flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all duration-200 relative overflow-hidden ${
-        active
-          ? "bg-indigo-50/90 dark:bg-indigo-950/70 border border-indigo-200/80 dark:border-indigo-800/80 text-indigo-600 dark:text-indigo-400"
-          : "hover:bg-slate-100/80 dark:hover:bg-slate-800/70 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 border border-transparent"
-      }`}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: "0.85rem",
+        padding: "0.8rem 1rem",
+        borderRadius: "10px",
+        textDecoration: "none",
+        background: active ? "var(--accent-dim)" : "transparent",
+        border: active
+          ? "1px solid rgba(79, 70, 229, 0.15)"
+          : "1px solid transparent",
+        transition: "all 0.2s cubic-bezier(0.22, 1, 0.36, 1)",
+        position: "relative",
+        overflow: "hidden",
+      }}
+      onMouseEnter={(e) => {
+        if (!active) (e.currentTarget as HTMLElement).style.background = "var(--bg-surface-3)";
+      }}
+      onMouseLeave={(e) => {
+        if (!active) (e.currentTarget as HTMLElement).style.background = "transparent";
+      }}
       aria-current={active ? "page" : undefined}
     >
       {/* Active indicator dot */}
       {active && (
-        <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-indigo-600 dark:bg-indigo-400 rounded-r-md" />
+        <span style={{
+          position: "absolute", left: 0, top: "50%", transform: "translateY(-50%)",
+          width: "2px", height: "60%", minHeight: "16px", maxHeight: "28px",
+          background: "var(--accent)", borderRadius: "0 2px 2px 0",
+        }} />
       )}
 
-      <div className="flex-1 min-w-0 flex items-center justify-between gap-2">
+      <div style={{ flex: 1, minWidth: 0, display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.5rem" }}>
         <div>
-          <span className={`block text-[0.82rem] leading-snug transition-colors ${
-            active ? "font-semibold text-indigo-600 dark:text-indigo-400" : "font-medium text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-slate-100"
-          }`}>
+          <span style={{
+            display: "block",
+            fontSize: "0.82rem",
+            fontWeight: active ? 600 : 500,
+            color: active ? "var(--accent)" : "var(--text-secondary)",
+            letterSpacing: "0.005em",
+            transition: "color 0.2s",
+            lineHeight: 1.3,
+          }}>
             {label}
           </span>
           {sub && (
-            <span className={`block text-[0.5rem] font-bold tracking-widest uppercase font-mono mt-0.5 leading-none transition-colors ${
-              active ? "text-indigo-600/70 dark:text-indigo-400/70" : "text-slate-400 dark:text-slate-500 group-hover:text-slate-500 dark:group-hover:text-slate-400"
-            }`}>
+            <span style={{
+              display: "block",
+              fontSize: "0.5rem",
+              fontWeight: 700,
+              letterSpacing: "0.1em",
+              textTransform: "uppercase",
+              color: active ? "rgba(79, 70, 229, 0.6)" : "var(--text-tertiary)",
+              fontFamily: "var(--font-sans, monospace)",
+              lineHeight: 1,
+              marginTop: "0.2rem",
+            }}>
               {sub}
             </span>
           )}
         </div>
         {badge && badge > 0 ? (
-          <span className="bg-indigo-100 dark:bg-indigo-950/90 text-indigo-600 dark:text-indigo-400 text-[0.62rem] font-bold px-2 py-0.5 rounded-full font-sans shrink-0">
+          <span style={{
+            background: "rgba(79, 70, 229, 0.15)",
+            color: "#4f46e5",
+            fontSize: "0.62rem",
+            fontWeight: 700,
+            padding: "0.15rem 0.45rem",
+            borderRadius: "100px",
+            fontFamily: "var(--font-sans)",
+            flexShrink: 0,
+          }}>
             {badge}
           </span>
         ) : null}
@@ -148,29 +191,51 @@ export function Sidebar({ onClose, role = "student" }: SidebarProps) {
 
   return (
     <nav
-      className="flex flex-col h-full font-sans"
+      style={{
+        display: "flex", flexDirection: "column", height: "100%",
+        padding: "0", fontFamily: "var(--font-sans)",
+      }}
       aria-label="Sidebar navigation"
     >
       {/* ── Wordmark header ── */}
-      <div className="p-6 pb-5 border-b border-slate-200/80 dark:border-slate-800 mb-2">
-        <Link href="/" className="no-underline">
-          <span className="font-display text-lg font-bold text-slate-900 dark:text-slate-100 hover:text-indigo-600 dark:hover:text-indigo-400 tracking-tight transition-colors">
+      <div style={{
+        padding: "2rem 1.5rem 1.75rem",
+        borderBottom: "1px solid var(--border)",
+        marginBottom: "0.5rem",
+      }}>
+        <Link href="/" style={{ textDecoration: "none" }}>
+          <span className="font-display" style={{
+            fontSize: "1.1rem", fontWeight: 800,
+            color: "var(--text-primary)", letterSpacing: "-0.025em",
+          }}>
             Schollective
           </span>
         </Link>
-        <div className="text-[0.52rem] font-bold tracking-widest uppercase text-indigo-600 dark:text-indigo-400 font-mono mt-1">
+        <div style={{
+          fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.15em",
+          textTransform: "uppercase", color: "var(--accent)",
+          fontFamily: "var(--font-sans, monospace)", marginTop: "0.3rem",
+        }}>
           {role === "professor" ? "Faculty Portal" : "Scholar Portal"}
         </div>
       </div>
 
       {/* ── Main nav ── */}
-      <div className="p-3 flex-1">
-        <p className="text-[0.52rem] font-bold tracking-widest uppercase text-slate-400 dark:text-slate-500 mb-2.5 pl-3 font-mono">
+      <div style={{ padding: "0.5rem 0.85rem", flex: 1 }}>
+        <p style={{
+          fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.15em",
+          textTransform: "uppercase", color: "var(--text-tertiary)",
+          marginBottom: "0.6rem", paddingLeft: "0.85rem",
+          fontFamily: "var(--font-sans, monospace)",
+        }}>
           Navigate
         </p>
         <motion.ul
           variants={stagger} initial="hidden" animate="show"
-          className="list-none flex flex-col gap-1 mb-6"
+          style={{
+            listStyle: "none", display: "flex", flexDirection: "column",
+            gap: "0.25rem", marginBottom: "2rem",
+          }}
         >
           {navItems.map((navItem) => {
             const isTarget = role === "professor" ? navItem.href === "/prof/dashboard" : navItem.href === "/threads";
@@ -188,15 +253,20 @@ export function Sidebar({ onClose, role = "student" }: SidebarProps) {
         </motion.ul>
 
         {/* Divider */}
-        <div className="h-px bg-slate-200/80 dark:bg-slate-800 mb-6 mx-3" />
+        <div style={{ height: "1px", background: "var(--border)", marginBottom: "1.5rem", marginLeft: "0.85rem", marginRight: "0.85rem" }} />
 
         {/* Account section */}
-        <p className="text-[0.52rem] font-bold tracking-widest uppercase text-slate-400 dark:text-slate-500 mb-2.5 pl-3 font-mono">
+        <p style={{
+          fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.15em",
+          textTransform: "uppercase", color: "var(--text-tertiary)",
+          marginBottom: "0.6rem", paddingLeft: "0.85rem",
+          fontFamily: "var(--font-sans, monospace)",
+        }}>
           Account
         </p>
         <motion.ul
           variants={stagger} initial="hidden" animate="show"
-          className="list-none flex flex-col gap-1"
+          style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "0.25rem" }}
         >
           {accountNav.map((navItem) => {
             const profileHref = role === "professor" ? "/prof/profile" : navItem.href;
@@ -218,18 +288,54 @@ export function Sidebar({ onClose, role = "student" }: SidebarProps) {
                 if (onClose) onClose();
                 window.dispatchEvent(new CustomEvent("schollective:launch-tour"));
               }}
-              className="group flex items-center gap-3.5 w-full px-4 py-3 rounded-xl transition-all duration-200 border border-transparent hover:bg-slate-100/80 dark:hover:bg-slate-800/70 text-left cursor-pointer"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "0.85rem",
+                width: "100%",
+                padding: "0.8rem 1rem",
+                borderRadius: "10px",
+                textDecoration: "none",
+                background: "transparent",
+                border: "1px solid transparent",
+                cursor: "pointer",
+                textAlign: "left",
+                transition: "all 0.2s cubic-bezier(0.22, 1, 0.36, 1)",
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLElement).style.background = "var(--bg-surface-3)";
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.background = "transparent";
+              }}
             >
-              <div className="flex-1 min-w-0 flex items-center justify-between">
+              <div style={{ flex: 1, minWidth: 0, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                 <div>
-                  <span className="block text-[0.82rem] font-medium text-indigo-600 dark:text-indigo-400 group-hover:text-indigo-700 dark:group-hover:text-indigo-300 leading-snug">
+                  <span style={{
+                    display: "block",
+                    fontSize: "0.82rem",
+                    fontWeight: 500,
+                    color: "var(--accent)",
+                    letterSpacing: "0.005em",
+                    lineHeight: 1.3,
+                  }}>
                     Product Tour
                   </span>
-                  <span className="block text-[0.5rem] font-bold tracking-widest uppercase text-indigo-500/70 dark:text-indigo-400/70 font-mono mt-0.5 leading-none">
+                  <span style={{
+                    display: "block",
+                    fontSize: "0.5rem",
+                    fontWeight: 700,
+                    letterSpacing: "0.1em",
+                    textTransform: "uppercase",
+                    color: "rgba(79, 70, 229, 0.6)",
+                    fontFamily: "var(--font-sans, monospace)",
+                    lineHeight: 1,
+                    marginTop: "0.2rem",
+                  }}>
                     Interactive Walkthrough
                   </span>
                 </div>
-                <Sparkles size={13} className="text-indigo-600 dark:text-indigo-400 opacity-80 group-hover:scale-110 transition-transform" />
+                <Sparkles size={13} color="#4f46e5" style={{ opacity: 0.8 }} />
               </div>
             </button>
           </motion.li>
@@ -237,16 +343,36 @@ export function Sidebar({ onClose, role = "student" }: SidebarProps) {
       </div>
 
       {/* ── Sign out — pinned to bottom ── */}
-      <div className="p-4 border-t border-slate-200/80 dark:border-slate-800">
+      <div style={{
+        padding: "1.25rem 1rem 2rem",
+        borderTop: "1px solid var(--border)",
+      }}>
         <button
           onClick={handleSignOut}
-          className="group flex items-center gap-3.5 w-full px-4 py-3 rounded-xl transition-all duration-200 border border-transparent hover:bg-rose-50 dark:hover:bg-rose-950/40 text-left cursor-pointer"
+          style={{
+            display: "flex", alignItems: "center", gap: "0.85rem",
+            width: "100%", padding: "0.8rem 1rem",
+            borderRadius: "10px", background: "transparent",
+            border: "1px solid transparent", cursor: "pointer",
+            textAlign: "left", transition: "all 0.2s",
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(220, 38, 38, 0.05)")}
+          onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
         >
           <div>
-            <span className="block text-[0.82rem] font-medium text-slate-600 dark:text-slate-400 group-hover:text-rose-600 dark:group-hover:text-rose-400 leading-snug transition-colors">
+            <span style={{
+              display: "block", fontSize: "0.82rem", fontWeight: 500,
+              color: "var(--text-secondary)", fontFamily: "var(--font-sans)",
+              transition: "color 0.2s", lineHeight: 1.3,
+            }}>
               Sign Out
             </span>
-            <span className="block text-[0.5rem] font-bold tracking-widest uppercase text-slate-400 dark:text-slate-500 group-hover:text-rose-500/70 dark:group-hover:text-rose-400/70 font-mono mt-0.5 leading-none transition-colors">
+            <span style={{
+              display: "block", fontSize: "0.5rem", fontWeight: 700,
+              letterSpacing: "0.1em", textTransform: "uppercase",
+              color: "rgba(220, 38, 38, 0.5)",
+              fontFamily: "var(--font-sans, monospace)", lineHeight: 1, marginTop: "0.2rem",
+            }}>
               Session
             </span>
           </div>
