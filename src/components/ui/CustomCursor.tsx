@@ -220,13 +220,13 @@ function CursorRing({
 
   // --- Colors ---
   const borderColor = isButton
-    ? "var(--accent)"
+    ? "rgba(79, 70, 229, 0.9)"
     : isCanvas
-      ? "var(--text-tertiary)"
-      : "var(--text-secondary)";
+      ? "rgba(15, 23, 42, 0.4)"
+      : "rgba(15, 23, 42, 0.5)";
 
   const boxShadow = isButton && isNav
-    ? `0 0 0 1.5px var(--accent), 0 0 18px var(--accent-glow), inset 0 0 12px var(--accent-dim)`
+    ? `0 0 0 1.5px rgba(79, 70, 229, 0.9), 0 0 18px rgba(79, 70, 229, 0.35), inset 0 0 12px rgba(79, 70, 229, 0.08)`
     : "none";
 
   const borderWidth = isButton ? "1.5px" : "1px";
@@ -274,7 +274,7 @@ function CursorRing({
               y,
               translateX: "-50%",
               translateY: "-50%",
-              border: "1px solid var(--border)",
+              border: "1px solid rgba(15, 23, 42, 0.3)",
               borderRadius: sizeX / 2,
               zIndex: 1,
             }}
