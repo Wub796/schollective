@@ -53,7 +53,7 @@ export default function ForStudentsPage() {
       <PublicNav />
 
       {/* ── HERO ──────────────────────────────────────────── */}
-      <section className="relative z-10 px-8 min-h-[75vh] flex flex-col items-center justify-center py-20">
+      <section className="relative z-10 px-8 min-h-[75vh] flex flex-col items-center justify-center pt-36 md:pt-44 pb-20">
         <div className="w-full max-w-[760px] mx-auto flex flex-col items-center text-center">
           <FadeIn className="w-full flex flex-col items-center">
             <Eyebrow>For Students</Eyebrow>
