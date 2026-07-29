@@ -38,7 +38,7 @@ export function TestimonialsSection() {
 
   return (
     <section style={{
-      padding: "7rem 1.5rem",
+      padding: "9rem 1.5rem",
       background: "rgba(15, 23, 42, 0.015)",
       borderTop: "1px solid rgba(15, 23, 42, 0.03)",
       borderBottom: "1px solid rgba(15, 23, 42, 0.03)",

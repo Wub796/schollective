@@ -180,7 +180,7 @@ export default function LandingPage() {
         </section>
 
         {/* ══ PROBLEM STATEMENT ════════════════════════════════════════ */}
-        <section className="js-fade relative border-t border-slate-100 flex flex-col items-center justify-center py-28 md:py-36 px-6" style={{ background: "#fdfdfd" }}>
+        <section className="js-fade relative border-t border-slate-100 flex flex-col items-center justify-center py-36 md:py-44 px-6" style={{ background: "#fdfdfd" }}>
           <div className="w-full max-w-4xl mx-auto flex flex-col items-center text-center">
             <Label>The truth about academic cold-outreach</Label>
             <h2
@@ -215,7 +215,7 @@ export default function LandingPage() {
         </section>
 
         {/* ══ COMPARISON TABLE ═════════════════════════════════════════ */}
-        <section className="js-fade relative border-t border-slate-100 flex flex-col items-center justify-center py-28 md:py-36 px-6" style={{ background: "#fdfdfd" }}>
+        <section className="js-fade relative border-t border-slate-100 flex flex-col items-center justify-center py-36 md:py-44 px-6" style={{ background: "#fdfdfd" }}>
           <div className="w-full max-w-4xl mx-auto flex flex-col items-center text-center">
             <h2
               className="font-display font-bold text-slate-900 tracking-tighter leading-[1.1] text-center w-full mb-14 mx-auto"
@@ -258,7 +258,7 @@ export default function LandingPage() {
         </section>
 
         {/* ══ 3-STEP WALKTHROUGH ══════════════════════════════════════ */}
-        <section className="js-fade relative flex flex-col items-center justify-center py-28 md:py-36 px-6" style={{ background: "#fdfdfd" }}>
+        <section className="js-fade relative flex flex-col items-center justify-center py-36 md:py-44 px-6" style={{ background: "#fdfdfd" }}>
           <div className="w-full max-w-6xl mx-auto flex flex-col items-center text-center mb-16">
             <h2 className="font-display font-bold text-slate-900 tracking-tighter leading-[1.1] mb-4" style={{ fontSize: "clamp(2rem, 3.5vw, 3rem)" }}>
               From sign-up to insight, in <em className="italic font-light text-indigo-600">three steps.</em>
@@ -409,7 +409,7 @@ export default function LandingPage() {
         <TestimonialsSection />
 
         {/* ══ FINAL CTA ════════════════════════════════════════════════ */}
-        <section className="js-fade relative border-t border-slate-100 flex flex-col items-center justify-center py-28 md:py-36 px-6" style={{ background: "#fdfdfd" }}>
+        <section className="js-fade relative border-t border-slate-100 flex flex-col items-center justify-center py-36 md:py-44 px-6" style={{ background: "#fdfdfd" }}>
           <div className="w-full max-w-3xl mx-auto flex flex-col items-center text-center gap-10 md:gap-14">
             <h2
               className="font-display font-bold text-slate-900 tracking-tighter leading-[1.1] text-center w-full mx-auto"
