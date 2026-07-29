@@ -10,6 +10,9 @@ import { Button } from "@/components/ui/Button";
 import { AnimatedBackground } from "@/components/ui/AnimatedBackground";
 import { TestimonialsSection } from "@/components/features/TestimonialsSection";
 import { PublicFooter } from "@/components/ui/PublicFooter";
+import { ScrollProgress } from "@/components/ui/ScrollProgress";
+import { BackToTop } from "@/components/ui/BackToTop";
+import { MobileStickyBar } from "@/components/ui/MobileStickyBar";
 
 /* ── Page Loader ───────────────────────────────────────────────────────── */
 function PageLoader({ done }: { done: boolean }) {
@@ -139,6 +142,7 @@ export default function LandingPage() {
 
   return (
     <>
+      <ScrollProgress />
       <PageLoader done={loaderDone} />
 
       <div
@@ -429,6 +433,10 @@ export default function LandingPage() {
 
         {/* ══ FOOTER ══════════════════════════════════════════════════ */}
         <PublicFooter />
+
+        {/* ══ INTERACTIVE FLOATING UTILITIES ══════════════════════════ */}
+        <BackToTop />
+        <MobileStickyBar />
       </div>
     </>
   );
