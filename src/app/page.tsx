@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { SchollectiveLogo } from "@/components/ui/SchollectiveLogo";
-import { motion, useInView, useReducedMotion } from "framer-motion";
+import { motion, useInView, useReducedMotion, AnimatePresence } from "framer-motion";
 import { PublicNav } from "@/components/ui/PublicNav";
 import { Button } from "@/components/ui/Button";
 import { AnimatedBackground } from "@/components/ui/AnimatedBackground";
@@ -16,18 +16,16 @@ import { BackToTop } from "@/components/ui/BackToTop";
 import { MobileStickyBar } from "@/components/ui/MobileStickyBar";
 
 /* ── Page Loader ───────────────────────────────────────────────────────── */
-function PageLoader({ done }: { done: boolean }) {
+function PageLoader() {
   const letters = "SCHOLLECTIVE".split("");
   return (
     <motion.div
+      key="loader"
       initial={{ opacity: 1 }}
-      animate={{ opacity: done ? 0 : 1 }}
-      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
       className="fixed inset-0 z-[99999] flex flex-col items-center justify-center select-none"
-      style={{
-        background: "radial-gradient(circle at center, rgba(79, 70, 229, 0.04) 0%, #fcfbfa 60%, #faf9f7 100%)",
-        pointerEvents: done ? "none" : "auto",
-      }}
+      style={{ background: "#faf9f7" }}
     >
       <div className="relative w-48 h-48 flex items-center justify-center mb-8">
         <motion.svg animate={{ rotate: 360 }} transition={{ duration: 6, ease: "linear", repeat: Infinity }} className="absolute w-48 h-48 pointer-events-none" viewBox="0 0 200 200">
@@ -116,20 +114,21 @@ const LOADER_KEY = "schollective_loader_shown";
 
 export default function LandingPage() {
   const router = useRouter();
-  const [loaderDone, setLoaderDone] = useState(false);
+  const [phase, setPhase] = useState<"ssr" | "loading" | "done">("ssr");
   const reduceMotion = useReducedMotion();
 
   useEffect(() => {
-    // If already shown this session, skip the loader immediately.
-    // Run on mount only — avoids SSR hydration mismatch.
+    // Return visit — skip loader, show page immediately
     if (sessionStorage.getItem(LOADER_KEY) === "1") {
-      setLoaderDone(true);
+      setPhase("done");
       return;
     }
+    // First visit — show loader, then reveal page after 1.8s
+    setPhase("loading");
     const t = setTimeout(() => {
-      setLoaderDone(true);
+      setPhase("done");
       sessionStorage.setItem(LOADER_KEY, "1");
-    }, 1000);
+    }, 1800);
     return () => clearTimeout(t);
   }, []);
 
@@ -150,12 +149,22 @@ export default function LandingPage() {
   return (
     <>
       <ScrollProgress />
-      <PageLoader done={loaderDone} />
 
-      <div
-        className="relative text-slate-900 font-sans overflow-x-hidden"
-        style={{ background: "#fdfdfd", opacity: loaderDone ? 1 : 0, transition: "opacity 0.5s ease" }}
-      >
+      {/* SSR / before hydration: opaque placeholder matching loader bg */}
+      {phase === "ssr" && (
+        <div className="fixed inset-0 z-[99999]" style={{ background: "#faf9f7" }} />
+      )}
+
+      {/* AnimatePresence stays mounted so exit animation plays */}
+      {phase !== "ssr" && (
+        <AnimatePresence>
+          {phase === "loading" && <PageLoader />}
+        </AnimatePresence>
+      )}
+
+      {/* Page content — only renders once loaded (return visit = instant, first visit = after loader) */}
+      {phase === "done" && (
+      <div className="relative text-slate-900 font-sans overflow-x-hidden" style={{ background: "#fdfdfd" }}>
         <PublicNav />
 
         {/* ══ HERO ══════════════════════════════════════════════════════ */}
@@ -445,6 +454,7 @@ export default function LandingPage() {
         <BackToTop />
         <MobileStickyBar />
       </div>
+      )}
     </>
   );
 }
