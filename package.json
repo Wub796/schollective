@@ -9,6 +9,8 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@amplitude/ai": "^0.16.0",
+    "@amplitude/unified": "^1.1.31",
     "@google/genai": "^2.16.0",
     "@supabase/ssr": "^0.10.2",
     "@supabase/supabase-js": "^2.105.3",
