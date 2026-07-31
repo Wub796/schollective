@@ -2,6 +2,7 @@
 
 import React, { useRef } from "react";
 import { motion, useInView } from "framer-motion";
+import { ScrollProgress } from "@/components/ui/ScrollProgress";
 import { PublicNav } from "@/components/ui/PublicNav";
 import { PublicFooter } from "@/components/ui/PublicFooter";
 import { Button } from "@/components/ui/Button";
@@ -50,6 +51,7 @@ const USE_CASES = [
 export default function ForStudentsPage() {
   return (
     <div className="bg-transparent text-slate-900 min-h-screen">
+      <ScrollProgress />
       <PublicNav />
 
       {/* ── HERO ──────────────────────────────────────────── */}

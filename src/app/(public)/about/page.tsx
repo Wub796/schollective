@@ -2,6 +2,7 @@
 
 import React, { useRef } from "react";
 import { motion, useInView } from "framer-motion";
+import { ScrollProgress } from "@/components/ui/ScrollProgress";
 import { PublicNav } from "@/components/ui/PublicNav";
 import { PublicFooter } from "@/components/ui/PublicFooter";
 import { Button } from "@/components/ui/Button";
@@ -47,6 +48,7 @@ const TEAM = [
 export default function AboutPage() {
   return (
     <div className="bg-transparent text-slate-900 min-h-screen">
+      <ScrollProgress />
       <PublicNav />
 
       {/* ── HERO ──────────────────────────────────────────── */}
