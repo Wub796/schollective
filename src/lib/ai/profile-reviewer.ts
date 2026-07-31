@@ -1,5 +1,6 @@
 import { getGeminiClient } from "./client";
 import { ProfileReviewResult } from "./types";
+import { ai } from "@/lib/amplitude";
 import {
   sanitizeAiPromptInput,
   getCachedAiResult,
@@ -103,30 +104,47 @@ Return ONLY valid JSON:
     const gemini = getGeminiClient();
     if (!gemini) throw new Error("GEMINI_API_KEY missing");
 
-    const response = await gemini.models.generateContent({
-      model: modelName,
-      contents: prompt,
-      config: {
-        responseMimeType: "application/json",
-        maxOutputTokens: 600,
-        temperature: 0.1,
-      },
-    });
+    const startTime = performance.now();
+    try {
+      const response = await gemini.models.generateContent({
+        model: modelName,
+        contents: prompt,
+        config: {
+          responseMimeType: "application/json",
+          maxOutputTokens: 600,
+          temperature: 0.1,
+        },
+      });
 
-    const text = response.text;
-    if (!text) throw new Error(`Empty response from ${modelName}`);
+      const latencyMs = performance.now() - startTime;
+      const text = response.text;
+      if (!text) throw new Error(`Empty response from ${modelName}`);
 
-    const cleanedText = text.replace(/```json\n?|\n?```/g, "").trim();
-    const parsed = JSON.parse(cleanedText) as ProfileReviewResult;
+      // Track AI message in Amplitude Agent Analytics
+      ai.trackAiMessage(text, modelName, "google", latencyMs, {
+        inputTokens: response.usageMetadata?.promptTokenCount,
+        outputTokens: response.usageMetadata?.candidatesTokenCount,
+        totalTokens: response.usageMetadata?.totalTokenCount,
+      });
 
-    parsed.overallScore = Math.max(0, Math.min(100, parsed.overallScore || 50));
-    parsed.clarityScore = Math.max(0, Math.min(100, parsed.clarityScore || 50));
-    parsed.academicToneScore = Math.max(0, Math.min(100, parsed.academicToneScore || 50));
-    parsed.alignmentScore = Math.max(0, Math.min(100, parsed.alignmentScore || 50));
-    parsed.completenessScore = Math.max(0, Math.min(100, parsed.completenessScore || 50));
+      const cleanedText = text.replace(/```json\n?|\n?```/g, "").trim();
+      const parsed = JSON.parse(cleanedText) as ProfileReviewResult;
 
-    setCachedAiResult(cacheKey, parsed, 15 * 60 * 1000);
-    return parsed;
+      parsed.overallScore = Math.max(0, Math.min(100, parsed.overallScore || 50));
+      parsed.clarityScore = Math.max(0, Math.min(100, parsed.clarityScore || 50));
+      parsed.academicToneScore = Math.max(0, Math.min(100, parsed.academicToneScore || 50));
+      parsed.alignmentScore = Math.max(0, Math.min(100, parsed.alignmentScore || 50));
+      parsed.completenessScore = Math.max(0, Math.min(100, parsed.completenessScore || 50));
+
+      setCachedAiResult(cacheKey, parsed, 15 * 60 * 1000);
+      return parsed;
+    } catch (err: any) {
+      ai.trackAiMessage("", modelName, "google", performance.now() - startTime, {
+        isError: true,
+        errorMessage: err?.message || "Unknown LLM error",
+      });
+      throw err;
+    }
   };
 
   return executeHybridAiWithFallback(
