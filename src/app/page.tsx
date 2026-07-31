@@ -148,7 +148,6 @@ export default function LandingPage() {
 
   return (
     <>
-      <ScrollProgress />
 
       {/* SSR / before hydration: opaque placeholder matching loader bg */}
       {phase === "ssr" && (
@@ -165,6 +164,7 @@ export default function LandingPage() {
       {/* Page content — only renders once loaded (return visit = instant, first visit = after loader) */}
       {phase === "done" && (
       <div className="relative text-slate-900 font-sans overflow-x-hidden" style={{ background: "#fdfdfd" }}>
+        <ScrollProgress />
         <PublicNav />
 
         {/* ══ HERO ══════════════════════════════════════════════════════ */}

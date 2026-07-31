@@ -4,31 +4,32 @@ import { createClient } from "@/utils/supabase/server";
 import { createAdminClient } from "@/utils/supabase/admin";
 import { revalidatePath } from "next/cache";
 import { scoreProfessorApplication } from "@/lib/validators";
+import { checkRateLimit, sanitiseText, isValidUuid, LIMITS } from "@/lib/security";
 
 /**
  * Runs the AI professor validation algorithm.
- * - Automatically APPROVES legitimate high-scoring applications (score >= 70).
- * - Leaves suspicious/low-scoring applications in 'pending' status, marked with AI flags for admin review.
- * - NEVER automatically rejects applications.
  */
 export async function scoreApplication(profileId: string) {
+  const pid = sanitiseText(profileId, 100);
+  if (!pid || !isValidUuid(pid)) {
+    return { error: "Invalid profile ID." };
+  }
+
   try {
     const adminClient = createAdminClient();
 
-    // 1. Fetch profile with resilience
     let profile: any = null;
     const { data: primaryProfile, error: selectError } = await adminClient
       .from("profiles")
       .select("id, email, institution, expertise_fields, first_name, last_name, lab_website, publications, status, role")
-      .eq("id", profileId)
+      .eq("id", pid)
       .maybeSingle();
 
     if (selectError || !primaryProfile) {
-      // Fallback query if optional columns throw schema error
       const { data: fallbackProfile } = await adminClient
         .from("profiles")
         .select("id, email, institution, first_name, last_name, status")
-        .eq("id", profileId)
+        .eq("id", pid)
         .maybeSingle();
 
       if (!fallbackProfile) return { error: "Profile not found" };
@@ -37,7 +38,6 @@ export async function scoreApplication(profileId: string) {
       profile = primaryProfile;
     }
 
-    // 2. Score Application
     const result = scoreProfessorApplication({
       email:            profile.email || "",
       institution:      profile.institution || "",
@@ -57,7 +57,6 @@ export async function scoreApplication(profileId: string) {
       updated_at: new Date().toISOString(),
     };
 
-    // Auto-approve if high legitimacy score and currently pending
     let autoApproved = false;
     if (isHighLegitimacy && (profile.status === "pending" || !profile.status)) {
       updates.status = "approved";
@@ -69,27 +68,25 @@ export async function scoreApplication(profileId: string) {
     let { error: updateError } = await adminClient
       .from("profiles")
       .update(updates)
-      .eq("id", profileId);
+      .eq("id", pid);
 
-    // Schema Fallback 1: If profile_complete or is_accepting_requests columns don't exist
     if (updateError && (updateError.message?.includes("profile_complete") || updateError.message?.includes("is_accepting_requests") || updateError.message?.includes("schema cache"))) {
       delete updates.profile_complete;
       delete updates.is_accepting_requests;
       const retry = await adminClient
         .from("profiles")
         .update(updates)
-        .eq("id", profileId);
+        .eq("id", pid);
       updateError = retry.error;
     }
 
-    // Schema Fallback 2: If ai_score / ai_flags / ai_level columns don't exist
     if (updateError && (updateError.message?.includes("ai_score") || updateError.message?.includes("ai_flags") || updateError.message?.includes("ai_level"))) {
       const coreUpdates: Record<string, any> = { updated_at: new Date().toISOString() };
       if (autoApproved) coreUpdates.status = "approved";
       const retryCore = await adminClient
         .from("profiles")
         .update(coreUpdates)
-        .eq("id", profileId);
+        .eq("id", pid);
       updateError = retryCore.error;
     }
 
@@ -101,26 +98,13 @@ export async function scoreApplication(profileId: string) {
     revalidatePath("/admin/professors");
     revalidatePath("/professors");
 
-    return {
-      success: true,
-      autoApproved,
-      result: {
-        score: result.score,
-        level: result.level,
-        flags: result.flags,
-        signals: result.signals,
-      },
-    };
+    return { success: true, autoApproved, result: { score: result.score, level: result.level, flags: result.flags, signals: result.signals } };
   } catch (err: any) {
     console.error("[scoreApplication] Unexpected error:", err);
     return { error: err.message || "Scoring failed" };
   }
 }
 
-/**
- * Batch Action: Process all pending professor applications with the AI reviewer.
- * Auto-approves high scoring applicants and flags suspicious ones for admin inspection.
- */
 export async function autoReviewAllPendingProfessors() {
   try {
     const adminClient = createAdminClient();
@@ -140,47 +124,36 @@ export async function autoReviewAllPendingProfessors() {
 
     for (const item of pending) {
       const res = await scoreApplication(item.id);
-      if (res?.autoApproved) {
-        autoApprovedCount++;
-      } else {
-        flaggedCount++;
-      }
+      if (res?.autoApproved) autoApprovedCount++;
+      else flaggedCount++;
     }
 
     revalidatePath("/admin/dashboard");
     revalidatePath("/admin/professors");
     revalidatePath("/professors");
 
-    return {
-      success: true,
-      processed: pending.length,
-      autoApprovedCount,
-      flaggedCount,
-    };
+    return { success: true, processed: pending.length, autoApprovedCount, flaggedCount };
   } catch (err: any) {
     console.error("[autoReviewAllPendingProfessors] Error:", err);
     return { error: err.message || "Batch review failed" };
   }
 }
 
-/**
- * Admin Action: Update Professor Application Status
- */
 export async function updateProfessorStatus(profileId: string, newStatus: 'approved' | 'rejected') {
+  const pid = sanitiseText(profileId, 100);
+  if (!pid || !isValidUuid(pid)) return { error: "Invalid profile ID." };
+  if (newStatus !== "approved" && newStatus !== "rejected") return { error: "Invalid status." };
+
   try {
     const supabase = await createClient();
 
-    // 1. Double-check Authorization
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     if (authError || !user) {
-      console.error("[updateProfessorStatus] Auth error or missing user:", authError?.message);
       return { error: "Unauthorized: Session expired. Please log in again." };
     }
 
-    // Use service role admin client to bypass RLS policies
     const adminClient = createAdminClient();
 
-    // Check if the current user is an admin
     const { data: adminProfile, error: adminQueryError } = await adminClient
       .from("profiles")
       .select("role")
@@ -188,11 +161,9 @@ export async function updateProfessorStatus(profileId: string, newStatus: 'appro
       .single();
 
     if (adminQueryError || adminProfile?.role !== 'admin') {
-      console.error("[updateProfessorStatus] Admin check failed:", adminQueryError?.message, adminProfile);
       return { error: "Access denied: Admin privileges required." };
     }
 
-    // 2. Perform Update with adminClient
     const updates: Record<string, any> = {
       status: newStatus,
       updated_at: new Date().toISOString(),
@@ -206,25 +177,22 @@ export async function updateProfessorStatus(profileId: string, newStatus: 'appro
     let { error: updateError } = await adminClient
       .from("profiles")
       .update(updates)
-      .eq("id", profileId);
+      .eq("id", pid);
 
     if (updateError && (updateError.message?.includes("profile_complete") || updateError.message?.includes("is_accepting_requests") || updateError.message?.includes("schema cache"))) {
-      console.warn("[updateProfessorStatus] Schema cache fallback — retrying update without extra columns:", updateError.message);
       delete updates.profile_complete;
       delete updates.is_accepting_requests;
       const retry = await adminClient
         .from("profiles")
         .update(updates)
-        .eq("id", profileId);
+        .eq("id", pid);
       updateError = retry.error;
     }
 
     if (updateError) {
-      console.error("[updateProfessorStatus] DB update error:", updateError.message);
       return { error: `Update failed: ${updateError.message}` };
     }
 
-    // 3. Sync State across all relevant views
     revalidatePath("/admin/dashboard");
     revalidatePath("/admin/professors");
     revalidatePath("/professors");
