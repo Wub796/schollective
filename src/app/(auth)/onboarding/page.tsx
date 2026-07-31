@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect, Suspense } from "react";
-import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { createClient } from "@/utils/supabase/client";
@@ -403,21 +402,10 @@ function OnboardingContent() {
         }}
       >
         {/* Wordmark */}
-        <motion.div variants={fadeUp} style={{ marginBottom: "3rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem" }}>
+        <motion.div variants={fadeUp} style={{ marginBottom: "3rem" }}>
           <span className="font-display" style={{ fontSize: "1.1rem", fontWeight: 800, color: "var(--text-primary)", letterSpacing: "-0.02em" }}>
             Schollective
           </span>
-          <Link
-            href="/login"
-            onClick={(event) => {
-              if (isDirty && !window.confirm("You have unsaved changes. Leave onboarding?")) {
-                event.preventDefault();
-              }
-            }}
-            style={{ color: "#4f46e5", fontSize: "0.65rem", fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase", textDecoration: "none", fontFamily: "var(--font-sans)" }}
-          >
-            Log in
-          </Link>
         </motion.div>
 
         {/* Eyebrow */}
