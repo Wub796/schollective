@@ -1,7 +1,8 @@
 import React from "react";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
-import { createClient } from "@/utils/supabase/server";
+import { sql } from "@/lib/neon/db";
+import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { RequestQueueCard } from "@/components/features/RequestQueueCard";
 import { AcceptingToggle } from "@/components/features/AcceptingToggle";
 import { ProfProfileForm } from "@/app/(dashboard)/prof/profile/ProfProfileForm";
@@ -57,17 +58,8 @@ const PROF_TOUR_STEPS: TourStep[] = [
 ];
 
 export default async function ProfessorDashboard() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", user.id)
-    .single();
-
-  if (!profile) redirect("/login");
+  const { user, profile } = await getCurrentUserAndProfile();
+  if (!user || !profile) redirect("/login");
 
   // Allow admins to preview as professor
   const cookieStore = await cookies();
@@ -82,15 +74,27 @@ export default async function ProfessorDashboard() {
   const isAccepting = profile.is_accepting_requests !== false; // default true
   const displayName = profile.preferred_name || profile.first_name || "Professor";
 
-  const { data: allRequests } = await supabase
-    .from("requests")
-    .select(`
-      id, status, topic, created_at, updated_at,
-      student:student_id ( first_name, last_name, preferred_name, education_level, bio, academic_interests, extracurriculars ),
-      messages ( content, created_at, read_at, sender_id )
-    `)
-    .eq("professor_id", user.id)
-    .order("created_at", { ascending: false });
+  const allRequests = await sql`
+    SELECT 
+      r.id, r.status, r.topic, r.created_at, r.updated_at,
+      json_build_object(
+        'first_name', s.first_name,
+        'last_name', s.last_name,
+        'preferred_name', s.preferred_name,
+        'education_level', s.education_level,
+        'bio', s.bio,
+        'academic_interests', s.academic_interests,
+        'extracurriculars', s.extracurriculars
+      ) as student,
+      COALESCE(
+        (SELECT json_agg(json_build_object('content', m.content, 'created_at', m.created_at, 'sender_id', m.sender_id))
+         FROM messages m WHERE m.request_id = r.id), '[]'::json
+      ) as messages
+    FROM requests r
+    LEFT JOIN profiles s ON r.student_id = s.id
+    WHERE r.professor_id = ${user.id}
+    ORDER BY r.created_at DESC;
+  `;
 
   const pendingRequests = (allRequests || [])
     .filter((r) => r.status === "pending")
