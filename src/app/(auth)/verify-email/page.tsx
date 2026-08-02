@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { createClient } from "@/utils/supabase/client";
+import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/Button";
 import { toast } from "sonner";
 
@@ -22,7 +22,6 @@ const stagger = {
 
 export default function VerifyEmailPage() {
   const router = useRouter();
-  const supabase = createClient();
   const [email, setEmail] = useState<string>("");
   const [cooldown, setCooldown] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
@@ -34,72 +33,17 @@ export default function VerifyEmailPage() {
     return () => clearTimeout(timer);
   }, [cooldown]);
 
-  // Load user email and handle initial check
+  // Load user email and check profile
   useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (user?.email) {
-        setEmail(user.email);
-        if (user.email_confirmed_at) {
-          // If already confirmed, auto-redirect immediately
-          supabase
-            .from("profiles")
-            .select("role, status")
-            .eq("id", user.id)
-            .single()
-            .then(({ data: profile }) => {
-              if (!profile || !profile.role) {
-                router.push("/onboarding");
-              } else if (profile.role === "professor") {
-                if (profile.status === "approved") {
-                  router.push("/prof/dashboard");
-                } else {
-                  router.push("/prof/pending");
-                }
-              } else {
-                router.push("/dashboard");
-              }
-            });
+    fetch("/api/auth/profile")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.user?.email) {
+          setEmail(data.user.email);
         }
-      }
-    });
-  }, [router, supabase]);
-
-  // Poll for email verification state
-  useEffect(() => {
-    let active = true;
-    const interval = setInterval(async () => {
-      if (!active) return;
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user?.email_confirmed_at) {
-        clearInterval(interval);
-        toast.success("Email verified successfully! Welcome.");
-        
-        // Fetch profile
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("role, status")
-          .eq("id", user.id)
-          .single();
-
-        if (!profile || !profile.role) {
-          router.push("/onboarding");
-        } else if (profile.role === "professor") {
-          if (profile.status === "approved") {
-            router.push("/prof/dashboard");
-          } else {
-            router.push("/prof/pending");
-          }
-        } else {
-          router.push("/dashboard");
-        }
-      }
-    }, 4000);
-
-    return () => {
-      active = false;
-      clearInterval(interval);
-    };
-  }, [router, supabase]);
+      })
+      .catch(() => {});
+  }, [router]);
 
   const handleResend = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -107,16 +51,10 @@ export default function VerifyEmailPage() {
 
     setLoading(true);
     try {
-      const { error } = await supabase.auth.resend({
-        type: "signup",
-        email: email,
-        options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
-        },
+      await authClient.sendVerificationEmail({
+        email,
+        callbackURL: `${window.location.origin}/dashboard`,
       });
-
-      if (error) throw error;
-
       toast.success("Verification email resent!");
       setCooldown(60);
     } catch (err: any) {
