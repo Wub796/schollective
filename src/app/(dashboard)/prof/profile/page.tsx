@@ -1,23 +1,14 @@
 import React from "react";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
-import { createClient } from "@/utils/supabase/server";
+import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { AccountSecuritySettings } from "@/components/features/AccountSecuritySettings";
 
 export const dynamic = "force-dynamic";
 
 export default async function ProfPublicProfilePage() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", user.id)
-    .single();
-
-  if (!profile) redirect("/dashboard");
+  const { user, profile } = await getCurrentUserAndProfile();
+  if (!user || !profile) redirect("/login");
 
   // Allow admins to preview as professor
   const cookieStore = await cookies();

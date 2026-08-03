@@ -4,7 +4,7 @@ import React, { useState, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { updateProfProfile } from "./actions";
-import { createClient } from "@/utils/supabase/client";
+import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
 import {
   GraduationCap,
@@ -38,7 +38,6 @@ export function ProfProfileForm({ profile: initialProfile }: Props) {
   const [activeTab, setActiveTab] = useState<"edit" | "preview">("edit");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
-  const supabase = createClient();
 
   // Custom Cursor Preference (OFF by default)
   const [customCursor, setCustomCursor] = useState(() => {
@@ -59,7 +58,7 @@ export function ProfProfileForm({ profile: initialProfile }: Props) {
   };
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
+    await authClient.signOut();
     router.push("/login");
   };
 
@@ -99,27 +98,32 @@ export function ProfProfileForm({ profile: initialProfile }: Props) {
 
     setAvatarUploading(true);
     try {
-      const ext = file.name.split(".").pop();
-      const filePath = `${profile.id}/avatar.${ext}`;
+      // 1. Get presigned upload URL from Neon storage
+      const presignRes = await fetch("/api/storage/upload", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ filename: file.name, contentType: file.type }),
+      });
 
-      const { error: uploadError } = await supabase.storage
-        .from("avatars")
-        .upload(filePath, file, { upsert: true, contentType: file.type });
+      if (!presignRes.ok) throw new Error("Failed to generate storage upload URL");
+      const { uploadUrl, publicUrl } = await presignRes.json();
 
-      if (uploadError) throw uploadError;
+      // 2. Direct upload to Neon Object Storage
+      const s3Res = await fetch(uploadUrl, {
+        method: "PUT",
+        headers: { "Content-Type": file.type },
+        body: file,
+      });
 
-      const { data: { publicUrl } } = supabase.storage
-        .from("avatars")
-        .getPublicUrl(filePath);
+      if (!s3Res.ok) throw new Error("Storage upload failed");
 
+      // 3. Save avatar URL in Neon profiles table
       const avatarUrl = `${publicUrl}?t=${Date.now()}`;
-
-      const { error: updateError } = await supabase
-        .from("profiles")
-        .update({ avatar_url: avatarUrl })
-        .eq("id", profile.id);
-
-      if (updateError) throw updateError;
+      await fetch("/api/auth/profile/update", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ avatar_url: avatarUrl }),
+      });
 
       setProfile((p: any) => ({ ...p, avatar_url: avatarUrl }));
       toast.success("Profile picture updated!");
