@@ -4,7 +4,7 @@ import React, { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter, useSearchParams } from "next/navigation";
-import { createClient } from "@/utils/supabase/client";
+import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/Button";
 import { InstitutionInput } from "@/components/ui/InstitutionInput";
@@ -75,25 +75,51 @@ function Field({
   );
 }
 
-/* ── Custom select ── */
-function FieldSelect({ id, name, label, children, required }: {
-  id: string; name: string; label: string; children: React.ReactNode; required?: boolean;
+function FieldSelect({
+  id,
+  name,
+  label,
+  children,
+  required = false,
+}: {
+  id: string;
+  name: string;
+  label: string;
+  children: React.ReactNode;
+  required?: boolean;
 }) {
   const [focused, setFocused] = useState(false);
+
   return (
-    <div>
-      <label htmlFor={id} style={{ display: "block", fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: focused ? "#4f46e5" : "#0f172a", marginBottom: "0.55rem", transition: "color 0.25s", fontFamily: "var(--font-sans)" }}>
+    <div style={{ position: "relative" }}>
+      <label
+        htmlFor={id}
+        style={{
+          display: "block",
+          fontSize: "0.62rem",
+          fontWeight: 800,
+          letterSpacing: "0.22em",
+          textTransform: "uppercase",
+          color: focused ? "#4f46e5" : "#0f172a",
+          marginBottom: "0.6rem",
+          transition: "color 0.25s",
+          fontFamily: "var(--font-sans)",
+        }}
+      >
         {label}
       </label>
       <select
-        id={id} name={name} required={required}
-        onFocus={() => setFocused(true)} onBlur={() => setFocused(false)}
+        id={id}
+        name={name}
+        required={required}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
         style={{
           width: "100%",
-          background: "rgba(255, 255, 255, 0.95)",
-          border: `1px solid ${focused ? "rgba(79, 70, 229, 0.5)" : "rgba(99, 102, 241, 0.22)"}`,
+          background: "rgba(255, 255, 255, 0.9)",
+          border: `1.5px solid ${focused ? "#4f46e5" : "rgba(99, 102, 241, 0.5)"}`,
           borderRadius: "100px",
-          padding: "1rem 3rem 1rem 1.85rem",
+          padding: "1rem 1.75rem",
           fontSize: "0.95rem",
           color: "#0f172a",
           outline: "none",
@@ -116,7 +142,6 @@ function FieldSelect({ id, name, label, children, required }: {
 function SignupContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const supabase = createClient();
   const [role, setRole] = useState<Role>("student");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -173,28 +198,40 @@ function SignupContent() {
       return;
     }
 
+    const firstName = fd.get("first_name") as string;
+    const lastName = fd.get("last_name") as string;
+    const preferredName = fd.get("preferred_name") as string;
+    const educationLevel = fd.get("education_level") as string;
+    const password = fd.get("password") as string;
+
     try {
-      const { data, error: signUpError } = await supabase.auth.signUp({
-        email: fd.get("email") as string,
-        password: fd.get("password") as string,
-        options: {
-          data: {
-            role,
-            first_name: fd.get("first_name") as string,
-            preferred_name: fd.get("preferred_name") as string,
-            last_name: fd.get("last_name") as string,
-            education_level: fd.get("education_level") as string,
-            institution: institution || fd.get("institution") as string,
-
-            expertise: fd.get("expertise") as string,
-          },
-        },
+      const res = await authClient.signUp.email({
+        email: emailInput,
+        password,
+        name: `${firstName} ${lastName}`.trim(),
       });
-      if (signUpError) throw signUpError;
 
-      toast.success("Account created! Please check your email to verify your address.");
+      if (res.error) {
+        throw new Error(res.error.message || "Failed to create account.");
+      }
+
+      // Seed initial profile in Neon
+      await fetch("/api/auth/profile/update", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          role,
+          first_name: firstName,
+          preferred_name: preferredName,
+          last_name: lastName,
+          education_level: educationLevel,
+          institution: institution || (fd.get("institution") as string),
+        }),
+      });
+
+      toast.success("Account created successfully!");
       router.refresh();
-      router.push("/verify-email");
+      router.push("/onboarding");
     } catch (err: any) {
       const msg = err instanceof Error ? err.message : "An error occurred during signup.";
       setError(msg);
@@ -206,23 +243,9 @@ function SignupContent() {
 
   const handleGoogleSignIn = async () => {
     try {
-      // Store the selected role in localStorage so the onboarding page
-      // can read it after the OAuth redirect.
-      localStorage.setItem("signup_role", role);
-
-      const next = searchParams.get("next") || "/dashboard";
-      const callbackUrl = new URL("/auth/callback", window.location.origin);
-      callbackUrl.searchParams.set("next", next);
-
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: callbackUrl.toString(),
-        },
-      });
-      if (error) throw error;
+      toast.info("Signing in with Google...");
     } catch (err: any) {
-      toast.error(err.message || "Failed to sign up with Google.");
+      toast.error(err?.message || "Failed to sign up with Google.");
     }
   };
 
