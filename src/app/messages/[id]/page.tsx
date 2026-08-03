@@ -1,7 +1,8 @@
 import React from "react";
 import Link from "next/link";
 import { redirect, notFound } from "next/navigation";
-import { createClient } from "@/utils/supabase/server";
+import { sql } from "@/lib/neon/db";
+import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { ChatThread } from "@/components/features/ChatThread";
 import { CloseThreadButton } from "@/components/features/CloseThreadButton";
 import { ArrowLeft, ShieldCheck } from "lucide-react";
@@ -14,31 +15,33 @@ interface MessagePageProps {
 }
 
 export default async function MessagePage({ params }: MessagePageProps) {
-  const supabase = await createClient();
   const { id: requestId } = await params;
-
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session) redirect("/login");
+  const { session, user } = await getCurrentUserAndProfile();
+  if (!session || !user) redirect("/login");
 
   // Mark incoming messages as read
   await markRead(requestId);
 
-  const { data: request, error: requestError } = await supabase
-    .from("requests")
-    .select("id, status, topic, student_id, professor_id")
-    .eq("id", requestId)
-    .single();
+  const requests = await sql`
+    SELECT id, status, topic, student_id, professor_id
+    FROM requests
+    WHERE id = ${requestId}
+    LIMIT 1;
+  `;
+  const request = requests[0];
 
-  if (requestError || !request) return notFound();
+  if (!request) return notFound();
 
-  // Fetch profiles separately so a failing join doesn't kill the whole page
-  const [{ data: studentProfile }, { data: professorProfile }] = await Promise.all([
-    supabase.from("profiles").select("id, first_name, last_name, preferred_name, role").eq("id", request.student_id).single(),
-    supabase.from("profiles").select("id, first_name, last_name, preferred_name, role, expertise").eq("id", request.professor_id).single(),
+  const [studentRows, professorRows] = await Promise.all([
+    sql`SELECT id, first_name, last_name, preferred_name, role FROM profiles WHERE id = ${request.student_id} LIMIT 1;`,
+    sql`SELECT id, first_name, last_name, preferred_name, role, expertise_fields, expertise FROM profiles WHERE id = ${request.professor_id} LIMIT 1;`,
   ]);
 
-  const isProfessor = session.user.id === request.professor_id;
-  const student   = (studentProfile   ?? {}) as any;
+  const studentProfile = studentRows[0];
+  const professorProfile = professorRows[0];
+
+  const isProfessor = user.id === request.professor_id;
+  const student = (studentProfile ?? {}) as any;
   const professor = (professorProfile ?? {}) as any;
   const participant = (isProfessor ? student : professor) as any;
   const participantName = participant.preferred_name || participant.first_name || "Unknown";
@@ -47,11 +50,12 @@ export default async function MessagePage({ params }: MessagePageProps) {
       ? `Dr. ${participantName} ${participant.last_name ?? ""}`
       : `${participantName} ${participant.last_name ?? ""}`;
 
-  const { data: messages } = await supabase
-    .from("messages")
-    .select("*")
-    .eq("request_id", requestId)
-    .order("created_at", { ascending: true });
+  const messages = await sql`
+    SELECT *
+    FROM messages
+    WHERE request_id = ${requestId}
+    ORDER BY created_at ASC;
+  `;
 
 
 
@@ -100,7 +104,7 @@ export default async function MessagePage({ params }: MessagePageProps) {
                 {participant.role === "professor" && <ShieldCheck size={12} style={{ color: "#4f46e5", flexShrink: 0 }} />}
               </div>
               <div style={{ fontSize: "0.58rem", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: "#4f46e5", fontFamily: "var(--font-sans, monospace)" }}>
-                {participant.role === "professor" ? (participant as any).expertise : "Student"}
+                {participant.role === "professor" ? ((participant as any).expertise || (participant as any).expertise_fields?.[0] || "Faculty") : "Student"}
               </div>
             </div>
           </div>
