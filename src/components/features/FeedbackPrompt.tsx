@@ -53,10 +53,10 @@ export function FeedbackPrompt() {
           position: "relative",
           background: "linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(245, 243, 255, 0.8) 100%)",
           backdropFilter: "blur(24px)",
-          border: "1px solid rgba(0, 140, 187, 0.15)",
+          border: "1px solid rgba(79, 70, 229, 0.15)",
           borderRadius: "20px",
           padding: "1.75rem 2rem",
-          boxShadow: "0 10px 30px rgba(0, 140, 187, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.6)",
+          boxShadow: "0 10px 30px rgba(79, 70, 229, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.6)",
           display: "flex",
           flexDirection: "column",
           gap: "1rem",
@@ -71,7 +71,7 @@ export function FeedbackPrompt() {
           right: "-5rem",
           width: "10rem",
           height: "10rem",
-          background: "radial-gradient(circle, rgba(0, 140, 187, 0.15) 0%, transparent 70%)",
+          background: "radial-gradient(circle, rgba(79, 70, 229, 0.15) 0%, transparent 70%)",
           pointerEvents: "none"
         }} />
 
@@ -113,7 +113,7 @@ export function FeedbackPrompt() {
                 width: "2.2rem",
                 height: "2.2rem",
                 borderRadius: "10px",
-                background: "rgba(0, 140, 187, 0.08)",
+                background: "rgba(79, 70, 229, 0.08)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",

@@ -33,7 +33,7 @@ function Field({
       <label htmlFor={id} style={{
         display: "block", fontSize: "0.62rem", fontWeight: 800,
         letterSpacing: "0.22em", textTransform: "uppercase",
-        color: disabled ? "rgba(20, 16, 5, 0.3)" : focused ? "#008CBB" : "#141005",
+        color: disabled ? "rgba(15, 23, 42, 0.3)" : focused ? "#4f46e5" : "#0f172a",
         marginBottom: "0.55rem", transition: "color 0.25s",
         fontFamily: "var(--font-sans)",
       }}>
@@ -47,15 +47,15 @@ function Field({
         onBlur={() => setFocused(false)}
         style={{
           width: "100%",
-          background: disabled ? "rgba(161, 197, 209, 0.08)" : focused ? "#ffffff" : "rgba(255, 255, 255, 0.9)",
-          border: `1.5px solid ${disabled ? "rgba(161, 197, 209, 0.3)" : focused ? "#008CBB" : "rgba(161, 197, 209, 0.5)"}`,
+          background: disabled ? "rgba(99, 102, 241, 0.08)" : focused ? "#ffffff" : "rgba(255, 255, 255, 0.9)",
+          border: `1.5px solid ${disabled ? "rgba(99, 102, 241, 0.3)" : focused ? "#4f46e5" : "rgba(99, 102, 241, 0.5)"}`,
           borderRadius: "100px",
           padding: "1rem 1.75rem",
           fontSize: "0.92rem",
-          color: disabled ? "rgba(20, 16, 5, 0.45)" : "#141005",
+          color: disabled ? "rgba(15, 23, 42, 0.45)" : "#0f172a",
           outline: "none",
           transition: "all 0.25s ease",
-          boxShadow: focused ? "0 0 0 4px rgba(0, 140, 187, 0.15)" : "none",
+          boxShadow: focused ? "0 0 0 4px rgba(79, 70, 229, 0.15)" : "none",
           fontFamily: "var(--font-sans)",
           cursor: disabled ? "not-allowed" : "text",
         }}

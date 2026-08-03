@@ -10,8 +10,8 @@ const Select = React.forwardRef<HTMLSelectElement, React.SelectHTMLAttributes<HT
             "flex h-12 w-full rounded-full px-8 py-3.5 text-sm transition-all appearance-none cursor-pointer",
             "bg-[rgba(15, 23, 42, 0.02)] border border-[rgba(15, 23, 42, 0.08)]",
             "text-slate-900",
-            "focus:outline-none focus:border-[rgba(147,51,234,0.4)] focus:bg-[rgba(15, 23, 42, 0.04)]",
-            "focus:ring-2 focus:ring-[rgba(147,51,234,0.1)]",
+            "focus:outline-none focus:border-[rgba(79,70,229,0.4)] focus:bg-[rgba(15, 23, 42, 0.04)]",
+            "focus:ring-2 focus:ring-[rgba(79,70,229,0.1)]",
             "disabled:cursor-not-allowed disabled:opacity-40",
             // Clean option styling for dropdown choices
             "[&>option]:bg-white [&>option]:text-slate-900",

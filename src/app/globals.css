@@ -21,41 +21,36 @@
   --z-toast: 40;
   --z-cursor: 50;
 
-  /* ── 4-Color Theme Palette ────── */
-  --bg-base:      #fafbfc;             /* Crisp clean base */
-  --bg-surface-1: #ffffff;             /* Pure white card surface */
-  --bg-surface-2: #f0f7f9;             /* Soft tint of Accent #A1C5D1 */
-  --bg-surface-3: #d9eaef;             /* Lifted tint of #A1C5D1 */
+  /* ── Cream / Off-white base palette ────── */
+  --bg-base:      #faf9f7;  /* warm cream off-white            */
+  --bg-surface-1: #ffffff;  /* lifted card surface             */
+  --bg-surface-2: #f5f3ff;  /* indigo-tinted surface           */
+  --bg-surface-3: #ede9fe;  /* indigo-100                      */
 
   /* Accent section */
-  --bg-accent-section: #eef6f9;
+  --bg-accent-section: #eef2ff;  /* indigo-50                  */
 
-  /* Contrast Color #141005 for primary text & dark elements */
-  --text-primary:   #141005;
-  --text-secondary: #3b3527;
-  --text-tertiary:  #6b6352;
+  --text-primary:   #0f172a;  /* slate 900                     */
+  --text-secondary: #475569;  /* slate 600                     */
+  --text-tertiary:  #64748b;  /* slate 500                     */
 
-  /* Main Color #008CBB */
-  --accent:       #008CBB;
-  --accent-dim:   rgba(0, 140, 187, 0.08);
-  --accent-glow:  rgba(0, 140, 187, 0.18);
+  /* Vibrant Indigo primary accent — #4f46e5 */
+  --accent:       #4f46e5;
+  --accent-dim:   rgba(79, 70, 229, 0.08);
+  --accent-glow:  rgba(79, 70, 229, 0.15);
 
-  /* Accent Color #A1C5D1 */
-  --accent-blue:     #A1C5D1;
-  --accent-blue-dim: rgba(161, 197, 209, 0.25);
+  /* Indigo mid-tone */
+  --accent-blue:     #6366f1;
+  --accent-blue-dim: rgba(99, 102, 241, 0.12);
 
-  /* Highlight Color #FFC20F */
-  --highlight:      #FFC20F;
-  --highlight-dim:  rgba(255, 194, 15, 0.15);
+  --border:       #e2e8f0;
+  --border-hover: #cbd5e1;
+  --border-focus: #a5b4fc;  /* indigo-300                      */
 
-  --border:       #dce8ed;
-  --border-hover: #b8d4de;
-  --border-focus: #008CBB;
-
-  --glass-bg:     rgba(255, 255, 255, 0.88);
-  --glass-border: rgba(161, 197, 209, 0.35);
+  --glass-bg:     rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(226, 232, 240, 0.8);
   --glass-blur:   24px;
-  --glass-shadow: 0 4px 12px rgba(0, 140, 187, 0.05);
+  --glass-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 
   --card-padding: 2rem;
   --card-radius:  0.75rem;
@@ -102,16 +97,16 @@ body {
   overflow-x: hidden;
 }
 
-/* Subtle accent blue glow */
+/* Subtle indigo glow */
 .page-bg::before {
   content: '';
   position: fixed;
   inset: 0;
   pointer-events: none;
   background:
-    radial-gradient(ellipse 70% 50% at 0% 50%,   rgba(0, 140, 187, 0.04) 0%, transparent 70%),
-    radial-gradient(ellipse 70% 50% at 100% 50%,  rgba(0, 140, 187, 0.04) 0%, transparent 70%),
-    radial-gradient(ellipse 100% 40% at 50% 100%, rgba(0, 140, 187, 0.03) 0%, transparent 70%);
+    radial-gradient(ellipse 70% 50% at 0% 50%,   rgba(79, 70, 229, 0.04) 0%, transparent 70%),
+    radial-gradient(ellipse 70% 50% at 100% 50%,  rgba(79, 70, 229, 0.04) 0%, transparent 70%),
+    radial-gradient(ellipse 100% 40% at 50% 100%, rgba(79, 70, 229, 0.03) 0%, transparent 70%);
   z-index: 0;
 }
 
@@ -709,9 +704,9 @@ a, button, [role="button"] {
 input:focus-visible,
 textarea:focus-visible,
 select:focus-visible {
-  outline: 2px solid rgba(0, 140, 187, 0.7);
+  outline: 2px solid rgba(79, 70, 229, 0.7);
   outline-offset: 2px;
-  box-shadow: 0 0 0 4px rgba(0, 140, 187, 0.1);
+  box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
 }
 
 a:not([class]):hover {
@@ -907,7 +902,7 @@ body {
   position: absolute;
   bottom: 0; left: 0;
   height: 1px; width: 0;
-  background: #A1C5D1;
+  background: #818cf8;
   opacity: 0.4;
   transition: width 0.7s cubic-bezier(0.19, 1, 0.22, 1);
 }
@@ -952,7 +947,7 @@ body {
   position: absolute;
   inset: 0;
   border-radius: 9999px;
-  border: 1px solid #A1C5D1;
+  border: 1px solid #818cf8;
   opacity: 0;
   transform: scale(0.5);
   transition: all 0.45s cubic-bezier(0.19, 1, 0.22, 1);
@@ -1172,17 +1167,17 @@ body {
    LP FOOTER STYLING
    ═══════════════════════════════════════════════════════════════ */
 /* ═══════════════════════════════════════════════════════════════
-   LP FOOTER STYLING — 4-Color Theme Palette
+   LP FOOTER STYLING — Saturated & single-line fit
    ═══════════════════════════════════════════════════════════════ */
 .lp-footer {
   position: relative;
   width: 100%;
-  border-top: 1px solid rgba(0, 140, 187, 0.18);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(240, 247, 249, 0.92) 100%);
+  border-top: 1px solid rgba(99, 102, 241, 0.18);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.85) 0%, rgba(238, 242, 255, 0.85) 100%);
   backdrop-filter: blur(24px) saturate(200%);
   -webkit-backdrop-filter: blur(24px) saturate(200%);
   padding: 1.75rem 2rem;
-  box-shadow: 0 -10px 40px -15px rgba(0, 140, 187, 0.08);
+  box-shadow: 0 -10px 40px -15px rgba(79, 70, 229, 0.08);
   overflow: hidden;
 }
 
@@ -1192,8 +1187,8 @@ body {
   top: 0;
   left: 0;
   right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, #008CBB, #FFC20F, #A1C5D1, transparent);
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(79, 70, 229, 0.4), rgba(129, 140, 248, 0.6), rgba(79, 70, 229, 0.4), transparent);
 }
 
 .lp-footer-inner {
@@ -1219,7 +1214,7 @@ body {
   font-family: var(--font-display);
   font-size: 1.2rem;
   font-weight: 800;
-  color: #141005;
+  color: #0f172a;
   letter-spacing: -0.025em;
   flex-shrink: 0;
 }
@@ -1242,7 +1237,7 @@ body {
   font-family: var(--font-sans);
   font-size: 0.72rem;
   font-weight: 700;
-  color: #141005;
+  color: #334155;
   text-decoration: none;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -1254,18 +1249,18 @@ body {
 }
 
 .lp-footer-links a:hover {
-  color: #008CBB;
-  background: rgba(0, 140, 187, 0.08);
+  color: #4f46e5;
+  background: rgba(79, 70, 229, 0.08);
   transform: translateY(-1px);
 }
 
 .lp-footer-copy {
   font-family: var(--font-sans);
   font-size: 0.78rem;
-  font-weight: 700;
-  color: #141005;
-  background: rgba(255, 194, 15, 0.18);
-  border: 1px solid rgba(255, 194, 15, 0.4);
+  font-weight: 600;
+  color: #4338ca;
+  background: rgba(79, 70, 229, 0.06);
+  border: 1px solid rgba(79, 70, 229, 0.14);
   padding: 0.4rem 1rem;
   border-radius: 100px;
   letter-spacing: 0.01em;

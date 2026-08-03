@@ -111,7 +111,7 @@ export function AdminThreadsTable({ threads }: { threads: ThreadRecord[] }) {
             onFocus={(e) => {
               e.currentTarget.style.borderColor = "var(--accent)";
               e.currentTarget.style.background = "rgba(255,255,255,0.95)";
-              e.currentTarget.style.boxShadow = "0 0 0 4px rgba(37, 99, 235, 0.08)";
+              e.currentTarget.style.boxShadow = "0 0 0 4px rgba(79, 70, 229, 0.08)";
             }}
             onBlur={(e)  => {
               e.currentTarget.style.borderColor = "var(--border)";

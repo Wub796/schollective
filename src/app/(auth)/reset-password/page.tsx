@@ -26,7 +26,7 @@ function Field({ id, name, type = "text", label, placeholder, required = false }
   const [focused, setFocused] = useState(false);
   return (
     <div style={{ position: "relative" }}>
-      <label htmlFor={id} style={{ display: "block", fontSize: "0.62rem", fontWeight: 600, letterSpacing: "0.22em", textTransform: "uppercase", color: focused ? "rgba(147, 51, 234, 0.7)" : "rgba(15, 23, 42, 0.3)", marginBottom: "0.6rem", transition: "color 0.25s", fontFamily: "var(--font-sans)" }}>
+      <label htmlFor={id} style={{ display: "block", fontSize: "0.62rem", fontWeight: 600, letterSpacing: "0.22em", textTransform: "uppercase", color: focused ? "rgba(79, 70, 229, 0.7)" : "rgba(15, 23, 42, 0.3)", marginBottom: "0.6rem", transition: "color 0.25s", fontFamily: "var(--font-sans)" }}>
         {label}
       </label>
       <input id={id} name={name} type={type} placeholder={placeholder} required={required}
@@ -35,7 +35,7 @@ function Field({ id, name, type = "text", label, placeholder, required = false }
         style={{
           width: "100%",
           background: "rgba(15, 23, 42, 0.02)",
-          border: `1px solid ${focused ? "rgba(147, 51, 234, 0.4)" : "rgba(15, 23, 42, 0.08)"}`,
+          border: `1px solid ${focused ? "rgba(79, 70, 229, 0.4)" : "rgba(15, 23, 42, 0.08)"}`,
           borderRadius: "12px",
           padding: "0.85rem 1.25rem",
           fontSize: "0.95rem",
@@ -43,7 +43,7 @@ function Field({ id, name, type = "text", label, placeholder, required = false }
           outline: "none",
           transition: "all 0.3s cubic-bezier(0.22, 1, 0.36, 1)",
           fontFamily: "var(--font-sans)",
-          boxShadow: focused ? "0 0 0 3px rgba(147, 51, 234, 0.1)" : "none",
+          boxShadow: focused ? "0 0 0 3px rgba(79, 70, 229, 0.1)" : "none",
         }}
       />
     </div>

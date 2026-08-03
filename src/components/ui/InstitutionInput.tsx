@@ -117,7 +117,7 @@ export function InstitutionInput({
         style={{
           width: "100%",
           background: "rgba(15, 23, 42, 0.02)",
-          border: `1px solid ${focused ? "rgba(147, 51, 234, 0.4)" : "rgba(15, 23, 42, 0.08)"}`,
+          border: `1px solid ${focused ? "rgba(79, 70, 229, 0.4)" : "rgba(15, 23, 42, 0.08)"}`,
           borderRadius: "120px",
           padding: "0.95rem 3rem 0.95rem 1.75rem",
           fontSize: "0.95rem",
@@ -125,7 +125,7 @@ export function InstitutionInput({
           outline: "none",
           fontFamily: "var(--font-sans)",
           transition: "all 0.3s cubic-bezier(0.22, 1, 0.36, 1)",
-          boxShadow: focused ? "0 0 0 3px rgba(147, 51, 234, 0.1)" : "none",
+          boxShadow: focused ? "0 0 0 3px rgba(79, 70, 229, 0.1)" : "none",
         }}
         onBlur={() => {
           setFocused(false);

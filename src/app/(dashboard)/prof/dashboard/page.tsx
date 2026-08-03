@@ -16,9 +16,9 @@ function StatCard({ value, label, sub }: { value: string | number; label: string
   return (
     <div style={{
       padding: "2.25rem 2.5rem",
-      border: "1px solid rgba(37, 99, 235, 0.08)",
+      border: "1px solid rgba(79, 70, 229, 0.08)",
       borderRadius: "14px",
-      background: "rgba(37, 99, 235, 0.03)",
+      background: "rgba(79, 70, 229, 0.03)",
       display: "flex", flexDirection: "column", gap: "0.5rem",
     }}>
       <span className="font-display" style={{ fontSize: "2.8rem", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.04em", lineHeight: 1 }}>
@@ -26,7 +26,7 @@ function StatCard({ value, label, sub }: { value: string | number; label: string
       </span>
       <div>
         <div style={{ fontSize: "0.78rem", fontWeight: 600, color: "rgba(15, 23, 42, 0.6)", fontFamily: "var(--font-sans)" }}>{label}</div>
-        <div style={{ fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(37, 99, 235, 0.3)", fontFamily: "var(--font-sans, monospace)", marginTop: "0.2rem" }}>
+        <div style={{ fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(79, 70, 229, 0.3)", fontFamily: "var(--font-sans, monospace)", marginTop: "0.2rem" }}>
           {sub}
         </div>
       </div>
@@ -205,7 +205,7 @@ export default async function ProfessorDashboard() {
       </div>
 
       {/* ── Hairline ─────────────────────────────────────────────── */}
-      <div style={{ height: "1px", background: "rgba(37, 99, 235, 0.07)" }} />
+      <div style={{ height: "1px", background: "rgba(79, 70, 229, 0.07)" }} />
 
       {/* ── Stacked Layout ─────────────────────────────────────────── */}
       <div style={{ display: "flex", flexDirection: "column", gap: "5rem" }}>
@@ -229,7 +229,7 @@ export default async function ProfessorDashboard() {
 
           {pendingRequests.length === 0 ? (
             <div style={{
-              border: "1px dashed rgba(37, 99, 235, 0.1)",
+              border: "1px dashed rgba(79, 70, 229, 0.1)",
               borderRadius: "16px", padding: "3rem 1.5rem", textAlign: "center",
             }}>
               <Inbox size={20} color="rgba(120, 220, 120, 0.4)" style={{ margin: "0 auto 0.75rem" }} />
@@ -268,7 +268,7 @@ export default async function ProfessorDashboard() {
 
           {activeThreads.length === 0 ? (
             <div style={{
-              border: "1px dashed rgba(37, 99, 235, 0.1)",
+              border: "1px dashed rgba(79, 70, 229, 0.1)",
               borderRadius: "16px", padding: "4rem 2rem", textAlign: "center",
               display: "flex", flexDirection: "column", alignItems: "center", gap: "1rem",
             }}>

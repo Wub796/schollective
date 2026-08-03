@@ -148,9 +148,9 @@ function ProfessorDetail({
           /* Logged out: Sign up CTA */
           <div style={{
             padding: "2.5rem 2rem",
-            border: "1px solid rgba(0, 140, 187, 0.15)",
+            border: "1px solid rgba(79, 70, 229, 0.15)",
             borderRadius: "16px",
-            background: "rgba(0, 140, 187, 0.02)",
+            background: "rgba(79, 70, 229, 0.02)",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
@@ -226,7 +226,7 @@ function ProfessorDetail({
                         <div style={{
                           padding: "1.25rem",
                           borderRadius: "12px",
-                          border: "1px solid rgba(37, 99, 235, 0.08)",
+                          border: "1px solid rgba(79, 70, 229, 0.08)",
                           background: "rgba(255, 255, 255, 0.65)",
                           backdropFilter: "blur(12px)",
                           display: "flex",
@@ -238,13 +238,13 @@ function ProfessorDetail({
                           transition: "all 0.3s cubic-bezier(0.22, 1, 0.36, 1)"
                         }}
                         onMouseEnter={(e) => {
-                          e.currentTarget.style.borderColor = "rgba(37, 99, 235, 0.22)";
+                          e.currentTarget.style.borderColor = "rgba(79, 70, 229, 0.22)";
                           e.currentTarget.style.background = "rgba(255, 255, 255, 0.85)";
-                          e.currentTarget.style.boxShadow = "0 8px 24px rgba(37, 99, 235, 0.06)";
+                          e.currentTarget.style.boxShadow = "0 8px 24px rgba(79, 70, 229, 0.06)";
                           e.currentTarget.style.transform = "translateY(-2px)";
                         }}
                         onMouseLeave={(e) => {
-                          e.currentTarget.style.borderColor = "rgba(37, 99, 235, 0.08)";
+                          e.currentTarget.style.borderColor = "rgba(79, 70, 229, 0.08)";
                           e.currentTarget.style.background = "rgba(255, 255, 255, 0.65)";
                           e.currentTarget.style.boxShadow = "0 4px 12px rgba(0, 0, 0, 0.02)";
                           e.currentTarget.style.transform = "none";

@@ -55,13 +55,13 @@ export default async function RequestNewPage({ searchParams }: RequestNewPagePro
           href="/professors"
           style={{
             display: "inline-flex", alignItems: "center", gap: "0.6rem", textDecoration: "none", width: "fit-content",
-            padding: "0.4rem 0.8rem", borderRadius: "100px", background: "rgba(0, 140, 187, 0.08)", border: "1px solid rgba(0, 140, 187, 0.2)"
+            padding: "0.4rem 0.8rem", borderRadius: "100px", background: "rgba(79, 70, 229, 0.08)", border: "1px solid rgba(79, 70, 229, 0.2)"
           }}
         >
-          <ArrowLeft size={12} style={{ color: "#008CBB" }} />
+          <ArrowLeft size={12} style={{ color: "#4f46e5" }} />
           <span style={{
             fontSize: "0.58rem", fontWeight: 800, letterSpacing: "0.22em",
-            textTransform: "uppercase", color: "#008CBB",
+            textTransform: "uppercase", color: "#4f46e5",
             fontFamily: "var(--font-sans, monospace)",
           }}>
             Back to Directory
@@ -69,11 +69,11 @@ export default async function RequestNewPage({ searchParams }: RequestNewPagePro
         </Link>
 
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <span style={{ width: "1.5rem", height: "2px", background: "#FFC20F", display: "block" }} />
+          <span style={{ width: "1.5rem", height: "2px", background: "#6366f1", display: "block" }} />
           <div style={{
             display: "inline-flex", alignItems: "center", gap: "0.5rem",
             fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.22em",
-            textTransform: "uppercase", color: "#008CBB",
+            textTransform: "uppercase", color: "#4f46e5",
             fontFamily: "var(--font-sans, monospace)",
           }}>
             <GraduationCap size={14} />
@@ -83,16 +83,16 @@ export default async function RequestNewPage({ searchParams }: RequestNewPagePro
 
         <h1 className="font-display" style={{
           fontSize: "clamp(2.4rem, 4.5vw, 3.6rem)", fontWeight: 900,
-          color: "#141005", letterSpacing: "-0.035em", lineHeight: 1.1,
+          color: "#0f172a", letterSpacing: "-0.035em", lineHeight: 1.1,
         }}>
           Initiate your{" "}
-          <em style={{ fontStyle: "italic", color: "#008CBB", fontWeight: 300 }}>
+          <em style={{ fontStyle: "italic", color: "#4f46e5", fontWeight: 300 }}>
             intellectual dialogue
           </em>
         </h1>
 
         <p style={{
-          fontSize: "0.95rem", color: "#3b3527", opacity: 0.75,
+          fontSize: "0.95rem", color: "#475569", opacity: 0.75,
           fontWeight: 400, maxWidth: "44rem", lineHeight: 1.8,
           fontFamily: "var(--font-sans)",
         }}>
@@ -102,7 +102,7 @@ export default async function RequestNewPage({ searchParams }: RequestNewPagePro
       </header>
 
       {/* Hairline */}
-      <div style={{ height: "1px", background: "rgba(37, 99, 235, 0.07)" }} />
+      <div style={{ height: "1px", background: "rgba(79, 70, 229, 0.07)" }} />
 
       {/* Form */}
       <RequestForm professor={professor as any} requestsToday={requestsToday} />
