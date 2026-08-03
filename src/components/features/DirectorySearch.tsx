@@ -86,12 +86,19 @@ export function DirectorySearch({ institutions, expertiseAreas }: DirectorySearc
   );
 
   return (
-    <div className="mb-10">
+    <div className="mb-14" style={{
+      background: "rgba(255, 255, 255, 0.92)",
+      border: "1.5px solid rgba(99, 102, 241, 0.35)",
+      borderRadius: "24px",
+      padding: "2.25rem 2.5rem",
+      backdropFilter: "blur(20px)",
+      boxShadow: "0 12px 40px rgba(15, 23, 42, 0.04)",
+    }}>
       {/* ── DESKTOP FILTER GRID (hidden on mobile, visible on md+) ── */}
-      <div className="hidden md:grid grid-cols-12 gap-5 items-end">
+      <div className="hidden md:grid grid-cols-12 gap-6 items-end">
         {/* Search Input (Query) */}
-        <div className="col-span-4 space-y-2">
-          <label className="text-[0.62rem] font-bold text-[rgba(15,23,42,0.3)] uppercase tracking-[0.2em] pl-4">
+        <div className="col-span-4 space-y-2.5">
+          <label className="text-[0.65rem] font-bold text-[rgba(15,23,42,0.4)] uppercase tracking-[0.2em] pl-4">
             Search Experts
           </label>
           <div style={{ position: "relative" }}>
@@ -102,7 +109,7 @@ export function DirectorySearch({ institutions, expertiseAreas }: DirectorySearc
                 left: "1.5rem",
                 top: "50%",
                 transform: "translateY(-50%)",
-                color: "rgba(15, 23, 42, 0.3)",
+                color: "rgba(15, 23, 42, 0.35)",
                 pointerEvents: "none",
                 flexShrink: 0,
               }}
@@ -114,12 +121,12 @@ export function DirectorySearch({ institutions, expertiseAreas }: DirectorySearc
               placeholder="Search by name, topic, or field…"
               style={{
                 width: "100%",
-                height: "3rem",
-                paddingLeft: "3.25rem",
+                height: "3.25rem",
+                paddingLeft: "3.5rem",
                 paddingRight: "1.75rem",
                 paddingTop: "0.5rem",
                 paddingBottom: "0.5rem",
-                background: "rgba(255, 255, 255, 0.6)",
+                background: "rgba(255, 255, 255, 0.8)",
                 border: "1px solid var(--border)",
                 borderRadius: "100px",
                 color: "var(--text-primary)",
@@ -130,12 +137,12 @@ export function DirectorySearch({ institutions, expertiseAreas }: DirectorySearc
               }}
               onFocus={(e) => {
                 e.currentTarget.style.borderColor = "var(--accent)";
-                e.currentTarget.style.background = "rgba(255, 255, 255, 0.95)";
+                e.currentTarget.style.background = "rgba(255, 255, 255, 1)";
                 e.currentTarget.style.boxShadow = "0 0 0 4px rgba(79, 70, 229, 0.08)";
               }}
               onBlur={(e) => {
                 e.currentTarget.style.borderColor = "var(--border)";
-                e.currentTarget.style.background = "rgba(255, 255, 255, 0.6)";
+                e.currentTarget.style.background = "rgba(255, 255, 255, 0.8)";
                 e.currentTarget.style.boxShadow = "none";
               }}
             />
@@ -143,8 +150,8 @@ export function DirectorySearch({ institutions, expertiseAreas }: DirectorySearc
         </div>
 
         {/* Institution Select */}
-        <div className="col-span-3 space-y-2">
-          <label className="text-[0.62rem] font-bold text-[rgba(15,23,42,0.3)] uppercase tracking-[0.2em] pl-4">
+        <div className="col-span-3 space-y-2.5">
+          <label className="text-[0.65rem] font-bold text-[rgba(15,23,42,0.4)] uppercase tracking-[0.2em] pl-4">
             Institution
           </label>
           <Select
@@ -159,8 +166,8 @@ export function DirectorySearch({ institutions, expertiseAreas }: DirectorySearc
         </div>
 
         {/* Expertise Multi-Select Dropdown */}
-        <div className="col-span-3 space-y-2" ref={dropdownRef} style={{ position: "relative" }}>
-          <label className="text-[0.62rem] font-bold text-[rgba(15,23,42,0.3)] uppercase tracking-[0.2em] pl-4">
+        <div className="col-span-3 space-y-2.5" ref={dropdownRef} style={{ position: "relative" }}>
+          <label className="text-[0.65rem] font-bold text-[rgba(15,23,42,0.4)] uppercase tracking-[0.2em] pl-4">
             Expertise Area
           </label>
           <button
@@ -168,7 +175,7 @@ export function DirectorySearch({ institutions, expertiseAreas }: DirectorySearc
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
             style={{
               display: "flex",
-              height: "3rem",
+              height: "3.25rem",
               width: "100%",
               alignItems: "center",
               justifyContent: "space-between",
@@ -270,8 +277,8 @@ export function DirectorySearch({ institutions, expertiseAreas }: DirectorySearc
         </div>
 
         {/* Sort Select */}
-        <div className="col-span-2 space-y-2">
-          <label className="text-[0.62rem] font-bold text-[rgba(15,23,42,0.3)] uppercase tracking-[0.2em] pl-4">
+        <div className="col-span-2 space-y-2.5">
+          <label className="text-[0.65rem] font-bold text-[rgba(15,23,42,0.4)] uppercase tracking-[0.2em] pl-4">
             Sort By
           </label>
           <Select
@@ -307,7 +314,7 @@ export function DirectorySearch({ institutions, expertiseAreas }: DirectorySearc
             placeholder="Search mentors..."
             style={{
               width: "100%",
-              height: "2.6rem",
+              height: "2.8rem",
               paddingLeft: "2.6rem",
               paddingRight: "1.2rem",
               background: "rgba(255, 255, 255, 0.7)",
@@ -332,7 +339,7 @@ export function DirectorySearch({ institutions, expertiseAreas }: DirectorySearc
               justifyContent: "center",
               gap: "0.4rem",
               width: "100%",
-              height: "2.6rem",
+              height: "2.8rem",
               borderRadius: "100px",
               border: "1px solid rgba(15, 23, 42, 0.1)",
               background: "rgba(15, 23, 42, 0.02)",
@@ -349,8 +356,17 @@ export function DirectorySearch({ institutions, expertiseAreas }: DirectorySearc
       </div>
 
       {/* Availability & Actions row */}
-      <div className="mt-5 flex items-center justify-between gap-8 flex-wrap">
-        <div style={{ display: "flex", alignItems: "center", gap: "1.5rem", flexWrap: "wrap" }}>
+      <div style={{
+        marginTop: "1.75rem",
+        paddingTop: "1.75rem",
+        borderTop: "1px solid rgba(99, 102, 241, 0.2)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        gap: "1.5rem",
+        flexWrap: "wrap",
+      }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "2rem", flexWrap: "wrap" }}>
           {/* Actions */}
           <div className="flex gap-4">
             <Button
@@ -373,7 +389,7 @@ export function DirectorySearch({ institutions, expertiseAreas }: DirectorySearc
           </div>
 
           {/* Availability Toggle */}
-          <label style={{ display: "inline-flex", alignItems: "center", gap: "0.6rem", cursor: "pointer", userSelect: "none" }}>
+          <label style={{ display: "inline-flex", alignItems: "center", gap: "0.75rem", cursor: "pointer", userSelect: "none" }}>
             <input
               type="checkbox"
               checked={currentAccepting}
@@ -381,8 +397,8 @@ export function DirectorySearch({ institutions, expertiseAreas }: DirectorySearc
               style={{ display: "none" }}
             />
             <div style={{
-              width: "2.2rem",
-              height: "1.2rem",
+              width: "2.4rem",
+              height: "1.3rem",
               borderRadius: "100px",
               background: currentAccepting ? "var(--accent)" : "rgba(15, 23, 42, 0.15)",
               position: "relative",
@@ -390,25 +406,25 @@ export function DirectorySearch({ institutions, expertiseAreas }: DirectorySearc
               border: "1px solid rgba(15, 23, 42, 0.05)",
             }}>
               <div style={{
-                width: "0.9rem",
-                height: "0.9rem",
+                width: "1rem",
+                height: "1rem",
                 borderRadius: "50%",
                 background: "#ffffff",
                 position: "absolute",
                 top: "50%",
-                left: currentAccepting ? "calc(100% - 1.05rem)" : "0.15rem",
+                left: currentAccepting ? "calc(100% - 1.15rem)" : "0.15rem",
                 transform: "translateY(-50%)",
                 transition: "left 0.25s",
                 boxShadow: "0 1px 3px rgba(0,0,0,0.15)",
               }} />
             </div>
-            <span style={{ fontSize: "0.68rem", fontWeight: 700, color: "rgba(15, 23, 42, 0.65)", textTransform: "uppercase", letterSpacing: "0.15em", fontFamily: "var(--font-sans)" }}>
+            <span style={{ fontSize: "0.72rem", fontWeight: 700, color: "rgba(15, 23, 42, 0.7)", textTransform: "uppercase", letterSpacing: "0.15em", fontFamily: "var(--font-sans)" }}>
               Accepting Requests Only
             </span>
           </label>
         </div>
 
-        <div className="text-[0.62rem] text-[rgba(15, 23, 42,0.25)] font-medium hidden sm:block">
+        <div className="text-[0.68rem] text-[rgba(15, 23, 42,0.35)] font-medium hidden sm:block">
           Filter through our network of verified academic mentors.
         </div>
       </div>
