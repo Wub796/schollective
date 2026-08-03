@@ -19,6 +19,11 @@ export function DirectorySearch({ institutions, expertiseAreas }: DirectorySearc
   // Search input query draft
   const [draftQuery, setDraftQuery] = useState(searchParams.get("query") || "");
 
+  // Sync draftQuery if searchParams.get("query") changes externally (e.g. Clear All or popular field links)
+  useEffect(() => {
+    setDraftQuery(searchParams.get("query") || "");
+  }, [searchParams]);
+
   // Desktop expertise dropdown open state
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [expertiseSearch, setExpertiseSearch] = useState("");
@@ -40,7 +45,20 @@ export function DirectorySearch({ institutions, expertiseAreas }: DirectorySearc
 
   const updateSearch = (updates: Record<string, string>) => {
     const params = new URLSearchParams(searchParams.toString());
+    
+    // Always preserve or update query if draftQuery has a value
+    if ("query" in updates) {
+      if (updates.query) {
+        params.set("query", updates.query);
+      } else {
+        params.delete("query");
+      }
+    } else if (draftQuery.trim()) {
+      params.set("query", draftQuery.trim());
+    }
+
     Object.entries(updates).forEach(([key, value]) => {
+      if (key === "query") return; // already handled
       if (value && value !== "all") {
         params.set(key, value);
       } else {
@@ -49,6 +67,17 @@ export function DirectorySearch({ institutions, expertiseAreas }: DirectorySearc
     });
     router.push(`/professors?${params.toString()}`);
   };
+
+  // Live debounced search as user types
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const currentParamQuery = searchParams.get("query") || "";
+      if (draftQuery.trim() !== currentParamQuery) {
+        updateSearch({ query: draftQuery.trim() });
+      }
+    }, 350);
+    return () => clearTimeout(timer);
+  }, [draftQuery]);
 
   const handleClear = () => {
     setDraftQuery("");

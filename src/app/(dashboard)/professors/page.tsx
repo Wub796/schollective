@@ -27,7 +27,7 @@ export default async function ProfessorsPage({ searchParams }: ProfessorsPagePro
 
   let dbQuery = supabase
     .from("profiles")
-    .select("id, first_name, last_name, preferred_name, institution, expertise_fields, is_accepting_requests")
+    .select("id, first_name, last_name, preferred_name, institution, expertise_fields, is_accepting_requests, updated_at")
     .eq("role", "professor")
     .eq("status", "approved")
     .eq("profile_complete", true);
@@ -36,18 +36,8 @@ export default async function ProfessorsPage({ searchParams }: ProfessorsPagePro
     dbQuery = dbQuery.eq("is_accepting_requests", true);
   }
 
-  if (query) {
-    dbQuery = dbQuery.or(
-      `first_name.ilike.%${query}%,last_name.ilike.%${query}%,preferred_name.ilike.%${query}%,institution.ilike.%${query}%`
-    );
-  }
-  if (institution && institution !== "all") dbQuery = dbQuery.eq("institution", institution);
-  
-  if (expertise && expertise !== "all") {
-    const selectedExpertise = expertise.split(",").map(decodeURIComponent).filter(Boolean);
-    if (selectedExpertise.length > 0) {
-      dbQuery = dbQuery.overlaps("expertise_fields", selectedExpertise);
-    }
+  if (institution && institution !== "all") {
+    dbQuery = dbQuery.eq("institution", institution);
   }
 
   // Apply sorting based on sort param
@@ -58,20 +48,45 @@ export default async function ProfessorsPage({ searchParams }: ProfessorsPagePro
     dbQuery = dbQuery.order("last_name", { ascending: true });
   }
 
-  const { data: professors } = await dbQuery;
+  const { data: rawProfessors } = await dbQuery;
+  let professors = rawProfessors || [];
 
-  let filterQuery = supabase
+  // Filter by search text query (matches name, institution, OR expertise fields / topics)
+  if (query && query.trim()) {
+    const q = query.toLowerCase().trim();
+    professors = professors.filter((p) => {
+      const fullName = `${p.first_name || ""} ${p.last_name || ""} ${p.preferred_name || ""}`.toLowerCase();
+      const inst = (p.institution || "").toLowerCase();
+      const fields = (p.expertise_fields || []).map((f: string) => f.toLowerCase()).join(" ");
+      return fullName.includes(q) || inst.includes(q) || fields.includes(q);
+    });
+  }
+
+  // Filter by selected expertise areas (multi-select)
+  if (expertise && expertise !== "all") {
+    const selectedExpertise = expertise
+      .split(",")
+      .map(decodeURIComponent)
+      .filter(Boolean)
+      .map((s) => s.toLowerCase());
+
+    if (selectedExpertise.length > 0) {
+      professors = professors.filter((p) => {
+        const profFields = (p.expertise_fields || []).map((f: string) => f.toLowerCase());
+        return selectedExpertise.some(
+          (sel) => profFields.includes(sel) || profFields.some((f) => f.includes(sel))
+        );
+      });
+    }
+  }
+
+  // Fetch full dataset for populating filter dropdown options (all approved complete professors)
+  const { data: filterData } = await supabase
     .from("profiles")
     .select("institution, expertise_fields")
     .eq("role", "professor")
     .eq("status", "approved")
     .eq("profile_complete", true);
-
-  if (isAcceptingOnly) {
-    filterQuery = filterQuery.eq("is_accepting_requests", true);
-  }
-
-  const { data: filterData } = await filterQuery;
 
   const distinctInstitutions = Array.from(
     new Set(filterData?.map((p) => p.institution).filter(Boolean) as string[])
