@@ -23,36 +23,36 @@ function PageLoader({ done }: { done: boolean }) {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
           className="fixed inset-0 z-[99999] flex flex-col items-center justify-center select-none"
-          style={{ background: "radial-gradient(circle at center, rgba(0, 140, 187, 0.04) 0%, #fcfbfa 60%, #faf9f7 100%)" }}
+          style={{ background: "radial-gradient(circle at center, rgba(79, 70, 229, 0.04) 0%, #fcfbfa 60%, #faf9f7 100%)" }}
         >
           <div className="relative w-48 h-48 flex items-center justify-center mb-8">
             <motion.svg animate={{ rotate: 360 }} transition={{ duration: 6, ease: "linear", repeat: Infinity }} className="absolute w-48 h-48 pointer-events-none" viewBox="0 0 200 200">
-              <circle cx="100" cy="100" r="96" stroke="rgba(0, 140, 187, 0.1)" strokeWidth="1" fill="none" strokeDasharray="4 4" />
-              <circle cx="100" cy="4" r="3.5" fill="#008CBB" />
+              <circle cx="100" cy="100" r="96" stroke="rgba(79, 70, 229, 0.1)" strokeWidth="1" fill="none" strokeDasharray="4 4" />
+              <circle cx="100" cy="4" r="3.5" fill="#4f46e5" />
             </motion.svg>
             <motion.svg animate={{ rotate: -360 }} transition={{ duration: 4.5, ease: "linear", repeat: Infinity }} className="absolute w-36 h-36 pointer-events-none" viewBox="0 0 160 160">
-              <circle cx="80" cy="80" r="76" stroke="rgba(0, 140, 187, 0.15)" strokeWidth="1.2" fill="none" strokeDasharray="4 12" />
-              <circle cx="80" cy="4" r="4.5" fill="#00749b" />
+              <circle cx="80" cy="80" r="76" stroke="rgba(79, 70, 229, 0.15)" strokeWidth="1.2" fill="none" strokeDasharray="4 12" />
+              <circle cx="80" cy="4" r="4.5" fill="#4338ca" />
             </motion.svg>
             <motion.svg animate={{ rotate: 360 }} transition={{ duration: 3, ease: "linear", repeat: Infinity }} className="absolute w-24 h-24 pointer-events-none" viewBox="0 0 100 100">
-              <circle cx="50" cy="50" r="46" stroke="rgba(0, 140, 187, 0.2)" strokeWidth="1.5" fill="none" strokeDasharray="15 8" />
-              <circle cx="82.5" cy="17.5" r="2.5" fill="#A1C5D1" />
+              <circle cx="50" cy="50" r="46" stroke="rgba(79, 70, 229, 0.2)" strokeWidth="1.5" fill="none" strokeDasharray="15 8" />
+              <circle cx="82.5" cy="17.5" r="2.5" fill="#818cf8" />
             </motion.svg>
             <motion.div
-              animate={{ scale: [0.96, 1.04, 0.96], boxShadow: ["0 0 12px rgba(0,140,187,0.05)", "0 0 28px rgba(0,140,187,0.15)", "0 0 12px rgba(0,140,187,0.05)"] }}
+              animate={{ scale: [0.96, 1.04, 0.96], boxShadow: ["0 0 12px rgba(79,70,229,0.05)", "0 0 28px rgba(79,70,229,0.15)", "0 0 12px rgba(79,70,229,0.05)"] }}
               transition={{ duration: 2, ease: "easeInOut", repeat: Infinity }}
-              className="absolute w-14 h-14 rounded-2xl bg-white border border-[#008CBB]/15 flex items-center justify-center"
+              className="absolute w-14 h-14 rounded-2xl bg-white border border-indigo-600/15 flex items-center justify-center"
             >
               <motion.svg animate={{ y: [-2, 2, -2] }} transition={{ duration: 2, ease: "easeInOut", repeat: Infinity }} width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <path d="M22 10v6M2 10l10-5 10 5-10 5z" stroke="#008CBB" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5" stroke="#008CBB" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M22 10v6M2 10l10-5 10 5-10 5z" stroke="#4f46e5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5" stroke="#4f46e5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </motion.svg>
             </motion.div>
           </div>
           <div className="text-center">
             <div className="flex justify-center gap-0.5 overflow-hidden py-1 mb-1">
               {letters.map((char, i) => (
-                <motion.span key={i} initial={{ y: "100%", opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.1 + i * 0.04 }} className="font-mono text-xs font-bold uppercase tracking-[0.25em] text-[#008CBB]">
+                <motion.span key={i} initial={{ y: "100%", opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.1 + i * 0.04 }} className="font-mono text-xs font-bold uppercase tracking-[0.25em] text-indigo-600">
                   {char}
                 </motion.span>
               ))}
@@ -62,7 +62,7 @@ function PageLoader({ done }: { done: boolean }) {
             </motion.p>
           </div>
           <div className="w-32 h-[1px] bg-slate-200/60 relative overflow-hidden mt-6 rounded-full">
-            <motion.div initial={{ scaleX: 0, originX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }} className="absolute inset-0 bg-[#008CBB]" />
+            <motion.div initial={{ scaleX: 0, originX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }} className="absolute inset-0 bg-indigo-600" />
           </div>
         </motion.div>
       )}
@@ -84,8 +84,8 @@ function FadeIn({ children, delay = 0, className = "" }: { children: React.React
 
 function Label({ children }: { children: React.ReactNode }) {
   return (
-    <div className="inline-flex items-center justify-center rounded-full bg-[#008CBB]/5 border border-[#008CBB]/10 py-1.5 px-4 mb-10 select-none mx-auto">
-      <span className="font-sans uppercase text-[#008CBB] tracking-[0.2em] font-bold text-center" style={{ fontSize: "0.62rem" }}>
+    <div className="inline-flex items-center justify-center rounded-full bg-indigo-600/5 border border-indigo-600/10 py-1.5 px-4 mb-10 select-none mx-auto">
+      <span className="font-sans uppercase text-indigo-600 tracking-[0.2em] font-bold text-center" style={{ fontSize: "0.62rem" }}>
         {children}
       </span>
     </div>
@@ -156,7 +156,7 @@ export default function LandingPage() {
               style={{ fontSize: "clamp(3rem, 6.5vw, 5.2rem)" }}
             >
               Find the mentor<br />
-              <span className="italic font-light text-[#008CBB]">who changes your life.</span>
+              <span className="italic font-light text-indigo-600">who changes your life.</span>
             </h1>
             <motion.p
               initial={{ opacity: 0 }}
@@ -204,7 +204,7 @@ export default function LandingPage() {
 
             <Link
               href="/signup"
-              className="group inline-flex items-center justify-center gap-1.5 font-sans text-xs uppercase tracking-[0.22em] text-[#008CBB] border-b border-[#008CBB]/20 pb-2 hover:border-[#008CBB] transition-colors font-bold mx-auto text-center mt-6"
+              className="group inline-flex items-center justify-center gap-1.5 font-sans text-xs uppercase tracking-[0.22em] text-indigo-600 border-b border-indigo-600/20 pb-2 hover:border-indigo-600 transition-colors font-bold mx-auto text-center mt-6"
               style={{ textDecoration: "none" }}
             >
               Send one that gets read <span className="transition-transform group-hover:translate-x-1">→</span>
@@ -229,7 +229,7 @@ export default function LandingPage() {
                   <span className="font-sans text-[0.68rem] font-bold tracking-widest text-slate-400 uppercase text-center mx-auto">ChatGPT</span>
                 </div>
                 <div className="text-center border-l border-slate-200 mx-auto w-full flex justify-center">
-                  <span className="font-sans text-[0.68rem] font-bold tracking-widest text-[#008CBB] uppercase text-center mx-auto">Schollective</span>
+                  <span className="font-sans text-[0.68rem] font-bold tracking-widest text-indigo-600 uppercase text-center mx-auto">Schollective</span>
                 </div>
               </div>
 
@@ -245,7 +245,7 @@ export default function LandingPage() {
                       <p className="text-slate-500 text-sm leading-relaxed max-w-xs mx-auto text-center">{row.bad}</p>
                     </div>
                     <div className="flex flex-col items-center justify-center text-center pt-8 md:pt-0 md:border-l md:border-slate-200 gap-4 pl-0 md:pl-10 w-full mx-auto">
-                      <span className="w-7 h-7 rounded-full bg-[#008CBB]/10 border border-[#008CBB]/20 flex items-center justify-center text-[#008CBB] text-xs font-bold select-none mx-auto">✓</span>
+                      <span className="w-7 h-7 rounded-full bg-indigo-600/10 border border-indigo-600/20 flex items-center justify-center text-indigo-600 text-xs font-bold select-none mx-auto">✓</span>
                       <p className="text-slate-900 text-sm leading-relaxed font-medium max-w-xs mx-auto text-center">{row.good}</p>
                     </div>
                   </div>
@@ -259,7 +259,7 @@ export default function LandingPage() {
         <section className="js-fade relative border-t border-slate-100 min-h-screen flex flex-col items-center justify-center py-24 px-6" style={{ background: "#fdfdfd" }}>
           <div className="w-full max-w-6xl mx-auto flex flex-col items-center text-center mb-16">
             <h2 className="font-display font-bold text-slate-900 tracking-tighter leading-[1.1] mb-4" style={{ fontSize: "clamp(2rem, 3.5vw, 3rem)" }}>
-              From sign-up to insight, in <em className="italic font-light text-[#008CBB]">three steps.</em>
+              From sign-up to insight, in <em className="italic font-light text-indigo-600">three steps.</em>
             </h2>
             <p className="font-sans text-slate-500 text-base max-w-md mx-auto">
               How Schollective transforms academic cold-outreach into structured collaboration.
@@ -280,7 +280,7 @@ export default function LandingPage() {
             >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center w-full">
                 <div className="md:order-1 flex flex-col items-center text-center max-w-md mx-auto">
-                  <span className="font-mono text-xs uppercase tracking-widest text-[#008CBB] font-bold block mb-4">Step 01</span>
+                  <span className="font-mono text-xs uppercase tracking-widest text-indigo-600 font-bold block mb-4">Step 01</span>
                   <h3 className="font-display font-bold text-slate-900 tracking-tight text-2xl lg:text-3xl mb-4">
                     Search any research interest.
                   </h3>
@@ -291,7 +291,7 @@ export default function LandingPage() {
                 <div className="md:order-2 w-full">
                   <MockupChrome url="schollective.org/app">
                     <div className="flex items-center justify-center gap-2 p-2.5 rounded-xl bg-slate-50/60 border border-slate-100 select-none">
-                      <span className="px-4 py-2 rounded-lg bg-[#008CBB]/10 border border-[#008CBB]/20 text-xs text-[#008CBB] font-semibold">neuroscience</span>
+                      <span className="px-4 py-2 rounded-lg bg-indigo-600/10 border border-indigo-600/20 text-xs text-indigo-600 font-semibold">neuroscience</span>
                       <span className="px-4 py-2 rounded-lg text-xs text-slate-400">Harvard</span>
                     </div>
                     <div className="flex flex-col gap-3">
@@ -307,7 +307,7 @@ export default function LandingPage() {
                           </div>
                           <div className="flex gap-1.5">
                             <span className="px-2 py-0.5 rounded bg-slate-100 text-[0.55rem] text-slate-500 font-medium">{prof.tag1}</span>
-                            <span className="px-2 py-0.5 rounded bg-[#008CBB]/5 text-[0.55rem] text-[#008CBB] border border-[#008CBB]/10 font-semibold">{prof.tag2}</span>
+                            <span className="px-2 py-0.5 rounded bg-indigo-600/5 text-[0.55rem] text-indigo-600 border border-indigo-600/10 font-semibold">{prof.tag2}</span>
                           </div>
                         </div>
                       ))}
@@ -320,11 +320,11 @@ export default function LandingPage() {
             {/* Step 2 */}
             <motion.div
               variants={cardVariants}
-              className="p-8 md:p-12 lg:p-16 rounded-3xl border border-[#A1C5D1]/30 bg-[#008CBB]/[0.01] shadow-sm flex items-center justify-center md:h-[480px] lg:h-[520px]"
+              className="p-8 md:p-12 lg:p-16 rounded-3xl border border-indigo-300/30 bg-indigo-600/[0.01] shadow-sm flex items-center justify-center md:h-[480px] lg:h-[520px]"
             >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center w-full">
                 <div className="md:order-2 flex flex-col items-center text-center max-w-md mx-auto">
-                  <span className="font-mono text-xs uppercase tracking-widest text-[#008CBB] font-bold block mb-4">Step 02</span>
+                  <span className="font-mono text-xs uppercase tracking-widest text-indigo-600 font-bold block mb-4">Step 02</span>
                   <h3 className="font-display font-bold text-slate-900 tracking-tight text-2xl lg:text-3xl mb-4">
                     Understand their research.
                   </h3>
@@ -334,16 +334,16 @@ export default function LandingPage() {
                 </div>
                 <div className="md:order-1 w-full">
                   <MockupChrome url="schollective.org/app">
-                    <div className="p-5 rounded-2xl border border-[#008CBB]/10 bg-[#fdfdfd] flex flex-col items-center text-center">
+                    <div className="p-5 rounded-2xl border border-indigo-600/10 bg-[#fdfdfd] flex flex-col items-center text-center">
                       <div className="flex items-center justify-between mb-4 border-b border-slate-100 pb-3 w-full">
                         <span className="font-display font-bold text-xs text-slate-900">Dr. Emily Nakamura</span>
-                        <span className="px-2 py-0.5 rounded bg-[#008CBB]/10 text-[0.55rem] text-[#008CBB] font-bold">2024 PAPER</span>
+                        <span className="px-2 py-0.5 rounded bg-indigo-600/10 text-[0.55rem] text-indigo-600 font-bold">2024 PAPER</span>
                       </div>
                       <p className="text-slate-500 text-xs leading-[1.7] mb-4 text-center mx-auto">
                         Studies how memories form and consolidate during sleep using fMRI. Recent work shows neural oscillation patterns predict next-day recall accuracy.
                       </p>
-                      <div className="p-4 rounded-xl bg-[#008CBB]/[0.03] border border-[#008CBB]/10 flex flex-col items-center text-center w-full">
-                        <span className="font-sans text-[0.52rem] uppercase text-[#008CBB] tracking-widest font-bold block mb-1.5">Key Finding</span>
+                      <div className="p-4 rounded-xl bg-indigo-600/[0.03] border border-indigo-600/10 flex flex-col items-center text-center w-full">
+                        <span className="font-sans text-[0.52rem] uppercase text-indigo-600 tracking-widest font-bold block mb-1.5">Key Finding</span>
                         <p className="text-slate-900 text-xs leading-[1.6] font-medium text-center mx-auto">
                           Theta oscillations during REM sleep increased memory consolidation by 34%.
                         </p>
@@ -361,7 +361,7 @@ export default function LandingPage() {
             >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center w-full">
                 <div className="md:order-1 flex flex-col items-center text-center max-w-md mx-auto">
-                  <span className="font-mono text-xs uppercase tracking-widest text-[#008CBB] font-bold block mb-4">Step 03</span>
+                  <span className="font-mono text-xs uppercase tracking-widest text-indigo-600 font-bold block mb-4">Step 03</span>
                   <h3 className="font-display font-bold text-slate-900 tracking-tight text-2xl lg:text-3xl mb-4">
                     Draft structured requests.
                   </h3>
@@ -376,7 +376,7 @@ export default function LandingPage() {
                         <span className="font-sans text-[0.52rem] text-slate-400 uppercase tracking-wider font-semibold">Structured Request Flow</span>
                         <div className="text-xs leading-[1.7] text-slate-500 flex flex-col items-center">
                           <p className="mb-2.5 line-through text-red-400/80 decoration-[#ea580c] decoration-1">I would love to join your lab next semester.</p>
-                          <p className="text-slate-800 border-l-2 border-[#008CBB] bg-[#008CBB]/[0.02] py-2 px-4 font-medium rounded-sm text-center">
+                          <p className="text-slate-800 border-l-2 border-indigo-600 bg-indigo-600/[0.02] py-2 px-4 font-medium rounded-sm text-center">
                             I have been analyzing memory consolidation in sleep. Your 2024 theta oscillation findings motivated my question...
                           </p>
                         </div>
@@ -414,7 +414,7 @@ export default function LandingPage() {
               style={{ fontSize: "clamp(2.5rem, 5.5vw, 4.2rem)" }}
             >
               Your research mentor is<br />
-              <span className="italic font-light text-[#008CBB]">one structured request away.</span>
+              <span className="italic font-light text-indigo-600">one structured request away.</span>
             </h2>
             <p className="font-sans text-slate-500 text-base md:text-lg text-center mx-auto w-full max-w-lg leading-relaxed">
               Free to use. No credit card required.

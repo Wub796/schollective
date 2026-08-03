@@ -50,32 +50,32 @@ export default function PrivacyPage() {
   ];
 
   return (
-    <div style={{ minHeight: "100vh", background: "transparent", color: "#141005" }}>
+    <div style={{ minHeight: "100vh", background: "transparent", color: "#0f172a" }}>
       <PublicNav />
 
       <div style={{ maxWidth: "800px", margin: "0 auto", padding: "8rem 2rem 6rem", display: "flex", flexDirection: "column", gap: "4.5rem" }}>
         {/* Eyebrow */}
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <span style={{ width: "1.5rem", height: "2px", background: "#FFC20F", display: "block" }} />
-          <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: "#008CBB", fontFamily: "var(--font-sans)" }}>Legal</span>
+          <span style={{ width: "1.5rem", height: "2px", background: "#6366f1", display: "block" }} />
+          <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: "#4f46e5", fontFamily: "var(--font-sans)" }}>Legal</span>
         </div>
 
         <div>
-          <h1 className="font-display" style={{ fontSize: "clamp(2.4rem, 5vw, 3.8rem)", fontWeight: 900, color: "#141005", letterSpacing: "-0.04em", lineHeight: 1.05, marginBottom: "0.75rem" }}>
-            Privacy <em style={{ fontStyle: "italic", color: "#008CBB", fontWeight: 300 }}>Policy</em>
+          <h1 className="font-display" style={{ fontSize: "clamp(2.4rem, 5vw, 3.8rem)", fontWeight: 900, color: "#0f172a", letterSpacing: "-0.04em", lineHeight: 1.05, marginBottom: "0.75rem" }}>
+            Privacy <em style={{ fontStyle: "italic", color: "#4f46e5", fontWeight: 300 }}>Policy</em>
           </h1>
-          <p style={{ fontSize: "0.88rem", color: "#3b3527", opacity: 0.75, fontFamily: "var(--font-sans)" }}>
+          <p style={{ fontSize: "0.88rem", color: "#475569", opacity: 0.75, fontFamily: "var(--font-sans)" }}>
             Last updated: May 2025
           </p>
         </div>
 
-        <div style={{ height: "1px", background: "rgba(161, 197, 209, 0.4)", marginTop: "1rem", marginBottom: "1rem" }} />
+        <div style={{ height: "1px", background: "rgba(99, 102, 241, 0.4)", marginTop: "1rem", marginBottom: "1rem" }} />
 
         <div style={{ display: "flex", flexDirection: "column", gap: "2.75rem" }}>
           {sections.map(({ title, body }) => (
-            <div key={title} style={{ padding: "2rem 2.25rem", border: "1px solid rgba(161, 197, 209, 0.4)", borderRadius: "16px", background: "rgba(255, 255, 255, 0.9)" }}>
-              <h2 className="font-display" style={{ fontSize: "1.25rem", fontWeight: 800, color: "#141005", letterSpacing: "-0.015em", marginBottom: "0.75rem" }}>{title}</h2>
-              <p style={{ fontSize: "0.95rem", color: "#3b3527", opacity: 0.8, lineHeight: 1.8, fontFamily: "var(--font-sans)" }}>{body}</p>
+            <div key={title} style={{ padding: "2rem 2.25rem", border: "1px solid rgba(99, 102, 241, 0.4)", borderRadius: "16px", background: "rgba(255, 255, 255, 0.9)" }}>
+              <h2 className="font-display" style={{ fontSize: "1.25rem", fontWeight: 800, color: "#0f172a", letterSpacing: "-0.015em", marginBottom: "0.75rem" }}>{title}</h2>
+              <p style={{ fontSize: "0.95rem", color: "#475569", opacity: 0.8, lineHeight: 1.8, fontFamily: "var(--font-sans)" }}>{body}</p>
             </div>
           ))}
         </div>

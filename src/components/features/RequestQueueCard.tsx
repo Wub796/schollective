@@ -53,19 +53,19 @@ export function RequestQueueCard({ request }: RequestQueueCardProps) {
       style={{
         background: "rgba(255, 255, 255, 0.65)",
         backdropFilter: "blur(12px)",
-        border: "1px solid rgba(37, 99, 235, 0.08)",
+        border: "1px solid rgba(79, 70, 229, 0.08)",
         borderRadius: "16px",
         padding: "2rem",
         boxShadow: "0 4px 12px rgba(0, 0, 0, 0.02)",
         transition: "all 0.3s cubic-bezier(0.22, 1, 0.36, 1)",
       }}
       onMouseEnter={e => {
-        e.currentTarget.style.borderColor = "rgba(37, 99, 235, 0.22)";
+        e.currentTarget.style.borderColor = "rgba(79, 70, 229, 0.22)";
         e.currentTarget.style.background = "rgba(255, 255, 255, 0.85)";
-        e.currentTarget.style.boxShadow = "0 8px 30px rgba(37, 99, 235, 0.06)";
+        e.currentTarget.style.boxShadow = "0 8px 30px rgba(79, 70, 229, 0.06)";
       }}
       onMouseLeave={e => {
-        e.currentTarget.style.borderColor = "rgba(37, 99, 235, 0.08)";
+        e.currentTarget.style.borderColor = "rgba(79, 70, 229, 0.08)";
         e.currentTarget.style.background = "rgba(255, 255, 255, 0.65)";
         e.currentTarget.style.boxShadow = "0 4px 12px rgba(0, 0, 0, 0.02)";
       }}
@@ -75,7 +75,7 @@ export function RequestQueueCard({ request }: RequestQueueCardProps) {
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
           <div style={{
             width: "2.5rem", height: "2.5rem", borderRadius: "10px",
-            background: "rgba(37, 99, 235, 0.07)", border: "1px solid rgba(37, 99, 235, 0.18)",
+            background: "rgba(79, 70, 229, 0.07)", border: "1px solid rgba(79, 70, 229, 0.18)",
             display: "flex", alignItems: "center", justifyContent: "center",
             fontSize: "0.85rem", fontWeight: 600, color: "var(--accent)",
           }}>
@@ -85,7 +85,7 @@ export function RequestQueueCard({ request }: RequestQueueCardProps) {
             <div style={{ fontSize: "0.88rem", fontWeight: 500, color: "rgba(15, 23, 42, 0.88)", lineHeight: 1.25, fontFamily: "var(--font-sans)" }}>
               {studentName} {request.student?.last_name}
             </div>
-            <div style={{ fontSize: "0.58rem", color: "rgba(37, 99, 235, 0.5)", textTransform: "uppercase", letterSpacing: "0.12em", fontWeight: 600, marginTop: "0.2rem", fontFamily: "var(--font-sans, monospace)" }}>
+            <div style={{ fontSize: "0.58rem", color: "rgba(79, 70, 229, 0.5)", textTransform: "uppercase", letterSpacing: "0.12em", fontWeight: 600, marginTop: "0.2rem", fontFamily: "var(--font-sans, monospace)" }}>
               {request.student?.education_level?.replace("-", " ")}
             </div>
           </div>
@@ -98,7 +98,7 @@ export function RequestQueueCard({ request }: RequestQueueCardProps) {
 
       {/* Topic */}
       <div style={{ marginBottom: "1.25rem" }}>
-        <div style={{ fontSize: "0.6rem", color: "rgba(37, 99, 235, 0.4)", textTransform: "uppercase", letterSpacing: "0.18em", fontWeight: 700, marginBottom: "0.5rem", fontFamily: "var(--font-sans, monospace)" }}>Topic</div>
+        <div style={{ fontSize: "0.6rem", color: "rgba(79, 70, 229, 0.4)", textTransform: "uppercase", letterSpacing: "0.18em", fontWeight: 700, marginBottom: "0.5rem", fontFamily: "var(--font-sans, monospace)" }}>Topic</div>
         <p className="font-display" style={{ fontSize: "0.88rem", color: "rgba(15, 23, 42, 0.7)", lineHeight: 1.5, fontStyle: "italic" }}>
           &ldquo;{request.topic}&rdquo;
         </p>
@@ -111,12 +111,12 @@ export function RequestQueueCard({ request }: RequestQueueCardProps) {
           <div style={{
             position: "absolute", left: 0, top: 0, bottom: 0,
             width: "2px",
-            background: "linear-gradient(to bottom, rgba(37, 99, 235,0.5), rgba(37, 99, 235,0.05))",
+            background: "linear-gradient(to bottom, rgba(79, 70, 229,0.5), rgba(79, 70, 229,0.05))",
             borderRadius: "2px",
           }} />
           <div style={{ paddingLeft: "1rem" }}>
             <div style={{
-              fontSize: "0.52rem", color: "rgba(37, 99, 235,0.45)",
+              fontSize: "0.52rem", color: "rgba(79, 70, 229,0.45)",
               textTransform: "uppercase", letterSpacing: "0.22em",
               fontWeight: 700, marginBottom: "0.6rem",
               fontFamily: "var(--font-sans, monospace)",

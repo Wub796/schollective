@@ -45,7 +45,7 @@ function FormField({
     color: "var(--text-primary)",
     outline: "none",
     transition: "border-color 0.25s ease, background-0.25s ease, box-shadow 0.25s ease",
-    boxShadow: focused ? "0 0 0 4px rgba(37, 99, 235, 0.08)" : "none",
+    boxShadow: focused ? "0 0 0 4px rgba(79, 70, 229, 0.08)" : "none",
     fontFamily: "var(--font-sans)",
     lineHeight: 1.6,
   };
@@ -127,16 +127,16 @@ export function RequestForm({ professor, requestsToday }: RequestFormProps) {
       <div style={{
         display: "flex", alignItems: "center", gap: "1.25rem",
         padding: "1.25rem 1.75rem",
-        background: "rgba(37, 99, 235, 0.04)",
-        border: "1px solid rgba(37, 99, 235, 0.1)",
+        background: "rgba(79, 70, 229, 0.04)",
+        border: "1px solid rgba(79, 70, 229, 0.1)",
         borderRadius: "20px",
       }}>
         <div style={{
           width: "2.75rem", height: "2.75rem", borderRadius: "100px", flexShrink: 0,
-          background: "rgba(37, 99, 235, 0.08)",
-          border: "1px solid rgba(37, 99, 235, 0.18)",
+          background: "rgba(79, 70, 229, 0.08)",
+          border: "1px solid rgba(79, 70, 229, 0.18)",
           display: "flex", alignItems: "center", justifyContent: "center",
-          fontSize: "0.85rem", fontWeight: 700, color: "rgba(37, 99, 235, 0.9)",
+          fontSize: "0.85rem", fontWeight: 700, color: "rgba(79, 70, 229, 0.9)",
           fontFamily: "var(--font-sans)",
         }}>
           {professor.first_name[0]}{professor.last_name[0]}
@@ -144,7 +144,7 @@ export function RequestForm({ professor, requestsToday }: RequestFormProps) {
         <div style={{ minWidth: 0 }}>
           <div style={{
             fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.22em",
-            textTransform: "uppercase", color: "rgba(37, 99, 235, 0.4)",
+            textTransform: "uppercase", color: "rgba(79, 70, 229, 0.4)",
             fontFamily: "var(--font-sans, monospace)", marginBottom: "0.3rem",
           }}>
             Receiving Professor
@@ -201,8 +201,8 @@ export function RequestForm({ professor, requestsToday }: RequestFormProps) {
         justifyContent: "space-between",
         padding: "1rem 1.5rem",
         borderRadius: "14px",
-        background: requestsToday >= 5 ? "rgba(239, 68, 68, 0.05)" : "rgba(37, 99, 235, 0.04)",
-        border: requestsToday >= 5 ? "1px solid rgba(239, 68, 68, 0.2)" : "1px solid rgba(37, 99, 235, 0.1)",
+        background: requestsToday >= 5 ? "rgba(239, 68, 68, 0.05)" : "rgba(79, 70, 229, 0.04)",
+        border: requestsToday >= 5 ? "1px solid rgba(239, 68, 68, 0.2)" : "1px solid rgba(79, 70, 229, 0.1)",
         marginTop: "1rem"
       }}>
         <span style={{ fontSize: "0.8rem", color: requestsToday >= 5 ? "#ef4444" : "rgba(15, 23, 42, 0.5)", fontFamily: "var(--font-sans)" }}>
@@ -213,7 +213,7 @@ export function RequestForm({ professor, requestsToday }: RequestFormProps) {
           )}
         </span>
         {requestsToday < 5 && (
-          <span style={{ fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", color: "rgba(37, 99, 235, 0.5)", fontFamily: "var(--font-sans, monospace)" }}>
+          <span style={{ fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", color: "rgba(79, 70, 229, 0.5)", fontFamily: "var(--font-sans, monospace)" }}>
             {5 - requestsToday} remaining
           </span>
         )}
