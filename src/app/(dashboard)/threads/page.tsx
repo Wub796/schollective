@@ -2,7 +2,8 @@ import React from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
-import { createClient } from "@/utils/supabase/server";
+import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
+import { sql } from "@/lib/neon/db";
 import { ThreadCard } from "@/components/features/ThreadCard";
 import { BookOpen, Search } from "lucide-react";
 
@@ -20,17 +21,8 @@ function SectionLabel({ text }: { text: string }) {
 }
 
 export default async function ThreadsPage() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("role, preferred_name, first_name")
-    .eq("id", user.id)
-    .single();
-
-  if (!profile) redirect("/prof/dashboard");
+  const { user, profile } = await getCurrentUserAndProfile();
+  if (!user || !profile) redirect("/login");
 
   // Allow admins to preview as student
   const cookieStore = await cookies();
@@ -38,15 +30,24 @@ export default async function ThreadsPage() {
 
   if (!isAdminPreviewing && profile.role !== "student") redirect("/prof/dashboard");
 
-  const { data: requests } = await supabase
-    .from("requests")
-    .select(`
-      id, status, topic, updated_at,
-      professor:professor_id ( first_name, last_name, preferred_name, expertise ),
-      messages ( content, created_at, read_at, sender_id )
-    `)
-    .eq("student_id", user.id)
-    .order("updated_at", { ascending: false });
+  const requests = await sql`
+    SELECT 
+      r.id, r.status, r.topic, r.updated_at,
+      json_build_object(
+        'first_name', p.first_name,
+        'last_name', p.last_name,
+        'preferred_name', p.preferred_name,
+        'expertise', COALESCE(p.expertise, array_to_string(p.expertise_fields, ', '))
+      ) as professor,
+      COALESCE(
+        (SELECT json_agg(json_build_object('content', m.content, 'created_at', m.created_at, 'read_at', m.read_at, 'sender_id', m.sender_id))
+         FROM messages m WHERE m.request_id = r.id), '[]'::json
+      ) as messages
+    FROM requests r
+    LEFT JOIN profiles p ON r.professor_id = p.id
+    WHERE r.student_id = ${user.id}
+    ORDER BY r.updated_at DESC;
+  `;
 
   const processed = (requests || []).map((req: any) => {
     const prof = Array.isArray(req.professor) ? req.professor[0] : req.professor;

@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect, useTransition, useRef } from "react";
-import { createClient } from "@/utils/supabase/client";
 import { markAllNotificationsRead } from "@/app/(dashboard)/prof/dashboard/actions";
 import { Bell } from "lucide-react";
 import Link from "next/link";
@@ -19,7 +18,6 @@ interface Notification {
 
 /** Notification bell that shows unread count and a dropdown list */
 export function NotificationBell() {
-  const supabase = createClient();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [open, setOpen] = useState(false);
   const [, startTransition] = useTransition();
@@ -43,32 +41,24 @@ export function NotificationBell() {
     let mounted = true;
 
     const fetchNotifications = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user || !mounted) return;
-
-      const { data } = await supabase
-        .from("notifications")
-        .select("*")
-        .eq("user_id", user.id)
-        .order("created_at", { ascending: false })
-        .limit(20);
-
-      if (data && mounted) setNotifications(data);
+      try {
+        const res = await fetch("/api/notifications");
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data.notifications && mounted) {
+          setNotifications(data.notifications);
+        }
+      } catch (err) {
+        console.error("Failed to fetch notifications:", err);
+      }
     };
 
     fetchNotifications();
-
-    // Real-time subscription for new notifications
-    const channel = supabase
-      .channel("notifications")
-      .on("postgres_changes", { event: "INSERT", schema: "public", table: "notifications" }, () => {
-        fetchNotifications();
-      })
-      .subscribe();
+    const interval = setInterval(fetchNotifications, 15000);
 
     return () => {
       mounted = false;
-      supabase.removeChannel(channel);
+      clearInterval(interval);
     };
   }, []);
 
