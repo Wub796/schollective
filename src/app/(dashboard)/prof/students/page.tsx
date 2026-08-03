@@ -62,16 +62,16 @@ export default async function ProfStudentsPage() {
       {/* ── Header ── */}
       <header style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <span style={{ width: "1.5rem", height: "2px", background: "#FFC20F", display: "block" }} />
-          <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: "#008CBB", fontFamily: "var(--font-sans, monospace)" }}>
+          <span style={{ width: "1.5rem", height: "2px", background: "#6366f1", display: "block" }} />
+          <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: "#4f46e5", fontFamily: "var(--font-sans, monospace)" }}>
             Faculty Portal
           </span>
         </div>
-        <h1 className="font-display" style={{ fontSize: "clamp(2.4rem, 4.5vw, 3.6rem)", fontWeight: 900, color: "#141005", letterSpacing: "-0.035em", lineHeight: 1.1 }}>
+        <h1 className="font-display" style={{ fontSize: "clamp(2.4rem, 4.5vw, 3.6rem)", fontWeight: 900, color: "#0f172a", letterSpacing: "-0.035em", lineHeight: 1.1 }}>
           Dr. {displayName}&apos;s{" "}
-          <em style={{ fontStyle: "italic", color: "#008CBB", fontWeight: 300 }}>students</em>
+          <em style={{ fontStyle: "italic", color: "#4f46e5", fontWeight: 300 }}>students</em>
         </h1>
-        <p style={{ fontSize: "0.95rem", color: "#3b3527", opacity: 0.75, fontWeight: 400, maxWidth: "42rem", lineHeight: 1.8, fontFamily: "var(--font-sans)", marginTop: "0.25rem" }}>
+        <p style={{ fontSize: "0.95rem", color: "#475569", opacity: 0.75, fontWeight: 400, maxWidth: "42rem", lineHeight: 1.8, fontFamily: "var(--font-sans)", marginTop: "0.25rem" }}>
           An overview of every student you&apos;re currently mentoring and those you&apos;ve guided in the past.
         </p>
       </header>
@@ -85,20 +85,20 @@ export default async function ProfStudentsPage() {
         ].map(({ value, label, sub }) => (
           <div key={label} style={{
             padding: "2.25rem 2.5rem",
-            border: "1px solid rgba(161, 197, 209, 0.45)",
+            border: "1px solid rgba(99, 102, 241, 0.45)",
             borderRadius: "14px",
-            background: "rgba(161, 197, 209, 0.12)",
+            background: "rgba(99, 102, 241, 0.12)",
             display: "flex", flexDirection: "column", gap: "0.5rem",
           }}>
-            <span className="font-display" style={{ fontSize: "2.8rem", fontWeight: 900, color: "#141005", letterSpacing: "-0.04em", lineHeight: 1 }}>
+            <span className="font-display" style={{ fontSize: "2.8rem", fontWeight: 900, color: "#0f172a", letterSpacing: "-0.04em", lineHeight: 1 }}>
               {value}
             </span>
-            <div style={{ fontSize: "0.82rem", fontWeight: 700, color: "#141005", fontFamily: "var(--font-sans)", lineHeight: 1.4 }}>{label}</div>
+            <div style={{ fontSize: "0.82rem", fontWeight: 700, color: "#0f172a", fontFamily: "var(--font-sans)", lineHeight: 1.4 }}>{label}</div>
             <div style={{
               display: "inline-block", fontSize: "0.58rem", fontWeight: 800, letterSpacing: "0.2em",
-              textTransform: "uppercase", color: "#141005", background: "#FFC20F",
+              textTransform: "uppercase", color: "#0f172a", background: "#6366f1",
               padding: "0.25rem 0.75rem", borderRadius: "100px", width: "fit-content", marginTop: "0.5rem",
-              fontFamily: "var(--font-sans, monospace)", border: "1px solid rgba(255, 194, 15, 0.6)"
+              fontFamily: "var(--font-sans, monospace)", border: "1px solid rgba(79, 70, 229, 0.6)"
             }}>
               {sub}
             </div>

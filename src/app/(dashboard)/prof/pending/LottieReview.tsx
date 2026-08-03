@@ -13,7 +13,7 @@ export function LottieReview() {
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
-      filter: "drop-shadow(0 0 15px rgba(212, 146, 42, 0.15))",
+      filter: "drop-shadow(0 0 15px rgba(79, 70, 229, 0.15))",
     }}>
       {/* Outer dashed ring rotating */}
       <motion.div
@@ -23,7 +23,7 @@ export function LottieReview() {
           width: "160px",
           height: "160px",
           borderRadius: "50%",
-          border: "2px dashed rgba(61, 122, 106, 0.35)",
+          border: "2px dashed rgba(99, 102, 241, 0.35)",
           position: "absolute",
         }}
       />
@@ -35,9 +35,9 @@ export function LottieReview() {
           width: "32px",
           height: "32px",
           borderRadius: "50%",
-          background: "rgba(212, 146, 42, 0.9)",
+          background: "rgba(79, 70, 229, 0.9)",
           position: "absolute",
-          boxShadow: "0 0 12px rgba(212, 146, 42, 0.45)",
+          boxShadow: "0 0 12px rgba(79, 70, 229, 0.45)",
         }}
       />
     </div>

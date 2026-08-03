@@ -50,7 +50,7 @@ function NavLink({
         textDecoration: "none",
         background: active ? "var(--accent-dim)" : "transparent",
         border: active
-          ? "1px solid rgba(37, 99, 235, 0.15)"
+          ? "1px solid rgba(79, 70, 229, 0.15)"
           : "1px solid transparent",
         transition: "all 0.2s cubic-bezier(0.22, 1, 0.36, 1)",
         position: "relative",
@@ -93,7 +93,7 @@ function NavLink({
               fontWeight: 700,
               letterSpacing: "0.1em",
               textTransform: "uppercase",
-              color: active ? "rgba(37, 99, 235, 0.6)" : "var(--text-tertiary)",
+              color: active ? "rgba(79, 70, 229, 0.6)" : "var(--text-tertiary)",
               fontFamily: "var(--font-sans, monospace)",
               lineHeight: 1,
               marginTop: "0.2rem",
@@ -104,8 +104,8 @@ function NavLink({
         </div>
         {badge && badge > 0 ? (
           <span style={{
-            background: "rgba(0, 140, 187, 0.15)",
-            color: "#008CBB",
+            background: "rgba(79, 70, 229, 0.15)",
+            color: "#4f46e5",
             fontSize: "0.62rem",
             fontWeight: 700,
             padding: "0.15rem 0.45rem",

@@ -15,23 +15,23 @@ function StatCard({ value, label, sub }: { value: string | number; label: string
   return (
     <div style={{
       padding: "2.25rem 2.5rem",
-      border: "1px solid rgba(161, 197, 209, 0.45)",
+      border: "1px solid rgba(99, 102, 241, 0.45)",
       borderRadius: "14px",
-      background: "rgba(161, 197, 209, 0.12)",
+      background: "rgba(99, 102, 241, 0.12)",
       display: "flex", flexDirection: "column", gap: "0.5rem",
     }}>
-      <span className="font-display" style={{ fontSize: "2.8rem", fontWeight: 900, color: "#141005", letterSpacing: "-0.04em", lineHeight: 1 }}>
+      <span className="font-display" style={{ fontSize: "2.8rem", fontWeight: 900, color: "#0f172a", letterSpacing: "-0.04em", lineHeight: 1 }}>
         {value}
       </span>
       <div>
-        <div style={{ fontSize: "0.82rem", fontWeight: 700, color: "#141005", fontFamily: "var(--font-sans)", lineHeight: 1.4 }}>
+        <div style={{ fontSize: "0.82rem", fontWeight: 700, color: "#0f172a", fontFamily: "var(--font-sans)", lineHeight: 1.4 }}>
           {label}
         </div>
         <div style={{
           display: "inline-block", fontSize: "0.58rem", fontWeight: 800, letterSpacing: "0.2em",
-          textTransform: "uppercase", color: "#141005", background: "#FFC20F",
+          textTransform: "uppercase", color: "#0f172a", background: "#6366f1",
           padding: "0.25rem 0.75rem", borderRadius: "100px", marginTop: "0.5rem",
-          fontFamily: "var(--font-sans, monospace)", border: "1px solid rgba(255, 194, 15, 0.6)"
+          fontFamily: "var(--font-sans, monospace)", border: "1px solid rgba(79, 70, 229, 0.6)"
         }}>
           {sub}
         </div>
@@ -47,7 +47,7 @@ function QuickAction({ href, title, sub, icon }: { href: string; title: string; 
         className="quick-action-card"
         style={{
           padding: "1.5rem 1.75rem",
-          border: "1px solid rgba(161, 197, 209, 0.45)",
+          border: "1px solid rgba(99, 102, 241, 0.45)",
           borderRadius: "14px",
           background: "#ffffff",
           display: "flex", alignItems: "center", justifyContent: "space-between",
@@ -58,22 +58,22 @@ function QuickAction({ href, title, sub, icon }: { href: string; title: string; 
         <div style={{ display: "flex", alignItems: "center", gap: "1.25rem" }}>
           <div style={{
             width: "2.75rem", height: "2.75rem", borderRadius: "12px",
-            background: "rgba(0, 140, 187, 0.1)", border: "1px solid rgba(0, 140, 187, 0.25)",
+            background: "rgba(79, 70, 229, 0.1)", border: "1px solid rgba(79, 70, 229, 0.25)",
             display: "flex", alignItems: "center", justifyContent: "center",
-            flexShrink: 0, color: "#008CBB",
+            flexShrink: 0, color: "#4f46e5",
           }}>
             {icon}
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
-            <div style={{ fontSize: "0.88rem", fontWeight: 700, color: "#141005", fontFamily: "var(--font-sans)", lineHeight: 1.3 }}>
+            <div style={{ fontSize: "0.88rem", fontWeight: 700, color: "#0f172a", fontFamily: "var(--font-sans)", lineHeight: 1.3 }}>
               {title}
             </div>
-            <div style={{ fontSize: "0.7rem", color: "#3b3527", opacity: 0.75, fontFamily: "var(--font-sans)", lineHeight: 1.5 }}>
+            <div style={{ fontSize: "0.7rem", color: "#475569", opacity: 0.75, fontFamily: "var(--font-sans)", lineHeight: 1.5 }}>
               {sub}
             </div>
           </div>
         </div>
-        <ArrowRight size={16} style={{ color: "#008CBB", flexShrink: 0, marginLeft: "1rem" }} />
+        <ArrowRight size={16} style={{ color: "#4f46e5", flexShrink: 0, marginLeft: "1rem" }} />
       </div>
     </Link>
   );
@@ -85,25 +85,25 @@ function StepItem({ n, title, desc }: { n: number; title: string; desc: string }
       style={{
         padding: "1.25rem 1.5rem",
         borderRadius: "12px",
-        border: "1px solid rgba(161, 197, 209, 0.35)",
+        border: "1px solid rgba(99, 102, 241, 0.35)",
         background: "rgba(255, 255, 255, 0.7)",
         display: "flex", gap: "1.25rem", alignItems: "flex-start",
       }}
     >
       <div style={{
         width: "2rem", height: "2rem", borderRadius: "50%",
-        border: "2px solid #FFC20F", background: "rgba(255, 194, 15, 0.25)",
+        border: "2px solid #6366f1", background: "rgba(79, 70, 229, 0.25)",
         display: "flex", alignItems: "center", justifyContent: "center",
-        fontSize: "0.68rem", fontWeight: 800, color: "#141005",
+        fontSize: "0.68rem", fontWeight: 800, color: "#0f172a",
         fontFamily: "var(--font-sans, monospace)", flexShrink: 0, marginTop: "0.1rem",
       }}>
         {n}
       </div>
       <div style={{ display: "flex", flexDirection: "column", gap: "0.3rem" }}>
-        <div style={{ fontSize: "0.88rem", fontWeight: 700, color: "#141005", fontFamily: "var(--font-sans)", lineHeight: 1.3 }}>
+        <div style={{ fontSize: "0.88rem", fontWeight: 700, color: "#0f172a", fontFamily: "var(--font-sans)", lineHeight: 1.3 }}>
           {title}
         </div>
-        <div style={{ fontSize: "0.78rem", color: "#3b3527", opacity: 0.78, fontFamily: "var(--font-sans)", lineHeight: 1.6 }}>
+        <div style={{ fontSize: "0.78rem", color: "#475569", opacity: 0.78, fontFamily: "var(--font-sans)", lineHeight: 1.6 }}>
           {desc}
         </div>
       </div>
@@ -188,10 +188,10 @@ export default async function StudentDashboard() {
       {/* ── Header ─────────────────────────────────────────────── */}
       <header style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <span style={{ width: "1.5rem", height: "2px", background: "#FFC20F", display: "block" }} />
+          <span style={{ width: "1.5rem", height: "2px", background: "#6366f1", display: "block" }} />
           <span style={{
             fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.22em",
-            textTransform: "uppercase", color: "#008CBB", fontFamily: "var(--font-sans, monospace)",
+            textTransform: "uppercase", color: "#4f46e5", fontFamily: "var(--font-sans, monospace)",
           }}>
             Student Portal
           </span>
@@ -199,14 +199,14 @@ export default async function StudentDashboard() {
         <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: "2rem", flexWrap: "wrap" }}>
           <h1 className="font-display" style={{
             fontSize: "clamp(2.4rem, 4.5vw, 3.6rem)", fontWeight: 900,
-            color: "#141005", letterSpacing: "-0.035em", lineHeight: 1.1,
+            color: "#0f172a", letterSpacing: "-0.035em", lineHeight: 1.1,
           }}>
             Welcome back,{" "}
-            <em style={{ fontStyle: "italic", color: "#008CBB", fontWeight: 300 }}>{displayName}</em>
+            <em style={{ fontStyle: "italic", color: "#4f46e5", fontWeight: 300 }}>{displayName}</em>
           </h1>
         </div>
         <p style={{
-          fontSize: "0.95rem", color: "#3b3527", opacity: 0.75, fontWeight: 400,
+          fontSize: "0.95rem", color: "#475569", opacity: 0.75, fontWeight: 400,
           maxWidth: "42rem", lineHeight: 1.8, fontFamily: "var(--font-sans)", marginTop: "0.25rem",
         }}>
           Track your mentorship requests and active research dialogues below.
@@ -223,7 +223,7 @@ export default async function StudentDashboard() {
       </div>
 
       {/* ── Hairline ───────────────────────────────────────────── */}
-      <div style={{ height: "1px", background: "rgba(161, 197, 209, 0.4)" }} />
+      <div style={{ height: "1px", background: "rgba(99, 102, 241, 0.4)" }} />
 
       {/* ── Two-column body ────────────────────────────────────── */}
       <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-10 items-start">
@@ -234,8 +234,8 @@ export default async function StudentDashboard() {
           {/* Quick actions */}
           <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-              <span style={{ width: "1rem", height: "2px", background: "#FFC20F", display: "block" }} />
-              <h2 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "#141005", letterSpacing: "-0.025em" }}>
+              <span style={{ width: "1rem", height: "2px", background: "#6366f1", display: "block" }} />
+              <h2 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "#0f172a", letterSpacing: "-0.025em" }}>
                 Quick Actions
               </h2>
             </div>
@@ -256,13 +256,13 @@ export default async function StudentDashboard() {
           </div>
 
           {/* Hairline */}
-          <div style={{ height: "1px", background: "rgba(161, 197, 209, 0.4)" }} />
+          <div style={{ height: "1px", background: "rgba(99, 102, 241, 0.4)" }} />
 
           {/* How it works */}
           <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-              <span style={{ width: "1rem", height: "2px", background: "#FFC20F", display: "block" }} />
-              <h2 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "#141005", letterSpacing: "-0.025em" }}>
+              <span style={{ width: "1rem", height: "2px", background: "#6366f1", display: "block" }} />
+              <h2 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "#0f172a", letterSpacing: "-0.025em" }}>
                 How It Works
               </h2>
             </div>
@@ -278,15 +278,15 @@ export default async function StudentDashboard() {
         <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-              <span style={{ width: "1rem", height: "2px", background: "#FFC20F", display: "block" }} />
-              <h2 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "#141005", letterSpacing: "-0.025em" }}>
+              <span style={{ width: "1rem", height: "2px", background: "#6366f1", display: "block" }} />
+              <h2 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "#0f172a", letterSpacing: "-0.025em" }}>
                 Your Threads
               </h2>
             </div>
             {!isEmpty && (
               <span style={{
                 fontSize: "0.6rem", fontWeight: 800, letterSpacing: "0.22em",
-                textTransform: "uppercase", color: "#141005", background: "rgba(255, 194, 15, 0.35)",
+                textTransform: "uppercase", color: "#0f172a", background: "rgba(79, 70, 229, 0.35)",
                 padding: "0.3rem 0.8rem", borderRadius: "100px", fontFamily: "var(--font-sans, monospace)"
               }}>
                 {totalRequests} total
@@ -296,32 +296,32 @@ export default async function StudentDashboard() {
 
           {isEmpty ? (
             <div style={{
-              border: "1px dashed rgba(161, 197, 209, 0.6)",
+              border: "1px dashed rgba(99, 102, 241, 0.6)",
               borderRadius: "16px", padding: "3.5rem 2rem", textAlign: "center",
               display: "flex", flexDirection: "column", alignItems: "center", gap: "1.25rem",
               background: "rgba(255, 255, 255, 0.7)",
             }}>
               <div style={{
                 width: "3.5rem", height: "3.5rem", borderRadius: "50%",
-                background: "rgba(255, 194, 15, 0.25)", border: "1px solid rgba(255, 194, 15, 0.5)",
+                background: "rgba(79, 70, 229, 0.25)", border: "1px solid rgba(79, 70, 229, 0.5)",
                 display: "flex", alignItems: "center", justifyContent: "center"
               }}>
-                <BookOpen size={20} style={{ color: "#141005" }} />
+                <BookOpen size={20} style={{ color: "#0f172a" }} />
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-                <h3 className="font-display" style={{ fontSize: "1.25rem", fontWeight: 700, color: "#141005", letterSpacing: "-0.02em" }}>
+                <h3 className="font-display" style={{ fontSize: "1.25rem", fontWeight: 700, color: "#0f172a", letterSpacing: "-0.02em" }}>
                   Find your first research mentor
                 </h3>
-                <p style={{ fontSize: "0.82rem", color: "#3b3527", opacity: 0.75, maxWidth: "24rem", lineHeight: 1.7, fontFamily: "var(--font-sans)", margin: "0 auto" }}>
+                <p style={{ fontSize: "0.82rem", color: "#475569", opacity: 0.75, maxWidth: "24rem", lineHeight: 1.7, fontFamily: "var(--font-sans)", margin: "0 auto" }}>
                   Connect with verified faculty members. Your active mentorship threads will appear here.
                 </p>
               </div>
               <Link href="/professors" style={{ marginTop: "0.5rem", textDecoration: "none" }}>
                 <div style={{
-                  padding: "0.8rem 2rem", border: "2px solid #008CBB", background: "#008CBB",
+                  padding: "0.8rem 2rem", border: "2px solid #4f46e5", background: "#4f46e5",
                   borderRadius: "100px", fontSize: "0.65rem", fontWeight: 800,
                   letterSpacing: "0.18em", textTransform: "uppercase", color: "#ffffff",
-                  fontFamily: "var(--font-sans)", cursor: "pointer", boxShadow: "0 4px 14px rgba(0, 140, 187, 0.25)"
+                  fontFamily: "var(--font-sans)", cursor: "pointer", boxShadow: "0 4px 14px rgba(79, 70, 229, 0.25)"
                 }}>
                   Find a Mentor &rarr;
                 </div>
@@ -342,8 +342,8 @@ export default async function StudentDashboard() {
               {processedRequests.filter((r: any) => r.status === "closed").length > 0 && (
                 <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-                    <span style={{ width: "1rem", height: "2px", background: "#A1C5D1", display: "block" }} />
-                    <h2 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "#141005", opacity: 0.6, letterSpacing: "-0.025em" }}>
+                    <span style={{ width: "1rem", height: "2px", background: "#818cf8", display: "block" }} />
+                    <h2 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "#0f172a", opacity: 0.6, letterSpacing: "-0.025em" }}>
                       Past Mentorships
                     </h2>
                   </div>

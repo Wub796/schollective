@@ -23,9 +23,9 @@ function FadeIn({ children, delay = 0, className = "" }: { children: React.React
 function Eyebrow({ children }: { children: string }) {
   return (
     <div className="flex items-center justify-center gap-3 mb-6">
-      <span className="w-6 h-[2px] bg-[#FFC20F] block flex-shrink-0" />
-      <span className="text-[0.62rem] font-extrabold tracking-[0.22em] uppercase text-[#008CBB] font-sans">{children}</span>
-      <span className="w-6 h-[2px] bg-[#FFC20F] block flex-shrink-0" />
+      <span className="w-6 h-[2px] bg-indigo-500 block flex-shrink-0" />
+      <span className="text-[0.62rem] font-extrabold tracking-[0.22em] uppercase text-indigo-600 font-sans">{children}</span>
+      <span className="w-6 h-[2px] bg-indigo-500 block flex-shrink-0" />
     </div>
   );
 }
@@ -46,7 +46,7 @@ const TEAM = [
 
 export default function AboutPage() {
   return (
-    <div className="bg-transparent text-[#141005] min-h-screen">
+    <div className="bg-transparent text-slate-900 min-h-screen">
       <PublicNav />
 
       {/* ── HERO ──────────────────────────────────────────── */}
@@ -54,13 +54,13 @@ export default function AboutPage() {
         <div className="w-full max-w-[760px] mx-auto flex flex-col items-center text-center">
           <FadeIn className="w-full flex flex-col items-center">
             <Eyebrow>Our Story</Eyebrow>
-            <h1 className="font-display text-[clamp(2.8rem,6.5vw,5rem)] font-black tracking-[-0.04em] leading-[1.05] mb-8 text-[#141005] text-center">
+            <h1 className="font-display text-[clamp(2.8rem,6.5vw,5rem)] font-black tracking-[-0.04em] leading-[1.05] mb-8 text-slate-900 text-center">
               Democratizing<br />
-              <em className="italic font-light text-[#008CBB]">academic mentorship.</em>
+              <em className="italic font-light text-indigo-600">academic mentorship.</em>
             </h1>
           </FadeIn>
           <FadeIn delay={0.15} className="w-full flex flex-col items-center">
-            <p style={{ textAlign: "center" }} className="text-[clamp(1.05rem,1.4vw,1.25rem)] text-[#3b3527] leading-relaxed max-w-[620px]">
+            <p style={{ textAlign: "center" }} className="text-[clamp(1.05rem,1.4vw,1.25rem)] text-slate-600 leading-relaxed max-w-[620px]">
               Schollective was built on a simple belief: students should be able to reach the academics
               who can change their trajectory — without needing to know the right people, attend the right school,
               or send hundreds of cold emails into the void.
@@ -70,23 +70,23 @@ export default function AboutPage() {
       </section>
 
       {/* ── THE PROBLEM ──────────────────────────────────── */}
-      <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-[#A1C5D1]/40" style={{ paddingTop: "9rem", paddingBottom: "9rem" }}>
+      <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-indigo-300/40" style={{ paddingTop: "9rem", paddingBottom: "9rem" }}>
         <div className="w-full max-w-[920px] mx-auto">
           <FadeIn>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 text-left">
-              <div className="p-8 md:p-10 border border-[#A1C5D1]/40 rounded-2xl bg-white/80 shadow-xs flex flex-col gap-4">
-                <h2 className="font-display font-bold text-[clamp(1.6rem,2.5vw,2.2rem)] tracking-[-0.03em] leading-snug text-[#141005]">
+              <div className="p-8 md:p-10 border border-indigo-300/40 rounded-2xl bg-white/80 shadow-xs flex flex-col gap-4">
+                <h2 className="font-display font-bold text-[clamp(1.6rem,2.5vw,2.2rem)] tracking-[-0.03em] leading-snug text-slate-900">
                   Mentorship is gated by proximity.
                 </h2>
-                <p className="text-[0.95rem] text-[#3b3527]/80 leading-relaxed font-sans">
+                <p className="text-[0.95rem] text-slate-600/80 leading-relaxed font-sans">
                   Students at underfunded schools or outside major research hubs rarely connect with the professors whose work matches their interests. Geography, institutional prestige, and sheer luck create invisible walls that have nothing to do with talent.
                 </p>
               </div>
-              <div className="p-8 md:p-10 border border-[#A1C5D1]/40 rounded-2xl bg-white/80 shadow-xs flex flex-col gap-4">
-                <h2 className="font-display font-bold text-[clamp(1.6rem,2.5vw,2.2rem)] tracking-[-0.03em] leading-snug text-[#141005]">
+              <div className="p-8 md:p-10 border border-indigo-300/40 rounded-2xl bg-white/80 shadow-xs flex flex-col gap-4">
+                <h2 className="font-display font-bold text-[clamp(1.6rem,2.5vw,2.2rem)] tracking-[-0.03em] leading-snug text-slate-900">
                   Cold emails don&apos;t scale.
                 </h2>
-                <p className="text-[0.95rem] text-[#3b3527]/80 leading-relaxed font-sans">
+                <p className="text-[0.95rem] text-slate-600/80 leading-relaxed font-sans">
                   Professors receive hundreds of unfocused requests. Students spend days crafting emails that go unread. Both sides lose. Schollective replaces that broken system with structured, purposeful academic dialogue.
                 </p>
               </div>
@@ -96,22 +96,22 @@ export default function AboutPage() {
       </section>
 
       {/* ── VALUES ───────────────────────────────────────── */}
-      <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-[#A1C5D1]/40" style={{ paddingTop: "9rem", paddingBottom: "9rem" }}>
+      <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-indigo-300/40" style={{ paddingTop: "9rem", paddingBottom: "9rem" }}>
         <div className="w-full max-w-[920px] mx-auto">
           <FadeIn>
             <Eyebrow>What We Stand For</Eyebrow>
-            <h2 className="font-display text-[clamp(2.2rem,4vw,3.5rem)] font-black tracking-[-0.04em] leading-[1.05] mb-14 text-[#141005]">
-              Four principles.<br /><em className="italic font-light text-[#008CBB]">One direction.</em>
+            <h2 className="font-display text-[clamp(2.2rem,4vw,3.5rem)] font-black tracking-[-0.04em] leading-[1.05] mb-14 text-slate-900">
+              Four principles.<br /><em className="italic font-light text-indigo-600">One direction.</em>
             </h2>
           </FadeIn>
           <div className="w-full">
             {VALUES.map((v, i) => (
               <FadeIn key={v.n} delay={i * 0.07}>
-                <div className="grid grid-cols-[3.5rem_1fr] gap-8 p-8 md:p-10 mb-6 border border-[#A1C5D1]/40 rounded-2xl bg-white/90 text-left items-start shadow-xs">
-                  <span className="font-mono text-[0.68rem] font-bold tracking-[0.2em] text-[#141005] bg-[#FFC20F] px-2.5 py-1 rounded-full text-center mt-1">{v.n}</span>
+                <div className="grid grid-cols-[3.5rem_1fr] gap-8 p-8 md:p-10 mb-6 border border-indigo-300/40 rounded-2xl bg-white/90 text-left items-start shadow-xs">
+                  <span className="font-mono text-[0.68rem] font-bold tracking-[0.2em] text-slate-900 bg-indigo-500 px-2.5 py-1 rounded-full text-center mt-1">{v.n}</span>
                   <div>
-                    <h3 className="font-display text-[1.35rem] font-bold text-[#141005] tracking-[-0.02em] mb-2">{v.title}</h3>
-                    <p className="text-[0.95rem] text-[#3b3527]/80 leading-relaxed font-sans">{v.body}</p>
+                    <h3 className="font-display text-[1.35rem] font-bold text-slate-900 tracking-[-0.02em] mb-2">{v.title}</h3>
+                    <p className="text-[0.95rem] text-slate-600/80 leading-relaxed font-sans">{v.body}</p>
                   </div>
                 </div>
               </FadeIn>
@@ -121,23 +121,23 @@ export default function AboutPage() {
       </section>
 
       {/* ── TEAM ─────────────────────────────────────────── */}
-      <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-[#A1C5D1]/40" style={{ paddingTop: "9rem", paddingBottom: "9rem" }}>
+      <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-indigo-300/40" style={{ paddingTop: "9rem", paddingBottom: "9rem" }}>
         <div className="w-full max-w-[920px] mx-auto">
           <FadeIn>
-            <h2 className="font-display text-[clamp(2.2rem,3.5vw,3rem)] font-black tracking-[-0.04em] leading-[1.05] mb-14 text-[#141005]">
-              Built by someone who<br /><em className="italic font-light text-[#008CBB]">lived the problem.</em>
+            <h2 className="font-display text-[clamp(2.2rem,3.5vw,3rem)] font-black tracking-[-0.04em] leading-[1.05] mb-14 text-slate-900">
+              Built by someone who<br /><em className="italic font-light text-indigo-600">lived the problem.</em>
             </h2>
           </FadeIn>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
             {TEAM.map((m, i) => (
               <FadeIn key={m.name} delay={i * 0.07}>
-                <div className="p-8 border border-[#A1C5D1]/40 rounded-2xl bg-white h-full flex flex-col text-left transition-all duration-300 hover:shadow-md hover:border-[#008CBB]">
-                  <div className="w-12 h-12 rounded-xl bg-[#008CBB] flex items-center justify-center mb-6 shadow-sm">
+                <div className="p-8 border border-indigo-300/40 rounded-2xl bg-white h-full flex flex-col text-left transition-all duration-300 hover:shadow-md hover:border-indigo-600">
+                  <div className="w-12 h-12 rounded-xl bg-indigo-600 flex items-center justify-center mb-6 shadow-sm">
                     <span className="font-display font-black text-lg text-white">{m.initials}</span>
                   </div>
-                  <div className="font-display font-bold text-[1.15rem] text-[#141005] tracking-[-0.02em] mb-1">{m.name}</div>
-                  <div className="inline-block text-[0.55rem] font-bold tracking-[0.22em] uppercase text-[#141005] bg-[#FFC20F] px-2 py-0.5 rounded-full w-fit mb-4">{m.role}</div>
-                  <p className="text-[0.88rem] text-[#3b3527]/80 leading-relaxed font-sans mt-auto">{m.desc}</p>
+                  <div className="font-display font-bold text-[1.15rem] text-slate-900 tracking-[-0.02em] mb-1">{m.name}</div>
+                  <div className="inline-block text-[0.55rem] font-bold tracking-[0.22em] uppercase text-slate-900 bg-indigo-500 px-2 py-0.5 rounded-full w-fit mb-4">{m.role}</div>
+                  <p className="text-[0.88rem] text-slate-600/80 leading-relaxed font-sans mt-auto">{m.desc}</p>
                 </div>
               </FadeIn>
             ))}
@@ -146,15 +146,15 @@ export default function AboutPage() {
       </section>
 
       {/* ── CTA ──────────────────────────────────────────── */}
-      <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-[#A1C5D1]/40" style={{ paddingTop: "9rem", paddingBottom: "9rem" }}>
+      <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-indigo-300/40" style={{ paddingTop: "9rem", paddingBottom: "9rem" }}>
         <div className="w-full max-w-[920px] mx-auto">
           <FadeIn>
-            <div className="border border-[#A1C5D1]/50 rounded-3xl bg-[#A1C5D1]/10 flex flex-col items-center gap-12 text-center w-full px-8 md:px-16" style={{ paddingTop: "6.5rem", paddingBottom: "6.5rem" }}>
+            <div className="border border-indigo-300/50 rounded-3xl bg-indigo-300/10 flex flex-col items-center gap-12 text-center w-full px-8 md:px-16" style={{ paddingTop: "6.5rem", paddingBottom: "6.5rem" }}>
               <div className="flex flex-col gap-5">
-                <h2 className="font-display font-black text-[clamp(2rem,3vw,2.8rem)] tracking-[-0.04em] text-[#141005] leading-tight">
+                <h2 className="font-display font-black text-[clamp(2rem,3vw,2.8rem)] tracking-[-0.04em] text-slate-900 leading-tight">
                   Ready to connect?
                 </h2>
-                <p className="text-[1rem] text-[#3b3527]/80 leading-relaxed max-w-[480px] mx-auto font-sans text-center">
+                <p className="text-[1rem] text-slate-600/80 leading-relaxed max-w-[480px] mx-auto font-sans text-center">
                   Join the platform where serious students meet verified professors.
                 </p>
               </div>

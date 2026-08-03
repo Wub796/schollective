@@ -26,10 +26,10 @@ const Button = React.forwardRef<HTMLElement, ButtonProps>(
 
 
     const variants = {
-      primary: "bg-[#008CBB] text-white border-2 border-[#008CBB] hover:bg-[#00749b] hover:border-[#00749b] shadow-sm transition-all duration-200",
-      ghost: "bg-transparent backdrop-blur-md text-[#141005] border-2 border-[#141005] hover:border-[#008CBB] hover:text-[#008CBB] transition-all duration-200",
-      outline: "bg-transparent text-[#008CBB] border-2 border-[#008CBB] hover:bg-[#008CBB] hover:text-white transition-all duration-200",
-      gold: "bg-[#FFC20F] text-[#141005] border-2 border-[#FFC20F] hover:bg-[#e5ad00] hover:border-[#e5ad00] shadow-sm transition-all duration-200",
+      primary: "bg-indigo-600 text-white border-2 border-indigo-600 hover:bg-indigo-700 hover:border-indigo-700 shadow-sm transition-all duration-200",
+      ghost: "bg-transparent backdrop-blur-md text-slate-900 border-2 border-slate-900 hover:border-indigo-600 hover:text-indigo-600 transition-all duration-200",
+      outline: "bg-transparent text-indigo-600 border-2 border-indigo-600 hover:bg-indigo-600 hover:text-white transition-all duration-200",
+      gold: "bg-indigo-500 text-slate-900 border-2 border-indigo-500 hover:bg-indigo-700 hover:border-indigo-700 shadow-sm transition-all duration-200",
     };
 
     const sizes = {
@@ -44,7 +44,7 @@ const Button = React.forwardRef<HTMLElement, ButtonProps>(
     const isString = typeof children === "string";
     const chars = isString ? (children as string).split("") : [];
 
-    const layer2Color = variant === "primary" ? "#ffffff" : "#008CBB";
+    const layer2Color = variant === "primary" ? "#ffffff" : "#4f46e5";
 
     const rollContent = isString ? (
       <>
@@ -94,7 +94,7 @@ const Button = React.forwardRef<HTMLElement, ButtonProps>(
     );
 
     const mergedClassName = cn(
-      "group relative inline-flex items-center justify-center rounded-full overflow-visible whitespace-nowrap",
+      "group relative inline-flex items-center justify-center rounded-full overflow-hidden whitespace-nowrap",
       "transition-[background,border-color,opacity,transform] duration-300",
       "disabled:opacity-40 disabled:cursor-not-allowed",
       "active:scale-[0.98]",

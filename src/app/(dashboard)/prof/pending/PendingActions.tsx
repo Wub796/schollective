@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
-import { Button } from "@/components/ui/Button";
 import { RefreshCw, LogOut } from "lucide-react";
 
 export function PendingActions() {
@@ -25,24 +24,57 @@ export function PendingActions() {
   };
 
   return (
-    <div className="flex flex-col gap-8 w-full">
-      <Button 
-        onClick={handleRefresh} 
+    <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem", width: "100%" }}>
+      <button
+        onClick={handleRefresh}
         disabled={refreshing}
-        className="w-full gap-2 py-6 text-base"
+        type="button"
+        style={{
+          width: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: "0.6rem",
+          padding: "1.1rem 1.75rem",
+          borderRadius: "100px",
+          background: "#4f46e5",
+          border: "2px solid #4f46e5",
+          color: "#ffffff",
+          fontSize: "0.95rem",
+          fontWeight: 700,
+          cursor: refreshing ? "not-allowed" : "pointer",
+          opacity: refreshing ? 0.7 : 1,
+          boxShadow: "0 4px 14px rgba(79, 70, 229, 0.25)",
+          fontFamily: "var(--font-sans)",
+        }}
       >
         <RefreshCw size={18} className={refreshing ? "animate-spin" : ""} />
-        {refreshing ? "Checking status..." : "Refresh Application Status"}
-      </Button>
+        <span>{refreshing ? "Checking status..." : "Refresh Application Status"}</span>
+      </button>
       
-      <Button 
+      <button
         onClick={handleSignOut}
-        variant="ghost"
-        className="w-full gap-2 text-slate-500 hover:border-[rgba(255,80,80,0.4)] hover:text-[#ff6b6b]"
+        type="button"
+        style={{
+          width: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: "0.5rem",
+          padding: "1rem 1.75rem",
+          borderRadius: "100px",
+          background: "transparent",
+          border: "2px solid #0f172a",
+          color: "#0f172a",
+          fontSize: "0.9rem",
+          fontWeight: 700,
+          cursor: "pointer",
+          fontFamily: "var(--font-sans)",
+        }}
       >
-        <LogOut size={16} className="group-hover:translate-x-[-2px] transition-transform" style={{ marginRight: "0.25rem" }} />
-        Sign Out &amp; Return Home
-      </Button>
+        <LogOut size={16} />
+        <span>Sign Out &amp; Return Home</span>
+      </button>
     </div>
   );
 }

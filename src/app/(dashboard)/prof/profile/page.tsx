@@ -34,31 +34,31 @@ export default async function ProfPublicProfilePage() {
       {/* ── Header ── */}
       <header style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <span style={{ width: "1.5rem", height: "2px", background: "#FFC20F", display: "block" }} />
-          <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: "#008CBB", fontFamily: "var(--font-sans, monospace)" }}>
+          <span style={{ width: "1.5rem", height: "2px", background: "#6366f1", display: "block" }} />
+          <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: "#4f46e5", fontFamily: "var(--font-sans, monospace)" }}>
             Faculty Portal
           </span>
         </div>
-        <h1 className="font-display" style={{ fontSize: "clamp(2.4rem, 4.5vw, 3.6rem)", fontWeight: 900, color: "#141005", letterSpacing: "-0.035em", lineHeight: 1.1 }}>
+        <h1 className="font-display" style={{ fontSize: "clamp(2.4rem, 4.5vw, 3.6rem)", fontWeight: 900, color: "#0f172a", letterSpacing: "-0.035em", lineHeight: 1.1 }}>
           Your public{" "}
-          <em style={{ fontStyle: "italic", color: "#008CBB", fontWeight: 300 }}>profile</em>
+          <em style={{ fontStyle: "italic", color: "#4f46e5", fontWeight: 300 }}>profile</em>
         </h1>
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-          <Eye size={14} style={{ color: "#008CBB" }} />
-          <p style={{ fontSize: "0.88rem", color: "#3b3527", opacity: 0.75, fontFamily: "var(--font-sans)", lineHeight: 1.6 }}>
+          <Eye size={14} style={{ color: "#4f46e5" }} />
+          <p style={{ fontSize: "0.88rem", color: "#475569", opacity: 0.75, fontFamily: "var(--font-sans)", lineHeight: 1.6 }}>
             This is exactly how students see your card in the mentor directory.
           </p>
         </div>
       </header>
 
       {/* ── Hairline ── */}
-      <div style={{ height: "1px", background: "rgba(161, 197, 209, 0.4)" }} />
+      <div style={{ height: "1px", background: "rgba(99, 102, 241, 0.4)" }} />
 
       {/* ── Profile card preview (mimics ProfessorCard) ── */}
       <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.25rem" }}>
-          <span style={{ width: "1rem", height: "2px", background: "#FFC20F", display: "block" }} />
-          <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: "#008CBB", fontFamily: "var(--font-sans, monospace)" }}>
+          <span style={{ width: "1rem", height: "2px", background: "#6366f1", display: "block" }} />
+          <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: "#4f46e5", fontFamily: "var(--font-sans, monospace)" }}>
             Student View
           </span>
         </div>
@@ -66,7 +66,7 @@ export default async function ProfPublicProfilePage() {
         <div style={{
           position: "relative",
           background: "#ffffff",
-          border: "1.5px solid rgba(161, 197, 209, 0.5)",
+          border: "1.5px solid rgba(99, 102, 241, 0.5)",
           borderRadius: "16px",
           padding: "2.25rem 2.5rem",
           display: "flex",
@@ -77,16 +77,16 @@ export default async function ProfPublicProfilePage() {
           {/* Top shimmer */}
           <div style={{
             position: "absolute", insetInline: 0, top: 0, height: "2px",
-            background: "linear-gradient(90deg, transparent, #FFC20F, transparent)",
+            background: "linear-gradient(90deg, transparent, #6366f1, transparent)",
           }} />
 
           {/* Header row */}
           <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "1.5rem" }}>
             <div style={{
               width: "3.2rem", height: "3.2rem", borderRadius: "50%",
-              background: "rgba(0, 140, 187, 0.1)", border: "1px solid rgba(0, 140, 187, 0.25)",
+              background: "rgba(79, 70, 229, 0.1)", border: "1px solid rgba(79, 70, 229, 0.25)",
               display: "flex", alignItems: "center", justifyContent: "center",
-              fontSize: "0.95rem", fontWeight: 800, color: "#008CBB",
+              fontSize: "0.95rem", fontWeight: 800, color: "#4f46e5",
               fontFamily: "var(--font-sans)",
             }}>
               {initials || "?"}
@@ -94,10 +94,10 @@ export default async function ProfPublicProfilePage() {
             <div style={{
               display: "flex", alignItems: "center", gap: "0.4rem",
               padding: "0.35rem 0.85rem", borderRadius: "100px",
-              border: "1px solid rgba(255, 194, 15, 0.6)",
-              background: "#FFC20F",
+              border: "1px solid rgba(79, 70, 229, 0.6)",
+              background: "#6366f1",
             }}>
-              <span style={{ fontSize: "0.6rem", fontWeight: 800, letterSpacing: "0.2em", textTransform: "uppercase", color: "#141005", fontFamily: "var(--font-sans, monospace)" }}>
+              <span style={{ fontSize: "0.6rem", fontWeight: 800, letterSpacing: "0.2em", textTransform: "uppercase", color: "#0f172a", fontFamily: "var(--font-sans, monospace)" }}>
                 Verified
               </span>
             </div>
@@ -105,35 +105,35 @@ export default async function ProfPublicProfilePage() {
 
           {/* Name + institution */}
           <div style={{ marginBottom: "1.5rem" }}>
-            <h3 className="font-display" style={{ fontSize: "1.3rem", fontWeight: 800, color: "#141005", lineHeight: 1.2, marginBottom: "0.4rem", letterSpacing: "-0.02em" }}>
+            <h3 className="font-display" style={{ fontSize: "1.3rem", fontWeight: 800, color: "#0f172a", lineHeight: 1.2, marginBottom: "0.4rem", letterSpacing: "-0.02em" }}>
               Dr. {displayName} {profile.last_name}
             </h3>
-            <div style={{ fontSize: "0.75rem", color: "#3b3527", opacity: 0.75, fontFamily: "var(--font-sans)", lineHeight: 1.4, display: "flex", alignItems: "center", gap: "0.4rem" }}>
-              <GraduationCap size={14} style={{ color: "#008CBB" }} />
+            <div style={{ fontSize: "0.75rem", color: "#475569", opacity: 0.75, fontFamily: "var(--font-sans)", lineHeight: 1.4, display: "flex", alignItems: "center", gap: "0.4rem" }}>
+              <GraduationCap size={14} style={{ color: "#4f46e5" }} />
               {profile.institution || "Independent Researcher"}
             </div>
           </div>
 
           {/* Hairline */}
-          <div style={{ height: "1px", background: "rgba(161, 197, 209, 0.4)", marginBottom: "1.25rem" }} />
+          <div style={{ height: "1px", background: "rgba(99, 102, 241, 0.4)", marginBottom: "1.25rem" }} />
 
           {/* Expertise tags */}
           <div style={{ marginBottom: "1.75rem" }}>
-            <div style={{ fontSize: "0.6rem", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: "#008CBB", marginBottom: "0.75rem", fontFamily: "var(--font-sans, monospace)" }}>
+            <div style={{ fontSize: "0.6rem", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: "#4f46e5", marginBottom: "0.75rem", fontFamily: "var(--font-sans, monospace)" }}>
               Focus Areas
             </div>
             <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
               {profile.expertise_fields?.slice(0, 4).map((field: string, idx: number) => (
                 <span key={idx} style={{
                   padding: "0.4rem 0.85rem", borderRadius: "100px",
-                  border: "1px solid rgba(161, 197, 209, 0.6)",
-                  background: "rgba(161, 197, 209, 0.15)",
-                  fontSize: "0.7rem", fontWeight: 600, color: "#141005", fontFamily: "var(--font-sans)",
+                  border: "1px solid rgba(99, 102, 241, 0.6)",
+                  background: "rgba(99, 102, 241, 0.15)",
+                  fontSize: "0.7rem", fontWeight: 600, color: "#0f172a", fontFamily: "var(--font-sans)",
                 }}>
                   {field}
                 </span>
               )) || (
-                <span style={{ fontSize: "0.72rem", fontStyle: "italic", color: "#3b3527", opacity: 0.5, fontFamily: "var(--font-sans)" }}>
+                <span style={{ fontSize: "0.72rem", fontStyle: "italic", color: "#475569", opacity: 0.5, fontFamily: "var(--font-sans)" }}>
                   Open to all topics
                 </span>
               )}

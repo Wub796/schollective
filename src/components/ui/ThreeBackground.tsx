@@ -42,7 +42,7 @@ export function ThreeBackground() {
     starGeo.setAttribute("position", new THREE.BufferAttribute(starPos, 3));
     const starMat = new THREE.PointsMaterial({
       size: 0.12,
-      color: 0x8ecfe8,  // teal-tinted stars
+      color: 0xa5b4fc,  // indigo-tinted stars
       transparent: true,
       opacity: 0.5,
       sizeAttenuation: true,
@@ -71,7 +71,7 @@ export function ThreeBackground() {
 
     /* Central hub — represents the Schollective platform */
     const hubGeo = new THREE.SphereGeometry(1.2, 32, 32);
-    const hubMat = new THREE.MeshBasicMaterial({ color: 0x4ec9d4, transparent: true, opacity: 0.22, wireframe: true });
+    const hubMat = new THREE.MeshBasicMaterial({ color: 0x6366f1, transparent: true, opacity: 0.22, wireframe: true });
     const hub = new THREE.Mesh(hubGeo, hubMat);
     hub.position.set(0, 0, 0);
     scene.add(hub);
@@ -81,7 +81,7 @@ export function ThreeBackground() {
     const ringAngles = [Math.PI / 4, Math.PI / 2.2, Math.PI / 1.4];
     ringAngles.forEach((tilt, i) => {
       const rGeo = new THREE.TorusGeometry(2.4 + i * 0.8, 0.018, 8, 80);
-      const rMat = new THREE.MeshBasicMaterial({ color: 0x3d4dc7, transparent: true, opacity: 0.1 + i * 0.03 });
+      const rMat = new THREE.MeshBasicMaterial({ color: 0x4f46e5, transparent: true, opacity: 0.1 + i * 0.03 });
       const ring = new THREE.Mesh(rGeo, rMat);
       ring.position.copy(hub.position);
       ring.rotation.x = tilt;
@@ -99,7 +99,7 @@ export function ThreeBackground() {
     ];
     professorPositions.forEach((pos, i) => {
       const geo = new THREE.SphereGeometry(0.55 + Math.random() * 0.25, 12, 12);
-      const mat = new THREE.MeshBasicMaterial({ color: 0x6080c8, transparent: true, opacity: 0.18, wireframe: true });
+      const mat = new THREE.MeshBasicMaterial({ color: 0x818cf8, transparent: true, opacity: 0.18, wireframe: true });
       const mesh = new THREE.Mesh(geo, mat);
       mesh.position.set(...pos);
       scene.add(mesh);
@@ -113,7 +113,7 @@ export function ThreeBackground() {
       const angle = Math.random() * Math.PI * 2;
       const r = 3 + Math.random() * 4;
       const geo = new THREE.SphereGeometry(0.14 + Math.random() * 0.1, 8, 8);
-      const mat = new THREE.MeshBasicMaterial({ color: 0x4ec9d4, transparent: true, opacity: 0.45 + Math.random() * 0.25 });
+      const mat = new THREE.MeshBasicMaterial({ color: 0x6366f1, transparent: true, opacity: 0.45 + Math.random() * 0.25 });
       const mesh = new THREE.Mesh(geo, mat);
       const center = profNode.mesh.position.clone();
       mesh.position.set(
@@ -138,7 +138,7 @@ export function ThreeBackground() {
     }
 
     /* ── Edge lines between professors and hub ──────────────────── */
-    const lineMat = new THREE.LineBasicMaterial({ color: 0x4ec9d4, transparent: true, opacity: 0.09 });
+    const lineMat = new THREE.LineBasicMaterial({ color: 0x6366f1, transparent: true, opacity: 0.09 });
     const allProfMeshes = nodes.slice(1, 1 + professorPositions.length).map(n => n.mesh);
 
     // Hub → each professor
@@ -159,7 +159,7 @@ export function ThreeBackground() {
     }
 
     /* ── Lights ─────────────────────────────────────────────────── */
-    scene.add(new THREE.AmbientLight(0x3d6aff, 0.7));  // cool blue ambient
+    scene.add(new THREE.AmbientLight(0x4f46e5, 0.7));  // purple/indigo ambient
 
     /* ── Mouse parallax ─────────────────────────────────────────── */
     let mouseX = 0, mouseY = 0, targetX = 0, targetY = 0;
