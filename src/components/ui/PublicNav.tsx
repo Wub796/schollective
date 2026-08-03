@@ -129,18 +129,16 @@ export function PublicNav() {
   return (
     <>
       <header
-        className={`fixed left-1/2 -translate-x-1/2 z-[999] w-[calc(100%-2.5rem)] max-w-[76rem] flex items-center gap-3 transition-all duration-500 ease-out ${
-          scrolled ? "top-3" : "top-5"
-        }`}
+        className={`fixed left-1/2 -translate-x-1/2 z-[999] w-[calc(100%-2.5rem)] max-w-[76rem] flex items-center gap-3 transition-all duration-500 ease-out ${scrolled ? "top-3" : "top-5"
+          }`}
       >
         {/* Main Glass Nav Bar */}
         <div
           data-menu-bar="true"
-          className={`flex-1 rounded-full border flex justify-between lg:grid lg:grid-cols-3 items-center transition-all duration-500 ease-out overflow-hidden hover:bg-white/70 ${
-            scrolled
+          className={`flex-1 rounded-full border flex justify-between lg:grid lg:grid-cols-3 items-center transition-all duration-500 ease-out overflow-hidden hover:bg-white/70 ${scrolled
               ? "h-[3.8rem] bg-white/60 backdrop-blur-2xl backdrop-saturate-[190%] border-white/50 shadow-[0_12px_40px_rgba(15,23,42,0.08),_inset_0_1px_1px_rgba(255,255,255,0.9),_0_1px_3px_rgba(99,102,241,0.08)]"
               : "h-[4.4rem] bg-white/40 backdrop-blur-xl backdrop-saturate-[180%] border-white/30 shadow-[0_8px_32px_rgba(15,23,42,0.04),_inset_0_1px_1px_rgba(255,255,255,0.7),_0_1px_2px_rgba(99,102,241,0.03)]"
-          }`}
+            }`}
         >
           {/* COLUMN 1: LEFT (Logo) */}
           <div className="flex items-center justify-start pl-8 sm:pl-12 lg:pl-16">
@@ -190,9 +188,8 @@ export function PublicNav() {
             href="/signup"
             variant="primary"
             data-nav-item="true"
-            className={`rounded-full px-8 flex items-center justify-center uppercase tracking-widest text-[0.65rem] font-bold border-none shadow-[0_8px_25px_rgba(79,70,229,0.3)] hover:shadow-[0_12px_32px_rgba(79,70,229,0.4)] transition-all duration-500 ease-out ${
-              scrolled ? "h-[3.8rem]" : "h-[4.4rem]"
-            }`}
+            className={`rounded-full px-8 flex items-center justify-center uppercase tracking-widest text-[0.65rem] font-bold border-none shadow-[0_8px_25px_rgba(0,140,187,0.3)] hover:shadow-[0_12px_32px_rgba(0,140,187,0.4)] transition-all duration-500 ease-out ${scrolled ? "h-[3.8rem]" : "h-[4.4rem]"
+              }`}
           >
             Get Started →
           </Button>
