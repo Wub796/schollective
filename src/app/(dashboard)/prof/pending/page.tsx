@@ -24,7 +24,7 @@ export default async function ProfessorPendingPage() {
   const displayName = profile.preferred_name || profile.first_name || "Professor";
 
   return (
-    <div className="page-bg flex items-center justify-center p-8" style={{ minHeight: "100vh" }}>
+    <div className="page-bg flex items-center justify-center p-8" data-no-morph="true" style={{ minHeight: "100vh" }}>
       <main className="relative z-10 w-full max-w-[500px] text-center">
         <div style={{
           background: "rgba(255, 255, 255, 0.95)",
