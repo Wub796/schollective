@@ -117,13 +117,15 @@ function PrecisionDot({
   sourceX,
   sourceY,
   mode,
+  hasTargetRect,
 }: {
   sourceX: import("framer-motion").MotionValue<number>;
   sourceY: import("framer-motion").MotionValue<number>;
   mode: CursorMode;
+  hasTargetRect?: boolean;
 }) {
   const isText = mode === "text";
-  const isButton = mode === "hover-button";
+  const isButton = mode === "hover-button" && Boolean(hasTargetRect);
 
   if (mode === "hide" || isButton) return null;
 
@@ -196,8 +198,6 @@ function CursorRing({
   if (mode === "hide") return null;
 
   // --- Geometry ---
-  // Button: match the element's exact dimensions (zero padding so it sits on border)
-  // Others: standard sizes
   let sizeX: number, sizeY: number, borderRadius: number;
 
   if (isButton && targetRect) {
@@ -211,7 +211,7 @@ function CursorRing({
     sizeY = targetRect.height + 16;
     borderRadius = Math.min(sizeX, sizeY) / 2;
   } else {
-    sizeX = isText ? 3 : isLink ? 56 : isCanvas ? 48 : 24;
+    sizeX = isText ? 3 : isLink ? 56 : isButton ? 44 : isCanvas ? 48 : 24;
     sizeY = isText ? 22 : sizeX;
     borderRadius = isText ? 2 : sizeX / 2;
   }
@@ -230,7 +230,7 @@ function CursorRing({
     : "none";
 
   const borderWidth = isButton ? "1.5px" : "1px";
-  const border = isText || (isButton && !isNav) ? "none" : `${borderWidth} solid ${borderColor}`;
+  const border = isText || (isButton && targetRect && !isNav) ? "none" : `${borderWidth} solid ${borderColor}`;
 
   return (
     <>
@@ -425,7 +425,7 @@ export function CustomCursor() {
     <div className="fixed inset-0 pointer-events-none z-[9999] overflow-hidden">
       <SpotlightBlob sourceX={rawX} sourceY={rawY} mode={mode} />
       <CursorRing sourceX={rawX} sourceY={rawY} mode={mode} targetRect={targetRect} />
-      <PrecisionDot sourceX={rawX} sourceY={rawY} mode={mode} />
+      <PrecisionDot sourceX={rawX} sourceY={rawY} mode={mode} hasTargetRect={Boolean(targetRect)} />
     </div>
   );
 }
