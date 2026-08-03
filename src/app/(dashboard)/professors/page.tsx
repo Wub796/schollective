@@ -74,7 +74,7 @@ export default async function ProfessorsPage({ searchParams }: ProfessorsPagePro
       professors = professors.filter((p) => {
         const profFields = (p.expertise_fields || []).map((f: string) => f.toLowerCase());
         return selectedExpertise.some(
-          (sel) => profFields.includes(sel) || profFields.some((f) => f.includes(sel))
+          (sel) => profFields.includes(sel) || profFields.some((f: string) => f.includes(sel))
         );
       });
     }
