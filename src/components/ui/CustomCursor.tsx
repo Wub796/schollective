@@ -117,13 +117,15 @@ function PrecisionDot({
   sourceX,
   sourceY,
   mode,
+  hasTargetRect,
 }: {
   sourceX: import("framer-motion").MotionValue<number>;
   sourceY: import("framer-motion").MotionValue<number>;
   mode: CursorMode;
+  hasTargetRect?: boolean;
 }) {
   const isText = mode === "text";
-  const isButton = mode === "hover-button";
+  const isButton = mode === "hover-button" && Boolean(hasTargetRect);
 
   if (mode === "hide" || isButton) return null;
 
@@ -188,16 +190,14 @@ function CursorRing({
   const x = useSpring(hoverX, { stiffness, damping });
   const y = useSpring(hoverY, { stiffness, damping });
 
-  const isText   = mode === "text";
+  const isText = mode === "text";
   const isButton = mode === "hover-button";
-  const isLink   = mode === "hover-link";
+  const isLink = mode === "hover-link";
   const isCanvas = mode === "hover-canvas";
 
   if (mode === "hide") return null;
 
   // --- Geometry ---
-  // Button: match the element's exact dimensions (zero padding so it sits on border)
-  // Others: standard sizes
   let sizeX: number, sizeY: number, borderRadius: number;
 
   if (isButton && targetRect) {
@@ -211,7 +211,7 @@ function CursorRing({
     sizeY = targetRect.height + 16;
     borderRadius = Math.min(sizeX, sizeY) / 2;
   } else {
-    sizeX = isText ? 3 : isLink ? 56 : isCanvas ? 48 : 24;
+    sizeX = isText ? 3 : isLink ? 56 : isButton ? 44 : isCanvas ? 48 : 24;
     sizeY = isText ? 22 : sizeX;
     borderRadius = isText ? 2 : sizeX / 2;
   }
@@ -222,15 +222,15 @@ function CursorRing({
   const borderColor = isButton
     ? "rgba(79, 70, 229, 0.9)"
     : isCanvas
-    ? "rgba(15, 23, 42, 0.4)"
-    : "rgba(15, 23, 42, 0.5)";
+      ? "rgba(15, 23, 42, 0.4)"
+      : "rgba(15, 23, 42, 0.5)";
 
   const boxShadow = isButton && isNav
     ? `0 0 0 1.5px rgba(79, 70, 229, 0.9), 0 0 18px rgba(79, 70, 229, 0.35), inset 0 0 12px rgba(79, 70, 229, 0.08)`
     : "none";
 
   const borderWidth = isButton ? "1.5px" : "1px";
-  const border = isText || (isButton && !isNav) ? "none" : `${borderWidth} solid ${borderColor}`;
+  const border = isText || (isButton && targetRect && !isNav) ? "none" : `${borderWidth} solid ${borderColor}`;
 
   return (
     <>
@@ -254,12 +254,12 @@ function CursorRing({
         }}
         transition={{
           // Geometry transitions: fast snap when morphing to button
-          width:        { duration: isButton ? 0.22 : 0.28, ease: [0.22, 1, 0.36, 1] },
-          height:       { duration: isButton ? 0.22 : 0.28, ease: [0.22, 1, 0.36, 1] },
+          width: { duration: isButton ? 0.22 : 0.28, ease: [0.22, 1, 0.36, 1] },
+          height: { duration: isButton ? 0.22 : 0.28, ease: [0.22, 1, 0.36, 1] },
           borderRadius: { duration: isButton ? 0.22 : 0.28, ease: [0.22, 1, 0.36, 1] },
-          border:       { duration: isButton ? 0.18 : 0.28, ease: "easeOut" },
-          boxShadow:    { duration: 0.3, ease: "easeOut" },
-          opacity:      { duration: 0.2 },
+          border: { duration: isButton ? 0.18 : 0.28, ease: "easeOut" },
+          boxShadow: { duration: 0.3, ease: "easeOut" },
+          opacity: { duration: 0.2 },
         }}
       />
 
@@ -293,10 +293,10 @@ function CursorRing({
    MAIN EXPORT
 ═══════════════════════════════════════════════════════════════════════ */
 export function CustomCursor() {
-  const [mounted, setMounted]  = useState(false);
-  const [isTouch, setIsTouch]  = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [isTouch, setIsTouch] = useState(false);
   const [reducedMotion, setRm] = useState(false);
-  const [mode, setMode]        = useState<CursorMode>("default");
+  const [mode, setMode] = useState<CursorMode>("default");
   const [targetRect, setTargetRect] = useState<TargetRect | null>(null);
   const [isEnabled, setIsEnabled] = useState(true);
 
@@ -359,6 +359,14 @@ export function CustomCursor() {
     const onOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
 
+      // Skip morphing/snapping cursor ring if target is inside a data-no-morph container
+      if (target.closest("[data-no-morph]")) {
+        setMode(getMode(target));
+        hoveredEl.current = null;
+        setTargetRect(null);
+        return;
+      }
+
       const navEl = target.closest("[data-nav-item]");
       if (navEl) {
         setMode("hover-button");
@@ -417,7 +425,7 @@ export function CustomCursor() {
     <div className="fixed inset-0 pointer-events-none z-[9999] overflow-hidden">
       <SpotlightBlob sourceX={rawX} sourceY={rawY} mode={mode} />
       <CursorRing sourceX={rawX} sourceY={rawY} mode={mode} targetRect={targetRect} />
-      <PrecisionDot sourceX={rawX} sourceY={rawY} mode={mode} />
+      <PrecisionDot sourceX={rawX} sourceY={rawY} mode={mode} hasTargetRect={Boolean(targetRect)} />
     </div>
   );
 }

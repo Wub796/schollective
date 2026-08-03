@@ -19,7 +19,7 @@ type ButtonProps = ButtonAsButton | ButtonAsLink;
 
 const Button = React.forwardRef<HTMLElement, ButtonProps>(
   ({ className, variant = 'primary', size = 'md', icon, children, href, ...props }, ref) => {
-    
+
     // We need a local ref to attach event listeners if 'ref' is not provided
     const localRef = React.useRef<HTMLElement>(null);
     const resolvedRef = (ref as React.RefObject<HTMLElement>) || localRef;
@@ -53,8 +53,8 @@ const Button = React.forwardRef<HTMLElement, ButtonProps>(
           {icon && <span className="flex-shrink-0">{icon}</span>}
           <span className="flex" style={{ overflow: "hidden", padding: "0.1em 0.1em" }}>
             {chars.map((ch, i) => (
-              <span 
-                key={i} 
+              <span
+                key={i}
                 className="inline-block transition-transform duration-[450ms] ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:-translate-y-[110%]"
                 style={{ fontWeight: 600, transitionDelay: `${i * 12}ms`, willChange: "transform" }}
               >
@@ -63,14 +63,14 @@ const Button = React.forwardRef<HTMLElement, ButtonProps>(
             ))}
           </span>
         </span>
-        
+
         {/* Layer 2 — slides up and in (ABSOLUTE) */}
         <span className="flex" style={{ position: "absolute", inset: 0, alignItems: "center", justifyContent: "center", gap: icon ? "0.5rem" : "0", color: layer2Color, pointerEvents: "none" }}>
           {icon && <span className="flex-shrink-0">{icon}</span>}
           <span className="flex" style={{ overflow: "hidden", padding: "0.1em 0.1em" }}>
             {chars.map((ch, i) => (
-              <span 
-                key={i} 
+              <span
+                key={i}
                 className="inline-block translate-y-[110%] group-hover:translate-y-0 transition-transform duration-[450ms] ease-[cubic-bezier(0.19,1,0.22,1)]"
                 style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontWeight: 400, transitionDelay: `${i * 12}ms`, willChange: "transform" }}
               >
@@ -94,7 +94,7 @@ const Button = React.forwardRef<HTMLElement, ButtonProps>(
     );
 
     const mergedClassName = cn(
-      "group relative inline-flex items-center justify-center rounded-full overflow-hidden whitespace-nowrap",
+      "group relative inline-flex items-center justify-center rounded-full overflow-visible whitespace-nowrap",
       "transition-[background,border-color,opacity,transform] duration-300",
       "disabled:opacity-40 disabled:cursor-not-allowed",
       "active:scale-[0.98]",
