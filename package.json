@@ -7,11 +7,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "build:cf": "opennextjs-cloudflare build",
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
-    "build:cf": "opennextjs-cloudflare build",
-    "preview:cf": "opennextjs-cloudflare build && wrangler dev",
-    "deploy:cf": "opennextjs-cloudflare build && wrangler deploy"
+    "deploy:cf": "opennextjs-cloudflare build && wrangler deploy",
+    "preview:cf": "opennextjs-cloudflare build && wrangler dev"
   },
   "dependencies": {
     "@amplitude/ai": "^0.16.0",
