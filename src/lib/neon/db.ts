@@ -1,14 +1,19 @@
-import { neon, Pool } from "@neondatabase/serverless";
+import { neon, Pool, type NeonQueryFunction } from "@neondatabase/serverless";
 
 /**
- * Neon Serverless SQL client
- * Uses lightweight HTTP transport optimized for edge runtimes and serverless functions.
+ * Lazy Neon Serverless SQL client
+ * Reads DATABASE_URL dynamically at request time to ensure compatibility with Cloudflare Workers.
  */
-export const sql = neon(process.env.DATABASE_URL || "");
+export const sql: NeonQueryFunction<false, false> = ((strings: TemplateStringsArray, ...values: any[]) => {
+  const url = process.env.DATABASE_URL_UNPOOLED || process.env.DATABASE_URL || "";
+  const fn = neon(url);
+  return (fn as any)(strings, ...values);
+}) as any;
 
 /**
  * Neon Connection Pool for transactions and persistent connections.
  */
 export function getDbPool() {
-  return new Pool({ connectionString: process.env.DATABASE_URL || "" });
+  const url = process.env.DATABASE_URL_UNPOOLED || process.env.DATABASE_URL || "";
+  return new Pool({ connectionString: url });
 }

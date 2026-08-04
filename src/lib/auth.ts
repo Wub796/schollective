@@ -13,6 +13,7 @@ export const auth = betterAuth({
     "https://www.schollective.com",
     "https://schollective.schollective.workers.dev",
     "http://localhost:3000",
+    "http://localhost:8787",
     ...(process.env.BETTER_AUTH_URL ? [process.env.BETTER_AUTH_URL] : []),
     ...(process.env.NEXT_PUBLIC_APP_URL ? [process.env.NEXT_PUBLIC_APP_URL] : []),
   ],
