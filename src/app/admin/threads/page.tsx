@@ -1,36 +1,34 @@
 import React from "react";
 import { redirect } from "next/navigation";
-import { createClient } from "@/utils/supabase/server";
+import { sql } from "@/lib/neon/db";
+import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { AdminShell } from "@/components/ui/AdminShell";
 import { AdminThreadsTable } from "@/components/features/AdminThreadsTable";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminThreadsPage() {
-  const supabase = await createClient();
-
-  const { data: { session } } = await supabase.auth.getSession();
+  const { session, profile } = await getCurrentUserAndProfile();
   if (!session) redirect("/login");
 
-  const { data: profile } = await supabase
-    .from("profiles").select("role").eq("id", session.user.id).single();
   if (!profile || profile.role !== "admin") {
     redirect(profile?.role === "professor" ? "/prof/dashboard" : "/dashboard");
   }
 
-  // Fetch all requests/threads with student + professor name joined
-  const { data: threads } = await supabase
-    .from("requests")
-    .select(`
-      id,
-      status,
-      subject,
-      created_at,
-      updated_at,
-      student:profiles!requests_student_id_fkey(id, first_name, last_name, email),
-      professor:profiles!requests_professor_id_fkey(id, first_name, last_name, institution)
-    `)
-    .order("created_at", { ascending: false });
+  const threads = await sql`
+    SELECT 
+      r.id,
+      r.status,
+      r.topic as subject,
+      r.created_at,
+      r.updated_at,
+      json_build_object('id', s.id, 'first_name', s.first_name, 'last_name', s.last_name, 'email', s.email) as student,
+      json_build_object('id', p.id, 'first_name', p.first_name, 'last_name', p.last_name, 'institution', p.institution) as professor
+    FROM requests r
+    LEFT JOIN profiles s ON r.student_id = s.id
+    LEFT JOIN profiles p ON r.professor_id = p.id
+    ORDER BY r.created_at DESC;
+  `;
 
   const active = threads?.filter((t) => t.status === "active").length ?? 0;
   const closed = threads?.filter((t) => t.status === "closed").length ?? 0;
