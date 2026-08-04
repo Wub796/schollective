@@ -7,8 +7,18 @@ const pool = new Pool({
 
 export const auth = betterAuth({
   database: pool,
-  baseURL: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
-  secret: process.env.BETTER_AUTH_SECRET || process.env.SUPABASE_SERVICE_ROLE_KEY || "schollective-auth-secret-key-32-chars-long!",
+  baseURL: process.env.BETTER_AUTH_URL || process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+  secret: process.env.BETTER_AUTH_SECRET || "schollective-auth-secret-key-32-chars-long!",
+  socialProviders: {
+    ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
+      ? {
+          google: {
+            clientId: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+          },
+        }
+      : {}),
+  },
   emailAndPassword: {
     enabled: true,
   },
