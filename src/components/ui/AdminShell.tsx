@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { createClient } from "@/utils/supabase/client";
+import { authClient } from "@/lib/auth-client";
 import {
   LayoutDashboard,
   Users,
@@ -126,12 +126,11 @@ function NavLink({
 function AdminSidebarContent({ onClose }: { onClose?: () => void }) {
   const pathname = usePathname();
   const router   = useRouter();
-  const supabase = createClient();
 
   const isActive = (href: string) => pathname === href || pathname.startsWith(href + "/");
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
+    await authClient.signOut();
     router.push("/login");
   };
 
