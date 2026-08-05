@@ -17,11 +17,11 @@ export const auth = betterAuth({
     ...(process.env.BETTER_AUTH_URL ? [process.env.BETTER_AUTH_URL] : []),
     ...(process.env.NEXT_PUBLIC_APP_URL ? [process.env.NEXT_PUBLIC_APP_URL] : []),
   ],
-  secret: process.env.BETTER_AUTH_SECRET || "schollective-auth-secret-key-32-chars-long!",
+  secret: process.env.BETTER_AUTH_SECRET || "[REDACTED-ROTATED]=",
   socialProviders: {
     google: {
-      clientId: process.env.GOOGLE_CLIENT_ID || "",
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
+      clientId: process.env.GOOGLE_CLIENT_ID || "639902173862-25bm50enc0o26qsj52j8ovtmebpoms4p.apps.googleusercontent.com",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "[REDACTED-ROTATED]",
     },
   },
   emailAndPassword: {
