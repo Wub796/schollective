@@ -68,6 +68,9 @@ export default async function ProfessorDashboard() {
   if (!isAdminPreviewing && profile.role !== "professor") {
     redirect(profile?.role === "admin" ? "/admin/dashboard" : "/dashboard");
   }
+  if (!isAdminPreviewing && !profile.profile_complete && profile.role !== "admin") {
+    redirect("/onboarding");
+  }
   // Skip status check for admin previewing
   if (!isAdminPreviewing && profile.status !== "approved") redirect("/prof/pending");
 
