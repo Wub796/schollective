@@ -1,8 +1,10 @@
-import { NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 
-export async function GET() {
-  const { session, user, profile } = await getCurrentUserAndProfile();
+export const dynamic = "force-dynamic";
+
+export async function GET(request: NextRequest) {
+  const { session, user, profile } = await getCurrentUserAndProfile(request.headers);
   if (!session || !user) {
     return NextResponse.json({ authenticated: false, profile: null }, { status: 401 });
   }

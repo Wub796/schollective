@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
 import { getCurrentUserAndProfile, upsertProfile } from "@/lib/neon/profiles";
 
+export const dynamic = "force-dynamic";
+
 export async function POST(req: Request) {
-  const { session, user } = await getCurrentUserAndProfile();
+  const { session, user } = await getCurrentUserAndProfile(req.headers);
   if (!session || !user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
