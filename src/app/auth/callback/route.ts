@@ -9,13 +9,13 @@ export async function GET(request: NextRequest) {
     : '/dashboard';
 
   try {
-    const { user, profile } = await getCurrentUserAndProfile();
+    const { user, profile } = await getCurrentUserAndProfile(request.headers);
 
     if (!user) {
       return NextResponse.redirect(`${origin}/login`);
     }
 
-    if (!profile || !profile.first_name || !profile.role) {
+    if (!profile || !profile.first_name || !profile.role || !profile.profile_complete) {
       const onboardingUrl = new URL('/onboarding', origin);
       if (next && next !== '/dashboard') {
         onboardingUrl.searchParams.set('next', next);
