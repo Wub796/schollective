@@ -25,14 +25,8 @@ export async function middleware(request: NextRequest) {
     (path.startsWith("/prof/") || path === "/prof") && !path.startsWith("/professors");
   const isAdminRoute = path.startsWith("/admin");
   const isOnboarding = path === "/onboarding";
-  const isAuthPage = path === "/login" || path === "/signup";
 
-  // 0. Redirect logged-in users away from /login & /signup
-  if (sessionCookie && isAuthPage) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
-  }
-
-  // 1. Guard protected routes if no session cookie
+  // Guard protected routes if no session cookie
   if ((isStudentRoute || isProfessorRoute || isAdminRoute || isOnboarding) && !sessionCookie) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
