@@ -18,7 +18,8 @@ export async function middleware(request: NextRequest) {
     path.startsWith("/request") ||
     path.startsWith("/messages") ||
     path.startsWith("/profile") ||
-    path.startsWith("/threads");
+    path.startsWith("/threads") ||
+    path === "/professors";
 
   const isProfessorRoute =
     (path.startsWith("/prof/") || path === "/prof") && !path.startsWith("/professors");
