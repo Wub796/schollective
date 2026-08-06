@@ -1,5 +1,5 @@
 import { betterAuth } from "better-auth";
-import { Pool, neonConfig } from "@neondatabase/serverless";
+import { neon, neonConfig } from "@neondatabase/serverless";
 
 // Use stateless HTTP fetch queries for serverless edge / Cloudflare Workers
 neonConfig.poolQueryViaFetch = true;
@@ -18,13 +18,10 @@ function getDatabaseConnectionString(): string {
     .replace("?channel_binding=require", "?");
 }
 
-const pool = new Pool({
-  connectionString: getDatabaseConnectionString(),
-  max: 1,
-});
+const database = neon(getDatabaseConnectionString());
 
 export const auth = betterAuth({
-  database: pool,
+  database,
   baseURL: process.env.BETTER_AUTH_URL || "https://schollective.com",
   trustedOrigins: [
     "https://schollective.com",
