@@ -1,21 +1,8 @@
 import { betterAuth } from "better-auth";
 import { Pool } from "pg";
 
-function getDatabaseConnectionString(): string {
-  const raw =
-    process.env.DATABASE_URL_UNPOOLED ||
-    process.env.DATABASE_URL ||
-    "postgresql://neondb_owner:[REDACTED-ROTATED]@ep-nameless-dream-aefnmhh3.c-2.us-east-2.aws.neon.tech/neondb?sslmode=require";
-  // Strip '-pooler' and 'channel_binding' for Cloudflare Worker compatibility
-  return raw
-    .replace("-pooler.", ".")
-    .replace("channel_binding=require&", "")
-    .replace("&channel_binding=require", "")
-    .replace("?channel_binding=require", "?");
-}
-
 const database = new Pool({
-  connectionString: getDatabaseConnectionString(),
+  connectionString: process.env.DATABASE_URL_UNPOOLED || process.env.DATABASE_URL,
   max: 1,
   idleTimeoutMillis: 1000,
 });
