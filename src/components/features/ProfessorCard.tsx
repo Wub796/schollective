@@ -17,9 +17,14 @@ interface ProfessorCardProps {
 }
 
 export function ProfessorCard({ professor }: ProfessorCardProps) {
-  const displayName = professor.preferred_name || professor.first_name;
-  const initials = `${professor.first_name[0]}${professor.last_name[0]}`;
+  const displayName = professor.preferred_name || professor.first_name || "Professor";
+  const initials = `${professor.first_name?.[0] || "P"}${professor.last_name?.[0] || ""}`.toUpperCase();
   const isAccepting = professor.is_accepting_requests !== false;
+  const fields = Array.isArray(professor.expertise_fields)
+    ? professor.expertise_fields
+    : typeof professor.expertise_fields === "string"
+    ? (() => { try { const p = JSON.parse(professor.expertise_fields as string); return Array.isArray(p) ? p : [professor.expertise_fields]; } catch { return [professor.expertise_fields]; } })()
+    : [];
 
   return (
     <motion.div
@@ -141,24 +146,26 @@ export function ProfessorCard({ professor }: ProfessorCardProps) {
           Focus Areas
         </div>
         <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
-          {professor.expertise_fields?.slice(0, 4).map((field, idx) => (
-            <span
-              key={idx}
-              style={{
-                padding: "0.45rem 0.85rem",
-                borderRadius: "100px",
-                border: "1px solid rgba(99, 102, 241, 0.4)",
-                background: "rgba(99, 102, 241, 0.12)",
-                fontSize: "0.7rem",
-                fontWeight: 600,
-                color: "#0f172a",
-                fontFamily: "var(--font-sans)",
-                lineHeight: 1.4,
-              }}
-            >
-              {field}
-            </span>
-          )) || (
+          {fields.length > 0 ? (
+            fields.slice(0, 4).map((field, idx) => (
+              <span
+                key={idx}
+                style={{
+                  padding: "0.45rem 0.85rem",
+                  borderRadius: "100px",
+                  border: "1px solid rgba(99, 102, 241, 0.4)",
+                  background: "rgba(99, 102, 241, 0.12)",
+                  fontSize: "0.7rem",
+                  fontWeight: 600,
+                  color: "#0f172a",
+                  fontFamily: "var(--font-sans)",
+                  lineHeight: 1.4,
+                }}
+              >
+                {field}
+              </span>
+            ))
+          ) : (
             <span style={{ fontSize: "0.78rem", fontStyle: "italic", color: "#475569", opacity: 0.6, fontFamily: "var(--font-sans)" }}>
               Open to all topics
             </span>
