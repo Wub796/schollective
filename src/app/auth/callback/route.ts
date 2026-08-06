@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
     const { user, profile } = await getCurrentUserAndProfile(request.headers);
 
     if (!user) {
-      return NextResponse.redirect(`${origin}/login`);
+      return NextResponse.redirect(`${origin}/login?error=oauth_session_missing`);
     }
 
     if (!profile || !profile.first_name || !profile.role || !profile.profile_complete) {

@@ -20,11 +20,12 @@ function getDatabaseConnectionString(): string {
 
 const pool = new Pool({
   connectionString: getDatabaseConnectionString(),
+  max: 1,
 });
 
 export const auth = betterAuth({
   database: pool,
-  baseURL: process.env.BETTER_AUTH_URL || process.env.NEXT_PUBLIC_APP_URL || "https://schollective.com",
+  baseURL: process.env.BETTER_AUTH_URL || "https://schollective.com",
   trustedOrigins: [
     "https://schollective.com",
     "https://www.schollective.com",
@@ -32,7 +33,7 @@ export const auth = betterAuth({
     "http://localhost:3000",
     "http://localhost:8787",
     ...(process.env.BETTER_AUTH_URL ? [process.env.BETTER_AUTH_URL] : []),
-    ...(process.env.NEXT_PUBLIC_APP_URL ? [process.env.NEXT_PUBLIC_APP_URL] : []),
+    ...(process.env.NEXT_PUBLIC_APP_URL ? [process.env.NEXT_PUBLIC_APP_URL.replace(/\/$/, "")] : []),
   ],
   secret: process.env.BETTER_AUTH_SECRET || "[REDACTED-ROTATED]=",
   socialProviders: {
