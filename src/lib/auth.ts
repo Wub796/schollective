@@ -1,10 +1,12 @@
 import { betterAuth } from "better-auth";
-import { Pool } from "pg";
+import { Pool, neonConfig } from "@neondatabase/serverless";
+
+// Use stateless HTTP fetch queries (no persistent connections) for Cloudflare Workers
+neonConfig.poolQueryViaFetch = true;
 
 const database = new Pool({
   connectionString: process.env.DATABASE_URL_UNPOOLED || process.env.DATABASE_URL,
   max: 1,
-  idleTimeoutMillis: 1000,
 });
 
 export const auth = betterAuth({
