@@ -136,6 +136,8 @@ export async function upsertProfile(profile: Partial<ProfileRecord> & { id: stri
       ${profile.profile_complete ?? false}, now()
     )
     ON CONFLICT (id) DO UPDATE SET
+      role = COALESCE(EXCLUDED.role, profiles.role),
+      status = COALESCE(EXCLUDED.status, profiles.status),
       first_name = COALESCE(EXCLUDED.first_name, profiles.first_name),
       preferred_name = COALESCE(EXCLUDED.preferred_name, profiles.preferred_name),
       last_name = COALESCE(EXCLUDED.last_name, profiles.last_name),
