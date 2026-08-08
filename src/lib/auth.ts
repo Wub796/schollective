@@ -8,7 +8,7 @@ import {
   PostgresIntrospector,
   PostgresQueryCompiler,
 } from "kysely";
-import { getServerlessDbUrl } from "@/lib/neon/db";
+import { describeMissingDbUrl, getServerlessDbUrl } from "@/lib/neon/db";
 import { ensureAuthSchema } from "@/lib/neon/schema";
 
 const PG_DIALECT = {
@@ -31,11 +31,7 @@ const PG_DIALECT = {
         // call throw, which reaches the browser as a bodyless 500.
         await ensureAuthSchema();
         const url = getServerlessDbUrl();
-        if (!url) {
-          throw new Error(
-            "DATABASE_URL is not configured. Set DATABASE_URL (or DATABASE_URL_UNPOOLED) so authentication can reach Neon.",
-          );
-        }
+        if (!url) throw new Error(describeMissingDbUrl());
         if (!client) client = { query: neon(url, { fullResults: true }) };
         if (!connection) connection = new NeonConnection(client);
         return connection;
