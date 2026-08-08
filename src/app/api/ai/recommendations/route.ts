@@ -4,6 +4,7 @@ import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { recommendProfessors } from "@/lib/ai/recommender";
 import { checkUserAiRateLimit } from "@/lib/ai/guardrails";
 import { checkRateLimit, getClientIp } from "@/lib/security";
+import type { ProfessorCandidate } from "@/lib/ai/recommender";
 
 export async function GET(req: Request) {
   try {
@@ -39,12 +40,12 @@ export async function GET(req: Request) {
       last_name: "",
     };
 
-    const professors = await sql`
+    const professors = (await sql`
       SELECT id, first_name, last_name, preferred_name, institution, department, academic_title, expertise_fields, is_accepting_requests, bio, lab_website, publications, status, role
       FROM profiles
       WHERE role = 'professor' AND status = 'approved'
       LIMIT 30;
-    `;
+    `) as ProfessorCandidate[];
 
     const result = await recommendProfessors(safeStudent, professors);
 
