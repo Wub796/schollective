@@ -58,7 +58,6 @@ export async function POST(req: Request) {
     };
 
     const review = await reviewStudentProfile(profileToReview);
-
     return NextResponse.json({ success: true, review });
   } catch (err: any) {
     console.error("[POST /api/ai/review-profile] Error:", err);
