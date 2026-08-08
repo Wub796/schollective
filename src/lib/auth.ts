@@ -1,3 +1,4 @@
+import { AsyncLocalStorage } from "node:async_hooks";
 import { betterAuth } from "better-auth";
 import { neon } from "@neondatabase/serverless";
 import {
@@ -8,6 +9,7 @@ import {
   PostgresQueryCompiler,
 } from "kysely";
 import { getServerlessDbUrl } from "@/lib/neon/db";
+import { ensureAuthSchema } from "@/lib/neon/schema";
 
 const PG_DIALECT = {
   createAdapter: () => new PostgresAdapter(),
@@ -24,7 +26,17 @@ const PG_DIALECT = {
     return {
       init: async () => {},
       acquireConnection: async () => {
-        if (!client) client = { query: neon(getServerlessDbUrl(), { fullResults: true }) };
+        // Creates/repairs the Better Auth tables the first time this isolate
+        // talks to Neon. Without it a never-migrated database makes every auth
+        // call throw, which reaches the browser as a bodyless 500.
+        await ensureAuthSchema();
+        const url = getServerlessDbUrl();
+        if (!url) {
+          throw new Error(
+            "DATABASE_URL is not configured. Set DATABASE_URL (or DATABASE_URL_UNPOOLED) so authentication can reach Neon.",
+          );
+        }
+        if (!client) client = { query: neon(url, { fullResults: true }) };
         if (!connection) connection = new NeonConnection(client);
         return connection;
       },
@@ -51,6 +63,13 @@ class NeonConnection {
   async *streamQuery() { throw new Error("Streaming is not supported with Neon HTTP connections"); }
 }
 
+/**
+ * Per-request slot the API route uses to recover the cause of a failed auth
+ * call. Better Auth handles its own errors and answers unexpected ones with an
+ * empty HTTP 500, which reaches the browser as an error with no message at all.
+ */
+export const authErrorStore = new AsyncLocalStorage<{ error?: unknown }>();
+
 export const auth = betterAuth({
   database: { dialect: PG_DIALECT, type: "postgres" },
   baseURL: process.env.BETTER_AUTH_URL || "https://schollective.com",
@@ -68,6 +87,13 @@ export const auth = betterAuth({
     google: {
       clientId: process.env.GOOGLE_CLIENT_ID || "639902173862-25bm50enc0o26qsj52j8ovtmebpoms4p.apps.googleusercontent.com",
       clientSecret: process.env.GOOGLE_CLIENT_SECRET || "[REDACTED-ROTATED]",
+    },
+  },
+  onAPIError: {
+    onError: (error) => {
+      const slot = authErrorStore.getStore();
+      if (slot) slot.error = error;
+      console.error("[auth] API error:", error);
     },
   },
   emailAndPassword: {
