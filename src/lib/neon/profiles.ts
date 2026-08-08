@@ -1,4 +1,5 @@
 import { sql } from "./db";
+import { ensureAuthSchema } from "./schema";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
@@ -46,16 +47,23 @@ export async function getCurrentUserAndProfile(customHeaders?: Headers): Promise
   user: any | null;
   profile: ProfileRecord | null;
 }> {
+  const reqHeaders = customHeaders || (await headers());
+
+  let session: any = null;
   try {
-    const reqHeaders = customHeaders || (await headers());
-    const session = await auth.api.getSession({
-      headers: reqHeaders,
-    });
+    session = await auth.api.getSession({ headers: reqHeaders });
+  } catch (error) {
+    // A failed session read is not the same as being signed out, but every
+    // caller treats a null session that way, so make the real cause visible.
+    console.error("[auth] Failed to read session:", error);
+    return { session: null, user: null, profile: null };
+  }
 
-    if (!session?.user) {
-      return { session: null, user: null, profile: null };
-    }
+  if (!session?.user) {
+    return { session: null, user: null, profile: null };
+  }
 
+  try {
     const userId = session.user.id;
     const userEmail = session.user.email;
 
@@ -91,8 +99,10 @@ export async function getCurrentUserAndProfile(customHeaders?: Headers): Promise
 
     return { session, user: session.user, profile: profile || null };
   } catch (error) {
-    console.error("Error in getCurrentUserAndProfile:", error);
-    return { session: null, user: null, profile: null };
+    // The session is valid; only the profile row could not be loaded. Keep the
+    // user signed in so they are not bounced back to /login in a loop.
+    console.error("[auth] Failed to load profile:", error);
+    return { session, user: session.user, profile: null };
   }
 }
 
@@ -107,6 +117,7 @@ export async function getProfileByEmail(email: string): Promise<ProfileRecord | 
 }
 
 export async function upsertProfile(profile: Partial<ProfileRecord> & { id: string; email: string }) {
+  await ensureAuthSchema();
   const interests = JSON.stringify(profile.academic_interests || []);
   const extras = JSON.stringify(profile.extracurriculars || []);
   const expertise = JSON.stringify(profile.expertise_fields || []);
