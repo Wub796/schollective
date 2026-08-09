@@ -69,6 +69,7 @@ export async function setUserSuspended(targetUserId: string, suspend: boolean) {
   if (error) return { error: error.message };
   revalidatePath("/admin/dashboard");
   revalidatePath("/admin/users");
+  revalidatePath("/admin/professors");
   return { success: true };
 }
 
@@ -92,6 +93,7 @@ export async function revokeVerification(professorId: string) {
 
   if (error) return { error: error.message };
   revalidatePath("/admin/dashboard");
+  revalidatePath("/admin/professors");
   return { success: true };
 }
 
@@ -115,7 +117,7 @@ export async function changeUserRole(
   if (targetUserId === user.id) return { error: "Cannot change your own role" };
 
   // Status defaults per role
-  const defaultStatus = newRole === "professor" ? "approved" : "active";
+  const defaultStatus = newRole === "professor" ? "pending" : "active";
 
   const adminClient = createAdminClient();
   const { error } = await adminClient
@@ -130,6 +132,7 @@ export async function changeUserRole(
   if (error) return { error: error.message };
   revalidatePath("/admin/dashboard");
   revalidatePath("/admin/users");
+  revalidatePath("/admin/professors");
   return { success: true };
 }
 
@@ -189,6 +192,7 @@ export async function suspendUser(userId: string, reason: string) {
 
   revalidatePath("/admin/dashboard");
   revalidatePath("/admin/users");
+  revalidatePath("/admin/professors");
   return { success: true };
 }
 
@@ -216,6 +220,7 @@ export async function unsuspendUser(userId: string) {
 
   revalidatePath("/admin/dashboard");
   revalidatePath("/admin/users");
+  revalidatePath("/admin/professors");
   return { success: true };
 }
 

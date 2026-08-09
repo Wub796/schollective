@@ -701,12 +701,19 @@ a, button, [role="button"] {
   transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+select {
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  border-radius: 100px;
+  outline: none;
+}
+
 input:focus-visible,
 textarea:focus-visible,
+select:focus,
 select:focus-visible {
-  outline: 2px solid rgba(79, 70, 229, 0.7);
-  outline-offset: 2px;
-  box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+  outline: none !important;
+  border-color: rgba(79, 70, 229, 0.5) !important;
+  box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.12) !important;
 }
 
 a:not([class]):hover {

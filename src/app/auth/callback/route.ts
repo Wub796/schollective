@@ -93,7 +93,7 @@ export async function GET(request: NextRequest) {
     }
     destination = onboardingUrl.toString()
   } else if (profile.role === 'professor') {
-    destination = `${origin}/prof/dashboard`
+    destination = profile.status === 'approved' ? `${origin}/prof/dashboard` : `${origin}/prof/pending`
   } else if (profile.role === 'admin') {
     destination = `${origin}/admin/dashboard`
   } else {

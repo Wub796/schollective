@@ -10,7 +10,6 @@ import {
   Users,
   GraduationCap,
   MessageSquare,
-  Home,
   Settings,
   LogOut,
   Menu,
@@ -202,21 +201,20 @@ function AdminSidebarContent({ onClose }: { onClose?: () => void }) {
         {/* Divider */}
         <div style={{ height: "1px", background: "var(--border)", marginBottom: "1.5rem", marginLeft: "0.85rem", marginRight: "0.85rem" }} />
 
-        {/* Back to site */}
+        {/* Account Settings */}
         <p style={{
           fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.15em",
           textTransform: "uppercase", color: "var(--text-tertiary)",
           marginBottom: "0.6rem", paddingLeft: "0.85rem",
           fontFamily: "var(--font-sans, monospace)",
         }}>
-          Site
+          Account
         </p>
         <motion.ul
           variants={stagger} initial="hidden" animate="show"
           style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "0.25rem" }}
         >
           {[
-            { href: "/dashboard", icon: Home,     label: "Back to Site",  sub: "Student view" },
             { href: "/profile",   icon: Settings,  label: "Settings",      sub: "Account"     },
           ].map(({ href, icon, label, sub }) => (
             <motion.li key={href} variants={itemVariant}>
