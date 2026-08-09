@@ -16,6 +16,9 @@ interface RequestQueueCardProps {
       last_name: string | null;
       preferred_name: string | null;
       education_level: string;
+      bio?: string;
+      academic_interests?: string[];
+      extracurriculars?: string[];
     };
     initial_message?: string;
     created_at: string;
@@ -103,6 +106,44 @@ export function RequestQueueCard({ request }: RequestQueueCardProps) {
           &ldquo;{request.topic}&rdquo;
         </p>
       </div>
+
+      {/* Student bio */}
+      {request.student?.bio && (
+        <div style={{ marginBottom: "1.25rem" }}>
+          <div style={{ fontSize: "0.52rem", color: "rgba(79, 70, 229, 0.4)", textTransform: "uppercase", letterSpacing: "0.22em", fontWeight: 700, marginBottom: "0.5rem", fontFamily: "var(--font-sans, monospace)" }}>About</div>
+          <p style={{ fontSize: "0.82rem", color: "rgba(15, 23, 42, 0.6)", lineHeight: 1.7, fontFamily: "var(--font-sans)" }}>
+            {request.student.bio}
+          </p>
+        </div>
+      )}
+
+      {/* Student interests & extracurriculars */}
+      {((request.student?.academic_interests?.length ?? 0) > 0 || (request.student?.extracurriculars?.length ?? 0) > 0) && (
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem", marginBottom: "1.25rem" }}>
+          {request.student?.academic_interests?.map((interest, idx) => (
+            <span key={`i-${idx}`} style={{
+              padding: "0.3rem 0.7rem", borderRadius: "100px",
+              border: "1px solid rgba(79, 70, 229, 0.2)",
+              background: "rgba(79, 70, 229, 0.06)",
+              fontSize: "0.62rem", fontWeight: 600, color: "#4f46e5",
+              fontFamily: "var(--font-sans)",
+            }}>
+              {interest}
+            </span>
+          ))}
+          {request.student?.extracurriculars?.map((extra, idx) => (
+            <span key={`e-${idx}`} style={{
+              padding: "0.3rem 0.7rem", borderRadius: "100px",
+              border: "1px solid rgba(15, 23, 42, 0.1)",
+              background: "rgba(15, 23, 42, 0.04)",
+              fontSize: "0.62rem", fontWeight: 600, color: "rgba(15, 23, 42, 0.55)",
+              fontFamily: "var(--font-sans)",
+            }}>
+              {extra}
+            </span>
+          ))}
+        </div>
+      )}
 
       {/* Initial message — editorial quote block */}
       {request.initial_message && (

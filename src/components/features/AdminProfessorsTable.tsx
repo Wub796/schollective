@@ -26,6 +26,7 @@ type SortKey = "name" | "status" | "score" | "joined";
 
 const STATUS_COLOUR: Record<string, string> = {
   approved:  "rgba(74,222,128,0.8)",
+  active:    "rgba(74,222,128,0.8)",
   pending:   "rgba(250,204,21,0.8)",
   rejected:  "rgba(248,113,113,0.8)",
   suspended: "rgba(239,68,68,0.8)",
@@ -34,6 +35,13 @@ const STATUS_COLOUR: Record<string, string> = {
 function formatDate(iso: string) {
   try { return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" }).format(new Date(iso)); }
   catch { return "—"; }
+}
+
+function effectiveStatus(p: ProfessorRecord): string {
+  if (p.status === "approved") return "approved";
+  if (p.status === "rejected") return "rejected";
+  if (p.status === "suspended") return "suspended";
+  return "pending";
 }
 
 function FilterPill({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
@@ -58,16 +66,16 @@ export function AdminProfessorsTable({ professors }: { professors: ProfessorReco
       const q = query.toLowerCase();
       list = list.filter((p) => `${p.first_name} ${p.last_name} ${p.email} ${p.institution ?? ""}`.toLowerCase().includes(q));
     }
-    if (statusFilter !== "all") list = list.filter((p) => p.status === statusFilter);
+    if (statusFilter !== "all") list = list.filter((p) => effectiveStatus(p) === statusFilter);
     list.sort((a, b) => {
       // Prioritize pending professors at the top of the queue
-      const aPending = a.status === "pending" ? 1 : 0;
-      const bPending = b.status === "pending" ? 1 : 0;
+      const aPending = effectiveStatus(a) === "pending" ? 1 : 0;
+      const bPending = effectiveStatus(b) === "pending" ? 1 : 0;
       if (aPending !== bPending) return bPending - aPending;
 
       let cmp = 0;
       if (sortKey === "name")   cmp = `${a.last_name}${a.first_name}`.localeCompare(`${b.last_name}${b.first_name}`);
-      if (sortKey === "status") cmp = (a.status ?? "").localeCompare(b.status ?? "");
+      if (sortKey === "status") cmp = effectiveStatus(a).localeCompare(effectiveStatus(b));
       if (sortKey === "score")  cmp = (a.ai_score ?? 0) - (b.ai_score ?? 0);
       if (sortKey === "joined") cmp = new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
       return sortAsc ? cmp : -cmp;
@@ -77,10 +85,10 @@ export function AdminProfessorsTable({ professors }: { professors: ProfessorReco
 
   const counts = useMemo(() => ({
     all: professors.length,
-    approved:  professors.filter((p) => p.status === "approved").length,
-    pending:   professors.filter((p) => p.status === "pending").length,
-    rejected:  professors.filter((p) => p.status === "rejected").length,
-    suspended: professors.filter((p) => p.status === "suspended").length,
+    approved:  professors.filter((p) => effectiveStatus(p) === "approved").length,
+    pending:   professors.filter((p) => effectiveStatus(p) === "pending").length,
+    rejected:  professors.filter((p) => effectiveStatus(p) === "rejected").length,
+    suspended: professors.filter((p) => effectiveStatus(p) === "suspended").length,
   }), [professors]);
 
   function toggleSort(k: SortKey) {
@@ -177,8 +185,9 @@ export function AdminProfessorsTable({ professors }: { professors: ProfessorReco
               ) : filtered.map((p) => {
                 const name = `${p.preferred_name ?? p.first_name} ${p.last_name}`;
                 const isBusy = busy === p.id;
-                const isSuspended = p.status === "suspended";
-                const sColor = STATUS_COLOUR[p.status ?? ""] ?? "rgba(15, 23, 42,0.3)";
+                const status = effectiveStatus(p);
+                const isSuspended = status === "suspended";
+                const sColor = STATUS_COLOUR[status] ?? "rgba(15, 23, 42,0.3)";
                 return (
                   <tr key={p.id} style={{ borderBottom: "1px solid rgba(15, 23, 42,0.04)", transition: "background 0.15s" }}
                     onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(15, 23, 42,0.02)")}
@@ -196,7 +205,7 @@ export function AdminProfessorsTable({ professors }: { professors: ProfessorReco
                     </td>
                     <td style={{ padding: "0.9rem 1.1rem" }}>
                       <span style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", fontSize: "0.52rem", fontWeight: 700, color: sColor, fontFamily: "var(--font-sans)", textTransform: "capitalize" }}>
-                        <span style={{ width: "5px", height: "5px", borderRadius: "50%", background: sColor, flexShrink: 0 }} />{p.status ?? "—"}
+                        <span style={{ width: "5px", height: "5px", borderRadius: "50%", background: sColor, flexShrink: 0 }} />{status}
                       </span>
                     </td>
                     <td style={{ padding: "0.9rem 1.1rem" }}>
@@ -224,14 +233,14 @@ export function AdminProfessorsTable({ professors }: { professors: ProfessorReco
                     </td>
                     <td style={{ padding: "0.9rem 1.1rem", textAlign: "right" }}>
                       <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.4rem" }}>
-                        {p.status === "approved" && (
+                        {status === "approved" && (
                           <button disabled={isBusy} onClick={() => handleRevoke(p.id)}
                             className="btn-action"
                             style={{ padding: "0.45rem 1.15rem", borderRadius: "100px", border: "1px solid rgba(250,204,21,0.2)", background: "rgba(250,204,21,0.05)", color: "rgba(250,204,21,0.75)", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", fontFamily: "var(--font-sans)", cursor: isBusy ? "wait" : "pointer", opacity: isBusy ? 0.5 : 1, display: "flex", alignItems: "center", gap: "0.3rem" }}>
                             <RotateCcw size={9} />{isBusy ? "…" : "Revoke"}
                           </button>
                         )}
-                        {p.status === "pending" && (
+                        {status === "pending" && (
                           <>
                             <button disabled={isBusy} onClick={() => handleApprove(p.id)}
                               className="btn-action-success"
@@ -245,7 +254,7 @@ export function AdminProfessorsTable({ professors }: { professors: ProfessorReco
                             </button>
                           </>
                         )}
-                        {p.status === "rejected" && (
+                        {status === "rejected" && (
                           <button disabled={isBusy} onClick={() => handleApprove(p.id)}
                             className="btn-action-success"
                             style={{ padding: "0.45rem 1.15rem", borderRadius: "100px", border: "1px solid rgba(74,222,128,0.2)", background: "rgba(74,222,128,0.05)", color: "rgba(74,222,128,0.75)", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", fontFamily: "var(--font-sans)", cursor: isBusy ? "wait" : "pointer", opacity: isBusy ? 0.5 : 1, display: "flex", alignItems: "center", gap: "0.3rem" }}>

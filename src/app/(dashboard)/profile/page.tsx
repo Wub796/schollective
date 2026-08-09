@@ -64,6 +64,62 @@ function Field({
   );
 }
 
+function TextArea({
+  id, name, label, defaultValue = "", placeholder, maxLength = 280,
+}: {
+  id: string; name: string; label: string;
+  defaultValue?: string; placeholder?: string; maxLength?: number;
+}) {
+  const [focused, setFocused] = useState(false);
+  const [charCount, setCharCount] = useState(defaultValue.length);
+  return (
+    <div style={{ position: "relative" }}>
+      <label htmlFor={id} style={{
+        display: "flex", justifyContent: "space-between", alignItems: "baseline",
+        fontSize: "0.62rem", fontWeight: 800,
+        letterSpacing: "0.22em", textTransform: "uppercase",
+        color: focused ? "#4f46e5" : "#0f172a",
+        marginBottom: "0.55rem", transition: "color 0.25s",
+        fontFamily: "var(--font-sans)",
+      }}>
+        <span>{label}</span>
+        <span style={{
+          fontSize: "0.52rem", fontWeight: 500, letterSpacing: "0.05em",
+          textTransform: "none",
+          color: charCount > maxLength ? "#ef4444" : "rgba(15, 23, 42, 0.25)",
+        }}>
+          {charCount}/{maxLength}
+        </span>
+      </label>
+      <textarea
+        id={id} name={name}
+        defaultValue={defaultValue}
+        placeholder={placeholder}
+        maxLength={maxLength}
+        rows={3}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
+        onChange={(e) => setCharCount(e.target.value.length)}
+        style={{
+          width: "100%",
+          background: focused ? "#ffffff" : "rgba(255, 255, 255, 0.9)",
+          border: `1.5px solid ${focused ? "#4f46e5" : "rgba(99, 102, 241, 0.5)"}`,
+          borderRadius: "20px",
+          padding: "1rem 1.5rem",
+          fontSize: "0.92rem",
+          color: "#0f172a",
+          outline: "none",
+          transition: "all 0.25s ease",
+          fontFamily: "var(--font-sans)",
+          boxShadow: focused ? "0 0 0 4px rgba(79, 70, 229, 0.15)" : "none",
+          resize: "none",
+          lineHeight: 1.7,
+        }}
+      />
+    </div>
+  );
+}
+
 export default function ProfilePage() {
   const router   = useRouter();
   const supabase = createClient();
@@ -167,6 +223,15 @@ export default function ProfilePage() {
     if (profile?.role === "student") {
       const educationLevel = fd.get("education_level") as string;
       if (educationLevel) updates.education_level = educationLevel;
+      updates.bio = (fd.get("bio") as string ?? "").trim();
+      const interestsRaw = fd.get("academic_interests") as string;
+      updates.academic_interests = interestsRaw
+        ? interestsRaw.split(",").map((s: string) => s.trim()).filter(Boolean)
+        : [];
+      const extrasRaw = fd.get("extracurriculars") as string;
+      updates.extracurriculars = extrasRaw
+        ? extrasRaw.split(",").map((s: string) => s.trim()).filter(Boolean)
+        : [];
     }
     if (profile?.role === "professor") {
       const expertise = expertiseRaw
@@ -377,12 +442,49 @@ export default function ProfilePage() {
                 <option value="" style={{ background: "#white" }}>Select level…</option>
                 <option value="high-school"  style={{ background: "#white" }}>High School</option>
                 <option value="undergraduate" style={{ background: "#white" }}>Undergraduate</option>
-                <option value="graduate"     style={{ background: "#white" }}>Graduate (Master's)</option>
+                <option value="graduate"     style={{ background: "#white" }}>Graduate (Master&apos;s)</option>
                 <option value="doctoral"     style={{ background: "#white" }}>Doctoral (PhD)</option>
                 <option value="postdoctoral" style={{ background: "#white" }}>Postdoctoral</option>
                 <option value="other"        style={{ background: "#white" }}>Other</option>
               </Select>
             </div>
+          )}
+
+          {/* Student profile fields */}
+          {profile?.role === "student" && (
+            <>
+              {/* Hairline separator */}
+              <div style={{ height: "1px", background: "rgba(15, 23, 42, 0.06)" }} />
+
+              <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "-0.5rem" }}>
+                <span style={{ width: "1rem", height: "1px", background: "rgba(15, 23, 42, 0.2)", display: "block" }} />
+                <span style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.3)", fontFamily: "var(--font-sans, monospace)" }}>
+                  About You
+                </span>
+              </div>
+
+              <TextArea
+                id="bio" name="bio"
+                label="Short Bio"
+                defaultValue={profile?.bio ?? ""}
+                placeholder="A sentence or two about what drives your curiosity…"
+                maxLength={280}
+              />
+
+              <Field
+                id="academic_interests" name="academic_interests"
+                label="Academic Interests (comma-separated)"
+                defaultValue={profile?.academic_interests?.join(", ") ?? ""}
+                placeholder="e.g. Quantum Computing, Marine Biology, AI Ethics"
+              />
+
+              <Field
+                id="extracurriculars" name="extracurriculars"
+                label="Extracurriculars (comma-separated)"
+                defaultValue={profile?.extracurriculars?.join(", ") ?? ""}
+                placeholder="e.g. Debate Club, Science Olympiad, Volunteering"
+              />
+            </>
           )}
 
           {/* Expertise — professors only */}
