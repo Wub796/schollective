@@ -240,9 +240,20 @@ function OnboardingContent() {
       payload.profile_complete = !!(fName.trim() && lName.trim() && inst.trim() && expertise.length > 0);
     }
 
-    const { error: upsertError } = await supabase
+    let { error: upsertError } = await supabase
       .from("profiles")
       .upsert(payload, { onConflict: "id" });
+
+    if (upsertError && (upsertError.message?.includes("schema cache") || upsertError.message?.includes("academic_interests") || upsertError.message?.includes("extracurriculars") || upsertError.message?.includes("bio"))) {
+      console.warn("[onboarding] Schema cache error — retrying without optional student profile fields:", upsertError.message);
+      delete payload.bio;
+      delete payload.academic_interests;
+      delete payload.extracurriculars;
+      const retry = await supabase
+        .from("profiles")
+        .upsert(payload, { onConflict: "id" });
+      upsertError = retry.error;
+    }
 
     if (upsertError) {
       console.error("[onboarding] upsert error:", upsertError.message, upsertError.details, upsertError.hint);

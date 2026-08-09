@@ -245,10 +245,22 @@ export default function ProfilePage() {
       updates.profile_complete = !!(fName.trim() && lName.trim() && inst.trim() && expertise.length > 0);
     }
 
-    const { error } = await supabase
+    let { error } = await supabase
       .from("profiles")
       .update(updates)
       .eq("id", profile.id);
+
+    if (error && (error.message?.includes("schema cache") || error.message?.includes("academic_interests") || error.message?.includes("extracurriculars") || error.message?.includes("bio"))) {
+      console.warn("[profile/save] Schema cache error — retrying without optional student profile fields:", error.message);
+      delete updates.bio;
+      delete updates.academic_interests;
+      delete updates.extracurriculars;
+      const retry = await supabase
+        .from("profiles")
+        .update(updates)
+        .eq("id", profile.id);
+      error = retry.error;
+    }
 
     if (error) {
       console.error("[profile/save] Supabase error:", error.code, error.message, error.details, error.hint);
