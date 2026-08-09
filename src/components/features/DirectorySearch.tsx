@@ -68,9 +68,13 @@ export function DirectorySearch({ institutions, expertiseAreas }: DirectorySearc
     router.push(`/professors?${params.toString()}`);
   };
 
+  const isClearingRef = useRef(false);
+
   // Live debounced search as user types
   useEffect(() => {
+    if (isClearingRef.current) return;
     const timer = setTimeout(() => {
+      if (isClearingRef.current) return;
       const currentParamQuery = searchParams.get("query") || "";
       if (draftQuery.trim() !== currentParamQuery) {
         updateSearch({ query: draftQuery.trim() });
@@ -80,9 +84,15 @@ export function DirectorySearch({ institutions, expertiseAreas }: DirectorySearc
   }, [draftQuery]);
 
   const handleClear = () => {
+    isClearingRef.current = true;
     setDraftQuery("");
+    setExpertiseSearch("");
+    setIsDropdownOpen(false);
     setIsMobileFiltersOpen(false);
     router.push("/professors");
+    setTimeout(() => {
+      isClearingRef.current = false;
+    }, 500);
   };
 
   const currentInstitution = searchParams.get("institution") || "all";
