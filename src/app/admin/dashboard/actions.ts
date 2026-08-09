@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/utils/supabase/server";
+import { createAdminClient } from "@/utils/supabase/admin";
 import { revalidatePath } from "next/cache";
 import { scoreProfessorApplication } from "@/lib/validators";
 
@@ -68,21 +69,31 @@ export async function updateProfessorStatus(profileId: string, newStatus: 'appro
       return { error: "Access denied: Admin privileges required." };
     }
 
-    // 2. Perform Update
-    const { error } = await supabase
+    // 2. Perform Update with adminClient (service role bypasses RLS)
+    const adminClient = createAdminClient();
+
+    const updates: Record<string, any> = {
+      status: newStatus,
+      updated_at: new Date().toISOString(),
+    };
+
+    if (newStatus === "approved") {
+      updates.profile_complete = true;
+      updates.is_accepting_requests = true;
+    }
+
+    const { error } = await adminClient
       .from("profiles")
-      .update({ 
-        status: newStatus,
-        updated_at: new Date().toISOString() 
-      })
+      .update(updates)
       .eq("id", profileId)
       .eq("role", "professor");
 
     if (error) throw error;
 
-    // 3. Sync State
+    // 3. Sync State across all relevant views
     revalidatePath("/admin/dashboard");
     revalidatePath("/admin/professors");
+    revalidatePath("/professors");
     return { success: true };
   } catch (err: any) {
     return { error: err.message || "Failed to update professor status." };
