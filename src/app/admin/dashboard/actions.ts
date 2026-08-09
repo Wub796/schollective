@@ -88,10 +88,21 @@ export async function updateProfessorStatus(profileId: string, newStatus: 'appro
       updates.is_accepting_requests = true;
     }
 
-    const { error: updateError } = await adminClient
+    let { error: updateError } = await adminClient
       .from("profiles")
       .update(updates)
       .eq("id", profileId);
+
+    if (updateError && (updateError.message?.includes("profile_complete") || updateError.message?.includes("is_accepting_requests") || updateError.message?.includes("schema cache"))) {
+      console.warn("[updateProfessorStatus] Schema cache fallback — retrying update without extra columns:", updateError.message);
+      delete updates.profile_complete;
+      delete updates.is_accepting_requests;
+      const retry = await adminClient
+        .from("profiles")
+        .update(updates)
+        .eq("id", profileId);
+      updateError = retry.error;
+    }
 
     if (updateError) {
       console.error("[updateProfessorStatus] DB update error:", updateError.message);
