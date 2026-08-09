@@ -7,6 +7,8 @@ import { updateProfessorStatus, scoreApplication } from "@/app/admin/dashboard/a
 import { CheckCircle, XCircle, Loader2, Mail, GraduationCap, RefreshCw } from "lucide-react";
 import { scoreProfessorApplication, scoreLabel } from "@/lib/validators";
 
+import { toast } from "sonner";
+
 interface PendingProfessor {
   id: string;
   first_name: string;
@@ -115,10 +117,15 @@ function ScoreBadge({ prof }: { prof: PendingProfessor }) {
 export function AdminReviewTable({ applicants }: AdminReviewTableProps) {
   const router = useRouter();
   const [processingId, setProcessingId] = useState<string | null>(null);
+  const [list, setList] = useState(applicants);
+
+  useEffect(() => {
+    setList(applicants);
+  }, [applicants]);
 
   // Auto-score any applicants that haven't been scored yet
   useEffect(() => {
-    const unscored = applicants.filter((a) => typeof a.ai_score !== "number");
+    const unscored = list.filter((a) => typeof a.ai_score !== "number");
     if (unscored.length === 0) return;
     (async () => {
       await Promise.all(unscored.map((a) => scoreApplication(a.id)));
@@ -130,16 +137,22 @@ export function AdminReviewTable({ applicants }: AdminReviewTableProps) {
     setProcessingId(id);
     try {
       const result = await updateProfessorStatus(id, status);
-      if (result?.error) console.error(result.error);
-      else router.refresh();
-    } catch (error) {
+      if (result?.error) {
+        toast.error(result.error);
+      } else {
+        toast.success(status === "approved" ? "Professor application approved!" : "Professor application rejected.");
+        setList((prev) => prev.filter((a) => a.id !== id));
+        router.refresh();
+      }
+    } catch (error: any) {
+      toast.error("Failed to update professor status.");
       console.error("Failed to update professor status:", error);
     } finally {
       setProcessingId(null);
     }
   };
 
-  if (applicants.length === 0) {
+  if (list.length === 0) {
     return (
       <div style={{ border: "1px dashed rgba(15,23,42,0.08)", borderRadius: "16px", padding: "4rem 2rem", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: "1.25rem" }}>
         <div style={{ width: "3rem", height: "3rem", borderRadius: "50%", background: "rgba(79,70,229,0.05)", border: "1px solid rgba(79,70,229,0.12)", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -174,7 +187,7 @@ export function AdminReviewTable({ applicants }: AdminReviewTableProps) {
               </tr>
             </thead>
             <tbody>
-              {applicants.map((prof) => {
+              {list.map((prof) => {
                 const displayName = prof.preferred_name || prof.first_name;
                 const isProcessing = processingId === prof.id;
                 return (
@@ -249,7 +262,7 @@ export function AdminReviewTable({ applicants }: AdminReviewTableProps) {
 
       {/* Mobile Cards */}
       <div className="flex lg:hidden" style={{ flexDirection: "column", gap: "0.75rem" }}>
-        {applicants.map((prof) => {
+        {list.map((prof) => {
           const displayName = prof.preferred_name || prof.first_name;
           const isProcessing = processingId === prof.id;
           return (
