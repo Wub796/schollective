@@ -56,22 +56,28 @@ export async function updateProfessorStatus(profileId: string, newStatus: 'appro
     const supabase = await createClient();
 
     // 1. Double-check Authorization
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return { error: "Unauthorized" };
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) {
+      console.error("[updateProfessorStatus] Auth error or missing user:", authError?.message);
+      return { error: "Unauthorized: Session expired. Please log in again." };
+    }
 
-    const { data: adminProfile } = await supabase
+    // Use service role admin client to bypass RLS policies
+    const adminClient = createAdminClient();
+
+    // Check if the current user is an admin
+    const { data: adminProfile, error: adminQueryError } = await adminClient
       .from("profiles")
       .select("role")
       .eq("id", user.id)
       .single();
 
-    if (adminProfile?.role !== 'admin') {
+    if (adminQueryError || adminProfile?.role !== 'admin') {
+      console.error("[updateProfessorStatus] Admin check failed:", adminQueryError?.message, adminProfile);
       return { error: "Access denied: Admin privileges required." };
     }
 
-    // 2. Perform Update with adminClient (service role bypasses RLS)
-    const adminClient = createAdminClient();
-
+    // 2. Perform Update with adminClient
     const updates: Record<string, any> = {
       status: newStatus,
       updated_at: new Date().toISOString(),
@@ -82,13 +88,15 @@ export async function updateProfessorStatus(profileId: string, newStatus: 'appro
       updates.is_accepting_requests = true;
     }
 
-    const { error } = await adminClient
+    const { error: updateError } = await adminClient
       .from("profiles")
       .update(updates)
-      .eq("id", profileId)
-      .eq("role", "professor");
+      .eq("id", profileId);
 
-    if (error) throw error;
+    if (updateError) {
+      console.error("[updateProfessorStatus] DB update error:", updateError.message);
+      return { error: `Update failed: ${updateError.message}` };
+    }
 
     // 3. Sync State across all relevant views
     revalidatePath("/admin/dashboard");
@@ -96,6 +104,7 @@ export async function updateProfessorStatus(profileId: string, newStatus: 'appro
     revalidatePath("/professors");
     return { success: true };
   } catch (err: any) {
+    console.error("[updateProfessorStatus] Unexpected error:", err);
     return { error: err.message || "Failed to update professor status." };
   }
 }
