@@ -68,9 +68,13 @@ export function DirectorySearch({ institutions, expertiseAreas }: DirectorySearc
     router.push(`/professors?${params.toString()}`);
   };
 
+  const isClearingRef = useRef(false);
+
   // Live debounced search as user types
   useEffect(() => {
+    if (isClearingRef.current) return;
     const timer = setTimeout(() => {
+      if (isClearingRef.current) return;
       const currentParamQuery = searchParams.get("query") || "";
       if (draftQuery.trim() !== currentParamQuery) {
         updateSearch({ query: draftQuery.trim() });
@@ -80,9 +84,15 @@ export function DirectorySearch({ institutions, expertiseAreas }: DirectorySearc
   }, [draftQuery]);
 
   const handleClear = () => {
+    isClearingRef.current = true;
     setDraftQuery("");
+    setExpertiseSearch("");
+    setIsDropdownOpen(false);
     setIsMobileFiltersOpen(false);
     router.push("/professors");
+    setTimeout(() => {
+      isClearingRef.current = false;
+    }, 500);
   };
 
   const currentInstitution = searchParams.get("institution") || "all";
@@ -204,19 +214,20 @@ export function DirectorySearch({ institutions, expertiseAreas }: DirectorySearc
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
             style={{
               display: "flex",
-              height: "3.25rem",
+              height: "3rem",
               width: "100%",
               alignItems: "center",
               justifyContent: "space-between",
               borderRadius: "100px",
-              paddingLeft: "2rem",
-              paddingRight: "1.5rem",
+              paddingLeft: "1.75rem",
+              paddingRight: "1.25rem",
               fontSize: "0.875rem",
-              background: isDropdownOpen ? "rgba(15, 23, 42, 0.04)" : "rgba(15, 23, 42, 0.02)",
-              border: `1px solid ${isDropdownOpen ? "rgba(79, 70, 229, 0.4)" : "rgba(15, 23, 42, 0.08)"}`,
+              background: isDropdownOpen ? "rgba(255, 255, 255, 1)" : "rgba(255, 255, 255, 0.9)",
+              border: `1px solid ${isDropdownOpen ? "rgba(79, 70, 229, 0.45)" : "rgba(99, 102, 241, 0.2)"}`,
               color: "var(--text-primary)",
               cursor: "pointer",
               transition: "all 0.25s ease",
+              boxShadow: isDropdownOpen ? "0 0 0 4px rgba(79, 70, 229, 0.1)" : "0 2px 6px rgba(0,0,0,0.02)",
             }}
           >
             <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "80%" }}>

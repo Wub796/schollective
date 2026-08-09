@@ -66,24 +66,26 @@ export default async function AdminDashboard() {
   const adminClient = createAdminClient();
 
   const [
-    { data: pendingProfessors },
+    { data: allProfessors },
     { count: studentCount },
     { count: activeStudentCount },
-    { count: facultyCount },
-    { count: pendingCount },
     { count: activeThreadsCount },
   ] = await Promise.all([
     adminClient
       .from("profiles")
-      .select("id, first_name, last_name, preferred_name, email, institution, expertise_fields, ai_score, ai_level, ai_flags")
-      .eq("role", "professor").eq("status", "pending")
+      .select("id, first_name, last_name, preferred_name, email, status, institution, expertise_fields, ai_score, ai_level, ai_flags, created_at")
+      .eq("role", "professor")
       .order("created_at", { ascending: true }),
     adminClient.from("profiles").select("*", { count: "exact", head: true }).eq("role", "student"),
     adminClient.from("profiles").select("*", { count: "exact", head: true }).eq("role", "student").eq("status", "active"),
-    adminClient.from("profiles").select("*", { count: "exact", head: true }).eq("role", "professor").in("status", ["approved", "active"]),
-    adminClient.from("profiles").select("*", { count: "exact", head: true }).eq("role", "professor").eq("status", "pending"),
     adminClient.from("requests").select("*", { count: "exact", head: true }).eq("status", "active"),
   ]);
+
+  const pendingProfessors = (allProfessors ?? []).filter(
+    (p) => p.status !== "approved" && p.status !== "rejected" && p.status !== "suspended"
+  );
+  const facultyCount = (allProfessors ?? []).filter((p) => p.status === "approved").length;
+  const pendingCount = pendingProfessors.length;
 
   const totalActive = (activeStudentCount ?? 0) + (facultyCount ?? 0);
 

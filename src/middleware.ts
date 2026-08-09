@@ -13,8 +13,8 @@ export async function middleware(request: NextRequest) {
   const path = url.pathname
 
   // Protected route patterns — use exact prefixes to avoid false matches
-  const isStudentRoute = path === '/dashboard' || path.startsWith('/dashboard/') || path.startsWith('/request') || path.startsWith('/messages') || path.startsWith('/profile')
-  const isProfessorRoute = path === '/prof/dashboard' || path === '/prof/profile' || path.startsWith('/prof/dashboard') || path.startsWith('/prof/profile') || path.startsWith('/prof/pending')
+  const isStudentRoute = path === '/dashboard' || path.startsWith('/dashboard/') || path.startsWith('/request') || path.startsWith('/messages') || path.startsWith('/profile') || path.startsWith('/threads')
+  const isProfessorRoute = (path.startsWith('/prof/') || path === '/prof') && !path.startsWith('/professors')
   const isAdminRoute = path.startsWith('/admin')
   // /professors is a student-accessible browse route, NOT a professor-only route
   const isProfessorBrowse = path.startsWith('/professors')
@@ -56,6 +56,10 @@ export async function middleware(request: NextRequest) {
 
       if (!profile || !profile.role || !profile.first_name) {
         return Response.redirect(new URL('/onboarding', request.url))
+      }
+
+      if (isProfessorRoute && profile.role === 'professor' && !path.startsWith('/prof/pending') && profile.status !== 'approved') {
+        return Response.redirect(new URL('/prof/pending', request.url))
       }
     }
   }

@@ -29,8 +29,7 @@ export default async function ProfessorsPage({ searchParams }: ProfessorsPagePro
     .from("profiles")
     .select("id, first_name, last_name, preferred_name, institution, expertise_fields, is_accepting_requests, updated_at")
     .eq("role", "professor")
-    .eq("status", "approved")
-    .eq("profile_complete", true);
+    .eq("status", "approved");
 
   if (isAcceptingOnly) {
     dbQuery = dbQuery.eq("is_accepting_requests", true);
@@ -85,8 +84,7 @@ export default async function ProfessorsPage({ searchParams }: ProfessorsPagePro
     .from("profiles")
     .select("institution, expertise_fields")
     .eq("role", "professor")
-    .eq("status", "approved")
-    .eq("profile_complete", true);
+    .eq("status", "approved");
 
   const distinctInstitutions = Array.from(
     new Set(filterData?.map((p) => p.institution).filter(Boolean) as string[])

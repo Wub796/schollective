@@ -65,7 +65,7 @@ export default async function ProfessorDashboard() {
     .from("requests")
     .select(`
       id, status, topic, created_at, updated_at,
-      student:student_id ( first_name, last_name, preferred_name, education_level ),
+      student:student_id ( first_name, last_name, preferred_name, education_level, bio, academic_interests, extracurriculars ),
       messages ( content, created_at, read_at, sender_id )
     `)
     .eq("professor_id", user.id)
