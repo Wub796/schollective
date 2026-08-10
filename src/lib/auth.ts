@@ -10,6 +10,7 @@ import {
 } from "kysely";
 import { describeMissingDbUrl, getServerlessDbUrl } from "@/lib/neon/db";
 import { ensureAuthSchema } from "@/lib/neon/schema";
+import { passwordResetEmail, sendEmail, verificationEmail } from "@/lib/email";
 
 const PG_DIALECT = {
   createAdapter: () => new PostgresAdapter(),
@@ -66,6 +67,21 @@ class NeonConnection {
  */
 export const authErrorStore = new AsyncLocalStorage<{ error?: unknown }>();
 
+/**
+ * Google sign-in is registered only when both credentials are present.
+ * Registering it with blanks would fail mid-handshake instead of letting the
+ * client report the provider as unconfigured.
+ */
+const googleProvider =
+  process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
+    ? {
+        google: {
+          clientId: process.env.GOOGLE_CLIENT_ID,
+          clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        },
+      }
+    : {};
+
 export const auth = betterAuth({
   database: { dialect: PG_DIALECT, type: "postgres" },
   baseURL: process.env.BETTER_AUTH_URL || "https://schollective.com",
@@ -78,11 +94,23 @@ export const auth = betterAuth({
     ...(process.env.BETTER_AUTH_URL ? [process.env.BETTER_AUTH_URL] : []),
     ...(process.env.NEXT_PUBLIC_APP_URL ? [process.env.NEXT_PUBLIC_APP_URL.replace(/\/$/, "")] : []),
   ],
-  secret: process.env.BETTER_AUTH_SECRET || "[REDACTED-ROTATED]=",
-  socialProviders: {
-    google: {
-      clientId: process.env.GOOGLE_CLIENT_ID || "639902173862-25bm50enc0o26qsj52j8ovtmebpoms4p.apps.googleusercontent.com",
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "[REDACTED-ROTATED]",
+  socialProviders: googleProvider,
+  /**
+   * Database-backed so the counters are shared across Worker isolates. The
+   * in-memory default counts per isolate, which on Cloudflare means barely any
+   * limit at all — and these are the endpoints worth protecting from guessing
+   * and signup floods.
+   */
+  rateLimit: {
+    enabled: true,
+    storage: "database",
+    window: 60,
+    max: 60,
+    customRules: {
+      "/sign-in/email": { window: 60, max: 8 },
+      "/sign-up/email": { window: 3600, max: 10 },
+      "/request-password-reset": { window: 3600, max: 5 },
+      "/reset-password": { window: 3600, max: 10 },
     },
   },
   onAPIError: {
@@ -94,17 +122,14 @@ export const auth = betterAuth({
   },
   emailAndPassword: {
     enabled: true,
+    minPasswordLength: 8,
     sendResetPassword: async ({ user, url }) => {
-      // TODO: Replace with transactional email service (Resend, SendGrid, etc.)
-      console.log(`[auth] Password reset requested for ${user.email}`);
-      console.log(`[auth] Reset URL: ${url}`);
+      await sendEmail({ to: user.email, ...passwordResetEmail(url) });
     },
   },
   emailVerification: {
     sendVerificationEmail: async ({ user, url }) => {
-      // TODO: Replace with transactional email service (Resend, SendGrid, etc.)
-      console.log(`[auth] Verification email for ${user.email}`);
-      console.log(`[auth] Verify URL: ${url}`);
+      await sendEmail({ to: user.email, ...verificationEmail(url) });
     },
   },
   user: {
