@@ -1,0 +1,421 @@
+"use client";
+
+import React, { useState } from "react";
+import { updateProfProfile } from "./actions";
+import { toast } from "sonner";
+import {
+  GraduationCap,
+  Building2,
+  BookOpen,
+  Globe,
+  Clock,
+  Users,
+  FileText,
+  CheckCircle2,
+  Save,
+  Loader2,
+  Eye,
+  Edit3,
+} from "lucide-react";
+
+interface Props {
+  profile: any;
+}
+
+export function ProfProfileForm({ profile }: Props) {
+  const [loading, setLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState<"edit" | "preview">("edit");
+
+  // Form State for Live Preview
+  const [title, setTitle] = useState(profile.academic_title || "Professor / Principal Investigator");
+  const [dept, setDept] = useState(profile.department || "Academic Department");
+  const [inst, setInst] = useState(profile.institution || "University");
+  const [bio, setBio] = useState(profile.bio || "");
+  const [labSite, setLabSite] = useState(profile.lab_website || "");
+  const [officeHrs, setOfficeHrs] = useState(profile.office_hours || "");
+  const [expertise, setExpertise] = useState(
+    Array.isArray(profile.expertise_fields) ? profile.expertise_fields.join(", ") : profile.expertise_fields || ""
+  );
+  const [studentTypes, setStudentTypes] = useState(
+    Array.isArray(profile.accepting_student_types) ? profile.accepting_student_types.join(", ") : profile.accepting_student_types || "Undergraduates, High School, Master's"
+  );
+  const [publications, setPublications] = useState(
+    Array.isArray(profile.publications) ? profile.publications.join("\n") : profile.publications || ""
+  );
+  const [isAccepting, setIsAccepting] = useState<boolean>(profile.is_accepting_requests !== false);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const fd = new FormData(e.currentTarget);
+      fd.set("is_accepting_requests", String(isAccepting));
+      const res = await updateProfProfile(fd);
+      if (res?.error) {
+        toast.error(res.error);
+      } else {
+        toast.success("Profile saved successfully!");
+      }
+    } catch (err: any) {
+      console.error(err);
+      toast.error("Failed to save profile.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const displayName = profile.preferred_name || profile.first_name || "Professor";
+  const initials = `${profile.first_name?.[0] ?? ""}${profile.last_name?.[0] ?? ""}`.toUpperCase();
+  const expertiseArray = expertise.split(",").map((s) => s.trim()).filter(Boolean);
+  const studentTypesArray = studentTypes.split(",").map((s) => s.trim()).filter(Boolean);
+  const publicationsArray = publications.split("\n").map((s) => s.trim()).filter(Boolean);
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }}>
+      {/* Tab Switcher */}
+      <div style={{ display: "flex", gap: "0.5rem", background: "rgba(15, 23, 42, 0.04)", borderRadius: "100px", padding: "0.3rem", width: "fit-content" }}>
+        <button
+          type="button"
+          onClick={() => setActiveTab("edit")}
+          style={{
+            background: activeTab === "edit" ? "#ffffff" : "transparent",
+            color: activeTab === "edit" ? "#4f46e5" : "#64748b",
+            border: activeTab === "edit" ? "1px solid rgba(99, 102, 241, 0.2)" : "none",
+            borderRadius: "100px",
+            padding: "0.55rem 1.25rem",
+            fontSize: "0.82rem",
+            fontWeight: 800,
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            gap: "0.4rem",
+            boxShadow: activeTab === "edit" ? "0 2px 8px rgba(0, 0, 0, 0.04)" : "none",
+            transition: "all 0.2s ease",
+          }}
+        >
+          <Edit3 size={14} /> Edit Profile Details
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab("preview")}
+          style={{
+            background: activeTab === "preview" ? "#ffffff" : "transparent",
+            color: activeTab === "preview" ? "#4f46e5" : "#64748b",
+            border: activeTab === "preview" ? "1px solid rgba(99, 102, 241, 0.2)" : "none",
+            borderRadius: "100px",
+            padding: "0.55rem 1.25rem",
+            fontSize: "0.82rem",
+            fontWeight: 800,
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            gap: "0.4rem",
+            boxShadow: activeTab === "preview" ? "0 2px 8px rgba(0, 0, 0, 0.04)" : "none",
+            transition: "all 0.2s ease",
+          }}
+        >
+          <Eye size={14} /> Student View Preview
+        </button>
+      </div>
+
+      {activeTab === "edit" ? (
+        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
+          {/* Status Toggle */}
+          <div
+            style={{
+              background: "#ffffff",
+              border: "1px solid rgba(99, 102, 241, 0.18)",
+              borderRadius: "16px",
+              padding: "1.25rem 1.5rem",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              boxShadow: "0 4px 16px rgba(99, 102, 241, 0.05)",
+            }}
+          >
+            <div>
+              <div style={{ fontSize: "0.9rem", fontWeight: 800, color: "#0f172a" }}>Mentorship Acceptance Status</div>
+              <div style={{ fontSize: "0.78rem", color: "#64748b" }}>Control whether students can submit research mentorship requests to your lab.</div>
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsAccepting(!isAccepting)}
+              style={{
+                background: isAccepting ? "#10b981" : "#e2e8f0",
+                color: isAccepting ? "#ffffff" : "#64748b",
+                border: "none",
+                borderRadius: "100px",
+                padding: "0.5rem 1.25rem",
+                fontSize: "0.8rem",
+                fontWeight: 800,
+                cursor: "pointer",
+                transition: "all 0.2s ease",
+              }}
+            >
+              {isAccepting ? "✓ Accepting Requests" : "Not Accepting"}
+            </button>
+          </div>
+
+          {/* Form Fields Grid */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "1.5rem" }}>
+            <FieldInput id="academic_title" name="academic_title" label="Academic Position / Title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. Associate Professor & Lab PI" icon={<GraduationCap size={15} />} />
+            <FieldInput id="department" name="department" label="Department / School" value={dept} onChange={(e) => setDept(e.target.value)} placeholder="e.g. Department of Computer Science" icon={<Building2 size={15} />} />
+            <FieldInput id="institution" name="institution" label="University / Institution" value={inst} onChange={(e) => setInst(e.target.value)} placeholder="e.g. Stanford University" icon={<Building2 size={15} />} />
+            <FieldInput id="lab_website" name="lab_website" label="Lab Website / Personal URL" value={labSite} onChange={(e) => setLabSite(e.target.value)} placeholder="e.g. https://lab.university.edu" icon={<Globe size={15} />} />
+            <FieldInput id="office_hours" name="office_hours" label="Office Hours & Availability" value={officeHrs} onChange={(e) => setOfficeHrs(e.target.value)} placeholder="e.g. Tuesdays 2–4pm EST" icon={<Clock size={15} />} />
+            <FieldInput id="accepting_student_types" name="accepting_student_types" label="Mentee Levels Accepted (Comma separated)" value={studentTypes} onChange={(e) => setStudentTypes(e.target.value)} placeholder="Undergraduate, High School, Master's" icon={<Users size={15} />} />
+          </div>
+
+          {/* Focus Areas */}
+          <FieldInput id="expertise_fields" name="expertise_fields" label="Research Focus Areas (Comma separated)" value={expertise} onChange={(e) => setExpertise(e.target.value)} placeholder="Machine Learning, Computer Vision, Deep Learning" icon={<BookOpen size={15} />} />
+
+          {/* Research Bio */}
+          <div>
+            <label htmlFor="bio" style={{ display: "flex", alignItems: "center", gap: "0.4rem", fontSize: "0.72rem", fontWeight: 800, color: "#0f172a", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "0.5rem" }}>
+              <FileText size={15} color="#4f46e5" /> Research Overview & Lab Philosophy
+            </label>
+            <textarea
+              id="bio"
+              name="bio"
+              rows={4}
+              value={bio}
+              onChange={(e) => setBio(e.target.value)}
+              placeholder="Describe your lab's primary research questions, current projects, and what qualities you appreciate in prospective student mentees..."
+              style={{
+                width: "100%",
+                background: "#ffffff",
+                border: "1px solid rgba(99, 102, 241, 0.25)",
+                borderRadius: "14px",
+                padding: "1rem",
+                fontSize: "0.9rem",
+                color: "#0f172a",
+                outline: "none",
+                fontFamily: "var(--font-sans)",
+                lineHeight: 1.6,
+              }}
+            />
+          </div>
+
+          {/* Featured Publications */}
+          <div>
+            <label htmlFor="publications" style={{ display: "flex", alignItems: "center", gap: "0.4rem", fontSize: "0.72rem", fontWeight: 800, color: "#0f172a", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "0.5rem" }}>
+              <BookOpen size={15} color="#4f46e5" /> Featured Publications (One paper title per line)
+            </label>
+            <textarea
+              id="publications"
+              name="publications"
+              rows={3}
+              value={publications}
+              onChange={(e) => setPublications(e.target.value)}
+              placeholder="Smith et al. (2025). Efficient Transformer Architectures. Nature Machine Intelligence."
+              style={{
+                width: "100%",
+                background: "#ffffff",
+                border: "1px solid rgba(99, 102, 241, 0.25)",
+                borderRadius: "14px",
+                padding: "1rem",
+                fontSize: "0.85rem",
+                color: "#0f172a",
+                outline: "none",
+                fontFamily: "var(--font-sans)",
+                lineHeight: 1.6,
+              }}
+            />
+          </div>
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            disabled={loading}
+            style={{
+              background: "#4f46e5",
+              color: "#ffffff",
+              border: "none",
+              borderRadius: "100px",
+              padding: "0.85rem 2rem",
+              fontSize: "0.88rem",
+              fontWeight: 800,
+              cursor: loading ? "not-allowed" : "pointer",
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "0.5rem",
+              width: "fit-content",
+              boxShadow: "0 4px 14px rgba(79, 70, 229, 0.25)",
+              transition: "all 0.2s ease",
+            }}
+          >
+            {loading ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
+            {loading ? "Saving Profile..." : "Save Profile Details"}
+          </button>
+        </form>
+      ) : (
+        /* Live Student View Preview */
+        <div
+          style={{
+            background: "#ffffff",
+            border: "1px solid rgba(99, 102, 241, 0.18)",
+            borderRadius: "20px",
+            padding: "2.5rem",
+            boxShadow: "0 6px 24px rgba(99, 102, 241, 0.06)",
+            display: "flex",
+            flexDirection: "column",
+            gap: "1.75rem",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "1.25rem" }}>
+              <div
+                style={{
+                  width: "4rem",
+                  height: "4rem",
+                  borderRadius: "50%",
+                  background: "rgba(79, 70, 229, 0.1)",
+                  border: "1.5px solid rgba(79, 70, 229, 0.25)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "1.2rem",
+                  fontWeight: 900,
+                  color: "#4f46e5",
+                }}
+              >
+                {initials}
+              </div>
+              <div>
+                <h2 className="font-display" style={{ fontSize: "1.6rem", fontWeight: 900, color: "#0f172a", margin: "0 0 0.25rem 0" }}>
+                  Dr. {displayName} {profile.last_name}
+                </h2>
+                <div style={{ fontSize: "0.85rem", color: "#475569", fontWeight: 600 }}>
+                  {title} • {dept}
+                </div>
+                <div style={{ fontSize: "0.8rem", color: "#64748b", display: "flex", alignItems: "center", gap: "0.35rem", marginTop: "0.2rem" }}>
+                  <Building2 size={13} color="#4f46e5" /> {inst}
+                </div>
+              </div>
+            </div>
+
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+              <span style={{ padding: "0.35rem 0.85rem", borderRadius: "100px", background: "rgba(16, 185, 129, 0.1)", border: "1px solid rgba(16, 185, 129, 0.3)", color: "#166534", fontSize: "0.72rem", fontWeight: 800, display: "flex", alignItems: "center", gap: "0.3rem" }}>
+                <CheckCircle2 size={13} color="#166534" /> Verified Faculty
+              </span>
+              <span style={{ padding: "0.35rem 0.85rem", borderRadius: "100px", background: isAccepting ? "rgba(79, 70, 229, 0.1)" : "rgba(239, 68, 68, 0.1)", border: isAccepting ? "1px solid rgba(79, 70, 229, 0.3)" : "1px solid rgba(239, 68, 68, 0.3)", color: isAccepting ? "#4f46e5" : "#dc2626", fontSize: "0.72rem", fontWeight: 800 }}>
+                {isAccepting ? "Accepting Students" : "Currently Full"}
+              </span>
+            </div>
+          </div>
+
+          <div style={{ height: "1px", background: "rgba(99, 102, 241, 0.15)" }} />
+
+          {/* Research Bio */}
+          {bio && (
+            <div>
+              <span style={{ fontSize: "0.72rem", fontWeight: 800, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.08em", display: "block", marginBottom: "0.4rem" }}>
+                Research Overview & Lab Philosophy
+              </span>
+              <p style={{ fontSize: "0.9rem", color: "#334155", lineHeight: 1.65, margin: 0 }}>{bio}</p>
+            </div>
+          )}
+
+          {/* Focus Areas */}
+          {expertiseArray.length > 0 && (
+            <div>
+              <span style={{ fontSize: "0.72rem", fontWeight: 800, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.08em", display: "block", marginBottom: "0.5rem" }}>
+                Research Focus Areas
+              </span>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "0.45rem" }}>
+                {expertiseArray.map((exp, i) => (
+                  <span key={i} style={{ background: "rgba(99, 102, 241, 0.08)", border: "1px solid rgba(99, 102, 241, 0.25)", color: "#4f46e5", padding: "0.3rem 0.75rem", borderRadius: "100px", fontSize: "0.78rem", fontWeight: 700 }}>
+                    {exp}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Accepted Mentee Levels */}
+          {studentTypesArray.length > 0 && (
+            <div>
+              <span style={{ fontSize: "0.72rem", fontWeight: 800, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.08em", display: "block", marginBottom: "0.5rem" }}>
+                Accepted Mentee Levels
+              </span>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "0.45rem" }}>
+                {studentTypesArray.map((st, i) => (
+                  <span key={i} style={{ background: "#f8fafc", border: "1px solid #cbd5e1", color: "#334155", padding: "0.25rem 0.65rem", borderRadius: "8px", fontSize: "0.75rem", fontWeight: 600 }}>
+                    {st}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Office Hours & Lab Site */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem" }}>
+            {officeHrs && (
+              <div style={{ background: "#f8fafc", padding: "0.85rem 1rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
+                <span style={{ fontSize: "0.68rem", fontWeight: 800, color: "#64748b", textTransform: "uppercase", display: "flex", alignItems: "center", gap: "0.3rem" }}>
+                  <Clock size={12} color="#4f46e5" /> Office Hours
+                </span>
+                <span style={{ fontSize: "0.82rem", fontWeight: 700, color: "#0f172a" }}>{officeHrs}</span>
+              </div>
+            )}
+            {labSite && (
+              <div style={{ background: "#f8fafc", padding: "0.85rem 1rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
+                <span style={{ fontSize: "0.68rem", fontWeight: 800, color: "#64748b", textTransform: "uppercase", display: "flex", alignItems: "center", gap: "0.3rem" }}>
+                  <Globe size={12} color="#4f46e5" /> Lab Website
+                </span>
+                <a href={labSite.startsWith("http") ? labSite : `https://${labSite}`} target="_blank" rel="noopener noreferrer" style={{ fontSize: "0.82rem", fontWeight: 700, color: "#4f46e5" }}>
+                  {labSite}
+                </a>
+              </div>
+            )}
+          </div>
+
+          {/* Publications */}
+          {publicationsArray.length > 0 && (
+            <div>
+              <span style={{ fontSize: "0.72rem", fontWeight: 800, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.08em", display: "block", marginBottom: "0.5rem" }}>
+                Featured Publications
+              </span>
+              <ul style={{ margin: 0, paddingLeft: "1.25rem", fontSize: "0.82rem", color: "#475569", lineHeight: 1.6 }}>
+                {publicationsArray.map((pub, i) => (
+                  <li key={i} style={{ marginBottom: "0.3rem" }}>{pub}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function FieldInput({ id, name, label, value, onChange, placeholder, icon }: { id: string; name: string; label: string; value: string; onChange: (e: any) => void; placeholder: string; icon: React.ReactNode }) {
+  return (
+    <div>
+      <label htmlFor={id} style={{ display: "flex", alignItems: "center", gap: "0.4rem", fontSize: "0.72rem", fontWeight: 800, color: "#0f172a", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "0.5rem" }}>
+        {icon} {label}
+      </label>
+      <input
+        id={id}
+        name={name}
+        type="text"
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        style={{
+          width: "100%",
+          background: "#ffffff",
+          border: "1px solid rgba(99, 102, 241, 0.25)",
+          borderRadius: "100px",
+          padding: "0.75rem 1.25rem",
+          fontSize: "0.88rem",
+          color: "#0f172a",
+          outline: "none",
+          fontFamily: "var(--font-sans)",
+        }}
+      />
+    </div>
+  );
+}
