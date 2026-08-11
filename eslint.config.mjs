@@ -10,13 +10,14 @@ const compat = new FlatCompat({
 });
 
 /**
- * Optimized ESLint Config to resolve circular structure errors in Next.js 15.
- * We explicitly break down the extensions to avoid recursion.
+ * Optimized ESLint Config for Schollective App
  */
 const eslintConfig = [
+  {
+    ignores: [".agent/**", ".next/**", "node_modules/**", "_legacy_vanilla/**", "public/**"],
+  },
   ...compat.extends("next/core-web-vitals"),
   {
-    // Specific overrides for our MVP structure
     rules: {
       "@typescript-eslint/no-explicit-any": "off",
       "@typescript-eslint/no-unused-vars": "off",
