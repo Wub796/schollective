@@ -39,7 +39,7 @@ export async function GET() {
     let professors: any[] = [];
     let { data: primaryProfs, error: primaryErr } = await supabase
       .from("profiles")
-      .select("id, first_name, last_name, institution, department, expertise_fields, is_accepting_requests, bio, status, role")
+      .select("id, first_name, last_name, preferred_name, institution, department, academic_title, expertise_fields, is_accepting_requests, bio, lab_website, publications, status, role")
       .eq("role", "professor")
       .eq("status", "approved")
       .limit(30);
