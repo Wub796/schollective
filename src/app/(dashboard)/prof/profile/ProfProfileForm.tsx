@@ -1,7 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { updateProfProfile } from "./actions";
+import { createClient } from "@/utils/supabase/client";
 import { toast } from "sonner";
 import {
   GraduationCap,
@@ -16,33 +19,115 @@ import {
   Loader2,
   Eye,
   Edit3,
+  Camera,
+  User,
+  KeyRound,
+  LogOut,
+  Sliders,
 } from "lucide-react";
+import { Button } from "@/components/ui/Button";
 
 interface Props {
   profile: any;
 }
 
-export function ProfProfileForm({ profile }: Props) {
+export function ProfProfileForm({ profile: initialProfile }: Props) {
+  const [profile, setProfile] = useState(initialProfile);
   const [loading, setLoading] = useState(false);
+  const [avatarUploading, setAvatarUploading] = useState(false);
   const [activeTab, setActiveTab] = useState<"edit" | "preview">("edit");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
+  const supabase = createClient();
 
-  // Form State for Live Preview
-  const [title, setTitle] = useState(profile.academic_title || "Professor / Principal Investigator");
-  const [dept, setDept] = useState(profile.department || "Academic Department");
-  const [inst, setInst] = useState(profile.institution || "University");
-  const [bio, setBio] = useState(profile.bio || "");
-  const [labSite, setLabSite] = useState(profile.lab_website || "");
-  const [officeHrs, setOfficeHrs] = useState(profile.office_hours || "");
+  // Custom Cursor Preference
+  const [customCursor, setCustomCursor] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("schollective-custom-cursor") !== "false";
+    }
+    return true;
+  });
+
+  const handleToggleCursor = () => {
+    const newVal = !customCursor;
+    setCustomCursor(newVal);
+    localStorage.setItem("schollective-custom-cursor", String(newVal));
+    window.dispatchEvent(new Event("storage"));
+  };
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    router.push("/login");
+  };
+
+  // Form State for Live Preview & Edit
+  const [firstName, setFirstName] = useState(profile?.first_name || "");
+  const [lastName, setLastName] = useState(profile?.last_name || "");
+  const [preferredName, setPreferredName] = useState(profile?.preferred_name || "");
+  const [title, setTitle] = useState(profile?.academic_title || "Professor / Principal Investigator");
+  const [dept, setDept] = useState(profile?.department || "Academic Department");
+  const [inst, setInst] = useState(profile?.institution || "University");
+  const [bio, setBio] = useState(profile?.bio || "");
+  const [labSite, setLabSite] = useState(profile?.lab_website || "");
+  const [officeHrs, setOfficeHrs] = useState(profile?.office_hours || "");
   const [expertise, setExpertise] = useState(
-    Array.isArray(profile.expertise_fields) ? profile.expertise_fields.join(", ") : profile.expertise_fields || ""
+    Array.isArray(profile?.expertise_fields) ? profile.expertise_fields.join(", ") : profile?.expertise_fields || ""
   );
   const [studentTypes, setStudentTypes] = useState(
-    Array.isArray(profile.accepting_student_types) ? profile.accepting_student_types.join(", ") : profile.accepting_student_types || "Undergraduates, High School, Master's"
+    Array.isArray(profile?.accepting_student_types) ? profile.accepting_student_types.join(", ") : profile?.accepting_student_types || "Undergraduates, High School, Master's"
   );
   const [publications, setPublications] = useState(
-    Array.isArray(profile.publications) ? profile.publications.join("\n") : profile.publications || ""
+    Array.isArray(profile?.publications) ? profile.publications.join("\n") : profile?.publications || ""
   );
-  const [isAccepting, setIsAccepting] = useState<boolean>(profile.is_accepting_requests !== false);
+  const [isAccepting, setIsAccepting] = useState<boolean>(profile?.is_accepting_requests !== false);
+
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !profile) return;
+
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select an image file.");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image must be smaller than 5 MB.");
+      return;
+    }
+
+    setAvatarUploading(true);
+    try {
+      const ext = file.name.split(".").pop();
+      const filePath = `${profile.id}/avatar.${ext}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("avatars")
+        .upload(filePath, file, { upsert: true, contentType: file.type });
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from("avatars")
+        .getPublicUrl(filePath);
+
+      const avatarUrl = `${publicUrl}?t=${Date.now()}`;
+
+      const { error: updateError } = await supabase
+        .from("profiles")
+        .update({ avatar_url: avatarUrl })
+        .eq("id", profile.id);
+
+      if (updateError) throw updateError;
+
+      setProfile((p: any) => ({ ...p, avatar_url: avatarUrl }));
+      toast.success("Profile picture updated!");
+    } catch (err: any) {
+      console.error(err);
+      toast.error("Upload failed. Please try again.");
+    } finally {
+      setAvatarUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -54,7 +139,23 @@ export function ProfProfileForm({ profile }: Props) {
       if (res?.error) {
         toast.error(res.error);
       } else {
-        toast.success("Profile saved successfully!");
+        toast.success("Profile updated successfully!");
+        setProfile((prev: any) => ({
+          ...prev,
+          first_name: firstName,
+          last_name: lastName,
+          preferred_name: preferredName,
+          academic_title: title,
+          department: dept,
+          institution: inst,
+          bio,
+          lab_website: labSite,
+          office_hours: officeHrs,
+          expertise_fields: expertise.split(",").map((s) => s.trim()).filter(Boolean),
+          accepting_student_types: studentTypes.split(",").map((s) => s.trim()).filter(Boolean),
+          publications: publications.split("\n").map((s) => s.trim()).filter(Boolean),
+          is_accepting_requests: isAccepting,
+        }));
       }
     } catch (err: any) {
       console.error(err);
@@ -64,14 +165,78 @@ export function ProfProfileForm({ profile }: Props) {
     }
   };
 
-  const displayName = profile.preferred_name || profile.first_name || "Professor";
-  const initials = `${profile.first_name?.[0] ?? ""}${profile.last_name?.[0] ?? ""}`.toUpperCase();
+  const displayName = preferredName || firstName || "Professor";
+  const initials = `${firstName?.[0] ?? ""}${lastName?.[0] ?? ""}`.toUpperCase() || "P";
   const expertiseArray = expertise.split(",").map((s) => s.trim()).filter(Boolean);
   const studentTypesArray = studentTypes.split(",").map((s) => s.trim()).filter(Boolean);
   const publicationsArray = publications.split("\n").map((s) => s.trim()).filter(Boolean);
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }}>
+      {/* Header Avatar Row */}
+      <div style={{ display: "flex", alignItems: "center", gap: "1.5rem", flexWrap: "wrap" }}>
+        <div style={{ position: "relative" }}>
+          <div
+            style={{
+              width: "5rem",
+              height: "5rem",
+              borderRadius: "50%",
+              background: "rgba(79, 70, 229, 0.1)",
+              border: "2px solid rgba(79, 70, 229, 0.3)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: "1.6rem",
+              fontWeight: 900,
+              color: "#4f46e5",
+              overflow: "hidden",
+            }}
+          >
+            {profile?.avatar_url ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={profile.avatar_url} alt={displayName} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            ) : (
+              initials
+            )}
+          </div>
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={avatarUploading}
+            style={{
+              position: "absolute",
+              bottom: 0,
+              right: 0,
+              width: "1.8rem",
+              height: "1.8rem",
+              borderRadius: "50%",
+              background: "#4f46e5",
+              border: "2px solid #ffffff",
+              color: "#ffffff",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+              boxShadow: "0 2px 8px rgba(0, 0, 0, 0.15)",
+            }}
+            title="Upload profile picture"
+          >
+            {avatarUploading ? <Loader2 size={12} className="animate-spin" /> : <Camera size={12} />}
+          </button>
+          <input ref={fileInputRef} type="file" accept="image/*" onChange={handleAvatarChange} style={{ display: "none" }} />
+        </div>
+
+        <div>
+          <h2 className="font-display" style={{ fontSize: "1.6rem", fontWeight: 900, color: "#0f172a", margin: "0 0 0.2rem 0" }}>
+            Dr. {displayName} {lastName}
+          </h2>
+          <div style={{ fontSize: "0.85rem", color: "#475569", fontWeight: 600 }}>
+            {title} • {inst}
+          </div>
+          <div style={{ fontSize: "0.78rem", color: "#64748b", marginTop: "0.2rem" }}>{profile?.email}</div>
+        </div>
+      </div>
+
       {/* Tab Switcher */}
       <div style={{ display: "flex", gap: "0.5rem", background: "rgba(15, 23, 42, 0.04)", borderRadius: "100px", padding: "0.3rem", width: "fit-content" }}>
         <button
@@ -157,7 +322,14 @@ export function ProfProfileForm({ profile }: Props) {
             </button>
           </div>
 
-          {/* Form Fields Grid */}
+          {/* Name & Academic Position Grid */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "1.25rem" }}>
+            <FieldInput id="first_name" name="first_name" label="First Name" value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="e.g. Jane" icon={<User size={15} />} />
+            <FieldInput id="last_name" name="last_name" label="Last Name" value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="e.g. Smith" icon={<User size={15} />} />
+            <FieldInput id="preferred_name" name="preferred_name" label="Preferred Name (Optional)" value={preferredName} onChange={(e) => setPreferredName(e.target.value)} placeholder="e.g. Janie" icon={<User size={15} />} />
+          </div>
+
+          {/* Academic Profile Details Grid */}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "1.5rem" }}>
             <FieldInput id="academic_title" name="academic_title" label="Academic Position / Title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. Associate Professor & Lab PI" icon={<GraduationCap size={15} />} />
             <FieldInput id="department" name="department" label="Department / School" value={dept} onChange={(e) => setDept(e.target.value)} placeholder="e.g. Department of Computer Science" icon={<Building2 size={15} />} />
@@ -185,7 +357,7 @@ export function ProfProfileForm({ profile }: Props) {
               style={{
                 width: "100%",
                 background: "#ffffff",
-                border: "1px solid rgba(99, 102, 241, 0.25)",
+                border: "1px solid rgba(99, 102, 241, 0.18)",
                 borderRadius: "14px",
                 padding: "1rem",
                 fontSize: "0.9rem",
@@ -279,13 +451,19 @@ export function ProfProfileForm({ profile }: Props) {
                   fontSize: "1.2rem",
                   fontWeight: 900,
                   color: "#4f46e5",
+                  overflow: "hidden",
                 }}
               >
-                {initials}
+                {profile?.avatar_url ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={profile.avatar_url} alt={displayName} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                ) : (
+                  initials
+                )}
               </div>
               <div>
                 <h2 className="font-display" style={{ fontSize: "1.6rem", fontWeight: 900, color: "#0f172a", margin: "0 0 0.25rem 0" }}>
-                  Dr. {displayName} {profile.last_name}
+                  Dr. {displayName} {lastName}
                 </h2>
                 <div style={{ fontSize: "0.85rem", color: "#475569", fontWeight: 600 }}>
                   {title} • {dept}
@@ -387,6 +565,94 @@ export function ProfProfileForm({ profile }: Props) {
           )}
         </div>
       )}
+
+      {/* Hairline Separator */}
+      <div style={{ height: "1px", background: "rgba(99, 102, 241, 0.15)", marginTop: "1rem" }} />
+
+      {/* Account Settings: Preferences */}
+      <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+          <Sliders size={15} color="#4f46e5" />
+          <span style={{ fontSize: "0.68rem", fontWeight: 800, letterSpacing: "0.18em", textTransform: "uppercase", color: "#4f46e5" }}>
+            Preferences
+          </span>
+        </div>
+        <label style={{ display: "inline-flex", alignItems: "center", gap: "0.75rem", cursor: "pointer", userSelect: "none" }}>
+          <input
+            type="checkbox"
+            checked={customCursor}
+            onChange={handleToggleCursor}
+            style={{ display: "none" }}
+          />
+          <div style={{
+            width: "2.4rem",
+            height: "1.3rem",
+            borderRadius: "100px",
+            background: customCursor ? "#4f46e5" : "rgba(15, 23, 42, 0.15)",
+            position: "relative",
+            transition: "background 0.25s",
+            border: "1px solid rgba(15, 23, 42, 0.05)",
+          }}>
+            <div style={{
+              width: "1rem",
+              height: "1rem",
+              borderRadius: "50%",
+              background: "#ffffff",
+              position: "absolute",
+              top: "50%",
+              left: customCursor ? "calc(100% - 1.15rem)" : "0.15rem",
+              transform: "translateY(-50%)",
+              transition: "left 0.25s",
+              boxShadow: "0 1px 3px rgba(0,0,0,0.15)",
+            }} />
+          </div>
+          <span style={{ fontSize: "0.85rem", fontWeight: 600, color: "#334155" }}>
+            Use custom cursor effect (requires mouse pointer)
+          </span>
+        </label>
+      </div>
+
+      {/* Hairline Separator */}
+      <div style={{ height: "1px", background: "rgba(99, 102, 241, 0.15)" }} />
+
+      {/* Account Settings: Security */}
+      <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+          <KeyRound size={15} color="#4f46e5" />
+          <span style={{ fontSize: "0.68rem", fontWeight: 800, letterSpacing: "0.18em", textTransform: "uppercase", color: "#4f46e5" }}>
+            Security
+          </span>
+        </div>
+        <div>
+          <Button href="/reset-password" variant="ghost" size="lg" icon={<KeyRound size={15} />}>
+            Change Password
+          </Button>
+        </div>
+      </div>
+
+      {/* Hairline Separator */}
+      <div style={{ height: "1px", background: "rgba(99, 102, 241, 0.15)" }} />
+
+      {/* Account Settings: Session */}
+      <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+          <LogOut size={15} color="#dc2626" />
+          <span style={{ fontSize: "0.68rem", fontWeight: 800, letterSpacing: "0.18em", textTransform: "uppercase", color: "#dc2626" }}>
+            Session
+          </span>
+        </div>
+        <div>
+          <Button
+            onClick={handleSignOut}
+            variant="ghost"
+            size="lg"
+            className="hover:border-[rgba(239,68,68,0.4)] hover:text-[#ef4444]"
+            icon={<LogOut size={15} />}
+          >
+            Sign Out
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }

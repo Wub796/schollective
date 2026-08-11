@@ -11,6 +11,8 @@ import { Button } from "@/components/ui/Button";
 import { Select } from "@/components/ui/Select";
 import { AiProfileReviewerCard } from "@/components/features/AiProfileReviewerCard";
 
+import { ProfProfileForm } from "@/app/(dashboard)/prof/profile/ProfProfileForm";
+
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
 const fadeUp = {
@@ -152,7 +154,7 @@ export default function ProfilePage() {
       setProfile(data);
       setFetching(false);
     })();
-  }, []);
+  }, [router]);
 
   const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -289,6 +291,31 @@ export default function ProfilePage() {
     );
   }
 
+  if (profile?.role === "professor") {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: "2rem", maxWidth: "900px", paddingBottom: "6rem" }}>
+        <header style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+            <span style={{ width: "1.5rem", height: "2px", background: "#6366f1", display: "block" }} />
+            <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: "#4f46e5", fontFamily: "var(--font-sans, monospace)" }}>
+              Faculty Portal
+            </span>
+          </div>
+          <h1 className="font-display" style={{ fontSize: "clamp(2.4rem, 4.5vw, 3.6rem)", fontWeight: 900, color: "#0f172a", letterSpacing: "-0.035em", lineHeight: 1.1 }}>
+            Faculty Profile <em style={{ fontStyle: "italic", color: "#4f46e5", fontWeight: 300 }}>Manager</em>
+          </h1>
+          <p style={{ fontSize: "0.9rem", color: "#475569", margin: 0, opacity: 0.85 }}>
+            Manage your account, personal details, research focus, office hours, mentee preferences, and publications.
+          </p>
+        </header>
+
+        <div style={{ height: "1px", background: "rgba(99, 102, 241, 0.15)" }} />
+
+        <ProfProfileForm profile={profile} />
+      </div>
+    );
+  }
+
   const displayName = profile?.preferred_name || profile?.first_name || "Scholar";
   const roleLabel   = profile?.role === "professor" ? "Faculty" : profile?.role === "admin" ? "Admin" : "Student";
   const initials    = `${profile?.first_name?.[0] ?? ""}${profile?.last_name?.[0] ?? ""}`.toUpperCase();
@@ -296,7 +323,7 @@ export default function ProfilePage() {
   return (
     <motion.div
       variants={stagger} initial="hidden" animate="show"
-      style={{ display: "flex", flexDirection: "column", gap: "5rem", maxWidth: "640px" }}
+      style={{ display: "flex", flexDirection: "column", gap: "5rem", maxWidth: "640px", paddingBottom: "6rem" }}
     >
       {/* ── Header ── */}
       <motion.header variants={fadeUp} style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>

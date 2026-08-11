@@ -26,7 +26,7 @@ export default async function ProfPublicProfilePage() {
   if (!isAdminPreviewing && profile.role !== "professor") redirect("/dashboard");
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "2rem", maxWidth: "900px" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "2rem", maxWidth: "900px", paddingBottom: "6rem" }}>
       {/* Header */}
       <header style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
