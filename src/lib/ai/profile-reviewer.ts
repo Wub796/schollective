@@ -6,24 +6,39 @@ export interface StudentProfileData {
   id?: string;
   first_name?: string | null;
   last_name?: string | null;
+  preferred_name?: string | null;
   email?: string | null;
   institution?: string | null;
-  major?: string | null;
-  gpa?: string | number | null;
+  education_level?: string | null;
   bio?: string | null;
-  expertise_fields?: string[] | string | null;
-  publications?: string | string[] | null;
-  statement_of_purpose?: string | null;
+  academic_interests?: string[] | string | null;
+  extracurriculars?: string[] | string | null;
+  expertise_fields?: string[] | string | null; // professor field compatibility
 }
 
 /**
- * Reviews a student profile using Gemini AI with strict token guardrails and caching.
+ * Reviews a student profile using Gemini AI (or rule-based fallback) matching Schollective's exact form fields.
  */
 export async function reviewStudentProfile(
   profile: StudentProfileData
 ): Promise<ProfileReviewResult> {
-  // Check TTL cache to avoid burning API tokens on repeated requests
-  const profileKey = `${profile.id || profile.email || "anon"}_${profile.bio || ""}_${profile.major || ""}`;
+  // Normalize interests and extracurriculars arrays/strings
+  const interestsList = Array.isArray(profile.academic_interests)
+    ? profile.academic_interests.join(", ")
+    : typeof profile.academic_interests === "string"
+    ? profile.academic_interests
+    : Array.isArray(profile.expertise_fields)
+    ? profile.expertise_fields.join(", ")
+    : "";
+
+  const extrasList = Array.isArray(profile.extracurriculars)
+    ? profile.extracurriculars.join(", ")
+    : typeof profile.extracurriculars === "string"
+    ? profile.extracurriculars
+    : "";
+
+  // Check TTL cache to save token costs
+  const profileKey = `${profile.id || profile.email || "anon"}_${profile.bio || ""}_${interestsList}_${profile.education_level || ""}`;
   const cacheKey = `profile_review_${profileKey}`;
   const cached = getCachedAiResult<ProfileReviewResult>(cacheKey);
   if (cached) {
@@ -34,35 +49,34 @@ export async function reviewStudentProfile(
 
   if (gemini) {
     try {
-      // Truncate fields to prevent runaway prompt size
-      const safeBio = truncatePromptText(profile.bio, 400);
-      const safeStatement = truncatePromptText(profile.statement_of_purpose, 400);
-      const safeMajor = truncatePromptText(profile.major, 80);
       const safeInst = truncatePromptText(profile.institution, 80);
+      const safeLevel = truncatePromptText(profile.education_level, 50);
+      const safeBio = truncatePromptText(profile.bio, 280);
+      const safeInterests = truncatePromptText(interestsList, 150);
+      const safeExtras = truncatePromptText(extrasList, 150);
 
       const prompt = `You are an academic advisor reviewing a student profile on Schollective.
-Profile:
-- Institution: ${safeInst || "Not specified"}
-- Major: ${safeMajor || "Not specified"}
-- GPA: ${profile.gpa || "Not specified"}
-- Bio: "${safeBio}"
-- Research Fields: ${Array.isArray(profile.expertise_fields) ? profile.expertise_fields.join(", ") : profile.expertise_fields || "None"}
-- Statement: "${safeStatement}"
+The student can update these EXACT fields on their profile page:
+1. Institution: "${safeInst || "Not specified"}"
+2. Education Level: "${safeLevel || "Not specified"}"
+3. Short Bio: "${safeBio || "Empty"}"
+4. Academic Interests: "${safeInterests || "Empty"}"
+5. Extracurriculars: "${safeExtras || "Empty"}"
 
-Evaluate this profile and return a JSON object matching this schema:
+Analyze the profile for outreach readiness to professors and return a JSON object with this exact schema:
 {
   "overallScore": number (0-100),
   "clarityScore": number (0-100),
   "academicToneScore": number (0-100),
   "alignmentScore": number (0-100),
   "completenessScore": number (0-100),
-  "summary": "1-2 sentences assessment",
-  "strengths": ["2-3 concise strengths"],
+  "summary": "1-2 sentence overall feedback",
+  "strengths": ["2-3 specific strengths based on their actual inputs"],
   "improvements": [
     {
-      "field": "Bio | Research Fields | Statement",
-      "issue": "Specific area needing work",
-      "suggestion": "Actionable advice"
+      "field": "Short Bio | Academic Interests | Extracurriculars | Institution | Education Level",
+      "issue": "What is weak or missing in this specific input field",
+      "suggestion": "Actionable advice on what text/keywords the student should type into this field"
     }
   ],
   "outreachReadiness": "ready" | "needs_work" | "incomplete"
@@ -73,94 +87,129 @@ Evaluate this profile and return a JSON object matching this schema:
         contents: prompt,
         config: {
           responseMimeType: "application/json",
-          maxOutputTokens: 500, // Token Safety Guard
+          maxOutputTokens: 500,
         },
       });
 
       const text = response.text;
       if (text) {
         const parsed = JSON.parse(text) as ProfileReviewResult;
-        setCachedAiResult(cacheKey, parsed, 15 * 60 * 1000); // 15-min cache
+        setCachedAiResult(cacheKey, parsed, 15 * 60 * 1000);
         return parsed;
       }
     } catch (err) {
-      console.warn("[reviewStudentProfile] Gemini call failed or unconfigured, using fallback:", err);
+      console.warn("[reviewStudentProfile] Gemini API call failed or unconfigured, using fallback:", err);
     }
   }
 
-  // Fallback Rule-Based Scoring Engine (0 tokens spent)
-  const result = generateRuleBasedProfileReview(profile);
+  // Fallback Rule-Based Scoring Engine tailored to Schollective student fields
+  const result = generateRuleBasedProfileReview(profile, interestsList, extrasList);
   setCachedAiResult(cacheKey, result, 15 * 60 * 1000);
   return result;
 }
 
 /**
- * Intelligent deterministic fallback algorithm for student profile evaluation.
+ * Deterministic fallback scoring algorithm matching Schollective student fields.
  */
-function generateRuleBasedProfileReview(profile: StudentProfileData): ProfileReviewResult {
+function generateRuleBasedProfileReview(
+  profile: StudentProfileData,
+  interestsStr: string,
+  extrasStr: string
+): ProfileReviewResult {
   const bio = (profile.bio || "").trim();
   const inst = (profile.institution || "").trim();
-  const major = (profile.major || "").trim();
-  const gpa = profile.gpa ? String(profile.gpa).trim() : "";
-  const statement = (profile.statement_of_purpose || "").trim();
-  
-  let fields: string[] = [];
-  if (Array.isArray(profile.expertise_fields)) fields = profile.expertise_fields;
-  else if (typeof profile.expertise_fields === "string") {
-    fields = profile.expertise_fields.split(",").map((s) => s.trim()).filter(Boolean);
-  }
+  const level = (profile.education_level || "").trim();
+
+  const interests = interestsStr ? interestsStr.split(",").map((s) => s.trim()).filter(Boolean) : [];
+  const extras = extrasStr ? extrasStr.split(",").map((s) => s.trim()).filter(Boolean) : [];
 
   const strengths: string[] = [];
   const improvements: ProfileReviewResult["improvements"] = [];
 
+  // 1. Completeness Score
   let completeness = 0;
-  if (inst) completeness += 20; else improvements.push({ field: "Institution", issue: "Institution missing", suggestion: "Add your current university or college." });
-  if (major) completeness += 20; else improvements.push({ field: "Major", issue: "Academic major missing", suggestion: "Specify your field of study (e.g. Computer Science, Bioengineering)." });
-  if (gpa) completeness += 15; else improvements.push({ field: "GPA", issue: "GPA not listed", suggestion: "Include your GPA if it strengthens your academic profile." });
-  if (fields.length >= 2) completeness += 20; else improvements.push({ field: "Research Fields", issue: "Few research interests listed", suggestion: "List at least 2-3 specific research fields or methods." });
-  if (bio.length >= 50) completeness += 15; else improvements.push({ field: "Bio", issue: "Bio is brief", suggestion: "Expand your bio to highlight your background and research motivations." });
-  if (statement.length >= 50) completeness += 10;
-
-  let clarity = 60;
-  if (bio.length > 80) clarity += 20;
-  if (fields.length >= 3) clarity += 15;
-  if (bio.includes("research") || bio.includes("lab") || bio.includes("project")) {
-    clarity += 5;
-    strengths.push("Clear focus on research and practical academic experience.");
-  }
-  clarity = Math.min(100, clarity);
-
-  let academicTone = 70;
-  const academicKeywords = ["analysis", "algorithm", "hypothesis", "data", "investigation", "study", "engineering", "model", "publication", "laboratory", "theory"];
-  const matches = academicKeywords.filter((kw) => bio.toLowerCase().includes(kw) || statement.toLowerCase().includes(kw));
-  if (matches.length > 0) {
-    academicTone += Math.min(25, matches.length * 8);
-    strengths.push(`Strong academic vocabulary (${matches.slice(0, 3).join(", ")}).`);
+  if (inst) {
+    completeness += 20;
+    strengths.push(`Affiliated with ${inst}.`);
   } else {
     improvements.push({
-      field: "Bio / Statement",
-      issue: "Casual tone",
-      suggestion: "Incorporate domain-specific academic terminology and methodology keywords.",
+      field: "Institution",
+      issue: "Institution missing",
+      suggestion: "Type your current high school, college, or university name.",
     });
+  }
+
+  if (level) {
+    completeness += 20;
+  } else {
+    improvements.push({
+      field: "Education Level",
+      issue: "Education level not selected",
+      suggestion: "Select your current standing (e.g. Undergraduate, High School, Graduate).",
+    });
+  }
+
+  if (bio.length >= 30) {
+    completeness += 25;
+    if (bio.length >= 80) strengths.push("Informative short bio.");
+  } else {
+    improvements.push({
+      field: "Short Bio",
+      issue: "Short bio is brief or empty",
+      suggestion: "Write 1-2 sentences about your research goals and academic curiosity.",
+    });
+  }
+
+  if (interests.length >= 2) {
+    completeness += 20;
+    strengths.push(`${interests.length} academic interests listed (${interests.slice(0, 2).join(", ")}).`);
+  } else {
+    improvements.push({
+      field: "Academic Interests",
+      issue: "Few or no academic interests listed",
+      suggestion: "Enter comma-separated topics (e.g. Machine Learning, Neuroscience, AI Ethics).",
+    });
+  }
+
+  if (extras.length >= 1) {
+    completeness += 15;
+    strengths.push("Active in extracurricular activities.");
+  } else {
+    improvements.push({
+      field: "Extracurriculars",
+      issue: "Extracurriculars empty",
+      suggestion: "Add clubs, competitions, or research projects you participate in.",
+    });
+  }
+
+  // 2. Clarity Score
+  let clarity = 60;
+  if (bio.length > 60) clarity += 20;
+  if (interests.length >= 3) clarity += 20;
+  clarity = Math.min(100, clarity);
+
+  // 3. Academic Tone Score
+  let academicTone = 65;
+  const keywords = ["research", "study", "analysis", "science", "data", "engineering", "lab", "project", "algorithm", "biology", "computing"];
+  const textCombined = `${bio} ${interestsStr}`.toLowerCase();
+  const matchedKw = keywords.filter((kw) => textCombined.includes(kw));
+  if (matchedKw.length > 0) {
+    academicTone += Math.min(30, matchedKw.length * 10);
   }
   academicTone = Math.min(100, academicTone);
 
-  let alignment = fields.length >= 2 ? 80 : 50;
-  if (inst.toLowerCase().includes("university") || inst.toLowerCase().includes("college") || inst.toLowerCase().includes("institute")) {
-    alignment += 15;
-    strengths.push("Affiliated with an established academic institution.");
-  }
-  alignment = Math.min(100, alignment);
+  // 4. Alignment Score
+  let alignment = interests.length >= 2 ? 85 : 50;
 
-  const overall = Math.round((completeness * 0.35) + (clarity * 0.25) + (academicTone * 0.25) + (alignment * 0.15));
+  const overall = Math.round((completeness * 0.4) + (clarity * 0.25) + (academicTone * 0.25) + (alignment * 0.1));
 
   let readiness: ProfileReviewResult["outreachReadiness"] = "needs_work";
   if (overall >= 75 && completeness >= 70) readiness = "ready";
   else if (overall < 50) readiness = "incomplete";
 
   const summary = readiness === "ready"
-    ? "Your profile is well-rounded and ready for professor outreach. Your research interests and background are clear."
-    : "Your profile provides a good foundation, but expanding your research focus and statement of purpose will boost response rates from professors.";
+    ? "Your profile is well-crafted and ready for professor outreach. Your academic interests and bio provide clear context for faculty."
+    : "Your profile gives a good start, but filling in your Short Bio and Academic Interests will significantly improve your outreach response rate.";
 
   return {
     overallScore: overall,
@@ -169,7 +218,7 @@ function generateRuleBasedProfileReview(profile: StudentProfileData): ProfileRev
     alignmentScore: Math.min(100, alignment),
     completenessScore: Math.min(100, completeness),
     summary,
-    strengths: strengths.length > 0 ? strengths : ["Basic academic profile created."],
+    strengths: strengths.length > 0 ? strengths : ["Basic account details configured."],
     improvements: improvements.slice(0, 4),
     outreachReadiness: readiness,
   };
