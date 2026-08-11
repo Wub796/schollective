@@ -450,15 +450,17 @@ function OnboardingContent() {
                           backgroundRepeat: "no-repeat",
                           backgroundPosition: "right 1.5rem center",
                         }}>
-                        <option value="high-school">High School</option>
+                        <option value="high-school-senior">High School Senior (12th Grade)</option>
+                        <option value="high-school-junior">High School Junior (11th Grade)</option>
+                        <option value="high-school-underclassman">High School (9th/10th Grade)</option>
                         <option value="college">College / Undergraduate</option>
-                        <option value="graduate">Graduate (Masters / PhD)</option>
+                        <option value="graduate">Graduate (Master&apos;s / PhD)</option>
                       </select>
                     </div>
                     <Field
                       id="institution" name="institution"
-                      label="School (optional)"
-                      placeholder="e.g. Lincoln High School, MIT, …"
+                      label="School (High School or University)"
+                      placeholder="e.g. Westwood High School, Stanford, …"
                     />
 
                     {/* ── Student profile fields ── */}
@@ -467,20 +469,20 @@ function OnboardingContent() {
                     <TextArea
                       id="bio" name="bio"
                       label="Short Bio (optional)"
-                      placeholder="Tell professors a bit about yourself — what drives your curiosity?"
+                      placeholder="Tell professors what scientific topics drive your curiosity and your goals..."
                       maxLength={280}
                     />
 
                     <Field
                       id="academic_interests" name="academic_interests"
                       label="Academic Interests (optional)"
-                      placeholder="e.g. Quantum Computing, Marine Biology, AI Ethics"
+                      placeholder="e.g. Machine Learning, Neuroscience, Astrophysics, Bioengineering"
                     />
 
                     <Field
                       id="extracurriculars" name="extracurriculars"
-                      label="Extracurriculars (optional)"
-                      placeholder="e.g. Debate Club, Science Olympiad, Volunteering"
+                      label="Extracurriculars, Competitions & Projects (optional)"
+                      placeholder="e.g. Science Fair / ISEF Finalist, USAMO, USACO, MIT PRIMES, Unity Game Dev, Robotics Captain"
                     />
                   </div>
                 </motion.div>
