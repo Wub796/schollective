@@ -6,17 +6,18 @@ import { revalidatePath } from "next/cache";
 import { scoreProfessorApplication } from "@/lib/validators";
 
 /**
- * Runs the professor validation algorithm and stores the score
- * on the profile row so the admin can see it immediately.
- * Can be called server-side on signup or on-demand from the admin table.
+ * Runs the AI professor validation algorithm.
+ * - Automatically APPROVES legitimate high-scoring applications (score >= 70).
+ * - Leaves suspicious/low-scoring applications in 'pending' status, marked with AI flags for admin review.
+ * - NEVER automatically rejects applications.
  */
 export async function scoreApplication(profileId: string) {
   try {
-    const supabase = await createClient();
+    const adminClient = createAdminClient();
 
-    const { data: profile } = await supabase
+    const { data: profile } = await adminClient
       .from("profiles")
-      .select("email, institution, expertise_fields, first_name, last_name")
+      .select("id, email, institution, expertise_fields, first_name, last_name, status, role")
       .eq("id", profileId)
       .single();
 
@@ -30,23 +31,109 @@ export async function scoreApplication(profileId: string) {
       last_name:        profile.last_name,
     });
 
-    await supabase
+    const isHighLegitimacy = result.score >= 70 && result.level === "high";
+
+    const updates: Record<string, any> = {
+      ai_score: result.score,
+      ai_flags: result.flags,
+      ai_level: result.level,
+      updated_at: new Date().toISOString(),
+    };
+
+    // Auto-approve if high legitimacy score and currently pending
+    let autoApproved = false;
+    if (isHighLegitimacy && (profile.status === "pending" || !profile.status)) {
+      updates.status = "approved";
+      updates.profile_complete = true;
+      updates.is_accepting_requests = true;
+      autoApproved = true;
+    }
+
+    let { error: updateError } = await adminClient
       .from("profiles")
-      .update({
-        ai_score: result.score,
-        ai_flags: result.flags,
-        ai_level: result.level,
-      })
+      .update(updates)
       .eq("id", profileId);
 
+    if (updateError && (updateError.message?.includes("profile_complete") || updateError.message?.includes("is_accepting_requests"))) {
+      delete updates.profile_complete;
+      delete updates.is_accepting_requests;
+      const retry = await adminClient
+        .from("profiles")
+        .update(updates)
+        .eq("id", profileId);
+      updateError = retry.error;
+    }
+
+    if (updateError) {
+      console.error("[scoreApplication] Update error:", updateError.message);
+      return { error: updateError.message };
+    }
+
     revalidatePath("/admin/dashboard");
-    return { success: true, result };
+    revalidatePath("/admin/professors");
+    revalidatePath("/professors");
+
+    return {
+      success: true,
+      autoApproved,
+      result: {
+        score: result.score,
+        level: result.level,
+        flags: result.flags,
+        signals: result.signals,
+      },
+    };
   } catch (err: any) {
+    console.error("[scoreApplication] Error:", err);
     return { error: err.message || "Scoring failed" };
   }
 }
 
+/**
+ * Batch Action: Process all pending professor applications with the AI reviewer.
+ * Auto-approves high scoring applicants and flags suspicious ones for admin inspection.
+ */
+export async function autoReviewAllPendingProfessors() {
+  try {
+    const adminClient = createAdminClient();
 
+    const { data: pending } = await adminClient
+      .from("profiles")
+      .select("id")
+      .eq("role", "professor")
+      .eq("status", "pending");
+
+    if (!pending || pending.length === 0) {
+      return { success: true, processed: 0, autoApprovedCount: 0, flaggedCount: 0 };
+    }
+
+    let autoApprovedCount = 0;
+    let flaggedCount = 0;
+
+    for (const item of pending) {
+      const res = await scoreApplication(item.id);
+      if (res?.autoApproved) {
+        autoApprovedCount++;
+      } else {
+        flaggedCount++;
+      }
+    }
+
+    revalidatePath("/admin/dashboard");
+    revalidatePath("/admin/professors");
+    revalidatePath("/professors");
+
+    return {
+      success: true,
+      processed: pending.length,
+      autoApprovedCount,
+      flaggedCount,
+    };
+  } catch (err: any) {
+    console.error("[autoReviewAllPendingProfessors] Error:", err);
+    return { error: err.message || "Batch review failed" };
+  }
+}
 
 /**
  * Admin Action: Update Professor Application Status

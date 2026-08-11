@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, CheckCircle2, AlertTriangle, RefreshCw, ShieldCheck } from "lucide-react";
+import { Sparkles, CheckCircle2, AlertTriangle, RefreshCw, ShieldCheck, Plus } from "lucide-react";
 import { ProfileReviewResult } from "@/lib/ai/types";
 import { toast } from "sonner";
 
@@ -17,7 +17,6 @@ export function AiProfileReviewerCard({ profileData }: Props) {
   const handleReview = async () => {
     setLoading(true);
     try {
-      // Read active form values directly from the DOM so unsaved edits are evaluated!
       const bioEl = typeof document !== "undefined" ? (document.getElementById("bio") as HTMLTextAreaElement) : null;
       const instEl = typeof document !== "undefined" ? (document.getElementById("institution") as HTMLInputElement) : null;
       const levelEl = typeof document !== "undefined" ? (document.getElementById("education_level") as HTMLSelectElement) : null;
@@ -54,6 +53,17 @@ export function AiProfileReviewerCard({ profileData }: Props) {
     }
   };
 
+  const addInterestTag = (tag: string) => {
+    const interestsEl = document.getElementById("academic_interests") as HTMLInputElement;
+    if (interestsEl) {
+      const current = interestsEl.value.trim();
+      const newInterests = current ? `${current}, ${tag}` : tag;
+      interestsEl.value = newInterests;
+      interestsEl.dispatchEvent(new Event("change", { bubbles: true }));
+      toast.success(`Added "${tag}" to Academic Interests!`);
+    }
+  };
+
   return (
     <div
       style={{
@@ -87,7 +97,7 @@ export function AiProfileReviewerCard({ profileData }: Props) {
             Profile <em style={{ fontStyle: "italic", color: "#4f46e5", fontWeight: 300 }}>Reviewer</em>
           </h3>
           <p style={{ fontSize: "0.85rem", color: "#475569", margin: 0, opacity: 0.85 }}>
-            Real-time evaluation of your Bio, Academic Interests, Extracurriculars, & Education Level.
+            Evaluates your Short Bio, Academic Interests, Extracurriculars, & Education Level.
           </p>
         </div>
 
@@ -143,6 +153,40 @@ export function AiProfileReviewerCard({ profileData }: Props) {
               <ScoreBadge label="Alignment" score={review.alignmentScore} />
             </div>
 
+            {/* Suggested Academic Interest Topic Recommendations */}
+            {review.suggestedInterests && review.suggestedInterests.length > 0 && (
+              <div style={{ marginBottom: "1.25rem" }}>
+                <span style={{ fontSize: "0.72rem", fontWeight: 800, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.08em", display: "block", marginBottom: "0.4rem" }}>
+                  Recommended Topics to Explore (Click to add)
+                </span>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem" }}>
+                  {review.suggestedInterests.map((tag, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() => addInterestTag(tag)}
+                      style={{
+                        background: "#ffffff",
+                        border: "1px solid rgba(99, 102, 241, 0.3)",
+                        color: "#4f46e5",
+                        borderRadius: "100px",
+                        padding: "0.25rem 0.65rem",
+                        fontSize: "0.75rem",
+                        fontWeight: 700,
+                        cursor: "pointer",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "0.25rem",
+                        transition: "all 0.2s ease",
+                      }}
+                    >
+                      <Plus size={12} /> {tag}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Summary Banner */}
             <div
               style={{
@@ -186,7 +230,7 @@ export function AiProfileReviewerCard({ profileData }: Props) {
               {review.improvements?.length > 0 && (
                 <div style={{ background: "#ffffff", borderRadius: "12px", padding: "1.1rem 1.25rem", border: "1px solid rgba(226, 232, 240, 0.9)" }}>
                   <h4 style={{ fontSize: "0.82rem", fontWeight: 800, color: "#991b1b", margin: "0 0 0.65rem 0", display: "flex", alignItems: "center", gap: "0.4rem" }}>
-                    <AlertTriangle size={15} color="#991b1b" /> Actionable Improvements
+                    <AlertTriangle size={15} color="#991b1b" /> Actionable Recommendations
                   </h4>
                   <div style={{ display: "flex", flexDirection: "column", gap: "0.55rem" }}>
                     {review.improvements.map((imp, idx) => (

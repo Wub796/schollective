@@ -17,7 +17,7 @@ export interface StudentProfileData {
 }
 
 /**
- * Reviews a student profile using Gemini AI with strict factual grounding & safety parameters.
+ * Reviews a student profile using Gemini AI (or rule-based fallback) purely for recommendation & evaluation.
  */
 export async function reviewStudentProfile(
   profile: StudentProfileData
@@ -37,7 +37,7 @@ export async function reviewStudentProfile(
     : "";
 
   const profileKey = `${profile.id || profile.email || "anon"}_${profile.bio || ""}_${interestsList}_${profile.education_level || ""}`;
-  const cacheKey = `profile_review_${profileKey}`;
+  const cacheKey = `profile_review_v3_${profileKey}`;
   const cached = getCachedAiResult<ProfileReviewResult>(cacheKey);
   if (cached) {
     return cached;
@@ -53,11 +53,11 @@ export async function reviewStudentProfile(
       const safeInterests = truncatePromptText(interestsList, 150);
       const safeExtras = truncatePromptText(extrasList, 150);
 
-      const prompt = `You are a factual academic advisor evaluating a student profile on Schollective.
+      const prompt = `You are an academic advisor reviewing a student profile on Schollective.
 CRITICAL INSTRUCTIONS:
-- Base your analysis STRICTLY AND FACTUALLY on the provided fields.
-- Do NOT assume or invent external facts, degrees, publications, or credentials not mentioned in the input.
-- Keep feedback constructive, safe, and academically grounded.
+- Do NOT write or generate bio text for the student.
+- Evaluate the student's existing inputs for completeness, clarity, and academic tone.
+- Recommend 3-4 specific "suggestedInterests" tags to explore.
 
 STUDENT PROFILE DATA:
 - Institution: "${safeInst || "Not specified"}"
@@ -66,22 +66,23 @@ STUDENT PROFILE DATA:
 - Academic Interests: "${safeInterests || "Empty"}"
 - Extracurriculars: "${safeExtras || "Empty"}"
 
-Return ONLY a valid JSON object following this exact schema:
+Return ONLY a valid JSON object matching this schema:
 {
   "overallScore": number (0-100),
   "clarityScore": number (0-100),
   "academicToneScore": number (0-100),
   "alignmentScore": number (0-100),
   "completenessScore": number (0-100),
-  "summary": "1-2 sentence factual evaluation based strictly on input",
-  "strengths": ["2-3 specific strengths based strictly on provided inputs"],
+  "summary": "1-2 sentence evaluation",
+  "strengths": ["2-3 specific strengths"],
   "improvements": [
     {
       "field": "Short Bio | Academic Interests | Extracurriculars | Institution | Education Level",
-      "issue": "Factual gap in provided field",
-      "suggestion": "Actionable advice on what text or keywords to add"
+      "issue": "Specific weakness or gap",
+      "suggestion": "Actionable advice on what the student should add"
     }
   ],
+  "suggestedInterests": ["3-4 relevant academic interest topic recommendations"],
   "outreachReadiness": "ready" | "needs_work" | "incomplete"
 }`;
 
@@ -91,7 +92,7 @@ Return ONLY a valid JSON object following this exact schema:
         config: {
           responseMimeType: "application/json",
           maxOutputTokens: 500,
-          temperature: 0.2, // Low temperature for high factual consistency
+          temperature: 0.2,
         },
       });
 
@@ -99,8 +100,7 @@ Return ONLY a valid JSON object following this exact schema:
       if (text) {
         const cleanedText = text.replace(/```json\n?|\n?```/g, "").trim();
         const parsed = JSON.parse(cleanedText) as ProfileReviewResult;
-        
-        // Defensive bounds validation
+
         parsed.overallScore = Math.max(0, Math.min(100, parsed.overallScore || 50));
         parsed.clarityScore = Math.max(0, Math.min(100, parsed.clarityScore || 50));
         parsed.academicToneScore = Math.max(0, Math.min(100, parsed.academicToneScore || 50));
@@ -111,7 +111,7 @@ Return ONLY a valid JSON object following this exact schema:
         return parsed;
       }
     } catch (err) {
-      console.warn("[reviewStudentProfile] Gemini AI evaluation failed or unconfigured, returning factual fallback:", err);
+      console.warn("[reviewStudentProfile] Gemini evaluation failed, returning fallback:", err);
     }
   }
 
@@ -130,7 +130,7 @@ function generateRuleBasedProfileReview(
 ): ProfileReviewResult {
   const bio = (profile.bio || "").trim();
   const inst = (profile.institution || "").trim();
-  const level = (profile.education_level || "").trim();
+  const level = (profile.education_level || "undergraduate").trim();
 
   const interests = interestsStr ? interestsStr.split(",").map((s) => s.trim()).filter(Boolean) : [];
   const extras = extrasStr ? extrasStr.split(",").map((s) => s.trim()).filter(Boolean) : [];
@@ -173,12 +173,12 @@ function generateRuleBasedProfileReview(
 
   if (interests.length >= 2) {
     completeness += 20;
-    strengths.push(`${interests.length} academic interests listed (${interests.slice(0, 2).join(", ")}).`);
+    strengths.push(`${interests.length} academic interests listed.`);
   } else {
     improvements.push({
       field: "Academic Interests",
       issue: "Few or no academic interests listed",
-      suggestion: "Enter comma-separated topics (e.g. Machine Learning, Neuroscience, AI Ethics).",
+      suggestion: "Enter comma-separated topics (e.g. Machine Learning, Neuroscience).",
     });
   }
 
@@ -219,6 +219,10 @@ function generateRuleBasedProfileReview(
     ? "Your profile is well-crafted and ready for professor outreach. Your academic interests and bio provide clear context for faculty."
     : "Your profile gives a good start, but filling in your Short Bio and Academic Interests will significantly improve your outreach response rate.";
 
+  const suggestedInterests = interests.length >= 2
+    ? [`${interests[0]} Research`, `${interests[1]} Analysis`, "Data Modeling", "Methodology"]
+    : ["Machine Learning", "Data Analysis", "Research Methods", "Interdisciplinary Science"];
+
   return {
     overallScore: overall,
     clarityScore: Math.min(100, clarity),
@@ -228,6 +232,7 @@ function generateRuleBasedProfileReview(
     summary,
     strengths: strengths.length > 0 ? strengths : ["Basic account details configured."],
     improvements: improvements.slice(0, 4),
+    suggestedInterests,
     outreachReadiness: readiness,
   };
 }

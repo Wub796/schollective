@@ -8,6 +8,7 @@ import Link from "next/link";
 interface ProfessorMatchEnriched {
   professorId: string;
   matchScore: number;
+  matchTier?: "Best Fit" | "Strong Match" | "Potential Alignment";
   matchReasons: string[];
   keyOverlaps: string[];
   suggestedOutreachAngle: string;
@@ -95,7 +96,7 @@ export function AiProfessorRecommendations() {
                 height: "170px",
                 borderRadius: "14px",
                 background: "rgba(99, 102, 241, 0.06)",
-                border: "1px solid rgba(99, 102, 241, 0.2)",
+                border: "1px solid rgba(99, 102, 241, 0.15)",
               }}
             />
           ))}
@@ -132,21 +133,37 @@ export function AiProfessorRecommendations() {
                 }}
               >
                 <div>
-                  {/* Top Bar */}
+                  {/* Top Bar: Match Score & Tier */}
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.75rem" }}>
-                    <span
-                      style={{
-                        background: "#6366f1",
-                        color: "#ffffff",
-                        fontWeight: 800,
-                        fontSize: "0.72rem",
-                        padding: "0.2rem 0.6rem",
-                        borderRadius: "100px",
-                        letterSpacing: "0.02em",
-                      }}
-                    >
-                      {rec.matchScore}% Match
-                    </span>
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
+                      <span
+                        style={{
+                          background: rec.matchScore >= 88 ? "#10b981" : "#6366f1",
+                          color: "#ffffff",
+                          fontWeight: 800,
+                          fontSize: "0.72rem",
+                          padding: "0.2rem 0.6rem",
+                          borderRadius: "100px",
+                          letterSpacing: "0.02em",
+                        }}
+                      >
+                        {rec.matchScore}% Match
+                      </span>
+                      {rec.matchTier && (
+                        <span
+                          style={{
+                            background: "rgba(99, 102, 241, 0.08)",
+                            color: "#4f46e5",
+                            fontSize: "0.68rem",
+                            fontWeight: 800,
+                            padding: "0.15rem 0.5rem",
+                            borderRadius: "100px",
+                          }}
+                        >
+                          {rec.matchTier}
+                        </span>
+                      )}
+                    </div>
                     {prof.is_accepting_requests && (
                       <span style={{ fontSize: "0.7rem", fontWeight: 800, color: "#166534", display: "flex", alignItems: "center", gap: "0.25rem" }}>
                         <CheckCircle size={12} color="#166534" /> Accepting
