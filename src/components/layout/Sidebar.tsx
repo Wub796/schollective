@@ -181,7 +181,7 @@ export function Sidebar({ onClose, role = "student" }: SidebarProps) {
       ? [
           { href: "/prof/dashboard",  label: "Dashboard",       sub: "Overview"     },
           { href: "/prof/students",   label: "My Students",     sub: "All Time"     },
-          { href: "/prof/profile",    label: "Profile Preview", sub: "Student View" },
+          { href: "/prof/profile",    label: "My Profile",      sub: "Edit & Preview" },
         ]
       : [
           { href: "/dashboard",  label: "Dashboard",      sub: "Overview"     },
@@ -268,14 +268,17 @@ export function Sidebar({ onClose, role = "student" }: SidebarProps) {
           variants={stagger} initial="hidden" animate="show"
           style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "0.25rem" }}
         >
-          {accountNav.map((navItem) => (
-            <motion.li key={navItem.href} variants={itemVariant}>
-              <NavLink
-                href={navItem.href} label={navItem.label} sub={navItem.sub}
-                active={isActive(navItem.href)} onClose={onClose}
-              />
-            </motion.li>
-          ))}
+          {accountNav.map((navItem) => {
+            const profileHref = role === "professor" ? "/prof/profile" : navItem.href;
+            return (
+              <motion.li key={navItem.href} variants={itemVariant}>
+                <NavLink
+                  href={profileHref} label={navItem.label} sub={navItem.sub}
+                  active={isActive(profileHref)} onClose={onClose}
+                />
+              </motion.li>
+            );
+          })}
         </motion.ul>
       </div>
 
