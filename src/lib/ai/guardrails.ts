@@ -139,3 +139,27 @@ export async function executeAiWithFallback<T>(
     return await fallbackOperation();
   }
 }
+
+/**
+ * 3-Tier Hybrid AI Execution Engine (100% Free):
+ * 1. Primary: Gemini 2.5 Pro (Flagship deep academic reasoning & subfield synergy)
+ * 2. Secondary: Gemini 2.5 Flash (Blazing fast 15 RPM free tier fallback)
+ * 3. Tertiary: High-precision deterministic rule engine (Zero-cost offline fallback)
+ */
+export async function executeHybridAiWithFallback<T>(
+  primaryProOperation: () => Promise<T>,
+  secondaryFlashOperation: () => Promise<T>,
+  deterministicFallback: () => T | Promise<T>
+): Promise<T> {
+  try {
+    return await primaryProOperation();
+  } catch (proErr: any) {
+    console.warn("[HybridAI] Gemini 2.5 Pro rate-limited or busy. Trying Gemini 2.5 Flash:", proErr?.message || proErr);
+    try {
+      return await secondaryFlashOperation();
+    } catch (flashErr: any) {
+      console.warn("[HybridAI] Gemini 2.5 Flash also unavailable. Activating deterministic fallback:", flashErr?.message || flashErr);
+      return await deterministicFallback();
+    }
+  }
+}
