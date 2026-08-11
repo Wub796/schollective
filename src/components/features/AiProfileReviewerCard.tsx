@@ -17,10 +17,26 @@ export function AiProfileReviewerCard({ profileData }: Props) {
   const handleReview = async () => {
     setLoading(true);
     try {
+      // Read active form values directly from the DOM so unsaved edits are evaluated!
+      const bioEl = typeof document !== "undefined" ? (document.getElementById("bio") as HTMLTextAreaElement) : null;
+      const instEl = typeof document !== "undefined" ? (document.getElementById("institution") as HTMLInputElement) : null;
+      const levelEl = typeof document !== "undefined" ? (document.getElementById("education_level") as HTMLSelectElement) : null;
+      const interestsEl = typeof document !== "undefined" ? (document.getElementById("academic_interests") as HTMLInputElement) : null;
+      const extrasEl = typeof document !== "undefined" ? (document.getElementById("extracurriculars") as HTMLInputElement) : null;
+
+      const dynamicPayload = {
+        ...profileData,
+        bio: bioEl ? bioEl.value : profileData?.bio,
+        institution: instEl ? instEl.value : profileData?.institution,
+        education_level: levelEl ? levelEl.value : profileData?.education_level,
+        academic_interests: interestsEl ? interestsEl.value : profileData?.academic_interests,
+        extracurriculars: extrasEl ? extrasEl.value : profileData?.extracurriculars,
+      };
+
       const res = await fetch("/api/ai/review-profile", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(profileData || {}),
+        body: JSON.stringify(dynamicPayload),
       });
 
       const data = await res.json();
@@ -71,7 +87,7 @@ export function AiProfileReviewerCard({ profileData }: Props) {
             Profile <em style={{ fontStyle: "italic", color: "#4f46e5", fontWeight: 300 }}>Reviewer</em>
           </h3>
           <p style={{ fontSize: "0.85rem", color: "#475569", margin: 0, opacity: 0.85 }}>
-            Real-time evaluation of research clarity, academic tone, and outreach readiness.
+            Real-time evaluation of your Bio, Academic Interests, Extracurriculars, & Education Level.
           </p>
         </div>
 
