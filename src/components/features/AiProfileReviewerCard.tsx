@@ -58,7 +58,7 @@ export function AiProfileReviewerCard({ profileData }: Props) {
     <div
       style={{
         background: "rgba(99, 102, 241, 0.06)",
-        border: "1px solid rgba(99, 102, 241, 0.35)",
+        border: "1px solid rgba(99, 102, 241, 0.15)",
         borderRadius: "16px",
         padding: "1.75rem 2rem",
         marginBottom: "2.5rem",

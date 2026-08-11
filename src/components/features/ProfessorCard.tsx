@@ -34,7 +34,7 @@ export function ProfessorCard({ professor }: ProfessorCardProps) {
         position: "relative",
         background: "rgba(255, 255, 255, 0.92)",
         backdropFilter: "blur(16px)",
-        border: "1px solid rgba(99, 102, 241, 0.35)",
+        border: "1px solid rgba(99, 102, 241, 0.15)",
         borderRadius: "20px",
         padding: "2.35rem 2.25rem",
         display: "flex",

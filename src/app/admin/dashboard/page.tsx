@@ -20,16 +20,17 @@ function StatCard({
   return (
     <div
       style={{
-        padding: "2.25rem 2.5rem",
-        border: "1px solid rgba(99, 102, 241, 0.45)",
-        borderRadius: "14px",
-        background: "rgba(99, 102, 241, 0.12)",
+        padding: "2rem 2.25rem",
+        border: "1px solid rgba(99, 102, 241, 0.15)",
+        borderRadius: "16px",
+        background: "#ffffff",
+        boxShadow: "0 4px 18px rgba(99, 102, 241, 0.05)",
         display: "flex", flexDirection: "column", gap: "0.5rem",
       }}
     >
       <span
         className="font-display"
-        style={{ fontSize: "2.8rem", fontWeight: 900, color: "#0f172a", letterSpacing: "-0.04em", lineHeight: 1 }}
+        style={{ fontSize: "2.6rem", fontWeight: 900, color: "#0f172a", letterSpacing: "-0.04em", lineHeight: 1 }}
       >
         {value}
       </span>
@@ -39,9 +40,9 @@ function StatCard({
         </div>
         <div style={{
           display: "inline-block", fontSize: "0.58rem", fontWeight: 800, letterSpacing: "0.2em",
-          textTransform: "uppercase", color: "#0f172a", background: "#6366f1",
+          textTransform: "uppercase", color: "#4f46e5", background: "rgba(99, 102, 241, 0.08)",
           padding: "0.25rem 0.75rem", borderRadius: "100px", width: "fit-content", marginTop: "0.5rem",
-          fontFamily: "var(--font-sans, monospace)", border: "1px solid rgba(79, 70, 229, 0.6)"
+          fontFamily: "var(--font-sans, monospace)", border: "1px solid rgba(99, 102, 241, 0.2)"
         }}>
           {sub}
         </div>
@@ -119,7 +120,7 @@ export default async function AdminDashboard() {
         </div>
 
         {/* ── Hairline ── */}
-        <div style={{ height: "1px", background: "rgba(99, 102, 241, 0.4)" }} />
+        <div style={{ height: "1px", background: "rgba(99, 102, 241, 0.12)" }} />
 
         {/* ── Verification queue ── */}
         <section style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>

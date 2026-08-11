@@ -57,7 +57,7 @@ export function AdminSafetyQueue({ initialFlaggedAccounts = [] }: Props) {
       style={{
         background: "#ffffff",
         borderRadius: "14px",
-        border: "1px solid rgba(99, 102, 241, 0.45)",
+        border: "1px solid rgba(99, 102, 241, 0.15)",
         padding: "1.75rem",
         marginBottom: "2rem",
       }}

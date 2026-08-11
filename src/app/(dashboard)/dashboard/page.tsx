@@ -15,13 +15,14 @@ export const dynamic = "force-dynamic";
 function StatCard({ value, label, sub }: { value: string | number; label: string; sub: string }) {
   return (
     <div style={{
-      padding: "2.25rem 2.5rem",
-      border: "1px solid rgba(99, 102, 241, 0.45)",
-      borderRadius: "14px",
-      background: "rgba(99, 102, 241, 0.12)",
+      padding: "2rem 2.25rem",
+      border: "1px solid rgba(99, 102, 241, 0.15)",
+      borderRadius: "16px",
+      background: "#ffffff",
+      boxShadow: "0 4px 18px rgba(99, 102, 241, 0.05)",
       display: "flex", flexDirection: "column", gap: "0.5rem",
     }}>
-      <span className="font-display" style={{ fontSize: "2.8rem", fontWeight: 900, color: "#0f172a", letterSpacing: "-0.04em", lineHeight: 1 }}>
+      <span className="font-display" style={{ fontSize: "2.6rem", fontWeight: 900, color: "#0f172a", letterSpacing: "-0.04em", lineHeight: 1 }}>
         {value}
       </span>
       <div>
@@ -30,9 +31,9 @@ function StatCard({ value, label, sub }: { value: string | number; label: string
         </div>
         <div style={{
           display: "inline-block", fontSize: "0.58rem", fontWeight: 800, letterSpacing: "0.2em",
-          textTransform: "uppercase", color: "#0f172a", background: "#6366f1",
+          textTransform: "uppercase", color: "#4f46e5", background: "rgba(99, 102, 241, 0.08)",
           padding: "0.25rem 0.75rem", borderRadius: "100px", marginTop: "0.5rem",
-          fontFamily: "var(--font-sans, monospace)", border: "1px solid rgba(79, 70, 229, 0.6)"
+          fontFamily: "var(--font-sans, monospace)", border: "1px solid rgba(99, 102, 241, 0.2)"
         }}>
           {sub}
         </div>
@@ -47,13 +48,13 @@ function QuickAction({ href, title, sub, icon }: { href: string; title: string; 
       <div
         className="quick-action-card"
         style={{
-          padding: "1.5rem 1.75rem",
-          border: "1px solid rgba(99, 102, 241, 0.45)",
-          borderRadius: "14px",
+          padding: "1.35rem 1.6rem",
+          border: "1px solid rgba(99, 102, 241, 0.15)",
+          borderRadius: "16px",
           background: "#ffffff",
           display: "flex", alignItems: "center", justifyContent: "space-between",
           cursor: "pointer", transition: "all 0.2s cubic-bezier(0.22, 1, 0.36, 1)",
-          boxShadow: "0 2px 8px rgba(0, 0, 0, 0.02)",
+          boxShadow: "0 4px 14px rgba(0, 0, 0, 0.03)",
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: "1.25rem" }}>
@@ -257,7 +258,7 @@ export default async function StudentDashboard() {
           </div>
 
           {/* Hairline */}
-          <div style={{ height: "1px", background: "rgba(99, 102, 241, 0.4)" }} />
+          <div style={{ height: "1px", background: "rgba(99, 102, 241, 0.12)" }} />
 
           {/* How it works */}
           <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>

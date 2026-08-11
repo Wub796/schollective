@@ -122,7 +122,7 @@ export function AiProfessorRecommendations() {
                 transition={{ duration: 0.25, delay: idx * 0.06 }}
                 style={{
                   background: "#ffffff",
-                  border: "1px solid rgba(99, 102, 241, 0.35)",
+                  border: "1px solid rgba(99, 102, 241, 0.15)",
                   borderRadius: "14px",
                   padding: "1.35rem",
                   display: "flex",
