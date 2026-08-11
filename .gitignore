@@ -73,3 +73,6 @@ public/hero-glass.png
 .open-next
 .wrangler
 .dev.vars
+
+# Sentry Config File
+.env.sentry-build-plugin
