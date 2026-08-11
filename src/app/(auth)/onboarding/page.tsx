@@ -7,6 +7,7 @@ import { createClient } from "@/utils/supabase/client";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/Button";
 import { InstitutionInput } from "@/components/ui/InstitutionInput";
+import { scoreApplication } from "@/app/admin/dashboard/actions";
 
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 const fadeUp = {
@@ -274,16 +275,37 @@ function OnboardingContent() {
       return;
     }
 
+    // Auto-run AI Professor Reviewer if the new account is a professor
+    let isAutoApproved = false;
+    if (role === "professor") {
+      try {
+        const reviewRes = await scoreApplication(user.id);
+        if (reviewRes?.autoApproved) {
+          isAutoApproved = true;
+        }
+      } catch (reviewErr) {
+        console.warn("[onboarding] Auto-review background execution warning:", reviewErr);
+      }
+    }
+
     // Clear dirty state to allow normal navigation
     setIsDirty(false);
 
-    toast.success("Welcome to Schollective!");
+    if (role === "professor" && isAutoApproved) {
+      toast.success("Welcome to Schollective! Your academic credentials have been verified.");
+    } else {
+      toast.success("Welcome to Schollective!");
+    }
     
     const next = searchParams.get("next");
     if (next && next !== "/dashboard") {
       router.replace(next);
     } else {
-      router.replace(role === "professor" ? "/prof/pending" : "/dashboard");
+      router.replace(
+        role === "professor"
+          ? (isAutoApproved ? "/prof/dashboard" : "/prof/pending")
+          : "/dashboard"
+      );
     }
   };
 
