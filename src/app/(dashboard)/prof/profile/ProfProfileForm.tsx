@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState, useRef } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { updateProfProfile } from "./actions";
 import { createClient } from "@/utils/supabase/client";
 import { toast } from "sonner";
@@ -19,7 +21,11 @@ import {
   Edit3,
   Camera,
   User,
+  KeyRound,
+  LogOut,
+  Sliders,
 } from "lucide-react";
+import { Button } from "@/components/ui/Button";
 
 interface Props {
   profile: any;
@@ -31,7 +37,28 @@ export function ProfProfileForm({ profile: initialProfile }: Props) {
   const [avatarUploading, setAvatarUploading] = useState(false);
   const [activeTab, setActiveTab] = useState<"edit" | "preview">("edit");
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
   const supabase = createClient();
+
+  // Custom Cursor Preference
+  const [customCursor, setCustomCursor] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("schollective-custom-cursor") !== "false";
+    }
+    return true;
+  });
+
+  const handleToggleCursor = () => {
+    const newVal = !customCursor;
+    setCustomCursor(newVal);
+    localStorage.setItem("schollective-custom-cursor", String(newVal));
+    window.dispatchEvent(new Event("storage"));
+  };
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    router.push("/login");
+  };
 
   // Form State for Live Preview & Edit
   const [firstName, setFirstName] = useState(profile?.first_name || "");
@@ -538,6 +565,94 @@ export function ProfProfileForm({ profile: initialProfile }: Props) {
           )}
         </div>
       )}
+
+      {/* Hairline Separator */}
+      <div style={{ height: "1px", background: "rgba(99, 102, 241, 0.15)", marginTop: "1rem" }} />
+
+      {/* Account Settings: Preferences */}
+      <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+          <Sliders size={15} color="#4f46e5" />
+          <span style={{ fontSize: "0.68rem", fontWeight: 800, letterSpacing: "0.18em", textTransform: "uppercase", color: "#4f46e5" }}>
+            Preferences
+          </span>
+        </div>
+        <label style={{ display: "inline-flex", alignItems: "center", gap: "0.75rem", cursor: "pointer", userSelect: "none" }}>
+          <input
+            type="checkbox"
+            checked={customCursor}
+            onChange={handleToggleCursor}
+            style={{ display: "none" }}
+          />
+          <div style={{
+            width: "2.4rem",
+            height: "1.3rem",
+            borderRadius: "100px",
+            background: customCursor ? "#4f46e5" : "rgba(15, 23, 42, 0.15)",
+            position: "relative",
+            transition: "background 0.25s",
+            border: "1px solid rgba(15, 23, 42, 0.05)",
+          }}>
+            <div style={{
+              width: "1rem",
+              height: "1rem",
+              borderRadius: "50%",
+              background: "#ffffff",
+              position: "absolute",
+              top: "50%",
+              left: customCursor ? "calc(100% - 1.15rem)" : "0.15rem",
+              transform: "translateY(-50%)",
+              transition: "left 0.25s",
+              boxShadow: "0 1px 3px rgba(0,0,0,0.15)",
+            }} />
+          </div>
+          <span style={{ fontSize: "0.85rem", fontWeight: 600, color: "#334155" }}>
+            Use custom cursor effect (requires mouse pointer)
+          </span>
+        </label>
+      </div>
+
+      {/* Hairline Separator */}
+      <div style={{ height: "1px", background: "rgba(99, 102, 241, 0.15)" }} />
+
+      {/* Account Settings: Security */}
+      <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+          <KeyRound size={15} color="#4f46e5" />
+          <span style={{ fontSize: "0.68rem", fontWeight: 800, letterSpacing: "0.18em", textTransform: "uppercase", color: "#4f46e5" }}>
+            Security
+          </span>
+        </div>
+        <div>
+          <Button href="/reset-password" variant="ghost" size="lg" icon={<KeyRound size={15} />}>
+            Change Password
+          </Button>
+        </div>
+      </div>
+
+      {/* Hairline Separator */}
+      <div style={{ height: "1px", background: "rgba(99, 102, 241, 0.15)" }} />
+
+      {/* Account Settings: Session */}
+      <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+          <LogOut size={15} color="#dc2626" />
+          <span style={{ fontSize: "0.68rem", fontWeight: 800, letterSpacing: "0.18em", textTransform: "uppercase", color: "#dc2626" }}>
+            Session
+          </span>
+        </div>
+        <div>
+          <Button
+            onClick={handleSignOut}
+            variant="ghost"
+            size="lg"
+            className="hover:border-[rgba(239,68,68,0.4)] hover:text-[#ef4444]"
+            icon={<LogOut size={15} />}
+          >
+            Sign Out
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }
