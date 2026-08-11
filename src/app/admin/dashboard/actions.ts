@@ -16,13 +16,14 @@ export async function scoreApplication(profileId: string) {
     const adminClient = createAdminClient();
 
     // 1. Fetch profile with resilience
-    let { data: profile, error: selectError } = await adminClient
+    let profile: any = null;
+    const { data: primaryProfile, error: selectError } = await adminClient
       .from("profiles")
       .select("id, email, institution, expertise_fields, first_name, last_name, lab_website, publications, status, role")
       .eq("id", profileId)
       .maybeSingle();
 
-    if (selectError || !profile) {
+    if (selectError || !primaryProfile) {
       // Fallback query if optional columns throw schema error
       const { data: fallbackProfile } = await adminClient
         .from("profiles")
@@ -32,17 +33,19 @@ export async function scoreApplication(profileId: string) {
 
       if (!fallbackProfile) return { error: "Profile not found" };
       profile = fallbackProfile;
+    } else {
+      profile = primaryProfile;
     }
 
     // 2. Score Application
     const result = scoreProfessorApplication({
       email:            profile.email || "",
       institution:      profile.institution || "",
-      expertise_fields: (profile as any).expertise_fields || [],
+      expertise_fields: profile.expertise_fields || [],
       first_name:       profile.first_name || "",
       last_name:        profile.last_name || "",
-      lab_website:      (profile as any).lab_website || "",
-      publications:     (profile as any).publications || [],
+      lab_website:      profile.lab_website || "",
+      publications:     profile.publications || [],
     });
 
     const isHighLegitimacy = result.score >= 70 && result.level === "high";
