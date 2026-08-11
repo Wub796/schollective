@@ -53,7 +53,7 @@ export function ThreadCard({ request, viewerRole, hasUnread }: ThreadCardProps) 
           position: "relative",
           background: request.status === "active" ? "rgba(255, 255, 255, 0.98)" : "rgba(255, 255, 255, 0.85)",
           backdropFilter: "blur(12px)",
-          border: request.status === "active" ? "1px solid #4f46e5" : "1px solid rgba(99, 102, 241, 0.45)",
+          border: request.status === "active" ? "1px solid rgba(79, 70, 229, 0.4)" : "1px solid rgba(99, 102, 241, 0.15)",
           borderRadius: "16px",
           padding: "2rem",
           display: "flex",
