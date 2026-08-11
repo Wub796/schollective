@@ -5,6 +5,7 @@ import { createAdminClient } from "@/utils/supabase/admin";
 import { AdminShell } from "@/components/ui/AdminShell";
 import { AdminReviewTable } from "@/components/features/AdminReviewTable";
 import { AdminPreviewControls } from "@/components/features/AdminPreviewControls";
+import { AdminSafetyQueue } from "@/components/features/AdminSafetyQueue";
 import {
   Users, GraduationCap, MessageSquare, ClipboardCheck,
 } from "lucide-react";
@@ -144,6 +145,27 @@ export default async function AdminDashboard() {
           ) : (
             <AdminReviewTable applicants={(pendingProfessors ?? []) as any} />
           )}
+        </section>
+
+        {/* ── AI Safety & Bot Moderation Queue ── */}
+        <section>
+          <AdminSafetyQueue
+            initialFlaggedAccounts={
+              (allProfessors ?? [])
+                .filter((p) => p.ai_level === "suspicious" || (p.ai_flags && p.ai_flags.length > 0))
+                .map((p) => ({
+                  id: p.id,
+                  first_name: p.first_name || undefined,
+                  last_name: p.last_name || undefined,
+                  email: p.email,
+                  role: "professor",
+                  ai_score: p.ai_score,
+                  ai_flags: p.ai_flags,
+                  ai_level: p.ai_level,
+                  created_at: p.created_at,
+                }))
+            }
+          />
         </section>
       </div>
     </AdminShell>

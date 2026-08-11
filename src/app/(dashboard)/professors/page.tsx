@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { ProfessorCard } from "@/components/features/ProfessorCard";
 import { DirectorySearch } from "@/components/features/DirectorySearch";
+import { AiProfessorRecommendations } from "@/components/features/AiProfessorRecommendations";
 import { Button } from "@/components/ui/Button";
 import { ArrowLeft } from "lucide-react";
 
@@ -134,6 +135,9 @@ export default async function ProfessorsPage({ searchParams }: ProfessorsPagePro
           is manually approved via institutional credentials.
         </p>
       </header>
+
+      {/* AI Recommendations */}
+      <AiProfessorRecommendations />
 
       <DirectorySearch
         institutions={distinctInstitutions}
