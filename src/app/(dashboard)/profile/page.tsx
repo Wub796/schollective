@@ -11,6 +11,8 @@ import { Button } from "@/components/ui/Button";
 import { Select } from "@/components/ui/Select";
 import { AiProfileReviewerCard } from "@/components/features/AiProfileReviewerCard";
 
+import { ProfProfileForm } from "@/app/(dashboard)/prof/profile/ProfProfileForm";
+
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
 const fadeUp = {
@@ -152,7 +154,7 @@ export default function ProfilePage() {
       setProfile(data);
       setFetching(false);
     })();
-  }, []);
+  }, [router]);
 
   const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -285,6 +287,31 @@ export default function ProfilePage() {
         <span style={{ fontSize: "0.58rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.3)", fontFamily: "var(--font-sans)" }}>
           Loading…
         </span>
+      </div>
+    );
+  }
+
+  if (profile?.role === "professor") {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: "2rem", maxWidth: "900px" }}>
+        <header style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+            <span style={{ width: "1.5rem", height: "2px", background: "#6366f1", display: "block" }} />
+            <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: "#4f46e5", fontFamily: "var(--font-sans, monospace)" }}>
+              Faculty Portal
+            </span>
+          </div>
+          <h1 className="font-display" style={{ fontSize: "clamp(2.4rem, 4.5vw, 3.6rem)", fontWeight: 900, color: "#0f172a", letterSpacing: "-0.035em", lineHeight: 1.1 }}>
+            Faculty Profile <em style={{ fontStyle: "italic", color: "#4f46e5", fontWeight: 300 }}>Manager</em>
+          </h1>
+          <p style={{ fontSize: "0.9rem", color: "#475569", margin: 0, opacity: 0.85 }}>
+            Manage your account, personal details, research focus, office hours, mentee preferences, and publications.
+          </p>
+        </header>
+
+        <div style={{ height: "1px", background: "rgba(99, 102, 241, 0.15)" }} />
+
+        <ProfProfileForm profile={profile} />
       </div>
     );
   }
