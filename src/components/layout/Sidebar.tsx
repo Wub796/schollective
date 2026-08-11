@@ -179,9 +179,8 @@ export function Sidebar({ onClose, role = "student" }: SidebarProps) {
   const navItems: NavItem[] =
     role === "professor"
       ? [
-          { href: "/prof/dashboard",  label: "Dashboard",       sub: "Overview"     },
-          { href: "/prof/students",   label: "My Students",     sub: "All Time"     },
-          { href: "/prof/profile",    label: "My Profile",      sub: "Edit & Preview" },
+          { href: "/prof/dashboard",  label: "Dashboard",   sub: "Overview" },
+          { href: "/prof/students",   label: "My Students", sub: "All Requests & Threads" },
         ]
       : [
           { href: "/dashboard",  label: "Dashboard",      sub: "Overview"     },
