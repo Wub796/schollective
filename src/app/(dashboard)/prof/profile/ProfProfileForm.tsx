@@ -212,7 +212,7 @@ export function ProfProfileForm({ profile }: Props) {
               style={{
                 width: "100%",
                 background: "#ffffff",
-                border: "1px solid rgba(99, 102, 241, 0.25)",
+                border: "1px solid rgba(99, 102, 241, 0.18)",
                 borderRadius: "14px",
                 padding: "1rem",
                 fontSize: "0.85rem",
@@ -407,7 +407,7 @@ function FieldInput({ id, name, label, value, onChange, placeholder, icon }: { i
         style={{
           width: "100%",
           background: "#ffffff",
-          border: "1px solid rgba(99, 102, 241, 0.25)",
+          border: "1px solid rgba(99, 102, 241, 0.18)",
           borderRadius: "100px",
           padding: "0.75rem 1.25rem",
           fontSize: "0.88rem",
