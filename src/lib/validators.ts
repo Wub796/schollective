@@ -273,6 +273,8 @@ export function scoreProfessorApplication(input: {
   expertise_fields: string[] | string | null | undefined;
   first_name:       string | null | undefined;
   last_name:        string | null | undefined;
+  lab_website?:     string | null | undefined;
+  publications?:    string[] | string | null | undefined;
 }): ProfessorScore {
   const signals: string[] = [];
   const flags:   string[] = [];
@@ -282,6 +284,12 @@ export function scoreProfessorApplication(input: {
   const institution = (input.institution ?? "").toLowerCase().trim();
   const firstName   = (input.first_name ?? "").trim();
   const lastName    = (input.last_name ?? "").trim();
+  const labWebsite  = (input.lab_website ?? "").toLowerCase().trim();
+  const publications = Array.isArray(input.publications)
+    ? input.publications
+    : typeof input.publications === "string"
+    ? input.publications.split("\n").filter(Boolean)
+    : [];
 
   // Normalise expertise to an array of lowercase strings
   let expertiseFields: string[] = [];
@@ -349,6 +357,19 @@ export function scoreProfessorApplication(input: {
     } else if (institution.length > 80) {
       flags.push("Institution name unusually long");
       instScore -= 5;
+    }
+
+    // Lab Website & Publications Signals
+    if (labWebsite) {
+      const isLabAcademic = ACADEMIC_SUFFIXES.some((sfx) => labWebsite.includes(sfx)) || labWebsite.includes("edu") || labWebsite.includes("ac.");
+      if (isLabAcademic) {
+        instScore += 10;
+        signals.push("Verified academic lab website URL provided");
+      }
+    }
+    if (publications.length > 0) {
+      instScore += 5;
+      signals.push(`${publications.length} research publication(s) listed`);
     }
 
     // Suspicious patterns

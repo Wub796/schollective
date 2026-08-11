@@ -18,7 +18,7 @@ export async function scoreApplication(profileId: string) {
     // 1. Fetch profile with resilience
     let { data: profile, error: selectError } = await adminClient
       .from("profiles")
-      .select("id, email, institution, expertise_fields, first_name, last_name, status, role")
+      .select("id, email, institution, expertise_fields, first_name, last_name, lab_website, publications, status, role")
       .eq("id", profileId)
       .maybeSingle();
 
@@ -41,6 +41,8 @@ export async function scoreApplication(profileId: string) {
       expertise_fields: (profile as any).expertise_fields || [],
       first_name:       profile.first_name || "",
       last_name:        profile.last_name || "",
+      lab_website:      (profile as any).lab_website || "",
+      publications:     (profile as any).publications || [],
     });
 
     const isHighLegitimacy = result.score >= 70 && result.level === "high";
