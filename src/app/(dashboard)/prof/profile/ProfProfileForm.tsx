@@ -397,30 +397,17 @@ export function ProfProfileForm({ profile: initialProfile }: Props) {
           </div>
 
           {/* Submit Button */}
-          <button
-            type="submit"
-            disabled={loading}
-            style={{
-              background: "#4f46e5",
-              color: "#ffffff",
-              border: "none",
-              borderRadius: "100px",
-              padding: "0.85rem 2rem",
-              fontSize: "0.88rem",
-              fontWeight: 800,
-              cursor: loading ? "not-allowed" : "pointer",
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "0.5rem",
-              width: "fit-content",
-              boxShadow: "0 4px 14px rgba(79, 70, 229, 0.25)",
-              transition: "all 0.2s ease",
-            }}
-          >
-            {loading ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
-            {loading ? "Saving Profile..." : "Save Profile Details"}
-          </button>
+          <div style={{ display: "flex", justifyContent: "flex-end", paddingTop: "0.5rem" }}>
+            <Button
+              type="submit"
+              disabled={loading}
+              size="lg"
+              className="gap-2"
+              icon={loading ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
+            >
+              {loading ? "Saving Changes…" : "Save Faculty Profile"}
+            </Button>
+          </div>
         </form>
       ) : (
         /* Live Student View Preview */
