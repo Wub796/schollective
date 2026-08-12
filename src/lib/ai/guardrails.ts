@@ -142,8 +142,8 @@ export async function executeAiWithFallback<T>(
 
 /**
  * 3-Tier Hybrid AI Execution Engine (100% Free):
- * 1. Primary: Gemini 2.5 Pro (Flagship deep academic reasoning & subfield synergy)
- * 2. Secondary: Gemini 2.5 Flash (Blazing fast 15 RPM free tier fallback)
+ * 1. Primary: Gemini 3.6 Flash (Best free-tier reasoning model)
+ * 2. Secondary: Gemini 3.5 Flash-Lite (Lightweight fast fallback)
  * 3. Tertiary: High-precision deterministic rule engine (Zero-cost offline fallback)
  */
 export async function executeHybridAiWithFallback<T>(

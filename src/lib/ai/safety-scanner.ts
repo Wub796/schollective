@@ -74,7 +74,7 @@ Return ONLY a valid JSON object matching this schema:
 }`;
 
         const response = await gemini.models.generateContent({
-          model: "gemini-2.5-flash",
+          model: "gemini-3.6-flash",
           contents: prompt,
           config: {
             responseMimeType: "application/json",

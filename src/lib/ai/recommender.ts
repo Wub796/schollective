@@ -147,8 +147,8 @@ Return ONLY a JSON array matching this schema (sorted by matchScore descending, 
   };
 
   return executeHybridAiWithFallback(
-    async () => callModel("gemini-2.5-pro"),
-    async () => callModel("gemini-2.5-flash"),
+    async () => callModel("gemini-3.6-flash"),
+    async () => callModel("gemini-3.5-flash-lite"),
     () => {
       const matches = computeRuleBasedProfessorMatches(student, candidates);
       const fallbackResult: RecommenderResult = {
