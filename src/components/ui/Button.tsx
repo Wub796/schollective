@@ -48,9 +48,8 @@ const Button = React.forwardRef<HTMLElement, ButtonProps>(
 
     const rollContent = isString ? (
       <>
-        {/* Layer 1 — slides up and out (IN NORMAL FLOW) */}
-        <span className="flex relative" style={{ alignItems: "center", justifyContent: "center", gap: icon ? "0.5rem" : "0" }}>
-          {icon && <span className="flex-shrink-0">{icon}</span>}
+        {/* Layer 1 — slides up and out */}
+        <span className="flex relative" style={{ alignItems: "center", justifyContent: "center" }}>
           <span className="flex" style={{ overflow: "hidden", padding: "0.1em 0.1em" }}>
             {chars.map((ch, i) => (
               <span
@@ -64,9 +63,8 @@ const Button = React.forwardRef<HTMLElement, ButtonProps>(
           </span>
         </span>
 
-        {/* Layer 2 — slides up and in (ABSOLUTE) */}
-        <span className="flex" style={{ position: "absolute", inset: 0, alignItems: "center", justifyContent: "center", gap: icon ? "0.5rem" : "0", color: layer2Color, pointerEvents: "none" }}>
-          {icon && <span className="flex-shrink-0">{icon}</span>}
+        {/* Layer 2 — slides up and in */}
+        <span className="flex" style={{ position: "absolute", inset: 0, alignItems: "center", justifyContent: "center", color: layer2Color, pointerEvents: "none" }}>
           <span className="flex" style={{ overflow: "hidden", padding: "0.1em 0.1em" }}>
             {chars.map((ch, i) => (
               <span
@@ -82,12 +80,10 @@ const Button = React.forwardRef<HTMLElement, ButtonProps>(
       </>
     ) : (
       <>
-        <span className="flex transition-transform duration-[450ms] ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:-translate-y-full" style={{ alignItems: "center", justifyContent: "center", gap: "0.5rem" }}>
-          {icon && <span className="flex-shrink-0">{icon}</span>}
+        <span className="flex transition-transform duration-[450ms] ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:-translate-y-full" style={{ alignItems: "center", justifyContent: "center" }}>
           <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}>{children}</span>
         </span>
-        <span className="flex translate-y-full group-hover:translate-y-0 transition-transform duration-[450ms] ease-[cubic-bezier(0.19,1,0.22,1)]" style={{ position: "absolute", inset: 0, alignItems: "center", justifyContent: "center", gap: "0.5rem", pointerEvents: "none" }}>
-          {icon && <span className="flex-shrink-0">{icon}</span>}
+        <span className="flex translate-y-full group-hover:translate-y-0 transition-transform duration-[450ms] ease-[cubic-bezier(0.19,1,0.22,1)]" style={{ position: "absolute", inset: 0, alignItems: "center", justifyContent: "center", pointerEvents: "none" }}>
           <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}>{children}</span>
         </span>
       </>
@@ -104,11 +100,12 @@ const Button = React.forwardRef<HTMLElement, ButtonProps>(
     );
 
     const content = (
-      <>
-        <span style={{ position: "relative", display: "flex", alignItems: "center", zIndex: 1, overflow: "hidden" }}>
+      <span className="inline-flex items-center justify-center gap-2" style={{ position: "relative", zIndex: 1, overflow: "hidden" }}>
+        {icon && <span className="flex-shrink-0 flex items-center justify-center">{icon}</span>}
+        <span className="relative inline-flex items-center justify-center" style={{ overflow: "hidden" }}>
           {rollContent}
         </span>
-      </>
+      </span>
     );
 
     if (href) {
