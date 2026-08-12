@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { submitMentorshipRequest } from "./actions";
 import { Loader2, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
+import posthog from "posthog-js";
 
 interface RequestFormProps {
   professor: {
@@ -109,6 +110,10 @@ export function RequestForm({ professor, requestsToday }: RequestFormProps) {
       if (result?.error) {
         toast.error(result.error);
       } else {
+        posthog.capture("request_form_submitted", {
+          professor_id: professor.id,
+          professor_institution: professor.institution ?? undefined,
+        });
         toast.success("Request sent successfully!");
         router.push("/dashboard");
       }
