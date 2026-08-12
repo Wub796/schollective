@@ -645,10 +645,9 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
             </div>
           </div>
 
-          <div style={{ display: "flex", justifyContent: "flex-end" }}>
-            <Button type="submit" disabled={loading} size="lg" className="gap-2">
-              {loading ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
-              Save Profile Changes
+          <div style={{ display: "flex", justifyContent: "flex-end", paddingTop: "0.5rem" }}>
+            <Button type="submit" disabled={loading} size="lg" icon={loading ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}>
+              {loading ? "Saving Profile…" : "Save Student Profile"}
             </Button>
           </div>
         </form>
@@ -819,11 +818,11 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
           </label>
 
           <div style={{ display: "flex", gap: "0.75rem" }}>
-            <Button href="/reset-password" variant="ghost" size="sm" className="gap-2">
-              <KeyRound size={14} /> Change Password
+            <Button href="/reset-password" variant="ghost" size="sm" icon={<KeyRound size={14} />}>
+              Change Password
             </Button>
-            <Button onClick={handleSignOut} variant="ghost" size="sm" className="gap-2 text-red-600 hover:text-red-700 hover:bg-red-50">
-              <LogOut size={14} /> Sign Out
+            <Button onClick={handleSignOut} variant="outline" size="sm" icon={<LogOut size={14} />} className="text-red-600 border-red-300 hover:bg-red-50 hover:border-red-600 hover:text-red-700">
+              Sign Out
             </Button>
           </div>
         </div>
