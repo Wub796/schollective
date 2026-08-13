@@ -32,6 +32,7 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  serverExternalPackages: ["@sentry/nextjs", "posthog-node"],
   async headers() {
     return [
       {
