@@ -279,6 +279,7 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
 
       toast.success("Profile saved successfully.");
       setProfile((prev: any) => ({ ...prev, ...updates }));
+      router.refresh();
     } catch (error: any) {
       console.error("[StudentProfileForm] update error:", error);
       toast.error(`Save failed: ${error.message}`);

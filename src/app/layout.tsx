@@ -9,6 +9,7 @@ import { CookieBanner } from "@/components/CookieBanner";
 const mulish = Mulish({
   subsets: ["latin"],
   variable: "--font-sans",
+  preload: false,
   display: "swap",
   weight: ["300", "400", "500", "600", "700", "800", "900"],
 });
@@ -16,6 +17,7 @@ const mulish = Mulish({
 const arima = Arima({
   subsets: ["latin"],
   variable: "--font-display",
+  preload: false,
   display: "swap",
   weight: ["300", "400", "500", "600", "700"],
 });
