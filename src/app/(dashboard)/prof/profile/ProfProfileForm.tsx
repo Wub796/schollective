@@ -122,11 +122,12 @@ export function ProfProfileForm({ profile: initialProfile }: Props) {
 
       // 3. Save avatar URL in Neon profiles table
       const avatarUrl = `${publicUrl}?t=${Date.now()}`;
-      await fetch("/api/auth/profile/update", {
+      const profileRes = await fetch("/api/auth/profile/update", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ avatar_url: avatarUrl }),
       });
+      if (!profileRes.ok) throw new Error("Failed to save profile picture");
 
       setProfile((p: any) => ({ ...p, avatar_url: avatarUrl }));
       toast.success("Profile picture updated!");
