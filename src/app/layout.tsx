@@ -4,6 +4,7 @@ import "./globals.css";
 import { Toaster } from "sonner";
 import { CustomCursor } from "@/components/ui/CustomCursor";
 import { AmplitudeAnalytics } from "@/components/analytics/AmplitudeAnalytics";
+import { CookieBanner } from "@/components/CookieBanner";
 
 const mulish = Mulish({
   subsets: ["latin"],
@@ -157,6 +158,8 @@ export default function RootLayout({
         </div>
 
         {/* ── Layer 40: Toasts ────────────────────────────────── */}
+        <CookieBanner />
+
         <Toaster
           position="top-right"
           toastOptions={{
