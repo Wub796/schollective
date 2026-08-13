@@ -85,6 +85,18 @@ const googleProvider =
 export const auth = betterAuth({
   database: { dialect: PG_DIALECT, type: "postgres" },
   baseURL: process.env.BETTER_AUTH_URL || "https://schollective.com",
+  session: {
+    expiresIn: 60 * 60 * 24 * 365,
+    updateAge: 60 * 60 * 24,
+  },
+  advanced: {
+    defaultCookieAttributes: {
+      httpOnly: true,
+      secure: true,
+      sameSite: "lax",
+      path: "/",
+    },
+  },
   trustedOrigins: [
     "https://schollective.com",
     "https://www.schollective.com",
