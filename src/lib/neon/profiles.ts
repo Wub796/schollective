@@ -152,6 +152,7 @@ export async function upsertProfile(profile: Partial<ProfileRecord> & { id: stri
       first_name = COALESCE(EXCLUDED.first_name, profiles.first_name),
       preferred_name = COALESCE(EXCLUDED.preferred_name, profiles.preferred_name),
       last_name = COALESCE(EXCLUDED.last_name, profiles.last_name),
+      avatar_url = COALESCE(EXCLUDED.avatar_url, profiles.avatar_url),
       institution = COALESCE(EXCLUDED.institution, profiles.institution),
       education_level = COALESCE(EXCLUDED.education_level, profiles.education_level),
       department = COALESCE(EXCLUDED.department, profiles.department),
