@@ -1,25 +1,30 @@
 import { PostHog } from "posthog-node";
 
-let posthogClient: PostHog | null = null;
+let client: PostHog | null = null;
 
-export function getPostHogClient(): PostHog | null {
-  if (!process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN) {
-    if (process.env.NODE_ENV === "development") {
-      console.error(
-        "NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN variable required by PostHog is missing or un-configured, " +
-          "this causes events to be silently missed. " +
-          "This error stops appearing once NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN is configured"
-      );
-    }
-    return null;
-  }
+function getClient(): PostHog | null {
+  const apiKey = process.env.POSTHOG_API_KEY;
+  if (!apiKey) return null;
+  client ??= new PostHog(apiKey, {
+    host: process.env.POSTHOG_HOST || "https://us.i.posthog.com",
+    flushAt: 1,
+    flushInterval: 0,
+  });
+  return client;
+}
 
-  if (!posthogClient) {
-    posthogClient = new PostHog(process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN, {
-      host: process.env.NEXT_PUBLIC_POSTHOG_HOST,
-      flushAt: 1,
-      flushInterval: 0,
-    });
+export async function captureServerEvent(
+  distinctId: string,
+  event: string,
+  properties?: Record<string, unknown>,
+): Promise<void> {
+  const posthog = getClient();
+  if (!posthog) return;
+
+  try {
+    posthog.capture({ distinctId, event, properties });
+    await posthog.flush();
+  } catch (error) {
+    console.error("[posthog] server capture failed:", error);
   }
-  return posthogClient;
 }
