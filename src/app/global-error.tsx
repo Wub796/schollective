@@ -1,26 +1,26 @@
 "use client";
 
-import * as Sentry from "@sentry/nextjs";
-import NextError from "next/error";
-import { useEffect } from "react";
+import { ErrorState } from "@/components/ui/ErrorState";
 
+/**
+ * Catches a failure in the root layout itself, which is why this is the one
+ * error surface that has to render its own <html> and <body>: the root layout,
+ * and therefore `globals.css`, did not run.
+ *
+ * `ErrorState` writes every colour as `var(--token, literal)`, so it renders in
+ * the app's ink-on-paper palette here even with no stylesheet loaded.
+ */
 export default function GlobalError({
   error,
+  reset,
 }: {
   error: Error & { digest?: string };
+  reset: () => void;
 }) {
-  useEffect(() => {
-    Sentry.captureException(error);
-  }, [error]);
-
   return (
     <html lang="en">
-      <body>
-        {/* `NextError` is the default Next.js error page component. Its type
-        definition requires a `statusCode` prop. However, since the App Router
-        does not expose status codes for errors, we simply pass 0 to render a
-        generic error message. */}
-        <NextError statusCode={0} />
+      <body style={{ margin: 0 }}>
+        <ErrorState error={error} reset={reset} scope="root-layout" />
       </body>
     </html>
   );
