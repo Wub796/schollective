@@ -7,6 +7,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { authClient, authErrorMessage } from "@/lib/auth-client";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/Button";
+import { useHydrated } from "@/lib/use-hydrated";
 import { InstitutionInput } from "@/components/ui/InstitutionInput";
 import { validateEmail, type EmailValidationResult } from "@/lib/validators-client";
 import posthog from "posthog-js";
@@ -146,6 +147,7 @@ function SignupContent() {
   const [role, setRole] = useState<Role>("student");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const hydrated = useHydrated();
 
   // If there's an error in the URL (e.g. from OAuth callback), show it
   useEffect(() => {
@@ -379,7 +381,7 @@ function SignupContent() {
             ))}
           </motion.div>
 
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} method="post">
             <div style={{ display: "flex", flexDirection: "column", gap: "3rem" }}>
 
               {/* Name row */}
@@ -530,7 +532,7 @@ function SignupContent() {
               <motion.div variants={fadeUp} style={{ paddingTop: "0.25rem", display: "flex", flexDirection: "column", gap: "0.75rem" }}>
                 <Button
                   type="submit"
-                  disabled={loading}
+                  disabled={loading || !hydrated}
                   variant="primary"
                   size="lg"
                   className="w-full uppercase tracking-widest text-[0.6rem]"

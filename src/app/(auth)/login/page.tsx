@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { useRouter, useSearchParams } from "next/navigation";
 import { authClient, authErrorMessage } from "@/lib/auth-client";
 import { Button } from "@/components/ui/Button";
+import { useHydrated } from "@/lib/use-hydrated";
 import { toast } from "sonner";
 import posthog from "posthog-js";
 
@@ -87,6 +88,7 @@ function LoginContent() {
   const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [error,   setError]   = useState<string | null>(null);
+  const hydrated = useHydrated();
 
   useEffect(() => {
     const errorParam = searchParams.get("error");
@@ -279,7 +281,7 @@ function LoginContent() {
             <em style={{ fontStyle: "italic", color: "rgba(15, 23, 42, 0.38)" }}>back.</em>
           </motion.h1>
 
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} method="post">
             <div style={{ display: "flex", flexDirection: "column", gap: "3rem" }}>
               <motion.div variants={fadeUp}>
                 <Field id="email" name="email" type="email" label="Institutional Email" placeholder="name@university.edu" required />
@@ -309,7 +311,7 @@ function LoginContent() {
                 {/* Primary button */}
                 <Button
                   type="submit"
-                  disabled={loading}
+                  disabled={loading || !hydrated}
                   variant="primary"
                   size="lg"
                   className="w-full uppercase tracking-widest text-[0.6rem]"

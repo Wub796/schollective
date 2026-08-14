@@ -7,6 +7,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/Button";
+import { useHydrated } from "@/lib/use-hydrated";
 
 export const dynamic = "force-dynamic";
 
@@ -61,6 +62,7 @@ function ResetPasswordContent() {
   const token = searchParams.get("token") || searchParams.get("code");
   const [step, setStep]     = useState<Step>(token ? "update" : "request");
   const [loading, setLoading] = useState(false);
+  const hydrated = useHydrated();
   const [sent, setSent]     = useState(false);
   const [error, setError]   = useState<string | null>(null);
 
@@ -150,7 +152,7 @@ function ResetPasswordContent() {
         <AnimatePresence mode="wait">
           {/* ── Step 1: Email request ── */}
           {step === "request" && !sent && (
-            <motion.form key="request" onSubmit={handleRequest}
+            <motion.form key="request" onSubmit={handleRequest} method="post"
               initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
               style={{ display: "flex", flexDirection: "column", gap: "3rem" }}
             >
@@ -161,7 +163,7 @@ function ResetPasswordContent() {
               {error && <p style={{ fontSize: "0.78rem", color: "#ff7070", fontFamily: "var(--font-sans)" }}>{error}</p>}
               <Button
                 type="submit"
-                disabled={loading}
+                disabled={loading || !hydrated}
                 variant="primary"
                 size="lg"
                 className="w-full uppercase tracking-widest text-[0.6rem]"
@@ -188,7 +190,7 @@ function ResetPasswordContent() {
 
           {/* ── Step 2: Set new password ── */}
           {step === "update" && (
-            <motion.form key="update" onSubmit={handleUpdate}
+            <motion.form key="update" onSubmit={handleUpdate} method="post"
               initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
               style={{ display: "flex", flexDirection: "column", gap: "3rem" }}
             >
@@ -200,7 +202,7 @@ function ResetPasswordContent() {
               {error && <p style={{ fontSize: "0.78rem", color: "#ff7070", fontFamily: "var(--font-sans)" }}>{error}</p>}
               <Button
                 type="submit"
-                disabled={loading}
+                disabled={loading || !hydrated}
                 variant="primary"
                 size="lg"
                 className="w-full uppercase tracking-widest text-[0.6rem]"
