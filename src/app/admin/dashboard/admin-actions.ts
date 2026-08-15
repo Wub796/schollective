@@ -11,8 +11,9 @@ const VIEW_AS_COOKIE = "x-admin-view-as";
 /**
  * Admin: enter/exit "preview as" mode.
  * Sets an httpOnly cookie so the student/prof dashboards let the admin through.
+ * If launchTour is true, automatically appends ?tour=true to test the onboarding tour.
  */
-export async function setAdminViewAs(role: "student" | "professor" | null) {
+export async function setAdminViewAs(role: "student" | "professor" | null, launchTour?: boolean) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return;
@@ -28,7 +29,8 @@ export async function setAdminViewAs(role: "student" | "professor" | null) {
       path: "/",
       maxAge: 60 * 60, // 1 hour
     });
-    redirect(role === "student" ? "/dashboard" : "/prof/dashboard");
+    const targetPath = role === "student" ? "/dashboard" : "/prof/dashboard";
+    redirect(launchTour ? `${targetPath}?tour=true` : targetPath);
   } else {
     cookieStore.delete(VIEW_AS_COOKIE);
     redirect("/admin/dashboard");

@@ -35,19 +35,37 @@ export function InteractiveOnboardingTour({ role, steps }: InteractiveOnboarding
   const [currentStepIndex, setCurrentStepIndex] = useState(-1); // -1 = welcome, steps.length = complete
   const [rect, setRect] = useState<DOMRect | null>(null);
 
-  // Check if first-time user
+  // Check if first-time user OR triggered via ?tour=true query param
   useEffect(() => {
     if (typeof window !== "undefined") {
+      const urlParams = new URLSearchParams(window.location.search);
+      const forceTour =
+        urlParams.get("tour") === "true" ||
+        urlParams.get("tour") === "1" ||
+        urlParams.get("tour") === "open";
       const completed = localStorage.getItem(tourKey) === "completed";
-      if (!completed) {
+
+      if (forceTour || !completed) {
         const timer = setTimeout(() => {
           setIsOpen(true);
-          setCurrentStepIndex(-1); // start with welcome
-        }, 750);
+          setCurrentStepIndex(-1); // start with welcome splash
+        }, 650);
         return () => clearTimeout(timer);
       }
     }
   }, [tourKey]);
+
+  // Listen for on-demand tour launch events (e.g. from Admin preview banner)
+  useEffect(() => {
+    const handleLaunch = () => {
+      setCurrentStepIndex(-1);
+      setIsOpen(true);
+    };
+    window.addEventListener("schollective:launch-tour", handleLaunch);
+    return () => {
+      window.removeEventListener("schollective:launch-tour", handleLaunch);
+    };
+  }, []);
 
   const updateRect = useCallback(() => {
     if (!isOpen || currentStepIndex < 0 || currentStepIndex >= steps.length) {
