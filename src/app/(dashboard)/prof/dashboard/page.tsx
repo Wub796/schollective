@@ -5,10 +5,56 @@ import { createClient } from "@/utils/supabase/server";
 import { RequestQueueCard } from "@/components/features/RequestQueueCard";
 import { AcceptingToggle } from "@/components/features/AcceptingToggle";
 import { ProfProfileForm } from "@/app/(dashboard)/prof/profile/ProfProfileForm";
+import { InteractiveOnboardingTour, TourStep } from "@/components/features/InteractiveOnboardingTour";
 import { Inbox } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 
 export const dynamic = "force-dynamic";
+
+const PROF_TOUR_STEPS: TourStep[] = [
+  {
+    targetId: "tour-prof-header",
+    title: "Your Faculty Dashboard",
+    description: "Welcome to your command center. From here you can manage availability, review student requests, and fine-tune your research profile — all in one place.",
+    emoji: "🏛️",
+  },
+  {
+    targetId: "tour-availability-toggle",
+    title: "Mentorship Availability",
+    description: "Toggle whether your lab is currently accepting mentorship requests. When off, students won't be able to submit new requests — existing conversations remain open.",
+    emoji: "🟢",
+  },
+  {
+    targetId: "tour-request-queue",
+    title: "Incoming Request Queue",
+    description: "This is where student outreach cards appear. Review their credentials, read their research statement, and accept or decline mentorship requests directly from here.",
+    emoji: "📬",
+  },
+  {
+    targetId: "tour-prof-profile-section",
+    title: "Faculty Profile & Preferences",
+    description: "This section header leads into your full editable faculty profile below — academic position, department, research focus, publications, office hours, and more.",
+    emoji: "📝",
+  },
+  {
+    targetId: "tour-prof-profile-editor",
+    title: "Edit Profile Details",
+    description: "Update your academic credentials, research interests, accepted mentee levels, lab website, and featured publications. Students see this info when browsing mentors.",
+    emoji: "✏️",
+  },
+  {
+    targetId: "tour-prof-tab-switcher",
+    title: "Student View Preview",
+    description: "Switch to 'Student View Preview' to see exactly how your profile card appears to prospective mentees. Perfect for testing your presentation before going live.",
+    emoji: "👁️",
+  },
+  {
+    targetId: "tour-prof-save-button",
+    title: "Save Faculty Profile",
+    description: "After making changes, click 'Save Faculty Profile' to update your listing. Changes are immediately visible to students browsing the mentor directory.",
+    emoji: "💾",
+  },
+];
 
 export default async function ProfessorDashboard() {
   const supabase = await createClient();
@@ -66,8 +112,11 @@ export default async function ProfessorDashboard() {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "3.5rem", maxWidth: "950px", paddingBottom: "6rem" }}>
 
+      {/* Interactive Onboarding Tour for Faculty */}
+      <InteractiveOnboardingTour role="professor" steps={PROF_TOUR_STEPS} />
+
       {/* ── Header ──────────────────────────────────────────────── */}
-      <header style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+      <header data-tour="tour-prof-header" style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
           <span style={{ width: "1.5rem", height: "1px", background: "rgba(15, 23, 42, 0.2)", display: "block" }} />
           <span style={{
@@ -127,7 +176,7 @@ export default async function ProfessorDashboard() {
       <div style={{ height: "1px", background: "rgba(79, 70, 229, 0.1)" }} />
 
       {/* ── Request Queue ─────────────────────────────────────── */}
-      <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+      <div data-tour="tour-request-queue" style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
           <span style={{ width: "1rem", height: "1px", background: "rgba(15, 23, 42, 0.2)", display: "block" }} />
           <h2 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "rgba(15, 23, 42, 0.85)", letterSpacing: "-0.025em" }}>
@@ -169,7 +218,7 @@ export default async function ProfessorDashboard() {
       <div style={{ height: "1px", background: "rgba(79, 70, 229, 0.1)" }} />
 
       {/* ── Faculty Profile Manager ─────────────────────────────── */}
-      <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+      <div data-tour="tour-prof-profile-section" style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
           <span style={{ width: "1.5rem", height: "2px", background: "#6366f1", display: "block" }} />
           <h2 className="font-display" style={{ fontSize: "1.3rem", fontWeight: 800, color: "#0f172a", letterSpacing: "-0.025em" }}>

@@ -229,7 +229,12 @@ function OnboardingContent() {
 
     if (role === "student") {
       payload.education_level = fd.get("education_level") as string;
+      payload.major = (fd.get("major") as string ?? "").trim();
+      payload.graduation_year = (fd.get("graduation_year") as string ?? "").trim();
       payload.bio = (fd.get("bio") as string ?? "").trim();
+      payload.portfolio_url = (fd.get("portfolio_url") as string ?? "").trim();
+      payload.seeking_mentorship_type = (fd.get("seeking_mentorship_type") as string ?? "").trim();
+
       const interestsRaw = fd.get("academic_interests") as string;
       payload.academic_interests = interestsRaw
         ? interestsRaw.split(",").map((s) => s.trim()).filter(Boolean)
@@ -238,13 +243,37 @@ function OnboardingContent() {
       payload.extracurriculars = extrasRaw
         ? extrasRaw.split(",").map((s) => s.trim()).filter(Boolean)
         : [];
+      const courseworkRaw = fd.get("coursework") as string;
+      payload.coursework = courseworkRaw
+        ? courseworkRaw.split(",").map((s) => s.trim()).filter(Boolean)
+        : [];
+      const skillsRaw = fd.get("skills_and_tools") as string;
+      payload.skills_and_tools = skillsRaw
+        ? skillsRaw.split(",").map((s) => s.trim()).filter(Boolean)
+        : [];
     }
     if (role === "professor") {
-      const raw = fd.get("expertise") as string;
-      const expertise = raw
-        ? raw.split(",").map((s) => s.trim()).filter(Boolean)
+      payload.academic_title = (fd.get("academic_title") as string ?? "").trim();
+      payload.department = (fd.get("department") as string ?? "").trim();
+      payload.lab_website = (fd.get("lab_website") as string ?? "").trim();
+      payload.office_hours = (fd.get("office_hours") as string ?? "").trim();
+
+      const rawExpertise = fd.get("expertise") as string;
+      const expertise = rawExpertise
+        ? rawExpertise.split(",").map((s) => s.trim()).filter(Boolean)
         : [];
       payload.expertise_fields = expertise;
+
+      const rawMenteeLevels = fd.get("accepting_student_types") as string;
+      payload.accepting_student_types = rawMenteeLevels
+        ? rawMenteeLevels.split(",").map((s) => s.trim()).filter(Boolean)
+        : [];
+
+      const rawPubs = fd.get("publications") as string;
+      payload.publications = rawPubs
+        ? rawPubs.split("\n").map((s) => s.trim()).filter(Boolean)
+        : [];
+
       payload.status = "pending";
 
       const fName = payload.first_name || "";
@@ -257,11 +286,24 @@ function OnboardingContent() {
       .from("profiles")
       .upsert(payload, { onConflict: "id" });
 
-    if (upsertError && (upsertError.message?.includes("schema cache") || upsertError.message?.includes("academic_interests") || upsertError.message?.includes("extracurriculars") || upsertError.message?.includes("bio"))) {
-      console.warn("[onboarding] Schema cache error — retrying without optional student profile fields:", upsertError.message);
+    if (upsertError && (upsertError.message?.includes("schema cache") || upsertError.message?.includes("academic_interests") || upsertError.message?.includes("extracurriculars") || upsertError.message?.includes("bio") || upsertError.message?.includes("major") || upsertError.message?.includes("coursework") || upsertError.message?.includes("skills_and_tools") || upsertError.message?.includes("portfolio_url") || upsertError.message?.includes("graduation_year") || upsertError.message?.includes("seeking_mentorship_type"))) {
+      console.warn("[onboarding] Schema cache error — retrying with core student profile fields:", upsertError.message);
       delete payload.bio;
       delete payload.academic_interests;
       delete payload.extracurriculars;
+      delete payload.major;
+      delete payload.graduation_year;
+      delete payload.coursework;
+      delete payload.skills_and_tools;
+      delete payload.portfolio_url;
+      delete payload.seeking_mentorship_type;
+      delete payload.academic_title;
+      delete payload.department;
+      delete payload.lab_website;
+      delete payload.office_hours;
+      delete payload.accepting_student_types;
+      delete payload.publications;
+
       const retry = await supabase
         .from("profiles")
         .upsert(payload, { onConflict: "id" });
@@ -344,7 +386,7 @@ function OnboardingContent() {
         variants={stagger} initial="hidden" animate="show"
         style={{
           position: "relative", zIndex: 1,
-          width: "100%", maxWidth: "480px",
+          width: "100%", maxWidth: "560px",
         }}
       >
         {/* Wordmark */}
@@ -358,7 +400,7 @@ function OnboardingContent() {
         <motion.div variants={fadeUp} style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.5rem" }}>
           <span style={{ width: "1.5rem", height: "1px", background: "rgba(15, 23, 42, 0.2)", display: "block" }} />
           <span style={{ fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.38em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.32)", fontFamily: "var(--font-sans)" }}>
-            One last step
+            Complete Profile Setup
           </span>
         </motion.div>
 
@@ -367,15 +409,15 @@ function OnboardingContent() {
           fontSize: "clamp(2.4rem, 5vw, 3.5rem)", fontWeight: 900, color: "var(--text-primary)",
           letterSpacing: "-0.035em", lineHeight: 0.95, marginBottom: "2rem",
         }}>
-          Complete your<br />
-          <em style={{ fontStyle: "italic", color: "rgba(15, 23, 42, 0.35)" }}>profile.</em>
+          Set up your<br />
+          <em style={{ fontStyle: "italic", color: "rgba(15, 23, 42, 0.35)" }}>academic profile.</em>
         </motion.h1>
 
         <motion.p variants={fadeUp} style={{
           fontSize: "0.88rem", color: "rgba(15, 23, 42, 0.55)",
           marginBottom: "2.5rem", lineHeight: 1.7,
         }}>
-          Tell us a bit about yourself so we can connect you with the right people.
+          Configure your academic details so we can match you with the right research mentors and scholars.
         </motion.p>
 
         {/* Role indicator */}
@@ -412,7 +454,7 @@ function OnboardingContent() {
         )}
 
         <form onSubmit={handleSubmit} onChange={() => setIsDirty(true)}>
-          <motion.div variants={fadeUp} style={{ display: "flex", flexDirection: "column", gap: "3rem" }}>
+          <motion.div variants={fadeUp} style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }}>
 
             {/* Name row */}
             <div className="grid-2" style={{ gap: "1.5rem" }}>
@@ -426,7 +468,7 @@ function OnboardingContent() {
             <AnimatePresence mode="wait">
               {role === "student" ? (
                 <motion.div key="student" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.25 }}>
-                  <div style={{ display: "flex", flexDirection: "column", gap: "2.25rem" }}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
                     <div>
                       <label htmlFor="education_level" style={{ display: "block", fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: "#0f172a", marginBottom: "0.55rem", fontFamily: "var(--font-sans)" }}>
                         Education Level
@@ -457,20 +499,46 @@ function OnboardingContent() {
                         <option value="graduate">Graduate (Master&apos;s / PhD)</option>
                       </select>
                     </div>
-                    <Field
-                      id="institution" name="institution"
-                      label="School (High School or University)"
-                      placeholder="e.g. Westwood High School, Stanford, …"
-                    />
 
-                    {/* ── Student profile fields ── */}
+                    <div className="grid-2" style={{ gap: "1.5rem" }}>
+                      <Field
+                        id="institution" name="institution"
+                        label="School / Institution"
+                        placeholder="e.g. Westwood High, Stanford..."
+                      />
+                      <Field
+                        id="major" name="major"
+                        label="Major / Field of Study (optional)"
+                        placeholder="e.g. Computer Science, Bioengineering"
+                      />
+                    </div>
+
+                    <div className="grid-2" style={{ gap: "1.5rem" }}>
+                      <Field
+                        id="graduation_year" name="graduation_year"
+                        label="Expected Grad Year (optional)"
+                        placeholder="e.g. 2026, 2027"
+                      />
+                      <Field
+                        id="seeking_mentorship_type" name="seeking_mentorship_type"
+                        label="Mentorship Type (optional)"
+                        placeholder="e.g. Summer Science Fair, REU Prep"
+                      />
+                    </div>
+
                     <div style={{ height: "1px", background: "rgba(15, 23, 42, 0.06)", margin: "0.25rem 0" }} />
 
                     <TextArea
                       id="bio" name="bio"
-                      label="Short Bio (optional)"
+                      label="Short Bio / Research curiosity (optional)"
                       placeholder="Tell professors what scientific topics drive your curiosity and your goals..."
                       maxLength={280}
+                    />
+
+                    <Field
+                      id="coursework" name="coursework"
+                      label="AP/IB & Advanced Coursework (optional)"
+                      placeholder="e.g. AP Bio, AP Physics C, Multivariable Calculus, Data Structures"
                     />
 
                     <Field
@@ -481,14 +549,26 @@ function OnboardingContent() {
 
                     <Field
                       id="extracurriculars" name="extracurriculars"
-                      label="Extracurriculars, Competitions & Projects (optional)"
-                      placeholder="e.g. Science Fair / ISEF Finalist, USAMO, USACO, MIT PRIMES, Unity Game Dev, Robotics Captain"
+                      label="Extracurriculars & Projects (optional)"
+                      placeholder="e.g. Science Fair / ISEF Finalist, USACO, MIT PRIMES, Robotics Captain"
+                    />
+
+                    <Field
+                      id="skills_and_tools" name="skills_and_tools"
+                      label="Technical Skills & Tools (optional)"
+                      placeholder="e.g. Python, PyTorch, R, CRISPR lab bench, MATLAB"
+                    />
+
+                    <Field
+                      id="portfolio_url" name="portfolio_url"
+                      label="Portfolio / Github Link (optional)"
+                      placeholder="e.g. https://github.com/scholar-jane"
                     />
                   </div>
                 </motion.div>
               ) : (
                 <motion.div key="prof" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.25 }}>
-                  <div style={{ display: "flex", flexDirection: "column", gap: "2.25rem" }}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
                     <div>
                       <label htmlFor="institution" style={{
                         display: "block", fontSize: "0.62rem", fontWeight: 800,
@@ -505,7 +585,22 @@ function OnboardingContent() {
                       />
                       <input type="hidden" name="institution" value={institution} />
                     </div>
-                    <Field id="expertise" name="expertise" label="Expertise Fields (comma-separated)" placeholder="e.g. Machine Learning, Bio-Ethics" required />
+
+                    <div className="grid-2" style={{ gap: "1.5rem" }}>
+                      <Field id="academic_title" name="academic_title" label="Academic Position / Title" placeholder="e.g. Associate Professor" />
+                      <Field id="department" name="department" label="Department" placeholder="e.g. Computer Science" />
+                    </div>
+
+                    <Field id="expertise" name="expertise" label="Expertise Fields (comma-separated)" placeholder="e.g. Machine Learning, Computational Biology" required />
+
+                    <div className="grid-2" style={{ gap: "1.5rem" }}>
+                      <Field id="lab_website" name="lab_website" label="Lab Website URL (optional)" placeholder="https://lab.university.edu" />
+                      <Field id="office_hours" name="office_hours" label="Office Hours (optional)" placeholder="e.g. Tue/Thu 2-4 PM PST" />
+                    </div>
+
+                    <Field id="accepting_student_types" name="accepting_student_types" label="Mentee Levels Accepted (optional)" placeholder="e.g. High School, Undergraduate, PhD" />
+
+                    <TextArea id="publications" name="publications" label="Featured Publications (optional, one per line)" placeholder="1. Smith J. et al. (2025) Neural Networks in Genomics..." maxLength={500} />
                   </div>
                 </motion.div>
               )}

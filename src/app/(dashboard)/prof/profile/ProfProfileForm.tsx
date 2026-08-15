@@ -175,7 +175,7 @@ export function ProfProfileForm({ profile: initialProfile }: Props) {
   const publicationsArray = publications.split("\n").map((s: string) => s.trim()).filter(Boolean);
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }}>
+    <div data-tour="tour-prof-profile-editor" style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }}>
       {/* Header Avatar Row */}
       <div style={{ display: "flex", alignItems: "center", gap: "1.5rem", flexWrap: "wrap" }}>
         <div style={{ position: "relative" }}>
@@ -241,7 +241,7 @@ export function ProfProfileForm({ profile: initialProfile }: Props) {
       </div>
 
       {/* Tab Switcher */}
-      <div style={{ display: "flex", gap: "0.5rem", background: "rgba(15, 23, 42, 0.04)", borderRadius: "100px", padding: "0.3rem", width: "fit-content" }}>
+      <div data-tour="tour-prof-tab-switcher" style={{ display: "flex", gap: "0.5rem", background: "rgba(15, 23, 42, 0.04)", borderRadius: "100px", padding: "0.3rem", width: "fit-content" }}>
         <button
           type="button"
           onClick={() => setActiveTab("edit")}
@@ -402,7 +402,7 @@ export function ProfProfileForm({ profile: initialProfile }: Props) {
           </div>
 
           {/* Submit Button */}
-          <div style={{ display: "flex", justifyContent: "flex-end", paddingTop: "0.5rem" }}>
+          <div data-tour="tour-prof-save-button" style={{ display: "flex", justifyContent: "flex-end", paddingTop: "0.5rem" }}>
             <Button
               type="submit"
               disabled={loading}
