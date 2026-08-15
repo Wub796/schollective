@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { createClient } from "@/utils/supabase/client";
+import { Sparkles } from "lucide-react";
 
 interface NavItem {
   href: string;
@@ -278,6 +279,66 @@ export function Sidebar({ onClose, role = "student" }: SidebarProps) {
               </motion.li>
             );
           })}
+
+          {/* On-demand Product Tour Trigger */}
+          <motion.li variants={itemVariant}>
+            <button
+              type="button"
+              onClick={() => {
+                if (onClose) onClose();
+                window.dispatchEvent(new CustomEvent("schollective:launch-tour"));
+              }}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "0.85rem",
+                width: "100%",
+                padding: "0.8rem 1rem",
+                borderRadius: "10px",
+                textDecoration: "none",
+                background: "transparent",
+                border: "1px solid transparent",
+                cursor: "pointer",
+                textAlign: "left",
+                transition: "all 0.2s cubic-bezier(0.22, 1, 0.36, 1)",
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLElement).style.background = "var(--bg-surface-3)";
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.background = "transparent";
+              }}
+            >
+              <div style={{ flex: 1, minWidth: 0, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <div>
+                  <span style={{
+                    display: "block",
+                    fontSize: "0.82rem",
+                    fontWeight: 500,
+                    color: "var(--accent)",
+                    letterSpacing: "0.005em",
+                    lineHeight: 1.3,
+                  }}>
+                    Product Tour
+                  </span>
+                  <span style={{
+                    display: "block",
+                    fontSize: "0.5rem",
+                    fontWeight: 700,
+                    letterSpacing: "0.1em",
+                    textTransform: "uppercase",
+                    color: "rgba(79, 70, 229, 0.6)",
+                    fontFamily: "var(--font-sans, monospace)",
+                    lineHeight: 1,
+                    marginTop: "0.2rem",
+                  }}>
+                    Interactive Walkthrough
+                  </span>
+                </div>
+                <Sparkles size={13} color="#4f46e5" style={{ opacity: 0.8 }} />
+              </div>
+            </button>
+          </motion.li>
         </motion.ul>
       </div>
 
