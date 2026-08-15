@@ -299,7 +299,7 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
   return (
     <div data-tour="tour-profile-editor" style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }}>
       {/* Header Avatar Row */}
-      <div style={{ display: "flex", alignItems: "center", gap: "1.5rem", flexWrap: "wrap" }}>
+      <div data-tour="tour-profile-avatar" style={{ display: "flex", alignItems: "center", gap: "1.5rem", flexWrap: "wrap" }}>
         <div style={{ position: "relative" }}>
           <div
             style={{
@@ -424,13 +424,15 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
       </div>
 
       {/* Dynamic Education Guidance Banner */}
-      <div style={{ background: "rgba(99, 102, 241, 0.06)", borderRadius: "14px", padding: "1rem 1.25rem", border: "1px solid rgba(99, 102, 241, 0.2)", display: "flex", alignItems: "center", gap: "0.75rem", fontSize: "0.82rem", color: "#334155", lineHeight: 1.5 }}>
+      <div data-tour="tour-education-guidance" style={{ background: "rgba(99, 102, 241, 0.06)", borderRadius: "14px", padding: "1rem 1.25rem", border: "1px solid rgba(99, 102, 241, 0.2)", display: "flex", alignItems: "center", gap: "0.75rem", fontSize: "0.82rem", color: "#334155", lineHeight: 1.5 }}>
         <HelpCircle size={20} color="#4f46e5" style={{ flexShrink: 0 }} />
         <div>{levelConfig.tip}</div>
       </div>
 
       {/* AI Profile Reviewer Card Embedded directly */}
-      <AiProfileReviewerCard profileData={{ ...profile, first_name: firstName, last_name: lastName, bio, academic_interests: interests, extracurriculars, education_level: educationLevel }} />
+      <div data-tour="tour-ai-reviewer">
+        <AiProfileReviewerCard profileData={{ ...profile, first_name: firstName, last_name: lastName, bio, academic_interests: interests, extracurriculars, education_level: educationLevel }} />
+      </div>
 
       {activeTab === "edit" ? (
         <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
@@ -653,7 +655,7 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
             </div>
           </div>
 
-          <div style={{ display: "flex", justifyContent: "flex-end", paddingTop: "0.5rem" }}>
+          <div data-tour="tour-save-button" style={{ display: "flex", justifyContent: "flex-end", paddingTop: "0.5rem" }}>
             <Button type="submit" disabled={loading} size="lg" icon={loading ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}>
               {loading ? "Saving Profile…" : "Save Student Profile"}
             </Button>
