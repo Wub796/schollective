@@ -309,6 +309,13 @@ export function CustomCursor() {
   // Sync isEnabled with localStorage and watch for live updates (OFF by default)
   useEffect(() => {
     const checkPreference = () => {
+      // Migrate/clear legacy "true" setting if user did not explicitly toggle it
+      const isUserToggled = localStorage.getItem("schollective-custom-cursor-user-toggled") === "true";
+      if (!isUserToggled) {
+        localStorage.removeItem("schollective-custom-cursor");
+        setIsEnabled(false);
+        return;
+      }
       const pref = localStorage.getItem("schollective-custom-cursor");
       setIsEnabled(pref === "true");
     };
