@@ -297,7 +297,7 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
   const skillsArray = skills.split(",").map((s: string) => s.trim()).filter(Boolean);
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }}>
+    <div data-tour="tour-profile-editor" style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }}>
       {/* Header Avatar Row */}
       <div style={{ display: "flex", alignItems: "center", gap: "1.5rem", flexWrap: "wrap" }}>
         <div style={{ position: "relative" }}>
@@ -379,7 +379,7 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
         </div>
 
         {/* Edit vs Live Faculty Preview Tab Switcher */}
-        <div style={{ marginLeft: "auto", display: "flex", gap: "0.5rem", background: "rgba(99, 102, 241, 0.08)", padding: "0.3rem", borderRadius: "100px", border: "1px solid rgba(99, 102, 241, 0.2)" }}>
+        <div data-tour="tour-tab-switcher" style={{ marginLeft: "auto", display: "flex", gap: "0.5rem", background: "rgba(99, 102, 241, 0.08)", padding: "0.3rem", borderRadius: "100px", border: "1px solid rgba(99, 102, 241, 0.2)" }}>
           <button
             type="button"
             onClick={() => setActiveTab("edit")}
