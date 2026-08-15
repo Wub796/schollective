@@ -241,7 +241,7 @@ export function ProfProfileForm({ profile: initialProfile }: Props) {
       </div>
 
       {/* Tab Switcher */}
-      <div style={{ display: "flex", gap: "0.5rem", background: "rgba(15, 23, 42, 0.04)", borderRadius: "100px", padding: "0.3rem", width: "fit-content" }}>
+      <div data-tour="tour-prof-tab-switcher" style={{ display: "flex", gap: "0.5rem", background: "rgba(15, 23, 42, 0.04)", borderRadius: "100px", padding: "0.3rem", width: "fit-content" }}>
         <button
           type="button"
           onClick={() => setActiveTab("edit")}
@@ -402,7 +402,7 @@ export function ProfProfileForm({ profile: initialProfile }: Props) {
           </div>
 
           {/* Submit Button */}
-          <div style={{ display: "flex", justifyContent: "flex-end", paddingTop: "0.5rem" }}>
+          <div data-tour="tour-prof-save-button" style={{ display: "flex", justifyContent: "flex-end", paddingTop: "0.5rem" }}>
             <Button
               type="submit"
               disabled={loading}
