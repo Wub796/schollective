@@ -362,11 +362,11 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: "0.2rem" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
             <h2 style={{ fontSize: "1.4rem", fontWeight: 800, color: "#0f172a", margin: 0 }}>
               {displayName} {lastName}
             </h2>
-            <span style={{ fontSize: "0.7rem", fontWeight: 700, padding: "0.2rem 0.65rem", borderRadius: "100px", background: "rgba(99, 102, 241, 0.1)", color: "#4f46e5", border: "1px solid rgba(99, 102, 241, 0.25)" }}>
+            <span style={{ fontSize: "0.7rem", fontWeight: 700, padding: "0.2rem 0.65rem", borderRadius: "100px", background: "rgba(99, 102, 241, 0.1)", color: "#4f46e5", border: "1px solid rgba(99, 102, 241, 0.25)", flexShrink: 0 }}>
               {levelConfig.badge}
             </span>
           </div>
