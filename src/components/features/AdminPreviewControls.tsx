@@ -169,25 +169,22 @@ export function AdminPreviewControls() {
                 gap: "0.4rem",
                 padding: "0.55rem 0.85rem",
                 borderRadius: "8px",
-                border: "1px solid rgba(99, 102, 241, 0.3)",
-                background: "linear-gradient(135deg, #4f46e5, #6366f1)",
+                border: "none",
+                background: "#4f46e5",
                 color: "#ffffff",
                 fontSize: "0.72rem",
                 fontWeight: 700,
                 cursor: loadingAction ? "wait" : "pointer",
                 fontFamily: "var(--font-sans)",
                 boxShadow: "0 2px 8px rgba(79, 70, 229, 0.2)",
-                transition: "all 0.2s",
               }}
               onMouseEnter={(e) => {
                 if (loadingAction) return;
-                e.currentTarget.style.boxShadow = "0 4px 14px rgba(79, 70, 229, 0.35)";
-                e.currentTarget.style.transform = "translateY(-1px)";
+                e.currentTarget.style.background = "#4338ca";
               }}
               onMouseLeave={(e) => {
                 if (loadingAction) return;
-                e.currentTarget.style.boxShadow = "0 2px 8px rgba(79, 70, 229, 0.2)";
-                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.background = "#4f46e5";
               }}
             >
               {loadingAction === "student-tour" ? (
@@ -287,25 +284,22 @@ export function AdminPreviewControls() {
                 gap: "0.4rem",
                 padding: "0.55rem 0.85rem",
                 borderRadius: "8px",
-                border: "1px solid rgba(99, 102, 241, 0.3)",
-                background: "linear-gradient(135deg, #4f46e5, #6366f1)",
+                border: "none",
+                background: "#4f46e5",
                 color: "#ffffff",
                 fontSize: "0.72rem",
                 fontWeight: 700,
                 cursor: loadingAction ? "wait" : "pointer",
                 fontFamily: "var(--font-sans)",
                 boxShadow: "0 2px 8px rgba(79, 70, 229, 0.2)",
-                transition: "all 0.2s",
               }}
               onMouseEnter={(e) => {
                 if (loadingAction) return;
-                e.currentTarget.style.boxShadow = "0 4px 14px rgba(79, 70, 229, 0.35)";
-                e.currentTarget.style.transform = "translateY(-1px)";
+                e.currentTarget.style.background = "#4338ca";
               }}
               onMouseLeave={(e) => {
                 if (loadingAction) return;
-                e.currentTarget.style.boxShadow = "0 2px 8px rgba(79, 70, 229, 0.2)";
-                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.background = "#4f46e5";
               }}
             >
               {loadingAction === "professor-tour" ? (

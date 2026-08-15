@@ -535,7 +535,7 @@ export function ProfProfileForm({ profile: initialProfile }: Props) {
                 <span style={{ fontSize: "0.68rem", fontWeight: 800, color: "#64748b", textTransform: "uppercase", display: "flex", alignItems: "center", gap: "0.3rem" }}>
                   <Globe size={12} color="#4f46e5" /> Lab Website
                 </span>
-                <a href={labSite.startsWith("http") ? labSite : `https://${labSite}`} target="_blank" rel="noopener noreferrer" style={{ fontSize: "0.82rem", fontWeight: 700, color: "#4f46e5" }}>
+                <a href={labSite.startsWith("http") ? labSite : `https://${labSite}`} target="_blank" rel="noopener noreferrer" style={{ fontSize: "0.82rem", fontWeight: 700, color: "#4f46e5", wordBreak: "break-all", overflowWrap: "break-word", maxWidth: "100%", display: "block" }}>
                   {labSite}
                 </a>
               </div>
