@@ -298,7 +298,7 @@ export function CustomCursor() {
   const [reducedMotion, setRm] = useState(false);
   const [mode, setMode] = useState<CursorMode>("default");
   const [targetRect, setTargetRect] = useState<TargetRect | null>(null);
-  const [isEnabled, setIsEnabled] = useState(true);
+  const [isEnabled, setIsEnabled] = useState(false);
 
   const rawX = useMotionValue<number>(-1000);
   const rawY = useMotionValue<number>(-1000);
@@ -306,11 +306,11 @@ export function CustomCursor() {
   // Track currently hovered button for live rect updates on scroll/resize
   const hoveredEl = useRef<Element | null>(null);
 
-  // Sync isEnabled with localStorage and watch for live updates
+  // Sync isEnabled with localStorage and watch for live updates (OFF by default)
   useEffect(() => {
     const checkPreference = () => {
       const pref = localStorage.getItem("schollective-custom-cursor");
-      setIsEnabled(pref !== "false");
+      setIsEnabled(pref === "true");
     };
     checkPreference();
     window.addEventListener("storage", checkPreference);
