@@ -34,6 +34,7 @@ export function AcceptingToggle({ initialValue }: AcceptingToggleProps) {
   return (
     <button
       type="button"
+      data-tour="tour-availability-toggle"
       onClick={toggle}
       disabled={isPending}
       title={accepting ? "Click to stop accepting requests" : "Click to accept requests"}

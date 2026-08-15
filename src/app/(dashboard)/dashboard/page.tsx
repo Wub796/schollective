@@ -3,8 +3,22 @@ import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
 import { StudentProfileForm } from "@/app/(dashboard)/profile/StudentProfileForm";
+import { InteractiveOnboardingTour, TourStep } from "@/components/features/InteractiveOnboardingTour";
 
 export const dynamic = "force-dynamic";
+
+const STUDENT_TOUR_STEPS: TourStep[] = [
+  {
+    targetId: "tour-profile-editor",
+    title: "Student Profile Manager",
+    description: "Manage your academic standing, school, major, coursework, skills, bio, and portfolio link right from your dashboard.",
+  },
+  {
+    targetId: "tour-tab-switcher",
+    title: "Live Faculty View Preview",
+    description: "Toggle between 'Edit Profile' and 'Faculty View Preview' to test how professors view your candidate profile card.",
+  },
+];
 
 export default async function StudentDashboard() {
   const supabase = await createClient();
@@ -31,6 +45,9 @@ export default async function StudentDashboard() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "2.5rem", maxWidth: "950px", paddingBottom: "6rem" }}>
+
+      {/* Interactive Tour for First Time Users */}
+      <InteractiveOnboardingTour role="student" steps={STUDENT_TOUR_STEPS} />
 
       {/* ── Header ─────────────────────────────────────────────── */}
       <header style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>

@@ -5,10 +5,29 @@ import { createClient } from "@/utils/supabase/server";
 import { RequestQueueCard } from "@/components/features/RequestQueueCard";
 import { AcceptingToggle } from "@/components/features/AcceptingToggle";
 import { ProfProfileForm } from "@/app/(dashboard)/prof/profile/ProfProfileForm";
+import { InteractiveOnboardingTour, TourStep } from "@/components/features/InteractiveOnboardingTour";
 import { Inbox } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 
 export const dynamic = "force-dynamic";
+
+const PROF_TOUR_STEPS: TourStep[] = [
+  {
+    targetId: "tour-availability-toggle",
+    title: "Mentorship Availability Toggle",
+    description: "Control whether your lab is currently accepting research mentorship requests with one click.",
+  },
+  {
+    targetId: "tour-request-queue",
+    title: "Incoming Request Queue",
+    description: "Evaluate incoming student outreach cards, review candidate credentials, and accept or decline mentorship requests.",
+  },
+  {
+    targetId: "tour-prof-profile-editor",
+    title: "Faculty Profile & Research Focus",
+    description: "Manage your academic position, department, lab website, office hours, and research focus areas directly from your dashboard.",
+  },
+];
 
 export default async function ProfessorDashboard() {
   const supabase = await createClient();
@@ -65,6 +84,9 @@ export default async function ProfessorDashboard() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "3.5rem", maxWidth: "950px", paddingBottom: "6rem" }}>
+
+      {/* Interactive Onboarding Tour for Faculty */}
+      <InteractiveOnboardingTour role="professor" steps={PROF_TOUR_STEPS} />
 
       {/* ── Header ──────────────────────────────────────────────── */}
       <header style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
@@ -127,7 +149,7 @@ export default async function ProfessorDashboard() {
       <div style={{ height: "1px", background: "rgba(79, 70, 229, 0.1)" }} />
 
       {/* ── Request Queue ─────────────────────────────────────── */}
-      <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+      <div data-tour="tour-request-queue" style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
           <span style={{ width: "1rem", height: "1px", background: "rgba(15, 23, 42, 0.2)", display: "block" }} />
           <h2 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "rgba(15, 23, 42, 0.85)", letterSpacing: "-0.025em" }}>
