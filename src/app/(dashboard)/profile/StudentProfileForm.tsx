@@ -37,7 +37,12 @@ interface Props {
 
 export function getEducationLevelConfig(level: string) {
   const isHighSchool = (level || "").includes("high-school");
-  const isGraduate = (level || "").includes("graduate") || (level || "").includes("doctoral") || (level || "").includes("postdoctoral");
+  const isUndergrad = (level || "").includes("undergraduate") || (level || "").includes("college");
+  const isGraduate = !isUndergrad && !isHighSchool && (
+    (level || "").includes("graduate") ||
+    (level || "").includes("doctoral") ||
+    (level || "").includes("postdoctoral")
+  );
 
   if (isHighSchool) {
     return {
@@ -357,11 +362,11 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: "0.2rem" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
             <h2 style={{ fontSize: "1.4rem", fontWeight: 800, color: "#0f172a", margin: 0 }}>
               {displayName} {lastName}
             </h2>
-            <span style={{ fontSize: "0.7rem", fontWeight: 700, padding: "0.2rem 0.65rem", borderRadius: "100px", background: "rgba(99, 102, 241, 0.1)", color: "#4f46e5", border: "1px solid rgba(99, 102, 241, 0.25)" }}>
+            <span style={{ fontSize: "0.7rem", fontWeight: 700, padding: "0.2rem 0.65rem", borderRadius: "100px", background: "rgba(99, 102, 241, 0.1)", color: "#4f46e5", border: "1px solid rgba(99, 102, 241, 0.25)", flexShrink: 0 }}>
               {levelConfig.badge}
             </span>
           </div>
@@ -774,62 +779,6 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
           )}
         </div>
       )}
-
-      {/* Hairline Separator */}
-      <div style={{ height: "1px", background: "rgba(99, 102, 241, 0.15)", marginTop: "1rem" }} />
-
-      {/* Account Preferences, Security & Sign Out */}
-      <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <Sliders size={16} color="#4f46e5" />
-          <span style={{ fontSize: "0.75rem", fontWeight: 800, textTransform: "uppercase", color: "#475569" }}>
-            Preferences & Security
-          </span>
-        </div>
-
-        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: "1rem", background: "rgba(255, 255, 255, 0.8)", padding: "1.25rem 1.5rem", borderRadius: "12px", border: "1px solid rgba(99, 102, 241, 0.15)" }}>
-          <label style={{ display: "inline-flex", alignItems: "center", gap: "0.65rem", cursor: "pointer", userSelect: "none" }}>
-            <input
-              type="checkbox"
-              checked={customCursor}
-              onChange={handleToggleCursor}
-              style={{ display: "none" }}
-            />
-            <div style={{
-              width: "2.2rem",
-              height: "1.2rem",
-              borderRadius: "100px",
-              background: customCursor ? "#4f46e5" : "rgba(15, 23, 42, 0.15)",
-              position: "relative",
-              transition: "background 0.25s",
-            }}>
-              <div style={{
-                width: "0.9rem",
-                height: "0.9rem",
-                borderRadius: "50%",
-                background: "#ffffff",
-                position: "absolute",
-                top: "50%",
-                left: customCursor ? "calc(100% - 1.05rem)" : "0.15rem",
-                transform: "translateY(-50%)",
-                transition: "left 0.25s",
-              }} />
-            </div>
-            <span style={{ fontSize: "0.85rem", fontWeight: 600, color: "#334155" }}>
-              Use custom cursor
-            </span>
-          </label>
-
-          <div style={{ display: "flex", gap: "0.75rem" }}>
-            <Button href="/reset-password" variant="ghost" size="sm" icon={<KeyRound size={14} />}>
-              Change Password
-            </Button>
-            <Button onClick={handleSignOut} variant="outline" size="sm" icon={<LogOut size={14} />} className="text-red-600 border-red-300 hover:bg-red-50 hover:border-red-600 hover:text-red-700">
-              Sign Out
-            </Button>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }
