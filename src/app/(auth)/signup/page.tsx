@@ -337,12 +337,12 @@ function SignupContent() {
                   <label
                     htmlFor="email"
                     style={{
-                      display: "block", fontSize: "0.6rem", fontWeight: 600,
+                      display: "block", fontSize: "0.62rem", fontWeight: 800,
                       letterSpacing: "0.22em", textTransform: "uppercase",
                       color: emailVal?.state === "error" ? "rgba(255,100,100,0.8)"
                         : emailVal?.state === "warn" ? "rgba(255,190,80,0.8)"
                           : emailVal?.state === "valid" ? "rgba(120,220,120,0.8)"
-                            : "rgba(15, 23, 42, 0.3)",
+                            : "#0f172a",
                       marginBottom: "0.55rem", transition: "color 0.25s",
                       fontFamily: "var(--font-sans)",
                     }}
@@ -356,16 +356,16 @@ function SignupContent() {
                     onChange={() => { if (emailDirty) setEmailVal(null); }}
                     style={{
                       width: "100%",
-                      background: "rgba(15, 23, 42, 0.02)",
-                      border: `1px solid ${emailVal?.state === "error" ? "rgba(255,100,100,0.6)"
+                      background: "rgba(255, 255, 255, 0.9)",
+                      border: `1.5px solid ${emailVal?.state === "error" ? "rgba(255,100,100,0.6)"
                           : emailVal?.state === "warn" ? "rgba(255,190,80,0.6)"
                             : emailVal?.state === "valid" ? "rgba(120,220,120,0.5)"
-                              : "rgba(15, 23, 42, 0.08)"
+                              : "rgba(99, 102, 241, 0.5)"
                         }`,
                       borderRadius: "100px",
-                      padding: "0.95rem 1.75rem",
+                      padding: "1rem 1.75rem",
                       fontSize: "0.95rem",
-                      color: "var(--text-primary)",
+                      color: "#0f172a",
                       outline: "none",
                       transition: "all 0.3s cubic-bezier(0.22, 1, 0.36, 1)",
                       fontFamily: "var(--font-sans)",
@@ -427,11 +427,11 @@ function SignupContent() {
                         htmlFor="institution"
                         style={{
                           display: "block",
-                          fontSize: "0.6rem",
-                          fontWeight: 600,
+                          fontSize: "0.62rem",
+                          fontWeight: 800,
                           letterSpacing: "0.22em",
                           textTransform: "uppercase",
-                          color: "rgba(15, 23, 42, 0.3)",
+                          color: "#0f172a",
                           marginBottom: "0.55rem",
                           fontFamily: "var(--font-sans)",
                         }}

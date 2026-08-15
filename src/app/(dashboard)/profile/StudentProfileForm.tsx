@@ -124,17 +124,20 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
   const router = useRouter();
   const supabase = createClient();
 
-  // Custom Cursor Preference
+  // Custom Cursor Preference (OFF by default)
   const [customCursor, setCustomCursor] = useState(() => {
     if (typeof window !== "undefined") {
-      return localStorage.getItem("schollective-custom-cursor") !== "false";
+      const isUserToggled = localStorage.getItem("schollective-custom-cursor-user-toggled") === "true";
+      if (!isUserToggled) return false;
+      return localStorage.getItem("schollective-custom-cursor") === "true";
     }
-    return true;
+    return false;
   });
 
   const handleToggleCursor = () => {
     const newVal = !customCursor;
     setCustomCursor(newVal);
+    localStorage.setItem("schollective-custom-cursor-user-toggled", "true");
     localStorage.setItem("schollective-custom-cursor", String(newVal));
     window.dispatchEvent(new Event("storage"));
   };
