@@ -48,15 +48,35 @@ export async function GET(request: NextRequest) {
     supabaseUrl,
     supabaseAnonKey,
     {
+      cookieOptions: {
+        maxAge: 60 * 60 * 24 * 365,
+        path: '/',
+        sameSite: 'lax',
+        secure: process.env.NODE_ENV === 'production',
+      },
       cookies: {
         get(name: string) {
           return request.cookies.get(name)?.value
         },
         set(name: string, value: string, options: CookieOptions) {
-          cookiesToSet.push({ name, value, options })
+          const mergedOptions = {
+            maxAge: 60 * 60 * 24 * 365,
+            path: '/',
+            sameSite: 'lax' as const,
+            secure: process.env.NODE_ENV === 'production',
+            ...options,
+          }
+          cookiesToSet.push({ name, value, options: mergedOptions })
         },
         remove(name: string, options: CookieOptions) {
-          cookiesToRemove.push({ name, options })
+          const mergedOptions = {
+            maxAge: 0,
+            path: '/',
+            sameSite: 'lax' as const,
+            secure: process.env.NODE_ENV === 'production',
+            ...options,
+          }
+          cookiesToRemove.push({ name, options: mergedOptions })
         },
       },
     }

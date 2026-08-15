@@ -1,6 +1,15 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 
+export const ONE_YEAR_IN_SECONDS = 60 * 60 * 24 * 365
+
+const DEFAULT_COOKIE_OPTIONS: CookieOptions = {
+  maxAge: ONE_YEAR_IN_SECONDS,
+  path: '/',
+  sameSite: 'lax',
+  secure: process.env.NODE_ENV === 'production',
+}
+
 export async function createClient() {
   const cookieStore = await cookies()
 
@@ -13,6 +22,7 @@ export async function createClient() {
       'https://placeholder-url.supabase.co',
       'placeholder-key',
       {
+        cookieOptions: DEFAULT_COOKIE_OPTIONS,
         cookies: {
           get(name: string) { return undefined },
           set(name: string, value: string, options: CookieOptions) {},
@@ -26,20 +36,33 @@ export async function createClient() {
     supabaseUrl,
     supabaseAnonKey,
     {
+      cookieOptions: DEFAULT_COOKIE_OPTIONS,
       cookies: {
         get(name: string) {
           return cookieStore.get(name)?.value
         },
         set(name: string, value: string, options: CookieOptions) {
           try {
-            cookieStore.set({ name, value, ...options })
+            cookieStore.set({
+              name,
+              value,
+              ...DEFAULT_COOKIE_OPTIONS,
+              ...options,
+              maxAge: options?.maxAge ?? ONE_YEAR_IN_SECONDS,
+            })
           } catch (error) {
             // Can be ignored if handled by middleware
           }
         },
         remove(name: string, options: CookieOptions) {
           try {
-            cookieStore.set({ name, value: '', ...options })
+            cookieStore.set({
+              name,
+              value: '',
+              ...DEFAULT_COOKIE_OPTIONS,
+              ...options,
+              maxAge: 0,
+            })
           } catch (error) {
             // Can be ignored if handled by middleware
           }
