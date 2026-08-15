@@ -40,12 +40,12 @@ export function ProfProfileForm({ profile: initialProfile }: Props) {
   const router = useRouter();
   const supabase = createClient();
 
-  // Custom Cursor Preference
+  // Custom Cursor Preference (OFF by default)
   const [customCursor, setCustomCursor] = useState(() => {
     if (typeof window !== "undefined") {
-      return localStorage.getItem("schollective-custom-cursor") !== "false";
+      return localStorage.getItem("schollective-custom-cursor") === "true";
     }
-    return true;
+    return false;
   });
 
   const handleToggleCursor = () => {
