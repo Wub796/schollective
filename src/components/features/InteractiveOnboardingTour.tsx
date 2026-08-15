@@ -68,7 +68,8 @@ export function InteractiveOnboardingTour({ role, steps }: InteractiveOnboarding
     };
   }, []);
 
-  const updateRect = useCallback(() => {
+  // Measure target element position cleanly
+  const measureElement = useCallback(() => {
     if (!isOpen || currentStepIndex < 0 || currentStepIndex >= steps.length) {
       setRect(null);
       return;
@@ -81,36 +82,68 @@ export function InteractiveOnboardingTour({ role, steps }: InteractiveOnboarding
     if (element) {
       const r = element.getBoundingClientRect();
       setRect(r);
-      // Smooth scroll target into view if offscreen
-      if (r.top < 80 || r.bottom > window.innerHeight - 80) {
-        element.scrollIntoView({ behavior: "smooth", block: "center" });
-      }
     } else {
       setRect(null);
     }
   }, [isOpen, currentStepIndex, steps]);
 
-  // Continuously recalculate spotlight position on step change, scroll, or resize
+  // Handle intentional step transitions (scroll smoothly if needed, measure cleanly)
   useEffect(() => {
-    updateRect();
-    let animationFrameId: number;
-    const startTime = performance.now();
-    const tick = (now: number) => {
-      updateRect();
-      if (now - startTime < 650) {
-        animationFrameId = requestAnimationFrame(tick);
+    if (!isOpen || currentStepIndex < 0 || currentStepIndex >= steps.length) {
+      setRect(null);
+      return;
+    }
+
+    const targetId = steps[currentStepIndex].targetId;
+    const element =
+      document.querySelector(`[data-tour="${targetId}"]`) ||
+      document.getElementById(targetId);
+
+    if (!element) {
+      setRect(null);
+      return;
+    }
+
+    const initialRect = element.getBoundingClientRect();
+    const isOffscreen = initialRect.top < 80 || initialRect.bottom > window.innerHeight - 80;
+
+    if (isOffscreen) {
+      element.scrollIntoView({ behavior: "smooth", block: "center" });
+      const t1 = setTimeout(measureElement, 150);
+      const t2 = setTimeout(measureElement, 350);
+      const t3 = setTimeout(measureElement, 500);
+      return () => {
+        clearTimeout(t1);
+        clearTimeout(t2);
+        clearTimeout(t3);
+      };
+    } else {
+      measureElement();
+    }
+  }, [isOpen, currentStepIndex, steps, measureElement]);
+
+  // Handle window resize and manual user scrolling smoothly
+  useEffect(() => {
+    if (!isOpen || currentStepIndex < 0 || currentStepIndex >= steps.length) return;
+
+    let ticking = false;
+    const handleScrollOrResize = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          measureElement();
+          ticking = false;
+        });
+        ticking = true;
       }
     };
-    animationFrameId = requestAnimationFrame(tick);
 
-    window.addEventListener("resize", updateRect);
-    window.addEventListener("scroll", updateRect, true);
+    window.addEventListener("resize", handleScrollOrResize, { passive: true });
+    window.addEventListener("scroll", handleScrollOrResize, { passive: true });
     return () => {
-      cancelAnimationFrame(animationFrameId);
-      window.removeEventListener("resize", updateRect);
-      window.removeEventListener("scroll", updateRect, true);
+      window.removeEventListener("resize", handleScrollOrResize);
+      window.removeEventListener("scroll", handleScrollOrResize);
     };
-  }, [updateRect, currentStepIndex]);
+  }, [isOpen, currentStepIndex, steps, measureElement]);
 
   const handleNext = () => {
     if (currentStepIndex < steps.length - 1) {
@@ -145,6 +178,7 @@ export function InteractiveOnboardingTour({ role, steps }: InteractiveOnboarding
   if (!isOpen && mounted) {
     return (
       <button
+        type="button"
         onClick={handleReplay}
         style={{
           position: "fixed",
@@ -241,7 +275,7 @@ export function InteractiveOnboardingTour({ role, steps }: InteractiveOnboarding
         }}
       />
 
-      {/* ─── Persistent Spotlight (Glides smoothly without remounting) ─────── */}
+      {/* ─── Intentional Spotlight (Single smooth trajectory over 0.6s) ────── */}
       {isTouring && rect && (
         <div
           style={{
@@ -257,7 +291,7 @@ export function InteractiveOnboardingTour({ role, steps }: InteractiveOnboarding
             pointerEvents: "none",
             zIndex: 9999,
             transition:
-              "top 0.6s cubic-bezier(0.22, 1, 0.36, 1), left 0.6s cubic-bezier(0.22, 1, 0.36, 1), width 0.6s cubic-bezier(0.22, 1, 0.36, 1), height 0.6s cubic-bezier(0.22, 1, 0.36, 1)",
+              "top 0.6s cubic-bezier(0.16, 1, 0.3, 1), left 0.6s cubic-bezier(0.16, 1, 0.3, 1), width 0.6s cubic-bezier(0.16, 1, 0.3, 1), height 0.6s cubic-bezier(0.16, 1, 0.3, 1)",
           }}
         />
       )}
@@ -282,7 +316,7 @@ export function InteractiveOnboardingTour({ role, steps }: InteractiveOnboarding
               initial={{ opacity: 0, scale: 0.96 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.96 }}
-              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
               style={{
                 pointerEvents: "auto",
                 width: "100%",
@@ -479,7 +513,7 @@ export function InteractiveOnboardingTour({ role, steps }: InteractiveOnboarding
               initial={{ opacity: 0, scale: 0.96 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.96 }}
-              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
               style={{
                 pointerEvents: "auto",
                 width: "100%",
@@ -598,7 +632,7 @@ export function InteractiveOnboardingTour({ role, steps }: InteractiveOnboarding
         )}
       </AnimatePresence>
 
-      {/* ─── Smooth-Gliding Popover Card (Glides to position over 0.6s) ────── */}
+      {/* ─── Intentional Smooth Popover Card (Single 0.6s Glide) ──────────── */}
       {isTouring && currentStep && (
         <div
           style={{
@@ -619,7 +653,7 @@ export function InteractiveOnboardingTour({ role, steps }: InteractiveOnboarding
             overflow: "hidden",
             fontFamily: "var(--font-sans)",
             transition:
-              "top 0.6s cubic-bezier(0.22, 1, 0.36, 1), left 0.6s cubic-bezier(0.22, 1, 0.36, 1)",
+              "top 0.6s cubic-bezier(0.16, 1, 0.3, 1), left 0.6s cubic-bezier(0.16, 1, 0.3, 1)",
           }}
         >
           {/* Progress Bar */}
@@ -635,7 +669,7 @@ export function InteractiveOnboardingTour({ role, steps }: InteractiveOnboarding
                 height: "100%",
                 width: `${progressPercent}%`,
                 background: "#4f46e5",
-                transition: "width 0.4s ease",
+                transition: "width 0.6s cubic-bezier(0.16, 1, 0.3, 1)",
               }}
             />
           </div>
@@ -687,41 +721,43 @@ export function InteractiveOnboardingTour({ role, steps }: InteractiveOnboarding
               </button>
             </div>
 
-            {/* Crossfading Content */}
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={`step-content-${currentStepIndex}`}
-                initial={{ opacity: 0, y: 3 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -3 }}
-                transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-                style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}
-              >
-                <h4
-                  className="font-display"
-                  style={{
-                    fontSize: "1.05rem",
-                    fontWeight: 800,
-                    color: "#0f172a",
-                    margin: 0,
-                    letterSpacing: "-0.02em",
-                    lineHeight: 1.25,
-                  }}
+            {/* Stable Content with gentle crossfade */}
+            <div style={{ minHeight: "5.5rem", display: "flex", flexDirection: "column" }}>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={`step-content-${currentStepIndex}`}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.22, ease: "easeOut" }}
+                  style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}
                 >
-                  {currentStep.title}
-                </h4>
-                <p
-                  style={{
-                    fontSize: "0.82rem",
-                    color: "#475569",
-                    lineHeight: 1.55,
-                    margin: 0,
-                  }}
-                >
-                  {currentStep.description}
-                </p>
-              </motion.div>
-            </AnimatePresence>
+                  <h4
+                    className="font-display"
+                    style={{
+                      fontSize: "1.05rem",
+                      fontWeight: 800,
+                      color: "#0f172a",
+                      margin: 0,
+                      letterSpacing: "-0.02em",
+                      lineHeight: 1.25,
+                    }}
+                  >
+                    {currentStep.title}
+                  </h4>
+                  <p
+                    style={{
+                      fontSize: "0.82rem",
+                      color: "#475569",
+                      lineHeight: 1.55,
+                      margin: 0,
+                    }}
+                  >
+                    {currentStep.description}
+                  </p>
+                </motion.div>
+              </AnimatePresence>
+            </div>
 
             {/* Step Dots */}
             <div
