@@ -21,6 +21,12 @@ export async function middleware(request: NextRequest) {
   // /onboarding is accessible to any authenticated user (Google sign-up completion)
   const isOnboarding = path === '/onboarding'
 
+  // 0. Auth Page Guard: Redirect logged-in users visiting /login or /signup to dashboard
+  const isAuthPage = path === '/login' || path === '/signup'
+  if (user && isAuthPage) {
+    return Response.redirect(new URL('/dashboard', request.url))
+  }
+
   // 1. Authentication Guard: Redirect to login if no session
   if ((isStudentRoute || isProfessorRoute || isAdminRoute) && !user) {
     return Response.redirect(new URL('/login', request.url))
