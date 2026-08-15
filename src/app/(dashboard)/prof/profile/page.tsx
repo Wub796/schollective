@@ -2,7 +2,7 @@ import React from "react";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
-import { ProfProfileForm } from "./ProfProfileForm";
+import { AccountSecuritySettings } from "@/components/features/AccountSecuritySettings";
 
 export const dynamic = "force-dynamic";
 
@@ -26,7 +26,7 @@ export default async function ProfPublicProfilePage() {
   if (!isAdminPreviewing && profile.role !== "professor") redirect("/dashboard");
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "2rem", maxWidth: "900px", paddingBottom: "6rem" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "2rem", maxWidth: "800px", paddingBottom: "6rem" }}>
       {/* Header */}
       <header style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
@@ -36,18 +36,18 @@ export default async function ProfPublicProfilePage() {
           </span>
         </div>
         <h1 className="font-display" style={{ fontSize: "clamp(2.4rem, 4.5vw, 3.6rem)", fontWeight: 900, color: "#0f172a", letterSpacing: "-0.035em", lineHeight: 1.1 }}>
-          Faculty Profile <em style={{ fontStyle: "italic", color: "#4f46e5", fontWeight: 300 }}>Manager</em>
+          Faculty Security & <em style={{ fontStyle: "italic", color: "#4f46e5", fontWeight: 300 }}>Preferences</em>
         </h1>
         <p style={{ fontSize: "0.9rem", color: "#475569", margin: 0, opacity: 0.85 }}>
-          Manage your research focus, lab website, office hours, mentee preferences, and featured publications.
+          Manage your password, account verification details, security settings, and UI preferences.
         </p>
       </header>
 
       {/* Hairline */}
       <div style={{ height: "1px", background: "rgba(99, 102, 241, 0.15)" }} />
 
-      {/* Interactive Form & Live Preview Component */}
-      <ProfProfileForm profile={profile} />
+      {/* Account Security & Preferences Component */}
+      <AccountSecuritySettings profile={profile} />
     </div>
   );
 }
