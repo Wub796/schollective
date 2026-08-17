@@ -4,6 +4,7 @@ import { sql } from "@/lib/neon/db";
 import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { revalidatePath } from "next/cache";
 import { checkRateLimit, sanitiseText, isValidUuid, LIMITS } from "@/lib/security";
+import { captureServerEvent } from "@/lib/posthog-server";
 
 export async function updateRequestStatus(requestId: string, status: "active" | "declined") {
   const reqId = sanitiseText(requestId, 100);
@@ -30,7 +31,7 @@ export async function updateRequestStatus(requestId: string, status: "active" | 
       WHERE id = ${reqId} AND professor_id = ${user.id};
     `;
 
-
+    await captureServerEvent(user.id, "professor_request_status_updated", { request_id: reqId, status });
     revalidatePath("/prof/dashboard");
     return { success: true };
   } catch (err: any) {
@@ -78,6 +79,7 @@ export async function toggleAvailability(isAccepting: boolean) {
     `;
 
 
+    await captureServerEvent(user.id, "professor_availability_toggled", { is_accepting: isAccepting });
     revalidatePath("/prof/dashboard");
     return { success: true };
   } catch (err: any) {
