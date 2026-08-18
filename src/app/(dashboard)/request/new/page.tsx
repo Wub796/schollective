@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { sql } from "@/lib/neon/db";
 import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { RequestForm } from "./RequestForm";
-import { ArrowLeft, GraduationCap } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -66,19 +66,6 @@ export default async function RequestNewPage({ searchParams }: RequestNewPagePro
             Back to Directory
           </span>
         </Link>
-
-        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <span style={{ width: "1.5rem", height: "2px", background: "#6366f1", display: "block" }} />
-          <div style={{
-            display: "inline-flex", alignItems: "center", gap: "0.5rem",
-            fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.22em",
-            textTransform: "uppercase", color: "#4f46e5",
-            fontFamily: "var(--font-sans, monospace)",
-          }}>
-            <GraduationCap size={14} />
-            Mentorship Request
-          </div>
-        </div>
 
         <h1 className="font-display" style={{
           fontSize: "clamp(2.4rem, 4.5vw, 3.6rem)", fontWeight: 900,

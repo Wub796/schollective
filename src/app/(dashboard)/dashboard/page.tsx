@@ -78,15 +78,6 @@ export default async function StudentDashboard() {
 
       {/* ── Header ─────────────────────────────────────────────── */}
       <header data-tour="tour-dashboard-header" style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <span style={{ width: "1.5rem", height: "2px", background: "#6366f1", display: "block" }} />
-          <span style={{
-            fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.22em",
-            textTransform: "uppercase", color: "#4f46e5", fontFamily: "var(--font-sans, monospace)",
-          }}>
-            Student Portal
-          </span>
-        </div>
         <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: "2rem", flexWrap: "wrap" }}>
           <h1 className="font-display" style={{
             fontSize: "clamp(2.4rem, 4.5vw, 3.6rem)", fontWeight: 900,

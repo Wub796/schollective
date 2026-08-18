@@ -127,13 +127,6 @@ export default async function ProfessorsPage({ searchParams }: ProfessorsPagePro
           </span>
         </Link>
 
-        <div style={{ display: "flex", alignItems: "center", gap: "0.85rem", marginTop: "0.25rem" }}>
-          <span style={{ width: "2rem", height: "2px", background: "#6366f1", display: "block" }} />
-          <span style={{ fontSize: "0.65rem", fontWeight: 800, letterSpacing: "0.24em", textTransform: "uppercase", color: "#4f46e5", fontFamily: "var(--font-sans, monospace)" }}>
-            Academic Directory
-          </span>
-        </div>
-
         <h1 className="font-display" style={{ fontSize: "clamp(2.5rem, 5vw, 4rem)", fontWeight: 900, color: "#0f172a", letterSpacing: "-0.035em", lineHeight: 1.12 }}>
           Discover your{" "}
           <em style={{ fontStyle: "italic", color: "#4f46e5", fontWeight: 300 }}>intellectual mentor</em>
