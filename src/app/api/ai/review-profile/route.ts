@@ -1,69 +1,234 @@
-import { NextResponse } from "next/server";
+import { after, NextResponse } from "next/server";
 import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
-import { reviewStudentProfile } from "@/lib/ai/profile-reviewer";
+import {
+  createProfileReviewJob,
+  getProfileReviewJob,
+  processProfileReviewJob,
+  shouldStartProfileReviewJob,
+  type ProfileReviewJob,
+} from "@/lib/ai/profile-review-jobs";
+import type { StudentProfileData } from "@/lib/ai/profile-reviewer";
 import { checkUserAiRateLimit, sanitizeAiPromptInput } from "@/lib/ai/guardrails";
 import { checkRateLimit, getClientIp } from "@/lib/security";
 
+export const dynamic = "force-dynamic";
+
+const REVIEW_STATUS_POLL_LIMIT = 60;
+const REVIEW_STATUS_POLL_WINDOW_MS = 60 * 1000;
+const PRIVATE_JSON_HEADERS = { "Cache-Control": "private, no-store" };
+
+async function runProfileReview(job: ProfileReviewJob, userId: string): Promise<void> {
+  try {
+    await processProfileReviewJob(job.id, userId);
+  } catch (error) {
+    console.error("[profile-review-job] Background execution failed:", error);
+  }
+}
+
+async function scheduleProfileReview(job: ProfileReviewJob, userId: string): Promise<void> {
+  if (!shouldStartProfileReviewJob(job)) return;
+
+  // `after` is connected to the platform execution context by OpenNext. The
+  // response can return the durable job ID before the model call completes.
+  // If the isolate is interrupted, a later status request can recover a stale
+  // processing job through the same compare-and-claim operation.
+  try {
+    after(() => runProfileReview(job, userId));
+  } catch (error) {
+    // Keep local Node development and any adapter without waitUntil usable.
+    // The synchronous fallback is slower, but it cannot leave a pending job
+    // stranded after its row has already been created.
+    console.error("[profile-review-job] Background scheduling unavailable; processing inline:", error);
+    await runProfileReview(job, userId);
+  }
+}
+
+function parseBodyValue(
+  body: Record<string, unknown>,
+  profile: Record<string, unknown> | null,
+  key: string,
+): unknown {
+  if (Object.prototype.hasOwnProperty.call(body, key)) return body[key];
+  return profile?.[key];
+}
+
+function sanitiseTextField(
+  body: Record<string, unknown>,
+  profile: Record<string, unknown> | null,
+  key: string,
+  maxChars: number,
+): string | null {
+  const value = parseBodyValue(body, profile, key);
+  return typeof value === "string" ? sanitizeAiPromptInput(value, maxChars) : null;
+}
+
+function sanitiseListField(
+  body: Record<string, unknown>,
+  profile: Record<string, unknown> | null,
+  key: string,
+  maxItemChars: number,
+): string[] | string | null {
+  const value = parseBodyValue(body, profile, key);
+
+  if (Array.isArray(value)) {
+    return value
+      .slice(0, 50)
+      .filter((item): item is string => typeof item === "string")
+      .map((item) => sanitizeAiPromptInput(item, maxItemChars))
+      .filter(Boolean);
+  }
+
+  if (typeof value === "string") {
+    return sanitizeAiPromptInput(value, maxItemChars * 10);
+  }
+
+  return null;
+}
+
+function buildProfileToReview(
+  user: { id: string; email?: string | null },
+  profile: Record<string, unknown> | null,
+  body: Record<string, unknown>,
+): StudentProfileData {
+  return {
+    // Identity must come from the authenticated session, never the request body.
+    id: user.id,
+    email: user.email || null,
+    first_name: sanitiseTextField(body, profile, "first_name", 100),
+    last_name: sanitiseTextField(body, profile, "last_name", 100),
+    preferred_name: sanitiseTextField(body, profile, "preferred_name", 100),
+    institution: sanitiseTextField(body, profile, "institution", 200),
+    education_level: sanitiseTextField(body, profile, "education_level", 100),
+    major: sanitiseTextField(body, profile, "major", 200),
+    graduation_year: sanitiseTextField(body, profile, "graduation_year", 30),
+    bio: sanitiseTextField(body, profile, "bio", 500),
+    academic_interests: sanitiseListField(body, profile, "academic_interests", 300),
+    extracurriculars: sanitiseListField(body, profile, "extracurriculars", 600),
+    coursework: sanitiseListField(body, profile, "coursework", 300),
+    skills_and_tools: sanitiseListField(body, profile, "skills_and_tools", 300),
+    portfolio_url: sanitiseTextField(body, profile, "portfolio_url", 500),
+    expertise_fields: sanitiseListField(body, profile, "expertise_fields", 300),
+  };
+}
+
+function serialiseJob(job: ProfileReviewJob) {
+  return {
+    id: job.id,
+    status: job.status,
+    result: job.result,
+    error: job.error,
+    createdAt: job.createdAt,
+    startedAt: job.startedAt,
+    completedAt: job.completedAt,
+    updatedAt: job.updatedAt,
+  };
+}
+
 export async function POST(req: Request) {
   try {
-    // ── Rate limit: 5 per minute per IP ──────────────────────────
     const ip = getClientIp(req);
-    const rate = checkRateLimit(`review:${ip}`, 5, 60 * 1000, true);
-    if (!rate.allowed) {
+    const ipRate = checkRateLimit(`review:${ip}`, 5, 60 * 1000, true);
+    if (!ipRate.allowed) {
       return NextResponse.json(
         { error: "Too many requests. Please wait before trying again." },
-        { status: 429, headers: { "Retry-After": String(rate.retryAfterSeconds) } }
+        {
+          status: 429,
+          headers: { ...PRIVATE_JSON_HEADERS, "Retry-After": String(ipRate.retryAfterSeconds) },
+        },
       );
     }
 
-    const { user, profile } = await getCurrentUserAndProfile();
-
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const { session, user, profile } = await getCurrentUserAndProfile(req.headers);
+    if (!session || !user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401, headers: PRIVATE_JSON_HEADERS });
     }
 
-    // User-specific AI rate limit (stricter — 10 per 10 min)
     const rateCheck = checkUserAiRateLimit(user.id, 10, 10 * 60 * 1000);
     if (!rateCheck.allowed) {
       return NextResponse.json(
         { error: `AI request limit reached. Please wait ${rateCheck.retryAfterSeconds} seconds.` },
-        { status: 429 }
+        {
+          status: 429,
+          headers: { ...PRIVATE_JSON_HEADERS, "Retry-After": String(rateCheck.retryAfterSeconds) },
+        },
       );
     }
 
-    let bodyData: Record<string, unknown> = {};
+    let rawBody: unknown = {};
     try {
-      bodyData = await req.json();
+      rawBody = await req.json();
     } catch {
-      // Body optional — profile can be fetched from DB
+      // An empty body is valid; the current profile is used below.
     }
+    const body = rawBody && typeof rawBody === "object" && !Array.isArray(rawBody)
+      ? rawBody as Record<string, unknown>
+      : {};
 
-    // Sanitise any user-supplied profile fields
-    const sanitisedBody: Record<string, unknown> = {};
-    for (const [key, value] of Object.entries(bodyData)) {
-      if (typeof value === "string") {
-        sanitisedBody[key] = sanitizeAiPromptInput(value, 500);
-      } else {
-        sanitisedBody[key] = value;
-      }
-    }
+    const profileToReview = buildProfileToReview(
+      { id: user.id, email: user.email },
+      profile as Record<string, unknown> | null,
+      body,
+    );
+    const job = await createProfileReviewJob(user.id, profileToReview);
+    await scheduleProfileReview(job, user.id);
 
-    const profileToReview = {
-      id: user.id,
-      email: user.email,
-      first_name: "",
-      last_name: "",
-      ...profile,
-      ...sanitisedBody,
-    };
-
-    const review = await reviewStudentProfile(profileToReview);
-    return NextResponse.json({ success: true, review });
-  } catch (err: any) {
-    console.error("[POST /api/ai/review-profile] Error:", err);
     return NextResponse.json(
-      { error: err.message || "Failed to review profile" },
-      { status: 500 }
+      { success: true, job: serialiseJob(job) },
+      { status: 202, headers: PRIVATE_JSON_HEADERS },
+    );
+  } catch (error: any) {
+    console.error("[POST /api/ai/review-profile] Error:", error);
+    return NextResponse.json(
+      { error: error?.message || "Failed to start profile review" },
+      { status: 500, headers: PRIVATE_JSON_HEADERS },
+    );
+  }
+}
+
+export async function GET(req: Request) {
+  try {
+    const ip = getClientIp(req);
+    const ipRate = checkRateLimit(
+      `review-status:${ip}`,
+      REVIEW_STATUS_POLL_LIMIT,
+      REVIEW_STATUS_POLL_WINDOW_MS,
+      true,
+    );
+    if (!ipRate.allowed) {
+      return NextResponse.json(
+        { error: "Too many status requests. Please wait before trying again." },
+        {
+          status: 429,
+          headers: { ...PRIVATE_JSON_HEADERS, "Retry-After": String(ipRate.retryAfterSeconds) },
+        },
+      );
+    }
+
+    const { session, user } = await getCurrentUserAndProfile(req.headers);
+    if (!session || !user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401, headers: PRIVATE_JSON_HEADERS });
+    }
+
+    const jobId = new URL(req.url).searchParams.get("jobId") || undefined;
+    const job = await getProfileReviewJob(user.id, jobId);
+    if (jobId && !job) {
+      return NextResponse.json(
+        { error: "Review request not found" },
+        { status: 404, headers: PRIVATE_JSON_HEADERS },
+      );
+    }
+
+    if (job) await scheduleProfileReview(job, user.id);
+
+    return NextResponse.json(
+      { success: true, job: job ? serialiseJob(job) : null },
+      { headers: PRIVATE_JSON_HEADERS },
+    );
+  } catch (error: any) {
+    console.error("[GET /api/ai/review-profile] Error:", error);
+    return NextResponse.json(
+      { error: error?.message || "Failed to load profile review" },
+      { status: 500, headers: PRIVATE_JSON_HEADERS },
     );
   }
 }
