@@ -77,7 +77,7 @@ export default function ForProfessorsPage() {
           </FadeIn>
           <FadeIn delay={0.2} className="w-full flex justify-center">
             <div className="flex justify-center gap-4 flex-wrap">
-              <Button href="/signup" variant="primary" size="lg">
+              <Button href="/signup?role=professor" variant="primary" size="lg">
                 Apply to Join →
               </Button>
               <Button href="/about" variant="ghost" size="lg">
@@ -197,7 +197,7 @@ export default function ForProfessorsPage() {
                   Apply today. Manual verification means the students you meet have already been filtered for seriousness of purpose.
                 </p>
               </div>
-              <Button href="/signup" variant="primary" size="lg">
+              <Button href="/signup?role=professor" variant="primary" size="lg">
                 Apply as Professor →
               </Button>
             </div>

@@ -90,6 +90,9 @@ function LoginContent() {
   const [error,   setError]   = useState<string | null>(null);
   const hydrated = useHydrated();
 
+  const roleParam = searchParams.get("role");
+  const signupHref = roleParam ? `/signup?role=${encodeURIComponent(roleParam)}` : "/signup";
+
   useEffect(() => {
     const errorParam = searchParams.get("error");
     if (errorParam) {
@@ -234,7 +237,7 @@ function LoginContent() {
             </span>
           </Link>
           <div style={{ width: "1px", height: "1rem", background: "rgba(79, 70, 229, 0.15)" }} />
-          <Link href="/signup" style={{ textDecoration: "none" }}>
+          <Link href={signupHref} style={{ textDecoration: "none" }}>
             <span className="hover:text-indigo-700 transition-colors" style={{
               fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.2em",
               textTransform: "uppercase", color: "#4f46e5",
@@ -353,7 +356,7 @@ function LoginContent() {
                 fontFamily: "var(--font-sans)",
               }}>
                 New to Schollective?{" "}
-                <Link href="/signup" style={{ color: "rgba(15, 23, 42, 0.55)", textDecoration: "none" }}>
+                <Link href={signupHref} style={{ color: "rgba(15, 23, 42, 0.55)", textDecoration: "none" }}>
                   Create an account →
                 </Link>
               </motion.p>
