@@ -7,18 +7,24 @@
 
 ## Run the dev server
 
-Pick a free port (default 3000). Start the server inside a detached `screen` session so it outlives the conversation:
+Port 3000 is occupied on this machine by another project (`research-visualization`),
+so use **3100**. `screen` sessions are reaped in this environment, so detach via
+`launchctl submit` instead — and note launchd's default PATH has no Homebrew, so
+`export PATH` inside the shell or `npm`/`node` are not found (exit 127):
 
 ```bash
-screen -dmS schollective-preview npm run dev -- -p <PORT>
+label=schollective-preview-c275feab
+launchctl remove "$label" 2>/dev/null || true
+launchctl submit -l "$label" -- /bin/sh -c 'export PATH=/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin; cd /Users/bnjw/Documents/Projects/Schollective && exec npm run dev -- -p 3100 > /Users/bnjw/Documents/Projects/Schollective/.freebuff/preview-c275feab-5ee7-4e73-87b0-c5c729d99ef8.log 2>&1'
 ```
 
-Wait ~10-15s for Next.js to compile, then verify:
+Wait ~10-15s, then verify:
 
 ```bash
-curl -s -o /dev/null -w "HTTP %{http_code}\n" http://localhost:<PORT>/
+lsof -n -P -iTCP:3100 -sTCP:LISTEN          # server pid (register this in Preview)
+curl -sS -o /dev/null -w "HTTP %{http_code}\n" http://localhost:3100/
 ```
 
-**Port used:** 3000  
-**Screen session:** `schollective-preview`  
-**To stop:** `screen -S schollective-preview -X quit`
+**Port used:** 3100
+**launchd label:** `schollective-preview-c275feab`
+**To stop:** `launchctl remove schollective-preview-c275feab`
