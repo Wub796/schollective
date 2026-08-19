@@ -164,7 +164,7 @@ export default function LandingPage() {
               transition={{ duration: 1.2, ease: EASE, delay: 0.9 }}
               className="font-sans text-slate-500 text-lg leading-relaxed mt-8 mb-12 max-w-md mx-auto text-center"
             >
-              Cold emails to professors go unanswered. Send structured requests that get read.
+              Schollective helps high school students connect with professors and research mentors through structured academic outreach.
             </motion.p>
             <motion.div
               initial={{ opacity: 0, y: 15 }}
