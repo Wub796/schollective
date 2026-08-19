@@ -96,13 +96,6 @@ function ProfessorDetail({
     <div style={{ display: "flex", flexDirection: "column", gap: "4rem", paddingBottom: "6rem" }}>
       {/* Header */}
       <header style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <span style={{ width: "1.5rem", height: "1px", background: "rgba(15, 23, 42, 0.2)", display: "block" }} />
-          <span style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.3)", fontFamily: "var(--font-sans, monospace)" }}>
-            Faculty Profile
-          </span>
-        </div>
-
         <div style={{ display: "flex", alignItems: "center", gap: "1.75rem", flexWrap: "wrap" }}>
           {/* Avatar */}
           <div style={{ width: "5rem", height: "5rem", borderRadius: "50%", border: "1px solid rgba(15, 23, 42, 0.12)", background: "rgba(15, 23, 42, 0.04)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", flexShrink: 0 }}>
@@ -297,12 +290,9 @@ function ProfessorDetail({
 
             {similarProfessors.length > 0 && (
               <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-                  <span style={{ width: "1rem", height: "1px", background: "rgba(15, 23, 42, 0.15)", display: "block" }} />
-                  <span style={{ fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.35)", fontFamily: "var(--font-sans, monospace)" }}>
-                    Similar Available Mentors
-                  </span>
-                </div>
+                <span style={{ fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.35)", fontFamily: "var(--font-sans, monospace)" }}>
+                  Similar Available Mentors
+                </span>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: "1.5rem" }}>
                   {similarProfessors.map((p) => {
                     const name = p.preferred_name || p.first_name;

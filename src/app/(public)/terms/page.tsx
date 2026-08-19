@@ -54,12 +54,6 @@ export default function TermsPage() {
       <PublicNav />
 
       <div style={{ maxWidth: "800px", margin: "0 auto", padding: "9rem 2rem 6rem", display: "flex", flexDirection: "column", gap: "4.5rem" }}>
-        {/* Eyebrow */}
-        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <span style={{ width: "1.5rem", height: "2px", background: "#6366f1", display: "block" }} />
-          <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: "#4f46e5", fontFamily: "var(--font-sans)" }}>Legal</span>
-        </div>
-
         <div>
           <h1 className="font-display" style={{ fontSize: "clamp(2.4rem, 5vw, 3.8rem)", fontWeight: 900, color: "#0f172a", letterSpacing: "-0.04em", lineHeight: 1.05, marginBottom: "0.75rem" }}>
             Terms of <em style={{ fontStyle: "italic", color: "#4f46e5", fontWeight: 300 }}>Service</em>
