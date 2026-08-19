@@ -59,12 +59,6 @@ export function AiProfessorRecommendations() {
       {/* Header matching site style */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "1.25rem" }}>
         <div>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", marginBottom: "0.25rem" }}>
-            <span style={{ width: "1.2rem", height: "2px", background: "#6366f1", display: "block" }} />
-            <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: "#4f46e5", fontFamily: "var(--font-sans, monospace)" }}>
-              AI Matchmaker
-            </span>
-          </div>
           <h3 className="font-display" style={{ fontSize: "1.35rem", fontWeight: 800, color: "#0f172a", margin: 0, letterSpacing: "-0.025em" }}>
             Recommended <em style={{ fontStyle: "italic", color: "#4f46e5", fontWeight: 300 }}>Professors</em>
           </h3>
