@@ -20,55 +20,48 @@ const arima = Arima({
 
 export const metadata: Metadata = {
   title: {
-    default: "Schollective — Academic Mentorship for High School Students",
-    template: "%s — Schollective",
+    default: "Schollective | Academic Mentorship for High School Students",
+    template: "%s | Schollective",
   },
+
   description:
-    "Schollective helps high school students connect with professors and research mentors through structured academic outreach. Find verified faculty, understand their research, and send requests that get read.",
-  keywords: [
-    "research mentorship",
-    "high school research",
-    "professor outreach",
-    "academic mentorship",
-    "student research opportunities",
-    "science fair mentors",
-    "college research prep",
-    "find research mentor",
-    "cold email professors",
-    "structured academic outreach",
-    "undergraduate research",
-    "Schollective",
-  ],
+    "Schollective helps high school students find research mentors, understand faculty research, and send thoughtful outreach requests to professors.",
+
   authors: [{ name: "Schollective" }],
   creator: "Schollective",
+
   metadataBase: new URL("https://schollective.vercel.app"),
+
   alternates: {
     canonical: "/",
   },
+
   openGraph: {
     type: "website",
     locale: "en_US",
     url: "https://schollective.vercel.app",
     siteName: "Schollective",
-    title: "Schollective — Academic Mentorship for High School Students",
+    title: "Schollective | Academic Mentorship for High School Students",
     description:
-      "Find verified professors and research mentors. Send structured requests that actually get read.",
+      "Find research mentors, understand faculty research, and send thoughtful outreach requests to professors.",
     images: [
       {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Schollective — Academic Mentorship Platform",
+        alt: "Schollective | Academic Mentorship for High School Students",
       },
     ],
   },
+
   twitter: {
     card: "summary_large_image",
-    title: "Schollective — Academic Mentorship for High School Students",
+    title: "Schollective | Academic Mentorship for High School Students",
     description:
-      "Connect with professors and research mentors through structured academic outreach.",
+      "Find research mentors and connect with professors through thoughtful academic outreach.",
     images: ["/og-image.png"],
   },
+
   robots: {
     index: true,
     follow: true,
@@ -80,6 +73,7 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
+
   verification: {
     google: "WGZHC_3E62I1QeoQc48lnahPoU4OeWZ96K4o1VMjKLM",
   },
@@ -98,7 +92,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${mulish.variable} ${arima.variable}`} suppressHydrationWarning>
-      <body className="min-h-screen scroll-smooth" style={{background: 'var(--bg-base)', color: 'var(--text-primary)'}} suppressHydrationWarning>
+      <body className="min-h-screen scroll-smooth" style={{ background: 'var(--bg-base)', color: 'var(--text-primary)' }} suppressHydrationWarning>
 
         {/* ── Layer 0: Film-grain noise ──────────────────────────
             Fixed, pointer-events-none. z-index: 0 via .noise-overlay
