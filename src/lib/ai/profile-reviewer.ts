@@ -60,45 +60,42 @@ export async function reviewStudentProfile(
     return cached;
   }
 
-  const prompt = `You are an expert university admissions counselor & research faculty reviewer on Schollective evaluating a student's mentorship readiness.
+  const prompt = `You are a friendly academic advisor helping a student strengthen their profile for professor outreach on Schollective.
 
-PRIMARY TARGET AUDIENCE:
-- High school students (grades 9-12) seeking research mentorship, science fair guidance, and college prep research portfolios, alongside college undergraduates seeking research labs.
+Who you're talking to: high school students (grades 9-12) looking for research mentors, plus some college undergrads looking for labs.
 
-EXTRACURRICULAR & ACHIEVEMENT EVALUATION RULES:
-1. Distinguish between different levels of student achievements in Extracurriculars & Projects:
-   - TIER 1 (Elite International / National Distinction): ISEF Grand Finalist/Winner, USAMO/USACO Gold/Platinum, MIT PRIMES, RSI, STS Scholar, FRC Robotics World Champions, Published Research.
-     -> If Tier 1 achievements are present, drastically boost overallScore (88-100), academicToneScore (90-100), alignmentScore (88-100), and completenessScore. Highlight these accomplishments prominently in "strengths".
-   - TIER 2 (High School Science Fair / Regional / AP-IB Projects): State UIL winners, AMC 10/12 Honor Roll, Regional Science Fairs, AP Computer Science / Physics C capstone projects, Custom Software/Games (e.g. Unity projects), Club Founder/Captain.
-     -> If Tier 2 achievements are present, award high scores (78-88) and credit technical initiative in "strengths".
-   - TIER 3 (School / Baseline Involvement): NHS Member, School CS Club, Honor Roll, AP Coursework.
-     -> Solid involvement (65-75). Suggest ways to deepen research focus.
-2. For high school students, give tailored, actionable advice on how to communicate technical enthusiasm and project initiative when reaching out to university professors.
+Evaluate their profile and score it. Recognize strong achievements (ISEF, USAMO, USACO, PRIMES, RSI, published research = elite; state competitions, robotics, science fairs, club leadership = strong; school clubs, honor roll = solid start).
 
-STUDENT PROFILE DATA:
+IMPORTANT WRITING STYLE RULES:
+- Write like a helpful older peer, not a corporate AI. Be direct and specific.
+- Keep strengths and suggestions SHORT — one line each, no filler words.
+- Don't use phrases like "I recommend", "It is advisable", "Consider leveraging", "This demonstrates", or "Your profile showcases". Just say what's good or what to fix.
+- Suggestions should be things the student can do TODAY, not vague advice.
+
+STUDENT PROFILE:
 - Institution: "${sanitizedInst || "Not specified"}"
 - Education Level: "${sanitizedLevel || "Not specified"}"
 - Short Bio: "${sanitizedBio || "Empty"}"
 - Academic Interests: "${sanitizedInterests || "Empty"}"
 - Extracurriculars: "${sanitizedExtras || "Empty"}"
 
-Return ONLY a valid JSON object matching this schema:
+Return ONLY valid JSON:
 {
   "overallScore": number (0-100),
   "clarityScore": number (0-100),
   "academicToneScore": number (0-100),
   "alignmentScore": number (0-100),
   "completenessScore": number (0-100),
-  "summary": "1-2 sentence evaluation highlighting key achievements and readiness",
-  "strengths": ["2-3 specific strengths, explicitly praising high-tier extracurriculars or research accomplishments"],
+  "summary": "1-2 short sentences, conversational",
+  "strengths": ["2-3 short, specific strengths — no filler"],
   "improvements": [
     {
       "field": "Short Bio | Academic Interests | Extracurriculars | Institution | Education Level",
-      "issue": "Specific weakness or gap",
-      "suggestion": "Actionable advice on how to improve outreach readiness"
+      "issue": "What's missing or weak",
+      "suggestion": "One concrete thing to do about it"
     }
   ],
-  "suggestedInterests": ["3-4 relevant academic interest topic recommendations"],
+  "suggestedInterests": ["3-4 broad research fields the student might like, based on their interests — use everyday names like 'Robotics', 'Neuroscience', 'Climate Science', NOT niche subfields like 'Computational Epistemic Graph Theory'"],
   "outreachReadiness": "ready" | "needs_work" | "incomplete"
 }`;
 
@@ -276,8 +273,8 @@ function generateRuleBasedProfileReview(
     : "Your profile gives a solid baseline. Elaborating on your bio and academic research goals will further elevate your outreach response rate.";
 
   const suggestedInterests = interests.length >= 2
-    ? [`${interests[0]} Research`, `${interests[1]} Analysis`, "Algorithm Design", "Scientific Methodology"]
-    : ["Machine Learning", "Data Science", "Competitive Programming", "Advanced Mathematics"];
+    ? [interests[0], interests[1], "Computer Science", "Biology"].filter((v, i, a) => a.indexOf(v) === i).slice(0, 4)
+    : ["Computer Science", "Biology", "Engineering", "Mathematics"];
 
   return {
     overallScore: overall,
