@@ -199,6 +199,11 @@ export async function upsertProfile(profile: Partial<ProfileRecord> & { id: stri
   const languages = profile.languages !== undefined ? JSON.stringify(profile.languages) : null;
   const socialLinks = profile.social_links !== undefined ? JSON.stringify(profile.social_links) : null;
 
+  const existing = await sql`SELECT role, status, profile_complete FROM profiles WHERE id = ${profile.id} LIMIT 1;`;
+  const resolvedRole = (profile.role && profile.role.trim()) ? profile.role : (existing[0]?.role || 'student');
+  const resolvedStatus = (profile.status && profile.status.trim()) ? profile.status : (existing[0]?.status || 'active');
+  const resolvedProfileComplete = typeof profile.profile_complete === 'boolean' ? profile.profile_complete : (existing[0]?.profile_complete ?? false);
+
   const rows = await sql`
     INSERT INTO profiles (
       id, email, role, status, first_name, preferred_name, last_name,
@@ -210,21 +215,21 @@ export async function upsertProfile(profile: Partial<ProfileRecord> & { id: stri
       academic_stats, activities, honors_awards, languages, social_links,
       updated_at
     ) VALUES (
-      ${profile.id}, ${profile.email}, ${profile.role || 'student'}, ${profile.status || 'active'},
+      ${profile.id}, ${profile.email}, ${resolvedRole}, ${resolvedStatus},
       ${profile.first_name || null}, ${profile.preferred_name || null}, ${profile.last_name || null},
       ${profile.avatar_url || null}, ${profile.institution || null}, ${profile.education_level || null},
       ${profile.department || null}, ${profile.academic_title || null}, ${profile.major || null},
       ${profile.graduation_year || null}, ${profile.bio || null}, ${interests}, ${extras},
       ${expertise}, ${courseworkStr}, ${skills}, ${publications}, ${studentTypes},
       ${profile.lab_website || null}, ${portfolioUrl}, ${profile.office_hours || null},
-      ${profile.seeking_mentorship_type || null}, ${profile.is_accepting_requests ?? true},
-      ${profile.profile_complete ?? false},
+      ${profile.seeking_mentorship_type || null}, ${profile.is_accepting_requests !== undefined ? profile.is_accepting_requests : null},
+      ${resolvedProfileComplete},
       ${academicStats}, ${activities}, ${honorsAwards}, ${languages}, ${socialLinks},
       now()
     )
     ON CONFLICT (id) DO UPDATE SET
-      role = COALESCE(EXCLUDED.role, profiles.role),
-      status = COALESCE(EXCLUDED.status, profiles.status),
+      role = EXCLUDED.role,
+      status = EXCLUDED.status,
       first_name = COALESCE(EXCLUDED.first_name, profiles.first_name),
       preferred_name = COALESCE(EXCLUDED.preferred_name, profiles.preferred_name),
       last_name = COALESCE(EXCLUDED.last_name, profiles.last_name),
@@ -248,7 +253,7 @@ export async function upsertProfile(profile: Partial<ProfileRecord> & { id: stri
       office_hours = COALESCE(EXCLUDED.office_hours, profiles.office_hours),
       seeking_mentorship_type = COALESCE(EXCLUDED.seeking_mentorship_type, profiles.seeking_mentorship_type),
       is_accepting_requests = COALESCE(EXCLUDED.is_accepting_requests, profiles.is_accepting_requests),
-      profile_complete = COALESCE(EXCLUDED.profile_complete, profiles.profile_complete),
+      profile_complete = EXCLUDED.profile_complete,
       academic_stats = COALESCE(EXCLUDED.academic_stats, profiles.academic_stats),
       activities = COALESCE(EXCLUDED.activities, profiles.activities),
       honors_awards = COALESCE(EXCLUDED.honors_awards, profiles.honors_awards),
