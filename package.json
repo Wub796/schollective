@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "if [ -n \"$NEXT_PRIVATE_STANDALONE\" ]; then next build; else opennextjs-cloudflare build; fi",
     "start": "next start",
     "test": "node --test tests/*.test.mjs",
     "lint": "eslint",
