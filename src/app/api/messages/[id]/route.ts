@@ -3,6 +3,7 @@ import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { getThreadAccess } from "@/lib/authz";
 import { isValidId } from "@/lib/security";
 import { sql } from "@/lib/neon/db";
+import { runAs } from "@/lib/neon/user-context";
 
 export const dynamic = "force-dynamic";
 
@@ -27,12 +28,12 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
 
-    const messages = await sql`
+    const messages = await runAs(user.id, async () => sql`
       SELECT id, content, sender_id, created_at
       FROM messages
       WHERE request_id = ${requestId}
       ORDER BY created_at ASC;
-    `;
+    `);
 
     return NextResponse.json({ messages });
   } catch (err: any) {
