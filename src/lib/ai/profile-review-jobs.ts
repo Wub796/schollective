@@ -30,12 +30,28 @@ interface ProfileReviewJobRow {
 
 const STALE_PROCESSING_MS = 5 * 60 * 1000;
 
+function parseScoreValue(val: unknown, fallback = 60): number {
+  if (typeof val === "number" && Number.isFinite(val)) {
+    return Math.max(0, Math.min(100, Math.round(val)));
+  }
+  if (typeof val === "string") {
+    const cleaned = val.replace(/[^0-9.-]/g, "");
+    if (cleaned.length > 0) {
+      const parsed = Number(cleaned);
+      if (Number.isFinite(parsed)) {
+        return Math.max(0, Math.min(100, Math.round(parsed)));
+      }
+    }
+  }
+  return fallback;
+}
+
 export function adaptLegacyReviewResult(legacy: Record<string, unknown>): ProfileReviewOutput {
-  const overall = Number(legacy.overallScore) || 60;
-  const clarity = Number(legacy.clarityScore) || 60;
-  const tone = Number(legacy.academicToneScore) || 60;
-  const alignment = Number(legacy.alignmentScore) || 60;
-  const completeness = Number(legacy.completenessScore) || 60;
+  const overall = parseScoreValue(legacy.overallScore ?? legacy.overall, 65);
+  const clarity = parseScoreValue(legacy.clarityScore ?? legacy.clarity, 65);
+  const tone = parseScoreValue(legacy.academicToneScore ?? legacy.academic_tone ?? legacy.academicTone, 65);
+  const alignment = parseScoreValue(legacy.alignmentScore ?? legacy.alignment ?? legacy.domain_alignment, 65);
+  const completeness = parseScoreValue(legacy.completenessScore ?? legacy.completeness, 55);
 
   const pillarScores: PillarScores = {
     academic_rigor: Math.round((tone + overall) / 2),
@@ -52,6 +68,7 @@ export function adaptLegacyReviewResult(legacy: Record<string, unknown>): Profil
     4;
   const isReady =
     legacy.outreachReadiness === "ready" ||
+    legacy.outreach_readiness === "ready" ||
     (avg >= 80 &&
       pillarScores.academic_rigor >= 75 &&
       pillarScores.domain_alignment >= 75 &&
@@ -81,14 +98,16 @@ export function adaptLegacyReviewResult(legacy: Record<string, unknown>): Profil
     .filter((s): s is string => typeof s === "string")
     .slice(0, 3);
 
-  const rawInterests = Array.isArray(legacy.suggestedInterests) ? legacy.suggestedInterests : [];
-  const recommendedTopics = rawInterests
+  const rawInterests = Array.isArray(legacy.suggestedInterests ?? legacy.suggested_interests)
+    ? (legacy.suggestedInterests ?? legacy.suggested_interests)
+    : [];
+  const recommendedTopics = (Array.isArray(rawInterests) ? rawInterests : [])
     .filter((s): s is string => typeof s === "string")
     .slice(0, 4);
 
   return {
     status: isReady ? "Ready for Outreach" : "Needs Edits",
-    summary: typeof legacy.summary === "string" ? legacy.summary : "Profile review complete.",
+    summary: typeof legacy.summary === "string" && legacy.summary.trim() ? legacy.summary : "Profile review complete.",
     pillar_scores: pillarScores,
     strengths: strengths.length > 0 ? strengths : ["Registered academic standing."],
     flags: flags.length > 0 ? flags : ["Provide tangible metrics and specific tools for current projects."],
@@ -111,8 +130,35 @@ function parseResult(value: ProfileReviewJobRow["result"]): ProfileReviewOutput 
   }
   if (!raw) return null;
 
-  if (raw.pillar_scores && typeof raw.pillar_scores === "object" && raw.status) {
-    return raw as unknown as ProfileReviewOutput;
+  if (
+    raw.pillar_scores &&
+    typeof raw.pillar_scores === "object" &&
+    (raw.status === "Ready for Outreach" || raw.status === "Needs Edits")
+  ) {
+    const ps = raw.pillar_scores as Record<string, unknown>;
+    const sanitizedPillars: PillarScores = {
+      academic_rigor: parseScoreValue(ps.academic_rigor, 65),
+      domain_alignment: parseScoreValue(ps.domain_alignment, 65),
+      leadership_initiative: parseScoreValue(ps.leadership_initiative, 60),
+      completeness: parseScoreValue(ps.completeness, 50),
+    };
+    return {
+      status: raw.status as "Ready for Outreach" | "Needs Edits",
+      summary: typeof raw.summary === "string" && raw.summary.trim() ? raw.summary : "Profile review complete.",
+      pillar_scores: sanitizedPillars,
+      strengths: Array.isArray(raw.strengths)
+        ? raw.strengths.filter((s): s is string => typeof s === "string")
+        : ["Registered academic standing."],
+      flags: Array.isArray(raw.flags)
+        ? raw.flags.filter((s): s is string => typeof s === "string")
+        : ["Provide tangible metrics and specific tools for current projects."],
+      next_steps: Array.isArray(raw.next_steps)
+        ? raw.next_steps.filter((s): s is string => typeof s === "string")
+        : ["Add relevant advanced coursework and software tools."],
+      recommended_topics: Array.isArray(raw.recommended_topics)
+        ? raw.recommended_topics.filter((s): s is string => typeof s === "string")
+        : ["Computer Science", "Biology", "Mathematics", "Physics"],
+    };
   }
 
   return adaptLegacyReviewResult(raw);
