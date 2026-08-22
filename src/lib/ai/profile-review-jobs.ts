@@ -1,4 +1,5 @@
 import { sql } from "@/lib/neon/db";
+import { runAs } from "@/lib/neon/user-context";
 import { ensureAuthSchema } from "@/lib/neon/schema";
 import { reviewStudentProfile, type StudentProfileData } from "./profile-reviewer";
 import type { ProfileReviewResult } from "./types";
@@ -60,6 +61,7 @@ async function ensureReviewJobTable(): Promise<void> {
 
 /** Returns the user's latest review, or the requested review owned by that user. */
 export async function getProfileReviewJob(userId: string, jobId?: string): Promise<ProfileReviewJob | null> {
+  return runAs(userId, async () => {
   await ensureReviewJobTable();
 
   const rows = jobId
@@ -79,6 +81,7 @@ export async function getProfileReviewJob(userId: string, jobId?: string): Promi
 
   const row = rows[0] as ProfileReviewJobRow | undefined;
   return row ? toJob(row) : null;
+  });
 }
 
 async function insertProfileReviewJob(
@@ -122,6 +125,7 @@ export async function createProfileReviewJob(
   userId: string,
   profileData: StudentProfileData,
 ): Promise<ProfileReviewJob> {
+  return runAs(userId, async () => {
   await ensureReviewJobTable();
 
   const activeRows = await sql`
@@ -135,6 +139,7 @@ export async function createProfileReviewJob(
   if (active) return toJob(active);
 
   return insertProfileReviewJob(userId, crypto.randomUUID(), profileData);
+  });
 }
 
 function isStaleProcessing(updatedAt: string): boolean {
@@ -152,6 +157,7 @@ export function shouldStartProfileReviewJob(job: ProfileReviewJob): boolean {
  * overwriting a newer retry if a Worker isolate is restarted mid-request.
  */
 export async function processProfileReviewJob(jobId: string, userId: string): Promise<void> {
+  return runAs(userId, async () => {
   await ensureReviewJobTable();
 
   const processingToken = crypto.randomUUID();
@@ -207,4 +213,5 @@ export async function processProfileReviewJob(jobId: string, userId: string): Pr
         AND processing_token = ${processingToken};
     `;
   }
+  });
 }
