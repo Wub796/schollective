@@ -2,6 +2,7 @@
 
 import React, { useRef, useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { SchollectiveLogo } from "@/components/ui/SchollectiveLogo";
 import { motion, useInView, AnimatePresence, useReducedMotion } from "framer-motion";
@@ -44,12 +45,9 @@ function PageLoader({ done }: { done: boolean }) {
             <motion.div
               animate={{ scale: [0.96, 1.04, 0.96], boxShadow: ["0 0 12px rgba(79,70,229,0.05)", "0 0 28px rgba(79,70,229,0.15)", "0 0 12px rgba(79,70,229,0.05)"] }}
               transition={{ duration: 2, ease: "easeInOut", repeat: Infinity }}
-              className="absolute w-14 h-14 rounded-2xl bg-white border border-indigo-600/15 flex items-center justify-center"
+              className="absolute w-14 h-14 rounded-2xl bg-white border border-indigo-600/15 flex items-center justify-center overflow-hidden p-2"
             >
-              <motion.svg animate={{ y: [-2, 2, -2] }} transition={{ duration: 2, ease: "easeInOut", repeat: Infinity }} width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <path d="M22 10v6M2 10l10-5 10 5-10 5z" stroke="#4f46e5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5" stroke="#4f46e5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </motion.svg>
+              <Image src="/logo.png" alt="Schollective" width={38} height={38} className="rounded-xl object-cover" priority />
             </motion.div>
           </div>
           <div className="text-center">
