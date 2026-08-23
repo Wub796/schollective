@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useCallback } from "react";
+import React, { useState, useRef, useCallback, useEffect } from "react";
 import { UploadCloud, FileText, Sparkles, Loader2, AlertCircle, CheckCircle2, X } from "lucide-react";
 import { toast } from "sonner";
 import type { ParsedResumeProfile } from "@/lib/ai/resume-parser";
@@ -12,22 +12,44 @@ interface ResumeDropzoneProps {
 
 const MAX_FILE_SIZE = 4 * 1024 * 1024; // 4 MB
 
-const LOADING_STATUSES = [
-  "Reading digital PDF document...",
-  "Analyzing academic coursework & standing...",
-  "Structuring research projects, clubs & awards...",
-  "Extracting technical skills & interests...",
-  "Finalizing profile mapping...",
+const LOADING_STAGES = [
+  { minSec: 0, text: "Reading and extracting digital PDF..." },
+  { minSec: 1.5, text: "Analyzing academic standing and coursework..." },
+  { minSec: 3.5, text: "Structuring research projects, clubs & awards..." },
+  { minSec: 6.0, text: "Mapping technical skills & synthesizing profile fields..." },
 ];
 
 export function ResumeDropzone({ onParsed, disabled }: ResumeDropzoneProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [statusIndex, setStatusIndex] = useState(0);
+  const [elapsedSec, setElapsedSec] = useState(0);
   const [fileName, setFileName] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Clean up any running timer on unmount
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+    };
+  }, []);
+
+  // Monotonic progress state derived cleanly at component level
+  const currentStage =
+    [...LOADING_STAGES].reverse().find((s) => elapsedSec >= s.minSec) || LOADING_STAGES[0];
+  const isFinalStage = elapsedSec >= 6;
+  const statusText = isFinalStage
+    ? `${currentStage.text} (${elapsedSec}s)`
+    : currentStage.text;
+  const progressPercent = Math.min(
+    94,
+    Math.round(15 + Math.min(elapsedSec, 6) * 11 + Math.max(0, elapsedSec - 6) * 1.5)
+  );
 
   const processFile = useCallback(async (file: File) => {
     setError(null);
@@ -48,12 +70,13 @@ export function ResumeDropzone({ onParsed, disabled }: ResumeDropzoneProps) {
 
     setFileName(file.name);
     setLoading(true);
-    setStatusIndex(0);
+    setElapsedSec(0);
+    const startTime = Date.now();
 
-    // Rotate status messages every 900ms for smooth interactive feedback
-    const statusInterval = setInterval(() => {
-      setStatusIndex((prev) => (prev + 1) % LOADING_STATUSES.length);
-    }, 900);
+    if (timerRef.current) clearInterval(timerRef.current);
+    timerRef.current = setInterval(() => {
+      setElapsedSec(Math.floor((Date.now() - startTime) / 1000));
+    }, 500);
 
     try {
       const formData = new FormData();
@@ -79,7 +102,10 @@ export function ResumeDropzone({ onParsed, disabled }: ResumeDropzoneProps) {
       setError(msg);
       toast.error(msg);
     } finally {
-      clearInterval(statusInterval);
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
       setLoading(false);
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
@@ -225,7 +251,7 @@ export function ResumeDropzone({ onParsed, disabled }: ResumeDropzoneProps) {
         />
 
         {loading ? (
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.75rem" }}>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.75rem", width: "100%" }}>
             <div
               style={{
                 width: "44px",
@@ -240,13 +266,33 @@ export function ResumeDropzone({ onParsed, disabled }: ResumeDropzoneProps) {
             >
               <Loader2 size={24} className="animate-spin" />
             </div>
-            <div>
+            <div style={{ width: "100%", maxWidth: "340px", display: "flex", flexDirection: "column", alignItems: "center", gap: "0.35rem" }}>
               <p style={{ fontSize: "0.88rem", fontWeight: 700, color: "#0f172a", margin: 0 }}>
                 Parsing {fileName || "Resume"}…
               </p>
-              <p style={{ fontSize: "0.75rem", color: "#4f46e5", fontWeight: 600, margin: "0.25rem 0 0" }}>
-                {LOADING_STATUSES[statusIndex]}
+              <p style={{ fontSize: "0.74rem", color: "#4f46e5", fontWeight: 600, margin: 0 }}>
+                {statusText}
               </p>
+              <div
+                style={{
+                  width: "100%",
+                  height: "4px",
+                  borderRadius: "100px",
+                  background: "rgba(99, 102, 241, 0.15)",
+                  overflow: "hidden",
+                  marginTop: "0.35rem",
+                }}
+              >
+                <div
+                  style={{
+                    height: "100%",
+                    width: `${progressPercent}%`,
+                    background: "linear-gradient(90deg, #4f46e5, #818cf8)",
+                    borderRadius: "100px",
+                    transition: "width 0.5s ease-out",
+                  }}
+                />
+              </div>
             </div>
           </div>
         ) : (

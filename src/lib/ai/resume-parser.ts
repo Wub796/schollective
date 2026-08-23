@@ -1,4 +1,4 @@
-import { executeWithGeminiFailover } from "./client";
+import { executeWithGeminiFailover, isGeminiTransientError } from "./client";
 import { ai } from "@/lib/amplitude";
 import type {
   ActivityItem,
@@ -260,13 +260,13 @@ export function normalizeLanguageProficiency(val: unknown): LanguageItem["profic
  */
 export async function parseResumePdf(pdfBuffer: Buffer): Promise<ParsedResumeProfile> {
   const base64Pdf = pdfBuffer.toString("base64");
-  const modelName = "gemini-3.6-flash";
+  let activeModel = "gemini-3.6-flash";
   const startTime = performance.now();
 
-  try {
-    const response = await executeWithGeminiFailover(async (gemini) => {
+  const runWithModel = async (model: string) => {
+    return await executeWithGeminiFailover(async (gemini) => {
       return await gemini.models.generateContent({
-        model: modelName,
+        model,
         contents: [
           {
             inlineData: {
@@ -284,6 +284,23 @@ export async function parseResumePdf(pdfBuffer: Buffer): Promise<ParsedResumePro
         },
       });
     });
+  };
+
+  try {
+    let response: any;
+    try {
+      response = await runWithModel(activeModel);
+    } catch (primaryErr: any) {
+      if (isGeminiTransientError(primaryErr)) {
+        console.warn(
+          `[parseResumePdf] ${activeModel} hit transient capacity/quota spike (${primaryErr?.status || primaryErr?.code || "503/429"}). Falling back to gemini-3.5-flash-lite...`
+        );
+        activeModel = "gemini-3.5-flash-lite";
+        response = await runWithModel(activeModel);
+      } else {
+        throw primaryErr;
+      }
+    }
 
     const latencyMs = performance.now() - startTime;
     const text = response.text;
@@ -292,7 +309,7 @@ export async function parseResumePdf(pdfBuffer: Buffer): Promise<ParsedResumePro
     void ai.trackAiMessage({
       content: "PDF Resume Parsed",
       sessionId: "schollective-resume",
-      model: modelName,
+      model: activeModel,
       provider: "google",
       latencyMs,
       inputTokens: response.usageMetadata?.promptTokenCount,
@@ -388,7 +405,7 @@ export async function parseResumePdf(pdfBuffer: Buffer): Promise<ParsedResumePro
     void ai.trackAiMessage({
       content: "",
       sessionId: "schollective-resume",
-      model: modelName,
+      model: activeModel,
       provider: "google",
       latencyMs: performance.now() - startTime,
       isError: true,
