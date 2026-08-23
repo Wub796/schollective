@@ -7,9 +7,10 @@ import { SchollectiveLogo } from "@/components/ui/SchollectiveLogo";
 import { motion, useInView, AnimatePresence, useReducedMotion } from "framer-motion";
 import { PublicNav } from "@/components/ui/PublicNav";
 import { Button } from "@/components/ui/Button";
-import { AnimatedBackground } from "@/components/ui/AnimatedBackground";
-import { TestimonialsSection } from "@/components/features/TestimonialsSection";
 import { PublicFooter } from "@/components/ui/PublicFooter";
+import { ScrollProgress } from "@/components/ui/ScrollProgress";
+import { BackToTop } from "@/components/ui/BackToTop";
+import { MobileStickyBar } from "@/components/ui/MobileStickyBar";
 
 /* ── Page Loader ───────────────────────────────────────────────────────── */
 function PageLoader({ done }: { done: boolean }) {
@@ -139,6 +140,7 @@ export default function LandingPage() {
 
   return (
     <>
+      <ScrollProgress />
       <PageLoader done={loaderDone} />
 
       <div
@@ -149,7 +151,6 @@ export default function LandingPage() {
 
         {/* ══ HERO ══════════════════════════════════════════════════════ */}
         <section className="relative min-h-screen flex flex-col items-center justify-center text-center py-24 px-6" style={{ background: "#fdfdfd" }}>
-          <AnimatedBackground />
           <div className="relative z-10 w-full max-w-3xl mx-auto flex flex-col items-center text-center">
             <h1
               className="font-display font-bold text-slate-900 tracking-tighter leading-[1.08] text-center w-full mx-auto"
@@ -429,6 +430,10 @@ export default function LandingPage() {
 
         {/* ══ FOOTER ══════════════════════════════════════════════════ */}
         <PublicFooter />
+
+        {/* ══ ACCESSIBILITY & MOBILE CONTROLS ═════════════════════════ */}
+        <BackToTop />
+        <MobileStickyBar />
       </div>
     </>
   );

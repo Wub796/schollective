@@ -57,6 +57,31 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════
+   DARK MODE
+   ═══════════════════════════════════════════════════════════════ */
+[data-theme="dark"], .dark {
+  --bg-base:      #0b1224;
+  --bg-surface-1: #111827;
+  --bg-surface-2: #1e1b4b;
+  --bg-surface-3: #312e81;
+  --bg-accent-section: #1e1b4b;
+  --text-primary:   #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-tertiary:  #64748b;
+  --accent:       #818cf8;
+  --accent-dim:   rgba(129, 140, 248, 0.12);
+  --accent-glow:  rgba(129, 140, 248, 0.25);
+  --accent-blue:     #a5b4fc;
+  --accent-blue-dim: rgba(165, 180, 252, 0.15);
+  --border:       #1e293b;
+  --border-hover: #334155;
+  --border-focus: #6366f1;
+  --glass-bg:     rgba(17, 24, 39, 0.85);
+  --glass-border: rgba(30, 41, 59, 0.8);
+  --glass-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* ═══════════════════════════════════════════════════════════════
    BASE RESET
    ═══════════════════════════════════════════════════════════════ */
 *,
