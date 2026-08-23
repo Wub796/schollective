@@ -76,14 +76,14 @@ export const metadata: Metadata = {
 
   icons: {
     icon: [
-      { url: "/logo.png", type: "image/png" },
-      { url: "/icon.png", sizes: "32x32", type: "image/png" },
       { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon.png", sizes: "32x32", type: "image/png" },
+      { url: "/logo.png", type: "image/png" },
     ],
     apple: [
-      { url: "/apple-icon.png", sizes: "180x180", type: "image/png" },
+      { url: "/logo.png", sizes: "180x180", type: "image/png" },
     ],
-    shortcut: "/logo.png",
+    shortcut: "/favicon.ico",
   },
 
   verification: {
@@ -105,6 +105,29 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${mulish.variable} ${arima.variable}`} suppressHydrationWarning>
       <body className="min-h-screen scroll-smooth" style={{ background: 'var(--bg-base)', color: 'var(--text-primary)' }} suppressHydrationWarning>
+        {/* JSON-LD structured data for Google rich results + knowledge panel */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              name: "Schollective",
+              url: "https://schollective.com",
+              description:
+                "Schollective helps high school students find research mentors, understand faculty research, and send thoughtful outreach requests to professors.",
+              potentialAction: {
+                "@type": "SearchAction",
+                target: {
+                  "@type": "EntryPoint",
+                  urlTemplate:
+                    "https://schollective.com/professors?q={search_term_string}",
+                },
+                "query-input": "required name=search_term_string",
+              },
+            }),
+          }}
+        />
 
         {/* ── Layer 0: Film-grain noise ──────────────────────────
             Fixed, pointer-events-none. z-index: 0 via .noise-overlay
