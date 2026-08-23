@@ -45,7 +45,6 @@ export function AppShell({ children, role = "student" }: AppShellProps) {
   const openSidebar  = useCallback(() => setSidebarOpen(true),  []);
   const closeSidebar = useCallback(() => setSidebarOpen(false), []);
 
-
   return (
     <>
       {/* ── Top nav bar ─────────────────────────────────────────── */}
@@ -64,7 +63,7 @@ export function AppShell({ children, role = "student" }: AppShellProps) {
       >
         {/* Hamburger — mobile only */}
         <button
-          className="nav-hamburger"
+          className="nav-hamburger text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 p-1.5 rounded-lg hover:bg-slate-900/5 dark:hover:bg-white/10 transition-colors"
           onClick={openSidebar}
           aria-label="Open navigation"
           aria-expanded={sidebarOpen}
@@ -78,8 +77,8 @@ export function AppShell({ children, role = "student" }: AppShellProps) {
         {/* Wordmark */}
         <Link href={role === "professor" ? "/prof/dashboard" : "/dashboard"} style={{ textDecoration: "none", flexShrink: 0 }}>
           <span
-            className="font-display"
-            style={{ fontSize: "1.1rem", fontWeight: 800, letterSpacing: "-0.025em", color: "var(--text-primary)" }}
+            className="font-display font-bold text-slate-900 dark:text-slate-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+            style={{ fontSize: "1.1rem", letterSpacing: "-0.025em" }}
           >
             Schollective
           </span>
@@ -91,6 +90,7 @@ export function AppShell({ children, role = "student" }: AppShellProps) {
           <NotificationBell />
           <Link href={role === "professor" ? "/prof/profile" : "/profile"} style={{ textDecoration: "none" }}>
             <div
+              className="hover:bg-slate-900/5 dark:hover:bg-white/10 hover:border-indigo-300 dark:hover:border-indigo-500/50 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all cursor-pointer"
               style={{
                 height: "28px", padding: "0 0.9rem",
                 display: "flex", alignItems: "center", justifyContent: "center",
@@ -101,16 +101,6 @@ export function AppShell({ children, role = "student" }: AppShellProps) {
                 letterSpacing: "0.1em", textTransform: "uppercase",
                 color: "var(--text-secondary)",
                 fontFamily: "var(--font-sans)",
-                transition: "all 0.2s",
-                cursor: "pointer",
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.borderColor = "var(--border-focus)";
-                (e.currentTarget as HTMLElement).style.color = "var(--text-primary)";
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.borderColor = "var(--border)";
-                (e.currentTarget as HTMLElement).style.color = "var(--text-secondary)";
               }}
               role="button"
               tabIndex={0}
@@ -138,7 +128,7 @@ export function AppShell({ children, role = "student" }: AppShellProps) {
           data-open={sidebarOpen ? "true" : "false"}
           aria-label="Sidebar navigation"
           style={{
-            background: "var(--bg-surface-2)",
+            background: "var(--bg-surface-1)",
             borderRight: "1px solid var(--border)",
           }}
         >
