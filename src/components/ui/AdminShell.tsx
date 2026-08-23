@@ -18,7 +18,6 @@ import {
   Sparkles,
 } from "lucide-react";
 import { setAdminViewAs } from "@/app/admin/dashboard/admin-actions";
-import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 /* ─── Nav items ──────────────────────────────────────────────────────────── */
 const NAV = [
@@ -48,42 +47,76 @@ function NavLink({
     <Link
       href={href}
       onClick={onClick}
-      className={`group flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all duration-200 relative overflow-hidden ${
-        active
-          ? "bg-indigo-50/90 dark:bg-indigo-950/70 border border-indigo-200/80 dark:border-indigo-800/80 text-indigo-600 dark:text-indigo-400"
-          : "hover:bg-slate-100/80 dark:hover:bg-slate-800/70 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 border border-transparent"
-      }`}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: "0.85rem",
+        padding: "0.8rem 1rem",
+        borderRadius: "10px",
+        textDecoration: "none",
+        background: active ? "var(--accent-dim)" : "transparent",
+        border: active
+          ? "1px solid rgba(79, 70, 229, 0.15)"
+          : "1px solid transparent",
+        transition: "all 0.2s cubic-bezier(0.22, 1, 0.36, 1)",
+        position: "relative",
+        overflow: "hidden",
+      }}
+      onMouseEnter={(e) => {
+        if (!active) (e.currentTarget as HTMLElement).style.background = "var(--bg-surface-3)";
+      }}
+      onMouseLeave={(e) => {
+        if (!active) (e.currentTarget as HTMLElement).style.background = "transparent";
+      }}
       aria-current={active ? "page" : undefined}
     >
       {/* Active indicator */}
       {active && (
-        <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-indigo-600 dark:bg-indigo-400 rounded-r-md" />
+        <span style={{
+          position: "absolute", left: 0, top: "50%", transform: "translateY(-50%)",
+          width: "2px", height: "60%", minHeight: "16px", maxHeight: "28px",
+          background: "var(--accent)", borderRadius: "0 2px 2px 0",
+        }} />
       )}
 
       <Icon
         size={15}
-        className={`shrink-0 transition-colors ${
-          active
-            ? "text-indigo-600 dark:text-indigo-400"
-            : "text-slate-400 dark:text-slate-500 group-hover:text-slate-700 dark:group-hover:text-slate-200"
-        }`}
+        style={{
+          flexShrink: 0,
+          color: active ? "var(--accent)" : "var(--text-tertiary)",
+          transition: "color 0.2s",
+        }}
       />
 
-      <div className="flex-1 min-w-0">
-        <span className={`block text-[0.82rem] leading-snug transition-colors ${
-          active ? "font-semibold text-indigo-600 dark:text-indigo-400" : "font-medium text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-slate-100"
-        }`}>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <span style={{
+          display: "block",
+          fontSize: "0.82rem",
+          fontWeight: active ? 600 : 500,
+          color: active ? "var(--accent)" : "var(--text-secondary)",
+          letterSpacing: "0.005em",
+          transition: "color 0.2s",
+          lineHeight: 1.3,
+        }}>
           {label}
         </span>
-        <span className={`block text-[0.5rem] font-bold tracking-widest uppercase font-mono mt-0.5 leading-none transition-colors ${
-          active ? "text-indigo-600/70 dark:text-indigo-400/70" : "text-slate-400 dark:text-slate-500 group-hover:text-slate-500 dark:group-hover:text-slate-400"
-        }`}>
+        <span style={{
+          display: "block",
+          fontSize: "0.5rem",
+          fontWeight: 700,
+          letterSpacing: "0.1em",
+          textTransform: "uppercase",
+          color: active ? "rgba(79, 70, 229, 0.6)" : "var(--text-tertiary)",
+          fontFamily: "var(--font-sans, monospace)",
+          lineHeight: 1,
+          marginTop: "0.2rem",
+        }}>
           {sub}
         </span>
       </div>
 
       {active && (
-        <ChevronRight size={10} className="text-indigo-600 dark:text-indigo-400 opacity-60 shrink-0" />
+        <ChevronRight size={10} style={{ color: "var(--accent)", opacity: 0.5, flexShrink: 0 }} />
       )}
     </Link>
   );
@@ -373,19 +406,21 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
       <header
         className="app-nav"
         style={{
-          background: "var(--glass-bg)",
+          background: scrolled ? "rgba(255, 255, 255, 0.65)" : "rgba(255, 255, 255, 0.45)",
           backdropFilter: "blur(24px) saturate(190%)",
           WebkitBackdropFilter: "blur(24px) saturate(190%)",
-          borderBottom: "1px solid var(--border)",
+          borderBottom: scrolled
+            ? "1px solid rgba(15, 23, 42, 0.08)"
+            : "1px solid rgba(15, 23, 42, 0.05)",
           boxShadow: scrolled
-            ? "0 4px 30px -10px rgba(0, 0, 0, 0.08)"
+            ? "0 4px 30px -10px rgba(15, 23, 42, 0.08), inset 0 1px 0 0 rgba(255, 255, 255, 0.8)"
             : "none",
           transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
         }}
       >
         {/* Hamburger — mobile only */}
         <button
-          className="nav-hamburger text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 p-1.5 rounded-lg hover:bg-slate-900/5 dark:hover:bg-white/10 transition-colors"
+          className="nav-hamburger"
           onClick={openSidebar}
           aria-label="Open navigation"
           aria-expanded={mobileOpen}
@@ -399,8 +434,8 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         {/* Wordmark */}
         <Link href="/admin/dashboard" style={{ textDecoration: "none", flexShrink: 0 }}>
           <span
-            className="font-display font-bold text-slate-900 dark:text-slate-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
-            style={{ fontSize: "1.1rem", letterSpacing: "-0.025em" }}
+            className="font-display"
+            style={{ fontSize: "1.1rem", fontWeight: 800, letterSpacing: "-0.025em", color: "var(--text-primary)" }}
           >
             Schollective
           </span>
@@ -410,7 +445,6 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         <div className="hidden sm:flex" style={{ alignItems: "center", gap: "0.5rem", marginLeft: "auto", marginRight: "0.5rem" }}>
           <button
             onClick={() => setAdminViewAs("student", true)}
-            className="hover:scale-105 active:scale-95 transition-all"
             style={{
               height: "28px",
               padding: "0 0.85rem",
@@ -424,18 +458,26 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
               fontWeight: 800,
               letterSpacing: "0.08em",
               textTransform: "uppercase",
-              color: "var(--accent)",
+              color: "#4f46e5",
               fontFamily: "var(--font-sans)",
               cursor: "pointer",
+              transition: "all 0.2s",
+            }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLElement).style.background = "linear-gradient(135deg, rgba(79, 70, 229, 0.18), rgba(99, 102, 241, 0.28))";
+              (e.currentTarget as HTMLElement).style.borderColor = "rgba(79, 70, 229, 0.5)";
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLElement).style.background = "linear-gradient(135deg, rgba(79, 70, 229, 0.08), rgba(99, 102, 241, 0.15))";
+              (e.currentTarget as HTMLElement).style.borderColor = "rgba(79, 70, 229, 0.3)";
             }}
           >
-            <Sparkles size={11} className="text-indigo-600 dark:text-indigo-400" />
+            <Sparkles size={11} color="#4f46e5" />
             Test Student Tour
           </button>
 
           <button
             onClick={() => setAdminViewAs("professor", true)}
-            className="hover:scale-105 active:scale-95 transition-all"
             style={{
               height: "28px",
               padding: "0 0.85rem",
@@ -449,22 +491,29 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
               fontWeight: 800,
               letterSpacing: "0.08em",
               textTransform: "uppercase",
-              color: "var(--accent-blue)",
+              color: "#6366f1",
               fontFamily: "var(--font-sans)",
               cursor: "pointer",
+              transition: "all 0.2s",
+            }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLElement).style.background = "linear-gradient(135deg, rgba(99, 102, 241, 0.18), rgba(129, 140, 248, 0.28))";
+              (e.currentTarget as HTMLElement).style.borderColor = "rgba(99, 102, 241, 0.5)";
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLElement).style.background = "linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(129, 140, 248, 0.15))";
+              (e.currentTarget as HTMLElement).style.borderColor = "rgba(99, 102, 241, 0.3)";
             }}
           >
-            <Sparkles size={11} className="text-indigo-600 dark:text-indigo-400" />
+            <Sparkles size={11} color="#6366f1" />
             Test Faculty Tour
           </button>
         </div>
 
-        {/* Right: theme toggle + back to site */}
+        {/* Right: back to site */}
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexShrink: 0 }}>
-          <ThemeToggle />
           <Link href="/dashboard" style={{ textDecoration: "none" }}>
             <div
-              className="hover:bg-slate-900/5 dark:hover:bg-white/10 hover:border-indigo-300 dark:hover:border-indigo-500/50 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all cursor-pointer"
               style={{
                 height: "28px", padding: "0 0.9rem",
                 display: "flex", alignItems: "center", justifyContent: "center",
@@ -475,6 +524,16 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
                 letterSpacing: "0.1em", textTransform: "uppercase",
                 color: "var(--text-secondary)",
                 fontFamily: "var(--font-sans)",
+                transition: "all 0.2s",
+                cursor: "pointer",
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLElement).style.borderColor = "var(--border-focus)";
+                (e.currentTarget as HTMLElement).style.color = "var(--text-primary)";
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.borderColor = "var(--border)";
+                (e.currentTarget as HTMLElement).style.color = "var(--text-secondary)";
               }}
             >
               Exit Admin
@@ -499,7 +558,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           data-open={mobileOpen ? "true" : "false"}
           aria-label="Admin sidebar navigation"
           style={{
-            background: "var(--bg-surface-1)",
+            background: "var(--bg-surface-2)",
             borderRight: "1px solid var(--border)",
           }}
         >
