@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = await createClient();
 
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://schollective.vercel.app";
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://schollective.com";
 
   // Static marketing routes
   const staticRoutes = [
