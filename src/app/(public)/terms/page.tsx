@@ -53,7 +53,7 @@ export default function TermsPage() {
     <div style={{ minHeight: "100vh", background: "transparent", color: "#0f172a" }}>
       <PublicNav />
 
-      <div style={{ maxWidth: "800px", margin: "0 auto", padding: "8rem 2rem 6rem", display: "flex", flexDirection: "column", gap: "4.5rem" }}>
+      <div style={{ maxWidth: "800px", margin: "0 auto", padding: "9rem 2rem 6rem", display: "flex", flexDirection: "column", gap: "4.5rem" }}>
         {/* Eyebrow */}
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
           <span style={{ width: "1.5rem", height: "2px", background: "#6366f1", display: "block" }} />
