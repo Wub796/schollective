@@ -111,6 +111,10 @@ body {
   font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
 }
 
+[data-theme="dark"] body, .dark body {
+  background: #0b1224 !important;
+}
+
 /* ─── Shared page background — matches landing page ────────────
    Apply to any full-screen page wrapper:
    <div className="page-bg"> … </div>

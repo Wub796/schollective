@@ -93,7 +93,27 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${mulish.variable} ${arima.variable}`} suppressHydrationWarning>
-      <body className="min-h-screen scroll-smooth" style={{ background: 'var(--bg-base)', color: 'var(--text-primary)' }} suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var saved = localStorage.getItem('theme');
+                  if (saved === 'dark') {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                    document.documentElement.classList.add('dark');
+                  } else {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                    document.documentElement.classList.remove('dark');
+                  }
+                } catch(e) {}
+              })();
+            `,
+          }}
+        />
+      </head>
+      <body className="min-h-screen scroll-smooth bg-[var(--bg-base)] text-[var(--text-primary)] transition-colors duration-300" suppressHydrationWarning>
         <ThemeProvider>
           {/* ── Layer 0: Film-grain noise ──────────────────────────
               Fixed, pointer-events-none. z-index: 0 via .noise-overlay
