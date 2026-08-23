@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { NotificationBell } from "@/components/features/NotificationBell";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { Sidebar } from "./Sidebar";
 
 interface AppShellProps {
@@ -86,10 +87,11 @@ export function AppShell({ children, role = "student" }: AppShellProps) {
           </span>
         </Link>
 
-        {/* Right: notification + account */}
+        {/* Right: theme toggle + notification + account */}
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexShrink: 0 }}>
+          <ThemeToggle />
           <NotificationBell />
-          <Link href="/profile" style={{ textDecoration: "none" }}>
+          <Link href={role === "professor" ? "/prof/profile" : "/profile"} style={{ textDecoration: "none" }}>
             <div
               style={{
                 height: "28px", padding: "0 0.9rem",
