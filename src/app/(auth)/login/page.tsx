@@ -6,6 +6,8 @@ import { motion } from "framer-motion";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { Button } from "@/components/ui/Button";
+import { SchollectiveLogo } from "@/components/ui/SchollectiveLogo";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { toast } from "sonner";
 
 export const dynamic = "force-dynamic";
@@ -39,7 +41,7 @@ function Field({
           fontWeight: 800,
           letterSpacing: "0.22em",
           textTransform: "uppercase",
-          color: focused ? "#4f46e5" : "#0f172a",
+          color: focused ? "var(--accent)" : "var(--text-primary)",
           marginBottom: "0.6rem",
           transition: "color 0.25s",
           fontFamily: "var(--font-sans)",
@@ -58,17 +60,17 @@ function Field({
           onBlur={() => setFocused(false)}
           style={{
             width: "100%",
-            background: "rgba(255, 255, 255, 0.9)",
-            border: `1.5px solid ${focused ? "#4f46e5" : "rgba(99, 102, 241, 0.5)"}`,
+            background: "var(--bg-surface-1)",
+            border: `1.5px solid ${focused ? "var(--accent)" : "var(--border)"}`,
             borderRadius: "100px",
             padding: "1rem 1.75rem",
             fontSize: "0.95rem",
-            color: "#0f172a",
+            color: "var(--text-primary)",
             outline: "none",
             transition: "all 0.3s cubic-bezier(0.22, 1, 0.36, 1)",
             fontFamily: "var(--font-sans)",
             letterSpacing: "0.01em",
-            boxShadow: focused ? "0 0 0 4px rgba(79, 70, 229, 0.15)" : "none",
+            boxShadow: focused ? "0 0 0 4px var(--accent-dim)" : "none",
           }}
         />
         {suffix && (
@@ -120,38 +122,25 @@ function LoginContent() {
         .eq("id", data.user.id)
         .single();
 
-      // No profile row, or incomplete profile → send to onboarding
-      if (!profile || !profile.role || !profile.first_name) {
-        router.refresh();
-        const next = searchParams.get("next");
-        const onboardingUrl = next && next !== "/dashboard"
-          ? `/onboarding?next=${encodeURIComponent(next)}`
-          : "/onboarding";
-        router.push(onboardingUrl);
+      if (!profile) {
+        router.push("/onboarding");
         return;
       }
 
-      const next = searchParams.get("next");
-      if (next) {
-        router.refresh();
-        router.push(next);
-        return;
-      }
-
-      if (profile.role === "professor") {
-        router.refresh();
-        router.push(profile.status === "approved" ? "/prof/dashboard" : "/prof/pending");
-      } else if (profile.role === "admin") {
-        router.refresh();
+      if (profile.role === "admin") {
         router.push("/admin/dashboard");
+      } else if (profile.role === "professor") {
+        if (profile.status === "pending") {
+          router.push("/prof/pending");
+        } else {
+          router.push("/prof/dashboard");
+        }
       } else {
-        router.refresh();
         router.push("/dashboard");
       }
-    } catch (err: any) {
-      const msg = err instanceof Error ? err.message : "An error occurred during sign in.";
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Sign in failed";
       setError(msg);
-      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -159,53 +148,62 @@ function LoginContent() {
 
   const handleGoogleSignIn = async () => {
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
+      setLoading(true);
+      setError(null);
+
+      const callbackUrl = `${window.location.origin}/auth/callback`;
+
+      const { data, error: oauthError } = await supabase.auth.signInWithOAuth({
         provider: "google",
-        options: { redirectTo: `${window.location.origin}/auth/callback` },
+        options: {
+          redirectTo: callbackUrl,
+          queryParams: {
+            access_type: "offline",
+            prompt: "consent",
+          },
+        },
       });
-      if (error) throw error;
-    } catch (err: any) {
-      toast.error(err.message || "Failed to sign in with Google.");
+
+      if (oauthError) throw oauthError;
+
+      if (data?.url) {
+        window.location.href = data.url;
+      }
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Google sign in failed";
+      setError(msg);
+      setLoading(false);
     }
   };
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background: "transparent",
-        display: "flex",
-        flexDirection: "column",
-        position: "relative",
-        overflow: "hidden",
-      }}
-    >
-      {/* Removed local background glow */}
-
-      {/* ── Pill Nav ─────────────────────────────────────────── */}
+    <div className="page-bg" style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+      {/* ── Top Bar ────────────────────────────────────────────── */}
       <div style={{
-        position: "fixed", top: "1.5rem", left: "50%", transform: "translateX(-50%)",
-        zIndex: 50, display: "flex", alignItems: "center",
+        position: "fixed", top: 0, left: 0, right: 0, zIndex: 10,
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+        padding: "1.5rem 2rem",
       }}>
         <div style={{
-          display: "flex", alignItems: "center", gap: "2rem",
-          background: "rgba(253, 253, 253, 0.85)",
+          display: "flex", alignItems: "center", gap: "1.25rem",
+          background: "var(--glass-bg)",
           backdropFilter: "blur(20px)",
-          border: "1.5px solid rgba(79, 70, 229, 0.15)",
-          borderRadius: "100px",
-          padding: "0.6rem 1.6rem",
-          boxShadow: "0 4px 30px rgba(0, 0, 0, 0.03)",
+          border: "1px solid var(--border)",
+          borderRadius: "100px", padding: "0.5rem 1.25rem",
         }}>
-          <Link href="/" style={{ textDecoration: "none" }}>
+          <Link href="/" style={{ display: "flex", alignItems: "center", gap: "0.5rem", textDecoration: "none" }}>
+            <SchollectiveLogo size={18} />
             <span className="font-display hover:text-indigo-600 transition-colors" style={{ fontSize: "0.95rem", fontWeight: 800, color: "var(--text-primary)", letterSpacing: "-0.02em" }}>
               Schollective
             </span>
           </Link>
-          <div style={{ width: "1px", height: "1rem", background: "rgba(79, 70, 229, 0.15)" }} />
+          <div style={{ width: "1px", height: "1rem", background: "var(--border)" }} />
+          <ThemeToggle />
+          <div style={{ width: "1px", height: "1rem", background: "var(--border)" }} />
           <Link href="/signup" style={{ textDecoration: "none" }}>
             <span className="hover:text-indigo-700 transition-colors" style={{
               fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.2em",
-              textTransform: "uppercase", color: "#4f46e5",
+              textTransform: "uppercase", color: "var(--accent)",
               fontFamily: "var(--font-sans)",
               whiteSpace: "nowrap",
             }}>
@@ -229,10 +227,10 @@ function LoginContent() {
         >
           {/* Eyebrow */}
           <motion.div variants={fadeUp} style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.75rem" }}>
-            <span style={{ width: "1.5rem", height: "1px", background: "rgba(79, 70, 229, 0.4)", display: "block" }} />
+            <span style={{ width: "1.5rem", height: "1px", background: "var(--accent)", display: "block" }} />
             <span style={{
               fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.38em",
-              textTransform: "uppercase", color: "rgba(79, 70, 229, 0.7)",
+              textTransform: "uppercase", color: "var(--accent)",
               fontFamily: "var(--font-sans)",
             }}>
               Scholar Portal
@@ -246,11 +244,11 @@ function LoginContent() {
             marginBottom: "3.5rem",
           }}>
             Welcome<br />
-            <em style={{ fontStyle: "italic", color: "rgba(15, 23, 42, 0.38)" }}>back.</em>
+            <em style={{ fontStyle: "italic", color: "var(--text-tertiary)" }}>back.</em>
           </motion.h1>
 
           <form onSubmit={handleSubmit}>
-            <div style={{ display: "flex", flexDirection: "column", gap: "3rem" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
               <motion.div variants={fadeUp}>
                 <Field id="email" name="email" type="email" label="Institutional Email" placeholder="name@university.edu" required />
               </motion.div>
@@ -261,7 +259,7 @@ function LoginContent() {
                   label="Password" placeholder="••••••••" required
                   suffix={
                     <Link href="/reset-password" style={{ textDecoration: "none" }}>
-                      <span style={{ fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.28)" }}>
+                      <span style={{ fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--text-tertiary)" }}>
                         Forgot?
                       </span>
                     </Link>
@@ -270,7 +268,7 @@ function LoginContent() {
               </motion.div>
 
               {error && (
-                <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} style={{ fontSize: "0.78rem", color: "#ff7070", fontFamily: "var(--font-sans)" }}>
+                <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} style={{ fontSize: "0.78rem", color: "#ef4444", fontFamily: "var(--font-sans)" }}>
                   {error}
                 </motion.p>
               )}
@@ -289,9 +287,9 @@ function LoginContent() {
 
                 {/* Divider */}
                 <div style={{ display: "flex", alignItems: "center", gap: "1rem", margin: "0.25rem 0" }}>
-                  <div style={{ flex: 1, height: "1px", background: "rgba(15, 23, 42, 0.08)" }} />
-                  <span style={{ fontSize: "0.52rem", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.25)", fontFamily: "var(--font-sans)" }}>or</span>
-                  <div style={{ flex: 1, height: "1px", background: "rgba(15, 23, 42, 0.08)" }} />
+                  <div style={{ flex: 1, height: "1px", background: "var(--border)" }} />
+                  <span style={{ fontSize: "0.52rem", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--text-tertiary)", fontFamily: "var(--font-sans)" }}>or</span>
+                  <div style={{ flex: 1, height: "1px", background: "var(--border)" }} />
                 </div>
 
                 {/* Google button */}
@@ -317,11 +315,11 @@ function LoginContent() {
               {/* Footer link */}
               <motion.p variants={fadeUp} style={{
                 textAlign: "center", fontSize: "0.58rem", fontWeight: 600,
-                letterSpacing: "0.1em", color: "rgba(15, 23, 42, 0.22)",
+                letterSpacing: "0.1em", color: "var(--text-secondary)",
                 fontFamily: "var(--font-sans)",
               }}>
                 New to Schollective?{" "}
-                <Link href="/signup" style={{ color: "rgba(15, 23, 42, 0.55)", textDecoration: "none" }}>
+                <Link href="/signup" style={{ color: "var(--accent)", textDecoration: "none" }}>
                   Create an account →
                 </Link>
               </motion.p>
@@ -335,7 +333,7 @@ function LoginContent() {
         position: "relative", zIndex: 1,
         textAlign: "center", padding: "1.5rem",
       }}>
-        <span style={{ fontSize: "0.5rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.14)", fontFamily: "var(--font-sans)" }}>
+        <span style={{ fontSize: "0.5rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--text-tertiary)", fontFamily: "var(--font-sans)" }}>
           Manually verified · Institutionally credentialed · © 2025 Schollective
         </span>
       </div>
@@ -348,8 +346,8 @@ export default function LoginPage() {
     <Suspense fallback={
       <div style={{ minHeight: "100vh", background: "var(--bg-base)", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <div style={{ width: "1.5rem", height: "1px", background: "rgba(15, 23, 42, 0.2)" }} />
-          <span style={{ fontSize: "0.55rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.3)", fontFamily: "var(--font-sans)" }}>
+          <div style={{ width: "1.5rem", height: "1px", background: "var(--accent)" }} />
+          <span style={{ fontSize: "0.55rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "var(--text-secondary)", fontFamily: "var(--font-sans)" }}>
             Loading…
           </span>
         </div>
