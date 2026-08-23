@@ -141,7 +141,7 @@ export function PublicNav() {
             }`}
         >
           {/* COLUMN 1: LEFT (Logo) */}
-          <div className="flex items-center justify-start pl-8 sm:pl-10 lg:pl-14">
+          <div className="flex items-center justify-start pl-5 sm:pl-6 lg:pl-8">
             <Link
               href="/"
               data-nav-item="true"
@@ -165,7 +165,7 @@ export function PublicNav() {
           </div>
 
           {/* COLUMN 3: RIGHT (Log In + Mobile Hamburger) */}
-          <div className="flex items-center justify-end pr-8 sm:pr-10 lg:pr-14">
+          <div className="flex items-center justify-end pr-5 sm:pr-6 lg:pr-8">
             <div className="hidden lg:flex items-center">
               <NavItem label="Log In" href="/login" active={pathname === "/login"} />
             </div>
