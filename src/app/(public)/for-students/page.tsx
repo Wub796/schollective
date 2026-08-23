@@ -8,8 +8,6 @@ import { Button } from "@/components/ui/Button";
 import { FileText, GraduationCap, Microscope, BookOpen, Users, PenTool } from "lucide-react";
 
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
-const SECTION_STYLE = { paddingTop: "8rem", paddingBottom: "8rem" };
-const HERO_STYLE = { paddingTop: "9rem", paddingBottom: "8rem" };
 
 function FadeIn({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
   const ref = useRef(null);
@@ -25,7 +23,7 @@ function Eyebrow({ children }: { children: string }) {
   return (
     <div className="flex items-center justify-center gap-3 mb-6">
       <span className="w-6 h-[2px] bg-indigo-500 block flex-shrink-0" />
-      <span className="text-[0.62rem] font-extrabold tracking-[0.22em] uppercase text-indigo-600 font-sans">{children}</span>
+      <span className="text-[0.62rem] font-extrabold tracking-[0.22em] uppercase text-indigo-600 dark:text-indigo-400 font-sans">{children}</span>
       <span className="w-6 h-[2px] bg-indigo-500 block flex-shrink-0" />
     </div>
   );
@@ -39,17 +37,17 @@ const HOW_IT_WORKS = [
 ];
 
 const USE_CASES = [
-  { icon: <FileText className="w-6 h-6 text-indigo-600" />, title: "Research Paper Guidance", body: "Get feedback on your thesis, methodology, or literature review from a professor in exactly that field." },
-  { icon: <GraduationCap className="w-6 h-6 text-indigo-600" />, title: "Graduate School Planning", body: "Ask professors about their programs, what they look for in applicants, and how to strengthen your profile." },
-  { icon: <Microscope className="w-6 h-6 text-indigo-600" />, title: "Science Fair & Research Projects", body: "High schoolers: get expert perspective on your project before competition season." },
-  { icon: <BookOpen className="w-6 h-6 text-indigo-600" />, title: "Understanding Complex Topics", body: "Sometimes textbooks aren't enough. Get a nuanced explanation from someone who has spent a career studying it." },
-  { icon: <Users className="w-6 h-6 text-indigo-600" />, title: "Finding Research Opportunities", body: "Learn about lab openings, summer programs, and internships directly from professors actively seeking students." },
-  { icon: <PenTool className="w-6 h-6 text-indigo-600" />, title: "Academic Writing Improvement", body: "Get your writing reviewed by academics who publish regularly and know exactly what clarity looks like." },
+  { icon: <FileText className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />, title: "Research Paper Guidance", body: "Get feedback on your thesis, methodology, or literature review from a professor in exactly that field." },
+  { icon: <GraduationCap className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />, title: "Graduate School Planning", body: "Ask professors about their programs, what they look for in applicants, and how to strengthen your profile." },
+  { icon: <Microscope className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />, title: "Science Fair & Research Projects", body: "High schoolers: get expert perspective on your project before competition season." },
+  { icon: <BookOpen className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />, title: "Understanding Complex Topics", body: "Sometimes textbooks aren't enough. Get a nuanced explanation from someone who has spent a career studying it." },
+  { icon: <Users className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />, title: "Finding Research Opportunities", body: "Learn about lab openings, summer programs, and internships directly from professors actively seeking students." },
+  { icon: <PenTool className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />, title: "Academic Writing Improvement", body: "Get your writing reviewed by academics who publish regularly and know exactly what clarity looks like." },
 ];
 
 export default function ForStudentsPage() {
   return (
-    <div className="bg-transparent text-slate-900 min-h-screen">
+    <div className="bg-transparent text-slate-900 dark:text-slate-100 min-h-screen">
       <PublicNav />
 
       {/* ── HERO ──────────────────────────────────────────── */}
@@ -57,13 +55,13 @@ export default function ForStudentsPage() {
         <div className="w-full max-w-[760px] mx-auto flex flex-col items-center text-center">
           <FadeIn className="w-full flex flex-col items-center">
             <Eyebrow>For Students</Eyebrow>
-            <h1 className="font-display text-[clamp(2.8rem,6.5vw,5rem)] font-black tracking-[-0.04em] leading-[1.05] mb-8 text-slate-900 text-center">
+            <h1 className="font-display text-[clamp(2.8rem,6.5vw,5rem)] font-black tracking-[-0.04em] leading-[1.05] mb-8 text-slate-900 dark:text-slate-100 text-center">
               Your questions<br />
-              <em className="italic font-light text-indigo-600">deserve real answers.</em>
+              <em className="italic font-light text-indigo-600 dark:text-indigo-400">deserve real answers.</em>
             </h1>
           </FadeIn>
           <FadeIn delay={0.15} className="w-full flex flex-col items-center">
-            <p style={{ textAlign: "center" }} className="text-[clamp(1.05rem,1.4vw,1.25rem)] text-slate-600 leading-relaxed max-w-[620px] mb-10">
+            <p style={{ textAlign: "center" }} className="text-[clamp(1.05rem,1.4vw,1.25rem)] text-slate-600 dark:text-slate-300 leading-relaxed max-w-[620px] mb-10">
               Whether you&apos;re a high schooler working on a science fair project or an undergrad navigating grad school
               applications, Schollective connects you directly with verified professors who can actually help —
               for free, with no cold-email anxiety.
@@ -83,21 +81,21 @@ export default function ForStudentsPage() {
       </section>
 
       {/* ── HOW IT WORKS ─────────────────────────────────── */}
-      <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-indigo-300/40" style={{ paddingTop: "9rem", paddingBottom: "9rem" }}>
+      <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-slate-200/60 dark:border-slate-800" style={{ paddingTop: "9rem", paddingBottom: "9rem" }}>
         <div className="w-full max-w-[920px] mx-auto">
           <FadeIn>
-            <h2 className="font-display text-[clamp(2.2rem,4vw,3.5rem)] font-black tracking-[-0.04em] leading-[1.05] mb-14 text-slate-900">
-              From sign-up to<br /><em className="italic font-light text-indigo-600">insight, in four steps.</em>
+            <h2 className="font-display text-[clamp(2.2rem,4vw,3.5rem)] font-black tracking-[-0.04em] leading-[1.05] mb-14 text-slate-900 dark:text-slate-100">
+              From sign-up to<br /><em className="italic font-light text-indigo-600 dark:text-indigo-400">insight, in four steps.</em>
             </h2>
           </FadeIn>
           <div className="w-full">
             {HOW_IT_WORKS.map((s, i) => (
               <FadeIn key={s.n} delay={i * 0.06}>
-                <div className="grid grid-cols-[3.5rem_1fr] gap-8 p-8 md:p-10 mb-6 border border-indigo-300/40 rounded-2xl bg-white/90 text-left items-start shadow-xs">
-                  <span className="font-mono text-[0.68rem] font-bold tracking-[0.2em] text-slate-900 bg-indigo-500 px-2.5 py-1 rounded-full text-center mt-1">{s.n}</span>
+                <div className="grid grid-cols-[3.5rem_1fr] gap-8 p-8 md:p-10 mb-6 border border-slate-200/70 dark:border-slate-800 rounded-2xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-md text-left items-start shadow-xs">
+                  <span className="font-mono text-[0.68rem] font-bold tracking-[0.2em] text-white bg-indigo-600 px-2.5 py-1 rounded-full text-center mt-1">{s.n}</span>
                   <div>
-                    <h3 className="font-display text-[1.35rem] font-bold text-slate-900 tracking-[-0.02em] mb-2">{s.title}</h3>
-                    <p className="text-[0.95rem] text-slate-600/80 leading-relaxed font-sans">{s.body}</p>
+                    <h3 className="font-display text-[1.35rem] font-bold text-slate-900 dark:text-slate-100 tracking-[-0.02em] mb-2">{s.title}</h3>
+                    <p className="text-[0.95rem] text-slate-600/90 dark:text-slate-300 leading-relaxed font-sans">{s.body}</p>
                   </div>
                 </div>
               </FadeIn>
@@ -107,20 +105,20 @@ export default function ForStudentsPage() {
       </section>
 
       {/* ── USE CASES ────────────────────────────────────── */}
-      <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-indigo-300/40" style={{ paddingTop: "9rem", paddingBottom: "9rem" }}>
+      <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-slate-200/60 dark:border-slate-800" style={{ paddingTop: "9rem", paddingBottom: "9rem" }}>
         <div className="w-full max-w-[920px] mx-auto">
           <FadeIn>
-            <h2 className="font-display text-[clamp(2.2rem,4vw,3.5rem)] font-black tracking-[-0.04em] leading-[1.05] mb-14 text-slate-900">
-              Every serious question<br /><em className="italic font-light text-indigo-600">has a home here.</em>
+            <h2 className="font-display text-[clamp(2.2rem,4vw,3.5rem)] font-black tracking-[-0.04em] leading-[1.05] mb-14 text-slate-900 dark:text-slate-100">
+              Every serious question<br /><em className="italic font-light text-indigo-600 dark:text-indigo-400">has a home here.</em>
             </h2>
           </FadeIn>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
             {USE_CASES.map((uc, i) => (
               <FadeIn key={uc.title} delay={i * 0.05}>
-                <div className="p-8 border border-indigo-300/40 rounded-2xl bg-white h-full transition-all duration-300 hover:shadow-md hover:border-indigo-600 text-left flex flex-col">
-                  <div className="w-12 h-12 rounded-xl bg-indigo-600/10 border border-indigo-600/25 flex items-center justify-center mb-6">{uc.icon}</div>
-                  <h3 className="font-display text-[1.15rem] font-bold text-slate-900 tracking-[-0.02em] mb-2">{uc.title}</h3>
-                  <p className="text-[0.88rem] text-slate-600/80 leading-relaxed font-sans mt-auto">{uc.body}</p>
+                <div className="p-8 border border-slate-200/70 dark:border-slate-800 rounded-2xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-md h-full transition-all duration-300 hover:shadow-md hover:border-indigo-600 text-left flex flex-col">
+                  <div className="w-12 h-12 rounded-xl bg-indigo-600/10 dark:bg-indigo-500/15 border border-indigo-600/25 dark:border-indigo-500/30 flex items-center justify-center mb-6">{uc.icon}</div>
+                  <h3 className="font-display text-[1.15rem] font-bold text-slate-900 dark:text-slate-100 tracking-[-0.02em] mb-2">{uc.title}</h3>
+                  <p className="text-[0.88rem] text-slate-600/90 dark:text-slate-300 leading-relaxed font-sans mt-auto">{uc.body}</p>
                 </div>
               </FadeIn>
             ))}
@@ -129,15 +127,15 @@ export default function ForStudentsPage() {
       </section>
 
       {/* ── CTA ──────────────────────────────────────────── */}
-      <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-indigo-300/40" style={{ paddingTop: "9rem", paddingBottom: "9rem" }}>
+      <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-slate-200/60 dark:border-slate-800" style={{ paddingTop: "9rem", paddingBottom: "9rem" }}>
         <div className="w-full max-w-[920px] mx-auto">
           <FadeIn>
-            <div className="border border-indigo-300/50 rounded-3xl bg-indigo-300/10 flex flex-col items-center gap-12 text-center w-full px-8 md:px-16" style={{ paddingTop: "6.5rem", paddingBottom: "6.5rem" }}>
+            <div className="border border-indigo-300/50 dark:border-indigo-500/30 rounded-3xl bg-indigo-50/50 dark:bg-indigo-950/20 backdrop-blur-md flex flex-col items-center gap-12 text-center w-full px-8 md:px-16" style={{ paddingTop: "6.5rem", paddingBottom: "6.5rem" }}>
               <div className="flex flex-col gap-5">
-                <h2 className="font-display font-black text-[clamp(2rem,3vw,2.8rem)] tracking-[-0.04em] text-slate-900 leading-tight">
+                <h2 className="font-display font-black text-[clamp(2rem,3vw,2.8rem)] tracking-[-0.04em] text-slate-900 dark:text-slate-100 leading-tight">
                   Start for free, today.
                 </h2>
-                <p className="text-[1rem] text-slate-600/80 leading-relaxed max-w-[480px] mx-auto font-sans text-center">
+                <p className="text-[1rem] text-slate-600 dark:text-slate-300 leading-relaxed max-w-[480px] mx-auto font-sans text-center">
                   Join thousands of students getting real guidance from verified professors.
                 </p>
               </div>

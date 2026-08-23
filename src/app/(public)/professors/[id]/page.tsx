@@ -5,6 +5,7 @@ import { createClient } from "@/utils/supabase/server";
 import { ArrowLeft, GraduationCap, Building2, BookOpen, Mail, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { AppShell } from "@/components/layout/AppShell";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 export const dynamic = "force-dynamic";
 
@@ -438,8 +439,8 @@ export default async function PublicProfessorProfilePage({ params }: PageProps) 
         alignItems: "center",
         justifyContent: "space-between",
         padding: "1.25rem 2rem",
-        borderBottom: "1px solid rgba(15, 23, 42, 0.06)",
-        background: "rgba(255, 255, 255, 0.8)",
+        borderBottom: "1px solid var(--border)",
+        background: "var(--glass-bg)",
         backdropFilter: "blur(12px)",
         position: "sticky",
         top: 0,
@@ -450,7 +451,8 @@ export default async function PublicProfessorProfilePage({ params }: PageProps) 
             Schollective
           </span>
         </Link>
-        <div style={{ display: "flex", gap: "0.75rem" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <ThemeToggle />
           <Button href="/login" variant="ghost" size="sm">Log In</Button>
           <Button href="/signup" variant="primary" size="sm">Get Started</Button>
         </div>
