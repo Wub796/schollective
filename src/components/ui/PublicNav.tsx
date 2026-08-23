@@ -141,15 +141,15 @@ export function PublicNav() {
             }`}
         >
           {/* COLUMN 1: LEFT (Logo) */}
-          <div className="flex items-center justify-start pl-5 sm:pl-7 lg:pl-8">
+          <div className="flex items-center justify-start pl-8 sm:pl-10 lg:pl-14">
             <Link
               href="/"
               data-nav-item="true"
-              style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "0.6rem" }}
+              style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "0.65rem" }}
               className="group select-none"
             >
-              <SchollectiveLogo size={30} />
-              <span className="font-display font-bold text-slate-900 tracking-tight transition-colors group-hover:text-indigo-600" style={{ fontSize: "1.1rem" }}>
+              <SchollectiveLogo size={32} />
+              <span className="font-display font-bold text-slate-900 tracking-tight transition-colors group-hover:text-indigo-600" style={{ fontSize: "1.12rem" }}>
                 Schollective
               </span>
             </Link>
@@ -165,7 +165,7 @@ export function PublicNav() {
           </div>
 
           {/* COLUMN 3: RIGHT (Log In + Mobile Hamburger) */}
-          <div className="flex items-center justify-end pr-5 sm:pr-7 lg:pr-8">
+          <div className="flex items-center justify-end pr-8 sm:pr-10 lg:pr-14">
             <div className="hidden lg:flex items-center">
               <NavItem label="Log In" href="/login" active={pathname === "/login"} />
             </div>
