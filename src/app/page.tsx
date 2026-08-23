@@ -180,7 +180,7 @@ export default function LandingPage() {
         </section>
 
         {/* ══ PROBLEM STATEMENT ════════════════════════════════════════ */}
-        <section className="js-fade relative border-t border-slate-100 min-h-screen flex flex-col items-center justify-center py-24 px-6" style={{ background: "#fdfdfd" }}>
+        <section className="js-fade relative border-t border-slate-100 flex flex-col items-center justify-center py-20 md:py-24 px-6" style={{ background: "#fdfdfd" }}>
           <div className="w-full max-w-4xl mx-auto flex flex-col items-center text-center">
             <Label>The truth about academic cold-outreach</Label>
             <h2
@@ -191,13 +191,13 @@ export default function LandingPage() {
               <span className="italic font-light text-slate-400">before finishing the first line.</span>
             </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5 w-full mt-8 mb-16 mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5 w-full mt-6 mb-10 mx-auto">
               {[
                 "Professors can spot AI-written emails instantly.",
                 "Generic requests that could go to anyone get ignored.",
                 "Citing papers without understanding them backfires.",
               ].map((reason, i) => (
-                <div key={i} className="flex flex-col items-center justify-center text-center p-12 rounded-2xl border border-slate-200/50 bg-[#fdfdfd] mx-auto w-full">
+                <div key={i} className="flex flex-col items-center justify-center text-center p-10 md:p-12 rounded-2xl border border-slate-200/50 bg-[#fdfdfd] mx-auto w-full">
                   <span className="w-8 h-8 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500 text-xs font-bold font-sans mb-6 select-none mx-auto">✕</span>
                   <p className="text-slate-600 text-sm leading-loose tracking-wide text-center mx-auto">{reason}</p>
                 </div>
@@ -206,7 +206,7 @@ export default function LandingPage() {
 
             <Link
               href="/signup"
-              className="group inline-flex items-center justify-center gap-1.5 font-sans text-xs uppercase tracking-[0.22em] text-indigo-600 border-b border-indigo-600/20 pb-2 hover:border-indigo-600 transition-colors font-bold mx-auto text-center mt-6"
+              className="group inline-flex items-center justify-center gap-1.5 font-sans text-xs uppercase tracking-[0.22em] text-indigo-600 border-b border-indigo-600/20 pb-2 hover:border-indigo-600 transition-colors font-bold mx-auto text-center mt-2"
               style={{ textDecoration: "none" }}
             >
               Send one that gets read <span className="transition-transform group-hover:translate-x-1">→</span>
@@ -215,7 +215,7 @@ export default function LandingPage() {
         </section>
 
         {/* ══ COMPARISON TABLE ═════════════════════════════════════════ */}
-        <section className="js-fade relative border-t border-slate-100 min-h-screen flex flex-col items-center justify-center py-24 px-6" style={{ background: "#fdfdfd" }}>
+        <section className="js-fade relative border-t border-slate-100 flex flex-col items-center justify-center py-20 md:py-24 px-6" style={{ background: "#fdfdfd" }}>
           <div className="w-full max-w-4xl mx-auto flex flex-col items-center text-center">
             <h2
               className="font-display font-bold text-slate-900 tracking-tighter leading-[1.1] text-center w-full mb-16 mx-auto"
@@ -258,7 +258,7 @@ export default function LandingPage() {
         </section>
 
         {/* ══ 3-STEP WALKTHROUGH ══════════════════════════════════════ */}
-        <section className="js-fade relative border-t border-slate-100 min-h-screen flex flex-col items-center justify-center py-24 px-6" style={{ background: "#fdfdfd" }}>
+        <section className="js-fade relative flex flex-col items-center justify-center py-20 md:py-24 px-6" style={{ background: "#fdfdfd" }}>
           <div className="w-full max-w-6xl mx-auto flex flex-col items-center text-center mb-16">
             <h2 className="font-display font-bold text-slate-900 tracking-tighter leading-[1.1] mb-4" style={{ fontSize: "clamp(2rem, 3.5vw, 3rem)" }}>
               From sign-up to insight, in <em className="italic font-light text-indigo-600">three steps.</em>
