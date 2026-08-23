@@ -58,13 +58,19 @@
 
 /* ═══════════════════════════════════════════════════════════════
    BASE RESET
-   ═══════════════════════════════════════════════════════════════ */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+   ═══════════════════════════════════════════════════════════════
+   NOTE: this must stay inside `@layer base`. Tailwind v4 puts every
+   utility in `@layer utilities`, and unlayered rules always beat
+   layered ones in the cascade — an unlayered `margin: 0; padding: 0`
+   here silently disables all Tailwind spacing utilities. */
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
 }
 
 html {
