@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { SchollectiveLogo } from "@/components/ui/SchollectiveLogo";
-import { motion, useInView, AnimatePresence, useReducedMotion } from "framer-motion";
+import { motion, useInView, useReducedMotion } from "framer-motion";
 import { PublicNav } from "@/components/ui/PublicNav";
 import { Button } from "@/components/ui/Button";
 import { AnimatedBackground } from "@/components/ui/AnimatedBackground";
@@ -19,55 +19,53 @@ import { MobileStickyBar } from "@/components/ui/MobileStickyBar";
 function PageLoader({ done }: { done: boolean }) {
   const letters = "SCHOLLECTIVE".split("");
   return (
-    <AnimatePresence>
-      {!done && (
+    <motion.div
+      initial={{ opacity: 1 }}
+      animate={{ opacity: done ? 0 : 1 }}
+      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+      className="fixed inset-0 z-[99999] flex flex-col items-center justify-center select-none"
+      style={{
+        background: "radial-gradient(circle at center, rgba(79, 70, 229, 0.04) 0%, #fcfbfa 60%, #faf9f7 100%)",
+        pointerEvents: done ? "none" : "auto",
+      }}
+    >
+      <div className="relative w-48 h-48 flex items-center justify-center mb-8">
+        <motion.svg animate={{ rotate: 360 }} transition={{ duration: 6, ease: "linear", repeat: Infinity }} className="absolute w-48 h-48 pointer-events-none" viewBox="0 0 200 200">
+          <circle cx="100" cy="100" r="96" stroke="rgba(79, 70, 229, 0.1)" strokeWidth="1" fill="none" strokeDasharray="4 4" />
+          <circle cx="100" cy="4" r="3.5" fill="#4f46e5" />
+        </motion.svg>
+        <motion.svg animate={{ rotate: -360 }} transition={{ duration: 4.5, ease: "linear", repeat: Infinity }} className="absolute w-36 h-36 pointer-events-none" viewBox="0 0 160 160">
+          <circle cx="80" cy="80" r="76" stroke="rgba(79, 70, 229, 0.15)" strokeWidth="1.2" fill="none" strokeDasharray="4 12" />
+          <circle cx="80" cy="4" r="4.5" fill="#4338ca" />
+        </motion.svg>
+        <motion.svg animate={{ rotate: 360 }} transition={{ duration: 3, ease: "linear", repeat: Infinity }} className="absolute w-24 h-24 pointer-events-none" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="46" stroke="rgba(79, 70, 229, 0.2)" strokeWidth="1.5" fill="none" strokeDasharray="15 8" />
+          <circle cx="82.5" cy="17.5" r="2.5" fill="#818cf8" />
+        </motion.svg>
         <motion.div
-          key="loader"
-          initial={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
-          className="fixed inset-0 z-[99999] flex flex-col items-center justify-center select-none"
-          style={{ background: "radial-gradient(circle at center, rgba(79, 70, 229, 0.04) 0%, #fcfbfa 60%, #faf9f7 100%)" }}
+          animate={{ scale: [0.96, 1.04, 0.96], boxShadow: ["0 0 12px rgba(79,70,229,0.05)", "0 0 28px rgba(79,70,229,0.15)", "0 0 12px rgba(79,70,229,0.05)"] }}
+          transition={{ duration: 2, ease: "easeInOut", repeat: Infinity }}
+          className="absolute w-14 h-14 rounded-2xl bg-white border border-indigo-600/15 flex items-center justify-center overflow-hidden p-2"
         >
-          <div className="relative w-48 h-48 flex items-center justify-center mb-8">
-            <motion.svg animate={{ rotate: 360 }} transition={{ duration: 6, ease: "linear", repeat: Infinity }} className="absolute w-48 h-48 pointer-events-none" viewBox="0 0 200 200">
-              <circle cx="100" cy="100" r="96" stroke="rgba(79, 70, 229, 0.1)" strokeWidth="1" fill="none" strokeDasharray="4 4" />
-              <circle cx="100" cy="4" r="3.5" fill="#4f46e5" />
-            </motion.svg>
-            <motion.svg animate={{ rotate: -360 }} transition={{ duration: 4.5, ease: "linear", repeat: Infinity }} className="absolute w-36 h-36 pointer-events-none" viewBox="0 0 160 160">
-              <circle cx="80" cy="80" r="76" stroke="rgba(79, 70, 229, 0.15)" strokeWidth="1.2" fill="none" strokeDasharray="4 12" />
-              <circle cx="80" cy="4" r="4.5" fill="#4338ca" />
-            </motion.svg>
-            <motion.svg animate={{ rotate: 360 }} transition={{ duration: 3, ease: "linear", repeat: Infinity }} className="absolute w-24 h-24 pointer-events-none" viewBox="0 0 100 100">
-              <circle cx="50" cy="50" r="46" stroke="rgba(79, 70, 229, 0.2)" strokeWidth="1.5" fill="none" strokeDasharray="15 8" />
-              <circle cx="82.5" cy="17.5" r="2.5" fill="#818cf8" />
-            </motion.svg>
-            <motion.div
-              animate={{ scale: [0.96, 1.04, 0.96], boxShadow: ["0 0 12px rgba(79,70,229,0.05)", "0 0 28px rgba(79,70,229,0.15)", "0 0 12px rgba(79,70,229,0.05)"] }}
-              transition={{ duration: 2, ease: "easeInOut", repeat: Infinity }}
-              className="absolute w-14 h-14 rounded-2xl bg-white border border-indigo-600/15 flex items-center justify-center overflow-hidden p-2"
-            >
-              <Image src="/logo.png" alt="Schollective" width={38} height={38} className="rounded-xl object-cover" priority />
-            </motion.div>
-          </div>
-          <div className="text-center">
-            <div className="flex justify-center gap-0.5 overflow-hidden py-1 mb-1">
-              {letters.map((char, i) => (
-                <motion.span key={i} initial={{ y: "100%", opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.1 + i * 0.04 }} className="font-mono text-xs font-bold uppercase tracking-[0.25em] text-indigo-600">
-                  {char}
-                </motion.span>
-              ))}
-            </div>
-            <motion.p initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: "easeOut", delay: 0.6 }} className="font-mono text-[0.52rem] uppercase tracking-[0.25em] text-slate-400/80 m-0 mt-2">
-              Academic Mentorship Platform
-            </motion.p>
-          </div>
-          <div className="w-32 h-[1px] bg-slate-200/60 relative overflow-hidden mt-6 rounded-full">
-            <motion.div initial={{ scaleX: 0, originX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }} className="absolute inset-0 bg-indigo-600" />
-          </div>
+          <Image src="/logo.png" alt="Schollective" width={38} height={38} className="rounded-xl object-cover" priority />
         </motion.div>
-      )}
-    </AnimatePresence>
+      </div>
+      <div className="text-center">
+        <div className="flex justify-center gap-0.5 overflow-hidden py-1 mb-1">
+          {letters.map((char, i) => (
+            <motion.span key={i} initial={{ y: "100%", opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.1 + i * 0.04 }} className="font-mono text-xs font-bold uppercase tracking-[0.25em] text-indigo-600">
+              {char}
+            </motion.span>
+          ))}
+        </div>
+        <motion.p initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: "easeOut", delay: 0.6 }} className="font-mono text-[0.52rem] uppercase tracking-[0.25em] text-slate-400/80 m-0 mt-2">
+          Academic Mentorship Platform
+        </motion.p>
+      </div>
+      <div className="w-32 h-[1px] bg-slate-200/60 relative overflow-hidden mt-6 rounded-full">
+        <motion.div initial={{ scaleX: 0, originX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }} className="absolute inset-0 bg-indigo-600" />
+      </div>
+    </motion.div>
   );
 }
 
@@ -114,13 +112,24 @@ function MockupChrome({ url, children, className = "" }: { url: string; children
 /* ══════════════════════════════════════════════════════════════════════════
    LANDING PAGE
 ══════════════════════════════════════════════════════════════════════════ */
+const LOADER_KEY = "schollective_loader_shown";
+
 export default function LandingPage() {
   const router = useRouter();
   const [loaderDone, setLoaderDone] = useState(false);
   const reduceMotion = useReducedMotion();
 
   useEffect(() => {
-    const t = setTimeout(() => setLoaderDone(true), 1800);
+    // If already shown this session, skip the loader immediately.
+    // Run on mount only — avoids SSR hydration mismatch.
+    if (sessionStorage.getItem(LOADER_KEY) === "1") {
+      setLoaderDone(true);
+      return;
+    }
+    const t = setTimeout(() => {
+      setLoaderDone(true);
+      sessionStorage.setItem(LOADER_KEY, "1");
+    }, 1000);
     return () => clearTimeout(t);
   }, []);
 
@@ -163,7 +172,7 @@ export default function LandingPage() {
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 1.2, ease: EASE, delay: 0.9 }}
+              transition={{ duration: 0.7, ease: EASE, delay: 0.15 }}
               className="font-sans text-slate-500 text-lg leading-relaxed mt-8 mb-12 max-w-md mx-auto text-center"
             >
               Schollective helps high school students connect with professors and research mentors through structured academic outreach.
@@ -171,7 +180,7 @@ export default function LandingPage() {
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.9, ease: EASE, delay: 1.1 }}
+              transition={{ duration: 0.6, ease: EASE, delay: 0.3 }}
               className="flex justify-center w-full mx-auto"
             >
               <Button href="/signup" variant="primary" size="lg">Get Started →</Button>
