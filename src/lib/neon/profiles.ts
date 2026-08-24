@@ -278,6 +278,17 @@ export async function upsertProfile(profile: Partial<ProfileRecord> & { id: stri
     RETURNING *;
   `;
 
+  // Keep Better Auth "user" table in sync with profiles role & status
+  if (resolvedRole || resolvedStatus) {
+    await sql`
+      UPDATE "user"
+      SET "role" = COALESCE(${resolvedRole}, "role"),
+          "status" = COALESCE(${resolvedStatus}, "status"),
+          "updatedAt" = now()
+      WHERE "id" = ${profile.id};
+    `;
+  }
+
   return rows[0] as ProfileRecord;
   });
 }
