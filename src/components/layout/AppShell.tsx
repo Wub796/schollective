@@ -76,8 +76,8 @@ export function AppShell({ children, role = "student" }: AppShellProps) {
           </svg>
         </button>
 
-        {/* Wordmark */}
-        <Link href={role === "professor" ? "/prof/dashboard" : "/dashboard"} style={{ textDecoration: "none", flexShrink: 0 }}>
+        {/* Wordmark — only visible on mobile; sidebar has it on desktop */}
+        <Link href={role === "professor" ? "/prof/dashboard" : "/dashboard"} className="lg:hidden" style={{ textDecoration: "none", flexShrink: 0 }}>
           <span
             className="font-display"
             style={{ fontSize: "1.1rem", fontWeight: 800, letterSpacing: "-0.025em", color: "var(--text-primary)" }}
