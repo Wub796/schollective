@@ -85,8 +85,12 @@ export default async function ProfessorDashboard() {
         'last_name', s.last_name,
         'preferred_name', s.preferred_name,
         'education_level', s.education_level,
+        'major', s.major,
+        'graduation_year', s.graduation_year,
         'bio', s.bio,
         'academic_interests', s.academic_interests,
+        'skills_and_tools', s.skills_and_tools,
+        'portfolio_url', s.portfolio_url,
         'extracurriculars', s.extracurriculars
       ) as student,
       COALESCE(
@@ -100,7 +104,7 @@ export default async function ProfessorDashboard() {
   `;
 
   const pendingRequests = (allRequests || [])
-    .filter((r) => r.status === "pending")
+    .filter((r) => r.status === "pending" || r.status === "viewed")
     .map((req: any) => {
       const student = Array.isArray(req.student) ? req.student[0] : req.student;
       return {
