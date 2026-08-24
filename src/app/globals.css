@@ -58,14 +58,7 @@
 
 /* ═══════════════════════════════════════════════════════════════
    BASE RESET
-   ═══════════════════════════════════════════════════════════════ */
-.hide-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-.hide-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
+   ═══════════════════════════════════════════════════════════════
    NOTE: this must stay inside `@layer base`. Tailwind v4 puts every
    utility in `@layer utilities`, and unlayered rules always beat
    layered ones in the cascade — an unlayered `margin: 0; padding: 0`
@@ -78,6 +71,14 @@
     margin: 0;
     padding: 0;
   }
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 html {
