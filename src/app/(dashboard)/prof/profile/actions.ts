@@ -3,6 +3,15 @@
 import { createClient } from "@/utils/supabase/server";
 import { createAdminClient } from "@/utils/supabase/admin";
 import { revalidatePath } from "next/cache";
+import {
+  checkRateLimit,
+  sanitiseText,
+  sanitiseUrl,
+  sanitiseTagArray,
+  sanitiseMultiline,
+  sanitiseBool,
+  LIMITS,
+} from "@/lib/security";
 
 export async function updateProfProfile(formData: FormData) {
   try {
@@ -13,31 +22,33 @@ export async function updateProfProfile(formData: FormData) {
       return { error: "Unauthorized: Please log in." };
     }
 
+    // Rate limit: 10 profile updates per 5 minutes
+    const rate = checkRateLimit(`profile:${user.id}`, 10, 5 * 60 * 1000);
+    if (!rate.allowed) {
+      return { error: `Profile update limit reached. Please wait ${Math.ceil(rate.retryAfterSeconds / 60)} minute(s).` };
+    }
+
     const adminClient = createAdminClient();
 
-    const rawExpertise = (formData.get("expertise_fields") as string) || "";
-    const expertiseFields = rawExpertise.split(",").map((s) => s.trim()).filter(Boolean);
-
-    const rawStudentTypes = (formData.get("accepting_student_types") as string) || "";
-    const acceptingStudentTypes = rawStudentTypes.split(",").map((s) => s.trim()).filter(Boolean);
-
-    const rawPublications = (formData.get("publications") as string) || "";
-    const publications = rawPublications.split("\n").map((s) => s.trim()).filter(Boolean);
+    // ── Sanitise all string inputs ───────────────────────────────
+    const expertiseFields = sanitiseTagArray(formData.get("expertise_fields"), LIMITS.expertiseField);
+    const acceptingStudentTypes = sanitiseTagArray(formData.get("accepting_student_types"), LIMITS.studentType);
+    const publications = sanitiseMultiline(formData.get("publications"), LIMITS.publication);
 
     const payload: Record<string, any> = {
-      first_name: (formData.get("first_name") as string || "").trim(),
-      last_name: (formData.get("last_name") as string || "").trim(),
-      preferred_name: (formData.get("preferred_name") as string || "").trim(),
-      institution: (formData.get("institution") as string || "").trim(),
-      department: (formData.get("department") as string || "").trim(),
-      academic_title: (formData.get("academic_title") as string || "").trim(),
-      bio: (formData.get("bio") as string || "").trim(),
-      lab_website: (formData.get("lab_website") as string || "").trim(),
-      office_hours: (formData.get("office_hours") as string || "").trim(),
+      first_name: sanitiseText(formData.get("first_name"), LIMITS.name),
+      last_name: sanitiseText(formData.get("last_name"), LIMITS.name),
+      preferred_name: sanitiseText(formData.get("preferred_name"), LIMITS.name),
+      institution: sanitiseText(formData.get("institution"), LIMITS.institution),
+      department: sanitiseText(formData.get("department"), LIMITS.department),
+      academic_title: sanitiseText(formData.get("academic_title"), LIMITS.academicTitle),
+      bio: sanitiseText(formData.get("bio"), LIMITS.bio),
+      lab_website: sanitiseUrl(formData.get("lab_website")),
+      office_hours: sanitiseText(formData.get("office_hours"), LIMITS.officeHours),
       expertise_fields: expertiseFields,
       accepting_student_types: acceptingStudentTypes,
-      publications: publications,
-      is_accepting_requests: formData.get("is_accepting_requests") === "true",
+      publications,
+      is_accepting_requests: sanitiseBool(formData.get("is_accepting_requests")),
       updated_at: new Date().toISOString(),
     };
 
@@ -46,7 +57,7 @@ export async function updateProfProfile(formData: FormData) {
       .update(payload)
       .eq("id", user.id);
 
-    // Schema Resilience Fallback: If custom DB lacks new columns, retry with core fields
+    // Schema Resilience Fallback
     if (updateError && (updateError.message?.includes("academic_title") || updateError.message?.includes("publications") || updateError.message?.includes("accepting_student_types") || updateError.message?.includes("schema cache"))) {
       console.warn("[updateProfProfile] Retrying update with core guaranteed columns:", updateError.message);
       delete payload.academic_title;
