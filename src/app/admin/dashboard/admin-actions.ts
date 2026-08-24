@@ -1,6 +1,7 @@
 "use server";
 
 import { sql } from "@/lib/neon/db";
+import { runAs } from "@/lib/neon/user-context";
 import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
@@ -15,6 +16,8 @@ const VIEW_AS_COOKIE = "x-admin-view-as";
 
 export async function clearAdminNonAdminData(adminUserId: string): Promise<void> {
   if (!isValidUuid(adminUserId)) return;
+
+  return runAs(adminUserId, async () => {
 
   // 1. Reset all student & faculty profile fields on the admin profile
   try {
@@ -84,6 +87,7 @@ export async function clearAdminNonAdminData(adminUserId: string): Promise<void>
   } catch (error) {
     console.error("[admin-actions] Error clearing admin test requests/messages:", error);
   }
+  });
 }
 
 export async function setAdminViewAs(role: "student" | "professor" | null, launchTour?: boolean) {
@@ -116,6 +120,7 @@ export async function setUserSuspended(targetUserId: string, suspend: boolean) {
   const { user, profile: admin } = await getCurrentUserAndProfile();
   if (!user || admin?.role !== "admin") return { error: "Access denied" };
 
+  return runAs(user.id, async () => {
   let newStatus: string;
   if (suspend) {
     newStatus = "suspended";
@@ -135,6 +140,7 @@ export async function setUserSuspended(targetUserId: string, suspend: boolean) {
   revalidatePath("/admin/users");
   revalidatePath("/admin/professors");
   return { success: true };
+  });
 }
 
 export async function revokeVerification(professorId: string) {
@@ -143,6 +149,7 @@ export async function revokeVerification(professorId: string) {
   const { user, profile: admin } = await getCurrentUserAndProfile();
   if (!user || admin?.role !== "admin") return { error: "Access denied" };
 
+  return runAs(user.id, async () => {
   await sql`
     UPDATE profiles
     SET status = 'pending', updated_at = now()
@@ -152,6 +159,7 @@ export async function revokeVerification(professorId: string) {
   revalidatePath("/admin/dashboard");
   revalidatePath("/admin/professors");
   return { success: true };
+  });
 }
 
 export async function changeUserRole(
@@ -169,6 +177,7 @@ export async function changeUserRole(
 
   const defaultStatus = newRole === "professor" ? "pending" : "active";
 
+  return runAs(user.id, async () => {
   await sql`
     UPDATE profiles
     SET role = ${newRole}, status = ${defaultStatus}, updated_at = now()
@@ -179,6 +188,7 @@ export async function changeUserRole(
   revalidatePath("/admin/users");
   revalidatePath("/admin/professors");
   return { success: true };
+  });
 }
 
 export async function warnUser(userId: string, warningMessage: string) {
@@ -190,6 +200,7 @@ export async function warnUser(userId: string, warningMessage: string) {
   const { user, profile: admin } = await getCurrentUserAndProfile();
   if (!user || admin?.role !== "admin") return { error: "Access denied" };
 
+  return runAs(user.id, async () => {
   const requests = await sql`
     SELECT id
     FROM requests
@@ -210,6 +221,7 @@ export async function warnUser(userId: string, warningMessage: string) {
 
   revalidatePath(`/messages/${request.id}`);
   return { success: true };
+  });
 }
 
 export async function suspendUser(userId: string, reason: string) {
@@ -218,6 +230,7 @@ export async function suspendUser(userId: string, reason: string) {
   const { user, profile: admin } = await getCurrentUserAndProfile();
   if (!user || admin?.role !== "admin") return { error: "Access denied" };
 
+  return runAs(user.id, async () => {
   await sql`
     UPDATE profiles
     SET status = 'suspended', updated_at = now()
@@ -228,6 +241,7 @@ export async function suspendUser(userId: string, reason: string) {
   revalidatePath("/admin/users");
   revalidatePath("/admin/professors");
   return { success: true };
+  });
 }
 
 export async function unsuspendUser(userId: string) {
@@ -236,6 +250,7 @@ export async function unsuspendUser(userId: string) {
   const { user, profile: admin } = await getCurrentUserAndProfile();
   if (!user || admin?.role !== "admin") return { error: "Access denied" };
 
+  return runAs(user.id, async () => {
   const targets = await sql`SELECT role FROM profiles WHERE id = ${userId} LIMIT 1;`;
   const target = targets[0];
   const newStatus = target?.role === "professor" ? "approved" : "active";
@@ -250,6 +265,7 @@ export async function unsuspendUser(userId: string) {
   revalidatePath("/admin/users");
   revalidatePath("/admin/professors");
   return { success: true };
+  });
 }
 
 export async function softDeleteThread(requestId: string) {
@@ -258,6 +274,7 @@ export async function softDeleteThread(requestId: string) {
   const { user, profile: admin } = await getCurrentUserAndProfile();
   if (!user || admin?.role !== "admin") return { error: "Access denied" };
 
+  return runAs(user.id, async () => {
   await sql`
     UPDATE requests
     SET status = 'deleted', updated_at = now()
@@ -267,4 +284,5 @@ export async function softDeleteThread(requestId: string) {
   revalidatePath("/admin/dashboard");
   revalidatePath("/admin/threads");
   return { success: true };
+  });
 }
