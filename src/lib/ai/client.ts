@@ -99,9 +99,42 @@ export function isGeminiTransientError(err: unknown): boolean {
 }
 
 /**
+ * Checks if an error means the API key itself is unusable (invalid, revoked, or
+ * restricted) rather than a transient condition. Retrying with the same key can
+ * never succeed, but a different key can, so this should also trigger failover.
+ *
+ * Gemini reports these as 400 INVALID_ARGUMENT "API key not valid", 401
+ * UNAUTHENTICATED, or 403 PERMISSION_DENIED.
+ */
+export function isGeminiAuthError(err: unknown): boolean {
+  if (!err || typeof err !== "object") return false;
+  const anyErr = err as Record<string, any>;
+
+  const code = anyErr.code ?? anyErr.statusCode ?? anyErr.status;
+  if (code === 401 || code === 403) return true;
+  if (anyErr.error?.code === 401 || anyErr.error?.code === 403) return true;
+  if (anyErr.error?.status === "UNAUTHENTICATED" || anyErr.error?.status === "PERMISSION_DENIED") {
+    return true;
+  }
+
+  const msg = ((anyErr.message || "") + " " + (anyErr.error?.message || "") + " " + (anyErr.toString?.() || "")).toLowerCase();
+  return (
+    msg.includes("api key not valid") ||
+    msg.includes("api_key_invalid") ||
+    msg.includes("invalid api key") ||
+    msg.includes("api key expired") ||
+    msg.includes("api key revoked") ||
+    msg.includes("unauthenticated") ||
+    msg.includes("permission denied")
+  );
+}
+
+/**
  * Executes an AI operation with automatic failover across all configured API keys.
- * If Key #1 hits rate limits, quota exhaustion (429), or transient spikes (503),
- * it automatically re-runs the operation with Key #2, etc., with exponential backoff on the final key.
+ * If Key #1 fails for any key-specific reason — rate limit/quota (429), transient
+ * capacity spikes (503/overloaded), or an invalid/revoked key (400/401/403) — it
+ * automatically re-runs the operation with Key #2, etc. On the final key, a
+ * transient 503/high-demand spike gets one brief backoff retry before giving up.
  */
 export async function executeWithGeminiFailover<T>(
   operation: (client: GoogleGenAI, apiKeyIndex: number) => Promise<T>
@@ -118,21 +151,23 @@ export async function executeWithGeminiFailover<T>(
       return await operation(client, i);
     } catch (err: any) {
       lastError = err;
-      const isRetriable = isGeminiTransientError(err);
-      if (isRetriable) {
-        if (i < keys.length - 1) {
-          console.warn(
-            `[GeminiFailover] Key #${i + 1} hit quota or transient spike (${err?.status || err?.code || "503/429"}). Retrying with backup key #${i + 2}...`
-          );
-          continue;
-        } else {
-          // On the final key, if it's a transient 503/high-demand spike, attempt a brief backoff retry
-          try {
-            await new Promise((resolve) => setTimeout(resolve, 1200));
-            return await operation(client, i);
-          } catch (retryErr: any) {
-            lastError = retryErr;
-          }
+      const isAuth = isGeminiAuthError(err);
+      const isTransient = isGeminiTransientError(err);
+      if ((isAuth || isTransient) && i < keys.length - 1) {
+        console.warn(
+          `[GeminiFailover] Key #${i + 1} unusable (${isAuth ? "invalid/revoked key" : "quota or transient capacity error"}). Retrying with backup key #${i + 2}...`
+        );
+        continue;
+      }
+      // On the final key, a transient 503/high-demand spike may clear quickly:
+      // attempt one brief backoff retry before giving up. A dead key never
+      // benefits from retrying, so auth errors skip this.
+      if (isTransient && !isAuth) {
+        try {
+          await new Promise((resolve) => setTimeout(resolve, 1200));
+          return await operation(client, i);
+        } catch (retryErr: any) {
+          lastError = retryErr;
         }
       }
       throw lastError;
