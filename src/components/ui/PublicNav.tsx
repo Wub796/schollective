@@ -14,6 +14,56 @@ const NAV_LINKS = [
   { label: "For Professors", href: "/for-professors" },
 ];
 
+/* ─── Char-by-char font-swap label ─────────────────────────────────────
+ * Sans letters slide UP out on hover; serif italic letters slide UP in,
+ * staggered per character. The invisible setter span sizes the host to the
+ * wider of the two layers so nothing ever wraps or clips.
+ * ────────────────────────────────────────────────────────────────────── */
+function CharSwapLabel({ label, layer1, layer2 }: {
+  label: string;
+  layer1: React.CSSProperties;
+  layer2: React.CSSProperties;
+}) {
+  const chars = label.split("");
+  return (
+    <>
+      {/* Invisible layout setter to enforce correct natural width */}
+      <span
+        className="invisible select-none opacity-0 pointer-events-none whitespace-nowrap"
+        style={{ padding: "0 0.2rem", ...layer2 }}
+      >
+        {label}
+      </span>
+
+      {/* Layer 1 — sans-serif, slides UP out on hover */}
+      <span className="absolute inset-0 flex items-center justify-center whitespace-nowrap" aria-label={label}>
+        {chars.map((ch, i) => (
+          <span
+            key={i}
+            className="inline-block transition-transform duration-[450ms] ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:-translate-y-[250%]"
+            style={{ transitionDelay: `${i * 12}ms`, willChange: "transform", ...layer1 }}
+          >
+            {ch === " " ? "\u00A0" : ch}
+          </span>
+        ))}
+      </span>
+
+      {/* Layer 2 — serif italic, slides UP in from 250% on hover */}
+      <span className="absolute inset-0 flex items-center justify-center whitespace-nowrap" aria-hidden>
+        {chars.map((ch, i) => (
+          <span
+            key={i}
+            className="inline-block translate-y-[250%] group-hover:translate-y-0 transition-transform duration-[450ms] ease-[cubic-bezier(0.19,1,0.22,1)]"
+            style={{ transitionDelay: `${i * 12}ms`, willChange: "transform", ...layer2 }}
+          >
+            {ch === " " ? "\u00A0" : ch}
+          </span>
+        ))}
+      </span>
+    </>
+  );
+}
+
 /* ─── Nav item ───────────────────────────────────────────────────────── */
 function NavItem({ label, href, active }: {
   label: string; href: string; active: boolean;
@@ -22,21 +72,32 @@ function NavItem({ label, href, active }: {
     <Link
       href={href}
       data-nav-item="true"
-      className={`relative inline-flex items-center justify-center transition-colors duration-200 select-none ${
-        active ? "text-indigo-600 font-bold" : "text-slate-600 hover:text-indigo-600"
-      }`}
+      className="group relative inline-flex items-center justify-center overflow-hidden whitespace-nowrap"
       style={{
         textDecoration: "none",
         height: "2.6rem",
         borderRadius: "9999px",
-        padding: "0 1.2rem",
-        fontSize: "0.8rem",
-        fontWeight: 700,
-        letterSpacing: "0.06em",
-        textTransform: "uppercase",
+        padding: "0 1.1rem",
       }}
     >
-      {label}
+      <CharSwapLabel
+        label={label}
+        layer1={{
+          fontSize: "0.8rem",
+          fontWeight: 700,
+          letterSpacing: "0.06em",
+          textTransform: "uppercase",
+          color: active ? "var(--accent)" : "rgba(15, 23, 42, 0.6)",
+        }}
+        layer2={{
+          fontSize: "1.08rem",
+          fontFamily: "var(--font-display)",
+          fontWeight: 500,
+          fontStyle: "italic",
+          letterSpacing: "-0.01em",
+          color: "var(--accent)",
+        }}
+      />
     </Link>
   );
 }
@@ -80,31 +141,32 @@ export function PublicNav() {
         className={`fixed left-1/2 -translate-x-1/2 z-[999] w-[calc(100%-2.5rem)] max-w-[76rem] flex items-center gap-3 transition-all duration-500 ease-out ${scrolled ? "top-3" : "top-5"
           }`}
       >
-        {/* Main Glass Nav Bar */}
+        {/* Main Glass Nav Bar — 1fr auto 1fr keeps the centre column sized to
+            its content so no label ever wraps onto a second line */}
         <div
           data-menu-bar="true"
-          className={`flex-1 rounded-full border flex justify-between lg:grid lg:grid-cols-3 items-center transition-all duration-500 ease-out overflow-hidden hover:bg-white/70 ${scrolled
+          className={`flex-1 rounded-full border lg:grid lg:grid-cols-[1fr_auto_1fr] flex justify-between items-center transition-all duration-500 ease-out overflow-hidden hover:bg-white/70 ${scrolled
               ? "h-[3.8rem] bg-white/60 backdrop-blur-2xl backdrop-saturate-[190%] border-white/50 shadow-[0_12px_40px_rgba(15,23,42,0.08),_inset_0_1px_1px_rgba(255,255,255,0.9),_0_1px_3px_rgba(99,102,241,0.08)]"
               : "h-[4.4rem] bg-white/40 backdrop-blur-xl backdrop-saturate-[180%] border-white/30 shadow-[0_8px_32px_rgba(15,23,42,0.04),_inset_0_1px_1px_rgba(255,255,255,0.7),_0_1px_2px_rgba(99,102,241,0.03)]"
             }`}
         >
           {/* COLUMN 1: LEFT (Logo) */}
-          <div className="flex items-center justify-start pl-5 sm:pl-6 lg:pl-8">
+          <div className="flex items-center justify-start pl-5 sm:pl-6 lg:pl-8 min-w-0">
             <Link
               href="/"
               data-nav-item="true"
               style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "0.42rem" }}
-              className="group select-none"
+              className="group select-none whitespace-nowrap"
             >
-              <SchollectiveLogo size={32} className="-translate-y-0.5" />
-              <span className="font-display font-bold text-slate-900 tracking-tight transition-colors group-hover:text-indigo-600" style={{ fontSize: "1.12rem" }}>
+              <SchollectiveLogo size={32} className="-translate-y-0.5 flex-shrink-0" />
+              <span className="font-display font-bold text-slate-900 tracking-tight transition-colors group-hover:text-indigo-600 whitespace-nowrap" style={{ fontSize: "1.12rem" }}>
                 Schollective
               </span>
             </Link>
           </div>
 
           {/* COLUMN 2: CENTER (Centered nav links) */}
-          <div className="hidden lg:flex items-center justify-center">
+          <div className="hidden lg:flex items-center justify-center min-w-0">
             <nav className="flex items-center gap-1">
               {NAV_LINKS.map(({ label, href }) => (
                 <NavItem key={href} label={label} href={href} active={pathname === href} />
@@ -113,7 +175,7 @@ export function PublicNav() {
           </div>
 
           {/* COLUMN 3: RIGHT (Log In + Mobile Hamburger) */}
-          <div className="flex items-center justify-end pr-5 sm:pr-6 lg:pr-8">
+          <div className="flex items-center justify-end pr-5 sm:pr-6 lg:pr-8 min-w-0">
             <div className="hidden lg:flex items-center">
               <NavItem label="Log In" href="/login" active={pathname === "/login"} />
             </div>
@@ -136,10 +198,30 @@ export function PublicNav() {
             href="/signup"
             variant="primary"
             data-nav-item="true"
-            className={`rounded-full px-8 flex items-center justify-center uppercase tracking-widest text-[0.65rem] font-bold border-none shadow-[0_8px_25px_rgba(0,140,187,0.3)] hover:shadow-[0_12px_32px_rgba(0,140,187,0.4)] transition-all duration-500 ease-out ${scrolled ? "h-[3.8rem]" : "h-[4.4rem]"
+            className={`group relative overflow-hidden rounded-full px-7 flex items-center justify-center whitespace-nowrap uppercase tracking-widest text-[0.65rem] font-bold border-none shadow-[0_8px_25px_rgba(0,140,187,0.3)] hover:shadow-[0_12px_32px_rgba(0,140,187,0.4)] transition-all duration-500 ease-out ${scrolled ? "h-[3.8rem]" : "h-[4.4rem]"
               }`}
           >
-            Get Started →
+            <span className="inline-flex items-center" style={{ gap: "0.45rem" }}>
+              <CharSwapLabel
+                label="Get Started"
+                layer1={{
+                  fontSize: "0.65rem",
+                  fontWeight: 700,
+                  letterSpacing: "0.12em",
+                  textTransform: "uppercase",
+                  color: "#ffffff",
+                }}
+                layer2={{
+                  fontSize: "0.95rem",
+                  fontFamily: "var(--font-display)",
+                  fontWeight: 500,
+                  fontStyle: "italic",
+                  letterSpacing: "-0.01em",
+                  color: "#ffffff",
+                }}
+              />
+              <span aria-hidden>→</span>
+            </span>
           </Button>
         </div>
       </header>
