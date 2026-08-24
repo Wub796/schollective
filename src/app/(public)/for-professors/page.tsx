@@ -8,8 +8,6 @@ import { PublicFooter } from "@/components/ui/PublicFooter";
 import { Button } from "@/components/ui/Button";
 
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
-const SECTION_STYLE = { paddingTop: "8rem", paddingBottom: "8rem" };
-const HERO_STYLE = { paddingTop: "9rem", paddingBottom: "8rem" };
 
 function FadeIn({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
   const ref = useRef(null);
