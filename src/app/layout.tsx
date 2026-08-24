@@ -164,6 +164,7 @@ export default function RootLayout({
 
         <Toaster
           position="top-right"
+          visibleToasts={3}
           toastOptions={{
             style: {
               background: "rgba(11, 18, 36, 0.96)",
@@ -174,7 +175,7 @@ export default function RootLayout({
               boxShadow: "0 24px 48px rgba(0,0,0,0.55)",
               fontFamily: "var(--font-sans)",
               fontSize: "0.875rem",
-              zIndex: "var(--z-toast, 40)" as string,
+              zIndex: "var(--z-toast, 9999)" as string,
             },
           }}
         />
