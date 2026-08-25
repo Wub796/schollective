@@ -244,8 +244,8 @@ export function InteractiveOnboardingTour({ role, steps, suppressAutoLaunch = fa
       }
     }
 
-    // Explicit boundary clamp to guarantee the popover is always 100% visible inside the screen
-    popoverTop = Math.max(16, Math.min(popoverTop, windowH - 280));
+    // Explicit boundary clamp to guarantee the popover is always 100% visible inside the screen and below top nav
+    popoverTop = Math.max(72, Math.min(popoverTop, windowH - 280));
     popoverLeft = Math.max(16, Math.min(popoverLeft, windowW - (isMobile ? 32 : popoverWidth) - 16));
   }
 
@@ -259,6 +259,8 @@ export function InteractiveOnboardingTour({ role, steps, suppressAutoLaunch = fa
         inset: 0,
         zIndex: 9999,
         pointerEvents: "auto",
+        clipPath: "inset(var(--nav-height, 56px) 0 0 0)",
+        WebkitClipPath: "inset(var(--nav-height, 56px) 0 0 0)",
       }}
     >
       {/* ─── Persistent Dark Backdrop (Ensures screen NEVER flashes white) ─── */}
