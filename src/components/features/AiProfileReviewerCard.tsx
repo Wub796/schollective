@@ -208,16 +208,12 @@ export const AiProfileReviewerCard = React.memo(function AiProfileReviewerCard({
 
     if (clickTimestampsRef.current.length > 3) {
       startCooldown(30);
-      toast.error("Slow down — you can analyze your profile up to 3 times per minute.", {
-        id: "ai-rate-limit",
-      });
+      toast.error("Slow down — you can analyze your profile up to 3 times per minute.");
       return;
     }
 
     if (cooldownSeconds > 0) {
-      toast.error(`Please wait ${cooldownSeconds}s before analyzing again.`, {
-        id: "ai-rate-limit",
-      });
+      toast.error(`Please wait ${cooldownSeconds}s before analyzing again.`);
       return;
     }
 
@@ -255,7 +251,7 @@ export const AiProfileReviewerCard = React.memo(function AiProfileReviewerCard({
         if (res.status === 429) {
           const retryAfter = Number(res.headers.get("retry-after")) || 30;
           startCooldown(retryAfter);
-          toast.error(data?.error || `Rate limit reached. Please wait ${retryAfter}s before trying again.`, { id: "ai-rate-limit" });
+          toast.error(data?.error || `Rate limit reached. Please wait ${retryAfter}s before trying again.`);
           setLoading(false);
           return;
         }
@@ -294,7 +290,7 @@ export const AiProfileReviewerCard = React.memo(function AiProfileReviewerCard({
         const current = interestsEl.value.trim();
         const existing = current ? current.split(",").map((s) => s.trim()) : [];
         if (existing.length >= 5) {
-          toast.error("You can select up to 5 academic interests.", { id: "interests-limit" });
+          toast.error("You can select up to 5 academic interests.");
           return;
         }
         if (!existing.includes(tag)) {
