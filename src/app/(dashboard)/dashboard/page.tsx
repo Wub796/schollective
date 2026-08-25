@@ -74,7 +74,7 @@ export default async function StudentDashboard() {
     <div style={{ display: "flex", flexDirection: "column", gap: "2.5rem", maxWidth: "950px", paddingBottom: "6rem" }}>
 
       {/* Interactive Tour for First Time Users */}
-      <InteractiveOnboardingTour role="student" steps={STUDENT_TOUR_STEPS} />
+      <InteractiveOnboardingTour role="student" steps={STUDENT_TOUR_STEPS} suppressAutoLaunch={isAdminPreviewing} />
 
       {/* ── Header ─────────────────────────────────────────────── */}
       <header data-tour="tour-dashboard-header" style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
