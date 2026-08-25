@@ -147,7 +147,7 @@ export default function ForStudentsPage() {
                 <Button href="/signup" variant="primary" size="lg">
                   Create Account →
                 </Button>
-                <Button href="/professors" variant="ghost" size="lg">
+                <Button href="/signup" variant="ghost" size="lg">
                   Browse Mentors
                 </Button>
               </div>
