@@ -681,12 +681,7 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
       </div>
 
       {/* Section Jump-Nav Strip — only visible in edit mode */}
-      {activeTab === "edit" && (
-        <ProfileSectionNav
-          onSaveClick={() => formRef.current?.requestSubmit()}
-          loading={loading}
-        />
-      )}
+      {activeTab === "edit" && <ProfileSectionNav />}
 
       {activeTab === "edit" ? (
         <form ref={formRef} onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>

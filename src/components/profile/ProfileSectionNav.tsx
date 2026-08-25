@@ -7,10 +7,8 @@ import {
   FileText,
   Trophy,
   Wrench,
-  Save,
   Sparkles,
   Upload,
-  Loader2,
 } from "lucide-react";
 
 interface SectionDef {
@@ -30,11 +28,10 @@ const SECTIONS: SectionDef[] = [
 ];
 
 interface Props {
-  onSaveClick?: () => void;
-  loading?: boolean;
+  className?: string;
 }
 
-export function ProfileSectionNav({ onSaveClick, loading }: Props) {
+export function ProfileSectionNav({ className }: Props = {}) {
   const [activeSection, setActiveSection] = useState<string>("section-resume");
   const [isStuck, setIsStuck] = useState(false);
   const navRef = useRef<HTMLDivElement>(null);
@@ -213,46 +210,6 @@ export function ProfileSectionNav({ onSaveClick, loading }: Props) {
             </button>
           );
         })}
-
-        {/* Flexible spacer */}
-        <div style={{ flex: 1, minWidth: "0.5rem" }} />
-
-        {/* Quick Save button in sticky bar */}
-        {onSaveClick && (
-          <button
-            type="button"
-            onClick={onSaveClick}
-            disabled={loading}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "0.35rem",
-              padding: "0.45rem 0.95rem",
-              borderRadius: "10px",
-              border: "none",
-              background: "linear-gradient(135deg, #4f46e5 0%, #6366f1 100%)",
-              color: "#ffffff",
-              fontSize: "0.74rem",
-              fontWeight: 700,
-              fontFamily: "var(--font-sans)",
-              cursor: loading ? "not-allowed" : "pointer",
-              opacity: loading ? 0.65 : 1,
-              transition: "opacity 0.2s, transform 0.1s",
-              whiteSpace: "nowrap",
-              flexShrink: 0,
-              boxShadow: "0 2px 8px rgba(79, 70, 229, 0.28)",
-            }}
-            onMouseDown={(e) => {
-              if (!loading) (e.currentTarget as HTMLElement).style.transform = "scale(0.96)";
-            }}
-            onMouseUp={(e) => {
-              (e.currentTarget as HTMLElement).style.transform = "none";
-            }}
-          >
-            {loading ? <Loader2 size={12} className="animate-spin" /> : <Save size={12} />}
-            {loading ? "Saving…" : "Save"}
-          </button>
-        )}
       </div>
     </div>
   );
