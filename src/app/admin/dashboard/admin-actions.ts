@@ -5,14 +5,14 @@ import { createAdminClient } from "@/utils/supabase/admin";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import {
+  sanitiseText,
+  isValidUuid,
+  LIMITS,
+} from "@/lib/security";
 
 const VIEW_AS_COOKIE = "x-admin-view-as";
 
-/**
- * Admin: enter/exit "preview as" mode.
- * Sets an httpOnly cookie so the student/prof dashboards let the admin through.
- * If launchTour is true, automatically appends ?tour=true to test the onboarding tour.
- */
 export async function setAdminViewAs(role: "student" | "professor" | null, launchTour?: boolean) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -27,7 +27,7 @@ export async function setAdminViewAs(role: "student" | "professor" | null, launc
       httpOnly: true,
       sameSite: "lax",
       path: "/",
-      maxAge: 60 * 60, // 1 hour
+      maxAge: 60 * 60,
     });
     const targetPath = role === "student" ? "/dashboard" : "/prof/dashboard";
     redirect(launchTour ? `${targetPath}?tour=true` : targetPath);
@@ -37,14 +37,9 @@ export async function setAdminViewAs(role: "student" | "professor" | null, launc
   }
 }
 
-
-
-/**
- * Admin: ban or reactivate a user account.
- * Reactivation is role-aware: students → 'active', professors → 'approved'.
- */
 export async function setUserSuspended(targetUserId: string, suspend: boolean) {
-  // Verify the caller is an admin (uses session RLS client)
+  if (!isValidUuid(targetUserId)) return { error: "Invalid user ID." };
+
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
@@ -52,7 +47,6 @@ export async function setUserSuspended(targetUserId: string, suspend: boolean) {
   const { data: admin } = await supabase.from("profiles").select("role").eq("id", user.id).single();
   if (admin?.role !== "admin") return { error: "Access denied" };
 
-  // Use service-role client to bypass RLS on all mutations
   const adminClient = createAdminClient();
 
   let newStatus: string;
@@ -75,10 +69,9 @@ export async function setUserSuspended(targetUserId: string, suspend: boolean) {
   return { success: true };
 }
 
-/**
- * Admin: revoke a professor's verified status (set back to pending).
- */
 export async function revokeVerification(professorId: string) {
+  if (!isValidUuid(professorId)) return { error: "Invalid professor ID." };
+
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
@@ -99,15 +92,15 @@ export async function revokeVerification(professorId: string) {
   return { success: true };
 }
 
-/**
- * Admin: change a user's role.
- * Also resets status to the appropriate default for the new role.
- */
 export async function changeUserRole(
   targetUserId: string,
   newRole: "student" | "professor" | "admin"
 ) {
-  // Verify caller is admin
+  if (!isValidUuid(targetUserId)) return { error: "Invalid user ID." };
+  if (!["student", "professor", "admin"].includes(newRole)) {
+    return { error: "Invalid role." };
+  }
+
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
@@ -115,10 +108,8 @@ export async function changeUserRole(
   const { data: admin } = await supabase.from("profiles").select("role").eq("id", user.id).single();
   if (admin?.role !== "admin") return { error: "Access denied" };
 
-  // Prevent self-role-change (avoid accidental lockout)
   if (targetUserId === user.id) return { error: "Cannot change your own role" };
 
-  // Status defaults per role
   const defaultStatus = newRole === "professor" ? "pending" : "active";
 
   const adminClient = createAdminClient();
@@ -139,6 +130,11 @@ export async function changeUserRole(
 }
 
 export async function warnUser(userId: string, warningMessage: string) {
+  if (!isValidUuid(userId)) return { error: "Invalid user ID." };
+
+  const safeMsg = sanitiseText(warningMessage, LIMITS.warningMessage);
+  if (!safeMsg) return { error: "Warning message cannot be empty." };
+
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
@@ -164,7 +160,7 @@ export async function warnUser(userId: string, warningMessage: string) {
     .insert({
       request_id: request.id,
       sender_id: user.id,
-      content: `[SYSTEM WARNING]: ${warningMessage}`
+      content: `[SYSTEM WARNING]: ${safeMsg}`,
     });
 
   if (error) return { error: error.message };
@@ -174,6 +170,10 @@ export async function warnUser(userId: string, warningMessage: string) {
 }
 
 export async function suspendUser(userId: string, reason: string) {
+  if (!isValidUuid(userId)) return { error: "Invalid user ID." };
+
+  const safeReason = sanitiseText(reason, LIMITS.warningMessage);
+
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
@@ -186,7 +186,7 @@ export async function suspendUser(userId: string, reason: string) {
     .from("profiles")
     .update({
       status: "suspended",
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     })
     .eq("id", userId);
 
@@ -199,6 +199,8 @@ export async function suspendUser(userId: string, reason: string) {
 }
 
 export async function unsuspendUser(userId: string) {
+  if (!isValidUuid(userId)) return { error: "Invalid user ID." };
+
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
@@ -214,7 +216,7 @@ export async function unsuspendUser(userId: string) {
     .from("profiles")
     .update({
       status: newStatus,
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     })
     .eq("id", userId);
 
@@ -227,6 +229,8 @@ export async function unsuspendUser(userId: string) {
 }
 
 export async function softDeleteThread(requestId: string) {
+  if (!isValidUuid(requestId)) return { error: "Invalid request ID." };
+
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
@@ -239,7 +243,7 @@ export async function softDeleteThread(requestId: string) {
     .from("requests")
     .update({
       status: "deleted",
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     })
     .eq("id", requestId);
 
@@ -249,4 +253,3 @@ export async function softDeleteThread(requestId: string) {
   revalidatePath("/admin/threads");
   return { success: true };
 }
-

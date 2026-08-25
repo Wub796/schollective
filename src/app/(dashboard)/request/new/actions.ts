@@ -2,6 +2,7 @@
 
 import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
+import { sanitiseText, isValidUuid, LIMITS } from "@/lib/security";
 
 export async function submitMentorshipRequest(formData: FormData) {
   const supabase = await createClient();
@@ -10,13 +11,22 @@ export async function submitMentorshipRequest(formData: FormData) {
   const { data: { session } } = await supabase.auth.getSession();
   if (!session) return { error: "Unauthorized" };
 
-  const profId = formData.get("prof_id") as string;
-  const topic = formData.get("topic") as string;
-  const background = formData.get("background") as string;
-  const goals = formData.get("goals") as string;
+  const profId = sanitiseText(formData.get("prof_id"), 100);
+  const topic = sanitiseText(formData.get("topic"), LIMITS.topic);
+  const background = sanitiseText(formData.get("background"), LIMITS.background);
+  const goals = sanitiseText(formData.get("goals"), LIMITS.goal);
 
-  if (!profId || !topic || !background || !goals) {
-    return { error: "Missing required fields" };
+  if (!profId || !isValidUuid(profId)) {
+    return { error: "Invalid professor ID." };
+  }
+  if (!topic) {
+    return { error: "Please provide a topic for your request." };
+  }
+  if (!background) {
+    return { error: "Please describe your academic background." };
+  }
+  if (!goals) {
+    return { error: "Please describe your mentorship goals." };
   }
 
   // 1.5. Rate Limiting Check: Max 5 requests per 24 hours
@@ -33,15 +43,14 @@ export async function submitMentorshipRequest(formData: FormData) {
   }
 
   // 2. Transactional Insertion
-  // Insert Request
   const { data: request, error: requestError } = await supabase
     .from("requests")
     .insert({
       student_id: session.user.id,
       professor_id: profId,
       status: "pending",
-      topic: topic,
-      expected_outcome: goals
+      topic,
+      expected_outcome: goals,
     })
     .select()
     .single();
@@ -49,13 +58,13 @@ export async function submitMentorshipRequest(formData: FormData) {
   if (requestError) return { error: requestError.message };
 
   // Concatenate message content
-  const initialMessageContent = `
-**Academic Background:**
-${background}
-
-**Mentorship Goals:**
-${goals}
-  `.trim();
+  const initialMessageContent = [
+    `**Academic Background:**`,
+    background,
+    ``,
+    `**Mentorship Goals:**`,
+    goals,
+  ].join("\n").trim();
 
   // Insert Initial Message
   const { error: messageError } = await supabase
@@ -63,7 +72,7 @@ ${goals}
     .insert({
       request_id: request.id,
       sender_id: session.user.id,
-      content: initialMessageContent
+      content: initialMessageContent,
     });
 
   if (messageError) {

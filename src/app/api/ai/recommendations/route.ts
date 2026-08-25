@@ -2,9 +2,20 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import { recommendProfessors } from "@/lib/ai/recommender";
 import { checkUserAiRateLimit } from "@/lib/ai/guardrails";
+import { checkRateLimit, getClientIp } from "@/lib/security";
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
+    // ── Rate limit: 5 per minute per IP ──────────────────────────
+    const ip = getClientIp(req);
+    const rate = checkRateLimit(`recs:${ip}`, 5, 60 * 1000, true);
+    if (!rate.allowed) {
+      return NextResponse.json(
+        { error: "Too many requests. Please wait before trying again." },
+        { status: 429, headers: { "Retry-After": String(rate.retryAfterSeconds) } }
+      );
+    }
+
     const supabase = await createClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
 
@@ -12,7 +23,7 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Rate Limit Guard
+    // User-specific AI rate limit
     const rateCheck = checkUserAiRateLimit(user.id, 10, 10 * 60 * 1000);
     if (!rateCheck.allowed) {
       return NextResponse.json(
@@ -21,7 +32,6 @@ export async function GET() {
       );
     }
 
-    // 1. Fetch current student profile (safe fallback if single fails)
     const { data: studentProfile } = await supabase
       .from("profiles")
       .select("*")
@@ -35,7 +45,6 @@ export async function GET() {
       last_name: user.user_metadata?.last_name || "",
     };
 
-    // 2. Fetch professor candidates from profiles table with resilient schema fallback
     let professors: any[] = [];
     let { data: primaryProfs, error: primaryErr } = await supabase
       .from("profiles")
@@ -46,7 +55,6 @@ export async function GET() {
 
     if (primaryErr) {
       console.warn("[GET /api/ai/recommendations] Primary column query warning, attempting schema fallback query:", primaryErr.message);
-      // Fallback query requesting core guaranteed columns
       const { data: fallbackProfs, error: fallbackErr } = await supabase
         .from("profiles")
         .select("id, first_name, last_name, institution, expertise_fields, status, role")
@@ -62,10 +70,8 @@ export async function GET() {
       professors = primaryProfs || [];
     }
 
-    // 3. Compute AI recommendations
     const result = await recommendProfessors(safeStudent, professors);
 
-    // 4. Enrich recommendations with professor metadata
     const profMap = new Map(professors.map((p) => [p.id, p]));
     const enrichedRecommendations = result.recommendations.map((rec) => {
       const prof = profMap.get(rec.professorId);
@@ -91,7 +97,6 @@ export async function GET() {
     });
   } catch (err: any) {
     console.error("[GET /api/ai/recommendations] Unexpected error:", err);
-    // Always return clean JSON response instead of crashing backend
     return NextResponse.json(
       { success: false, error: err.message || "Failed to generate recommendations", recommendations: [] },
       { status: 500 }
