@@ -2,12 +2,27 @@
 
 import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
+import { checkRateLimit, sanitiseText, isValidUuid, LIMITS } from "@/lib/security";
 
 export async function updateRequestStatus(requestId: string, status: "active" | "declined") {
+  const reqId = sanitiseText(requestId, 100);
+  if (!reqId || !isValidUuid(reqId)) {
+    return { error: "Invalid request ID." };
+  }
+  if (status !== "active" && status !== "declined") {
+    return { error: "Invalid status." };
+  }
+
   try {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return { error: "Unauthorized" };
+
+    // Rate limit: 20 status changes per minute
+    const rate = checkRateLimit(`status:${user.id}`, 20, 60 * 1000);
+    if (!rate.allowed) {
+      return { error: `Please slow down. Try again in ${rate.retryAfterSeconds}s.` };
+    }
 
     const updates: Record<string, any> = {
       status,
@@ -23,7 +38,7 @@ export async function updateRequestStatus(requestId: string, status: "active" | 
     const { error } = await supabase
       .from("requests")
       .update(updates)
-      .eq("id", requestId)
+      .eq("id", reqId)
       .eq("professor_id", user.id);
 
     if (error) throw error;
@@ -35,6 +50,11 @@ export async function updateRequestStatus(requestId: string, status: "active" | 
 }
 
 export async function markRequestViewed(requestId: string) {
+  const reqId = sanitiseText(requestId, 100);
+  if (!reqId || !isValidUuid(reqId)) {
+    return { error: "Invalid request ID." };
+  }
+
   try {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
@@ -43,14 +63,10 @@ export async function markRequestViewed(requestId: string) {
     const { data: request } = await supabase
       .from("requests")
       .select("status, created_at")
-      .eq("id", requestId)
+      .eq("id", reqId)
       .single();
 
     if (request && request.status === "pending") {
-      // Delay reveal: check if created_at is older than 1 hour (optional or always mark viewed when professor expands / loads it)
-      // The plan says: "Only update if current status is pending AND created_at is > 1 hour ago (delay reveal)".
-      // But actually, to make it simple and robust, let's mark it viewed if it's pending.
-      // Let's implement the > 1 hour check:
       const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
       if (new Date(request.created_at) < oneHourAgo) {
         const { error } = await supabase
@@ -60,7 +76,7 @@ export async function markRequestViewed(requestId: string) {
             viewed_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
           })
-          .eq("id", requestId)
+          .eq("id", reqId)
           .eq("professor_id", user.id);
 
         if (error) throw error;
@@ -73,15 +89,17 @@ export async function markRequestViewed(requestId: string) {
   }
 }
 
-/**
- * Toggles the professor's is_accepting_requests field.
- * @param isAccepting - the NEW desired state
- */
 export async function toggleAvailability(isAccepting: boolean) {
   try {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return { error: "Unauthorized" };
+
+    // Rate limit: 5 toggles per minute
+    const rate = checkRateLimit(`toggle:${user.id}`, 5, 60 * 1000);
+    if (!rate.allowed) {
+      return { error: `Please wait ${rate.retryAfterSeconds}s before toggling again.` };
+    }
 
     const { error } = await supabase
       .from("profiles")
@@ -97,10 +115,6 @@ export async function toggleAvailability(isAccepting: boolean) {
   }
 }
 
-/**
- * Creates a notification for a user.
- * Called server-side after accept/decline/new-request events.
- */
 export async function createNotification({
   userId, type, title, body, requestId,
 }: {
@@ -111,19 +125,25 @@ export async function createNotification({
   requestId?: string;
 }) {
   const supabase = await createClient();
+
+  // Sanitise all string inputs
+  const safeType = type; // union type — no sanitisation needed
+  const safeTitle = sanitiseText(title, LIMITS.topic);
+  const safeBody = body ? sanitiseText(body, LIMITS.messageContent) : null;
+  const safeRequestId = requestId && isValidUuid(requestId) ? requestId : null;
+
+  if (!safeTitle) return; // don't store empty notifications
+
   const { error } = await supabase.from("notifications").insert({
-    user_id:    userId,
-    type,
-    title,
-    body:       body ?? null,
-    request_id: requestId ?? null,
+    user_id: userId,
+    type: safeType,
+    title: safeTitle,
+    body: safeBody,
+    request_id: safeRequestId,
   });
   if (error) console.error("[notification]", error.message);
 }
 
-/**
- * Marks all unread notifications as read for the current user.
- */
 export async function markAllNotificationsRead() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();

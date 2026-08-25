@@ -1,10 +1,21 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import { reviewStudentProfile } from "@/lib/ai/profile-reviewer";
-import { checkUserAiRateLimit } from "@/lib/ai/guardrails";
+import { checkUserAiRateLimit, sanitizeAiPromptInput } from "@/lib/ai/guardrails";
+import { checkRateLimit, getClientIp } from "@/lib/security";
 
 export async function POST(req: Request) {
   try {
+    // ── Rate limit: 5 per minute per IP ──────────────────────────
+    const ip = getClientIp(req);
+    const rate = checkRateLimit(`review:${ip}`, 5, 60 * 1000, true);
+    if (!rate.allowed) {
+      return NextResponse.json(
+        { error: "Too many requests. Please wait before trying again." },
+        { status: 429, headers: { "Retry-After": String(rate.retryAfterSeconds) } }
+      );
+    }
+
     const supabase = await createClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
 
@@ -12,7 +23,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Rate Limit Guard
+    // User-specific AI rate limit (stricter — 10 per 10 min)
     const rateCheck = checkUserAiRateLimit(user.id, 10, 10 * 60 * 1000);
     if (!rateCheck.allowed) {
       return NextResponse.json(
@@ -21,14 +32,23 @@ export async function POST(req: Request) {
       );
     }
 
-    let bodyData = {};
+    let bodyData: Record<string, unknown> = {};
     try {
       bodyData = await req.json();
     } catch {
-      // Body optional
+      // Body optional — profile can be fetched from DB
     }
 
-    // Fetch existing profile with maybeSingle to avoid 406/500 errors if user row is absent
+    // Sanitise any user-supplied profile fields
+    const sanitisedBody: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(bodyData)) {
+      if (typeof value === "string") {
+        sanitisedBody[key] = sanitizeAiPromptInput(value, 500);
+      } else {
+        sanitisedBody[key] = value;
+      }
+    }
+
     const { data: profile } = await supabase
       .from("profiles")
       .select("*")
@@ -41,7 +61,7 @@ export async function POST(req: Request) {
       first_name: user.user_metadata?.first_name || "",
       last_name: user.user_metadata?.last_name || "",
       ...profile,
-      ...bodyData,
+      ...sanitisedBody,
     };
 
     const review = await reviewStudentProfile(profileToReview);
