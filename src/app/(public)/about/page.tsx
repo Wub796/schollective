@@ -140,7 +140,7 @@ export default function AboutPage() {
           <FadeIn>
             <div className="border border-indigo-300/50 rounded-3xl bg-indigo-300/10 flex flex-col items-center gap-8 text-center w-full px-8 md:px-16" style={{ paddingTop: "6.5rem", paddingBottom: "6.5rem" }}>
               <h2 className="font-display font-black text-[clamp(2rem,3.5vw,3rem)] tracking-[-0.04em] text-slate-900 leading-tight max-w-[640px] mx-auto">
-                Start reaching out to labs doing work you care about.
+                Reach out to the people behind the research you read.
               </h2>
               <div className="flex gap-4 flex-wrap justify-center">
                 <Button href="/signup" variant="primary" size="lg">
