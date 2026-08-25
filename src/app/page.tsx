@@ -168,7 +168,7 @@ export default function LandingPage() {
         <PublicNav />
 
         {/* ══ HERO ══════════════════════════════════════════════════════ */}
-        <section className="relative min-h-screen flex flex-col items-center justify-center text-center py-24 px-6" style={{ background: "#fdfdfd" }}>
+        <section className="relative min-h-screen flex flex-col items-center justify-center text-center pt-36 md:pt-44 pb-20 px-6" style={{ background: "#fdfdfd" }}>
           <AnimatedBackground />
           <div className="relative z-10 w-full max-w-3xl mx-auto flex flex-col items-center text-center">
             <h1
