@@ -36,6 +36,13 @@ async function loadAmplitude(clientThrows) {
     format: "esm",
     write: false,
     logLevel: "silent",
+    // The module reads the key from env (no hardcoded fallback anymore);
+    // tests must inject a value explicitly so the contract does not depend
+    // on the developer's machine having it set.
+    define: {
+      "process.env.AMPLITUDE_AI_API_KEY": JSON.stringify("test-key"),
+      "process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY": JSON.stringify("test-key"),
+    },
     plugins: [
       {
         name: "amplitude-stub",
