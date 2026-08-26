@@ -7,6 +7,7 @@ import { revalidatePath } from "next/cache";
 import { filterMessage } from "@/lib/validators";
 import { checkRateLimit, sanitiseText, isValidUuid, LIMITS } from "@/lib/security";
 import { getThreadAccess, isSuspended } from "@/lib/authz";
+import { createNotification } from "@/lib/notifications";
 
 const MESSAGE_RATE_LIMIT = 15;
 
@@ -56,6 +57,18 @@ export async function sendMessage(requestId: string, content: string) {
         SET updated_at = now()
         WHERE id = ${reqId};
       `;
+
+      // Notify the other participant so the conversation is discovered
+      // without polling the thread page.
+      const recipientId = user.id === request.student_id ? request.professor_id : request.student_id;
+      await createNotification({
+        actorId: user.id,
+        userId: recipientId,
+        type: "message",
+        title: "New message",
+        body: sanitisedContent.slice(0, 120),
+        requestId: reqId,
+      });
 
       revalidatePath(`/messages/${reqId}`);
       return { success: true };

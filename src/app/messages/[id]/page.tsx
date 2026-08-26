@@ -2,6 +2,7 @@ import React from "react";
 import Link from "next/link";
 import { redirect, notFound } from "next/navigation";
 import { sql } from "@/lib/neon/db";
+import { runAs } from "@/lib/neon/user-context";
 import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { ChatThread } from "@/components/features/ChatThread";
 import { CloseThreadButton } from "@/components/features/CloseThreadButton";
@@ -32,8 +33,10 @@ export default async function MessagePage({ params }: MessagePageProps) {
   await markRead(requestId);
 
   const [studentRows, professorRows] = await Promise.all([
-    sql`SELECT id, first_name, last_name, preferred_name, role FROM profiles WHERE id = ${request.student_id} LIMIT 1;`,
-    sql`SELECT id, first_name, last_name, preferred_name, role, expertise_fields FROM profiles WHERE id = ${request.professor_id} LIMIT 1;`,
+    // Profiles are publicly readable, but run inside the viewer's context
+    // anyway so the whole page is consistently RLS-scoped.
+    runAs(user.id, async () => sql`SELECT id, first_name, last_name, preferred_name, role FROM profiles WHERE id = ${request.student_id} LIMIT 1;`),
+    runAs(user.id, async () => sql`SELECT id, first_name, last_name, preferred_name, role, expertise_fields FROM profiles WHERE id = ${request.professor_id} LIMIT 1;`),
   ]);
 
   const studentProfile = studentRows[0];
@@ -49,12 +52,14 @@ export default async function MessagePage({ params }: MessagePageProps) {
       ? `Dr. ${participantName} ${participant.last_name ?? ""}`
       : `${participantName} ${participant.last_name ?? ""}`;
 
-  const messages = await sql`
+  // RLS scopes messages to thread participants: the query must run under the
+  // signed-in user's database identity or every row is filtered out.
+  const messages = await runAs(user.id, async () => sql`
     SELECT *
     FROM messages
     WHERE request_id = ${requestId}
     ORDER BY created_at ASC;
-  `;
+  `);
 
 
 
