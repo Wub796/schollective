@@ -5,11 +5,14 @@ import { runAs } from "@/lib/neon/user-context";
 import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { revalidatePath } from "next/cache";
 import { filterMessage } from "@/lib/validators";
-import { checkRateLimit, sanitiseText, isValidUuid, LIMITS } from "@/lib/security";
+import { sanitiseText, isValidUuid, LIMITS } from "@/lib/security";
+import { checkDurableRateLimit } from "@/lib/rate-limit";
 import { getThreadAccess, isSuspended } from "@/lib/authz";
 import { createNotification } from "@/lib/notifications";
+import { errorMessage } from "@/lib/utils";
 
 const MESSAGE_RATE_LIMIT = 15;
+const MESSAGE_RATE_WINDOW_MS = 60 * 1000;
 
 export async function sendMessage(requestId: string, content: string) {
   const reqId = sanitiseText(requestId, 100);
@@ -32,7 +35,9 @@ export async function sendMessage(requestId: string, content: string) {
     if (!user) return { error: "Unauthorized" };
     if (isSuspended(profile)) return { error: "Your account is suspended." };
 
-    const rateCheck = checkRateLimit(`msg:${user.id}`, MESSAGE_RATE_LIMIT, 60 * 1000);
+    // DB-backed so the window is shared across Worker isolates (the in-memory
+    // counter resets on every deploy/isolate recycle).
+    const rateCheck = await checkDurableRateLimit("msg", user.id, MESSAGE_RATE_LIMIT, MESSAGE_RATE_WINDOW_MS);
     if (!rateCheck.allowed) {
       return {
         error: `You're sending messages too quickly. Please wait ${rateCheck.retryAfterSeconds} seconds.`,
@@ -73,8 +78,8 @@ export async function sendMessage(requestId: string, content: string) {
       revalidatePath(`/messages/${reqId}`);
       return { success: true };
     });
-  } catch (err: any) {
-    return { error: err.message || "Failed to send message." };
+  } catch (err) {
+    return { error: errorMessage(err, "Failed to send message.") };
   }
 }
 
@@ -104,8 +109,8 @@ export async function closeRequest(requestId: string) {
 
       return { success: true };
     });
-  } catch (err: any) {
-    return { error: err.message || "Failed to close request." };
+  } catch (err) {
+    return { error: errorMessage(err, "Failed to close request.") };
   }
 }
 
@@ -138,7 +143,7 @@ export async function markRead(requestId: string) {
 
       return { success: true };
     });
-  } catch (err: any) {
-    return { error: err.message || "Failed to mark messages as read." };
+  } catch (err) {
+    return { error: errorMessage(err, "Failed to mark messages as read.") };
   }
 }

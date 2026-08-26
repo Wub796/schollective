@@ -26,6 +26,11 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  // eslint and typescript errors are deliberately not failed during builds:
+  // typecheck, lint and tests gate every push in .github/workflows/ci.yml
+  // instead. Keep CI green — these flags only move the gate, they do not
+  // remove it. (They also keep the OpenNext Cloudflare build from timing out
+  // re-running them on a 33k-line codebase.)
   eslint: {
     ignoreDuringBuilds: true,
   },
