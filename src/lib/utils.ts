@@ -6,6 +6,18 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 /**
+ * Safely extracts a human-readable message from an unknown thrown value.
+ *
+ * Replaces `catch (err: any)` — the thrown value in a catch is `unknown` in
+ * strict TS, and most handlers only want `err?.message ?? fallback`.
+ */
+export function errorMessage(err: unknown, fallback = "Something went wrong."): string {
+  if (err instanceof Error && err.message) return err.message;
+  if (typeof err === "string" && err) return err;
+  return fallback;
+}
+
+/**
  * Reads a jsonb string-array column into a JS array.
  *
  * `expertise_fields` and friends are jsonb, and the Neon HTTP driver may hand
