@@ -8,6 +8,7 @@ import { sanitiseText, isValidUuid, LIMITS } from "@/lib/security";
 import { isSuspended } from "@/lib/authz";
 import { captureServerEvent } from "@/lib/posthog-server";
 import { createNotification } from "@/lib/notifications";
+import { checkGenericOutreach } from "@/lib/mentorship-quality";
 
 export async function submitMentorshipRequest(formData: FormData) {
   const { session, user, profile } = await getCurrentUserAndProfile();
@@ -32,6 +33,14 @@ export async function submitMentorshipRequest(formData: FormData) {
     return { error: "Please describe your mentorship goals." };
   }
 
+  // The for-professors page promises the outreach editor rejects generic mass
+  // messages — this is where that promise is enforced, before anything is
+  // written.
+  const quality = checkGenericOutreach(background, goals);
+  if (!quality.allowed) {
+    return { error: quality.reason };
+  }
+
   // All DB work runs under the student's database identity (RLS): creating a
   // request and its opening message are owner-scoped writes.
   return runAs(user.id, async () => {
@@ -45,7 +54,7 @@ export async function submitMentorshipRequest(formData: FormData) {
 
   const count = countResult[0]?.count || 0;
   if (count >= 5) {
-    return { error: "Daily request limit reached. You can send up to 5 requests per day.", limitReached: true };
+    return { error: "Request limit reached. You can send up to 5 requests per 24 hours.", limitReached: true };
   }
 
   // The professor id arrives from the client, so confirm it really is an
