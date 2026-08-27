@@ -12,6 +12,7 @@
     "@google/genai": "^2.16.0",
     "@supabase/ssr": "^0.10.2",
     "@supabase/supabase-js": "^2.105.3",
+    "@vercel/speed-insights": "^2.0.0",
     "clsx": "^2.1.1",
     "framer-motion": "^11.18.0",
     "lucide-react": "^1.14.0",
