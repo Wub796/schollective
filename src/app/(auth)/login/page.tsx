@@ -261,8 +261,8 @@ function LoginContent() {
                   label="Password" placeholder="••••••••" required
                   suffix={
                     <Link href="/reset-password" style={{ textDecoration: "none" }}>
-                      <span style={{ fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.28)" }}>
-                        Forgot?
+                      <span style={{ fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: "#4f46e5", whiteSpace: "nowrap" }}>
+                        Forgot password?
                       </span>
                     </Link>
                   }
