@@ -1,12 +1,19 @@
 import { sql } from "@/lib/neon/db";
 import { runAs } from "@/lib/neon/user-context";
-import { sanitiseText, isValidUuid, LIMITS } from "@/lib/security";
+import { sanitiseText, isValidId, LIMITS } from "@/lib/security";
 
 export type NotificationType =
   | "request_accepted"
   | "request_declined"
   | "new_request"
-  | "message";
+  | "message"
+  /**
+   * A moderation warning from an admin. Delivered here rather than as a thread
+   * message: the previous implementation inserted `[SYSTEM WARNING]: …` into the
+   * target's most recent thread, which meant the unrelated other participant
+   * read it too, and a user with no threads could not be warned at all.
+   */
+  | "admin_warning";
 
 /**
  * Inserts a notification for a recipient, on behalf of the acting user.
@@ -34,12 +41,15 @@ export async function createNotification({
   body?: string;
   requestId?: string;
 }): Promise<void> {
-  if (!actorId || !isValidUuid(userId)) return;
+  // Both ids are validated: `actorId` becomes the database identity the insert
+  // runs under, so a malformed value would silently widen what the RLS policy
+  // evaluates rather than failing loudly.
+  if (!isValidId(actorId) || !isValidId(userId)) return;
 
   const safeType = type;
   const safeTitle = sanitiseText(title, LIMITS.topic);
   const safeBody = body ? sanitiseText(body, LIMITS.messageContent) : null;
-  const safeRequestId = requestId && isValidUuid(requestId) ? requestId : null;
+  const safeRequestId = requestId && isValidId(requestId) ? requestId : null;
 
   if (!safeTitle) return;
 
