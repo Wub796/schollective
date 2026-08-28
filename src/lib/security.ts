@@ -3,12 +3,23 @@
  * ─────────────────────────────────────────────────────────────────
  * Zero-dependency, in-memory security utilities:
  *
- *   1. Rate limiter — sliding-window, dual IP + user-ID tracking
+ *   1. Rate limiter — sliding-window, per-isolate
  *   2. Input sanitizers — XSS-neutralise, truncate, validate
- *   3. Request validators — zod-lite type guards with clean messages
+ *   3. Id type guards
  *
- * These guards run on EVERY server action and API route.
- * In production, swap the in-memory Map for a Redis-backed store.
+ * SCOPE, precisely: the sanitisers are applied by every server action and by
+ * the profile update route; `checkRateLimit` is used by the AI routes, the
+ * uploads route and three server actions. Nothing here is applied
+ * automatically — each call site opts in, and the list above is the whole of
+ * it. (An earlier version of this comment claimed these guards ran on every
+ * action and route, which was never true and is the kind of claim that stops
+ * people checking.)
+ *
+ * IMPORTANT — these counters are PER WORKER ISOLATE. On Cloudflare, isolates
+ * recycle on deploy and traffic fans out across many, so this limiter bounds a
+ * single burst rather than sustained abuse. Anything that needs a real shared
+ * window uses `checkDurableRateLimit` (src/lib/rate-limit.ts), which keeps the
+ * window in Postgres.
  */
 
 // ─────────────────────────────────────────────────────────────────
@@ -96,10 +107,14 @@ export function checkRateLimit(
  * Extracts a client IP from request headers, with fallbacks for proxies.
  *
  * `cf-connecting-ip` is set by Cloudflare from the TCP peer and cannot be
- * spoofed by the client; `x-forwarded-for` is a client-writable header, so
- * trusting its first entry would let an attacker rotate fake IPs and bypass
- * every per-IP rate limit. Only fall back to it behind proxies that strip the
- * client's own value.
+ * spoofed by the client, so on this deployment it is always the value used.
+ *
+ * The two fallbacks are BOTH client-writable — `x-real-ip` no less than
+ * `x-forwarded-for` — and are reachable only if a request arrives without
+ * Cloudflare in front of it. Treat any per-IP limit keyed on a fallback value as
+ * advisory: an attacker who can reach the origin directly can rotate either
+ * header freely. They are kept so local development and a direct-origin
+ * deployment still group requests sensibly, not because they are trustworthy.
  */
 export function getClientIp(request: Request): string {
   const headers = request.headers;
@@ -109,31 +124,6 @@ export function getClientIp(request: Request): string {
     headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
     "unknown"
   );
-}
-
-/**
- * Runs rate limit checks for both IP and user-ID in one call.
- * Returns the strictest result.
- */
-export function checkDualRateLimit(
-  userId: string | null,
-  ip: string,
-  maxUser: number,
-  maxIp: number,
-  windowMs: number
-): RateLimitResult {
-  // IP check first (broader, blocks abuse even without auth)
-  const ipResult = checkRateLimit(ip, maxIp, windowMs, true);
-  if (!ipResult.allowed) return ipResult;
-
-  // User-specific check if authenticated
-  if (userId) {
-    const userResult = checkRateLimit(userId, maxUser, windowMs);
-    if (!userResult.allowed) return userResult;
-    return userResult; // return user result (has correct remaining count)
-  }
-
-  return ipResult;
 }
 
 // ─────────────────────────────────────────────────────────────────
@@ -212,17 +202,18 @@ export function sanitiseUrl(input: unknown, maxLen: number = LIMITS.url): string
 }
 
 /**
- * Sanitises an email string.
+ * Cheap shape check for an opaque record id.
+ *
+ * Deliberately NOT named `isValidUuid`, which is what it used to be called: the
+ * second branch admits any 8–64 character slug, so the old name promised a
+ * guarantee the function never made and invited callers to treat it as an
+ * authorisation check. It is a malformed-input filter and nothing more — it
+ * keeps junk out of a query parameter, and every caller must still confirm the
+ * row exists and that the user may see it.
+ *
+ * Accepts a canonical UUID, or a Better Auth nanoid / CUID-style id.
  */
-export function sanitiseEmail(input: unknown): string {
-  if (typeof input !== "string") return "";
-  return input.replace(DANGEROUS_CHARS, "").trim().slice(0, LIMITS.email).toLowerCase();
-}
-
-/**
- * Validates an ID string (supports standard UUIDs, CUIDs, and Better Auth nanoid strings).
- */
-export function isValidUuid(input: unknown): input is string {
+export function isValidId(input: unknown): input is string {
   if (typeof input !== "string") return false;
   // Standard UUID format
   if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(input)) return true;
@@ -231,7 +222,13 @@ export function isValidUuid(input: unknown): input is string {
   return false;
 }
 
-export const isValidId = isValidUuid;
+/** True only for a canonical RFC 4122 UUID, for callers that need the real thing. */
+export function isCanonicalUuid(input: unknown): input is string {
+  return (
+    typeof input === "string" &&
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(input)
+  );
+}
 
 /**
  * Sanitises an array of strings (comma-separated or already an array).
@@ -275,54 +272,4 @@ export function sanitiseBool(input: unknown): boolean {
   if (typeof input === "boolean") return input;
   if (typeof input === "string") return input.toLowerCase() === "true" || input === "on";
   return false;
-}
-
-// ─────────────────────────────────────────────────────────────────
-// REQUEST GUARD
-// ─────────────────────────────────────────────────────────────────
-
-/**
- * Wraps an API route handler with:
- *   1. Rate limiting (IP + optional user)
- *   2. Error boundary (always returns JSON, never crashes)
- */
-export function withApiGuard<T extends (...args: any[]) => Promise<Response>>(
-  handler: T,
-  options: {
-    maxPerMinute?: number;
-  } = {}
-): T {
-  const { maxPerMinute = 60 } = options;
-
-  return (async (...args: Parameters<T>) => {
-    try {
-      const request = args[0] as Request;
-      const ip = getClientIp(request);
-
-      const rateResult = checkRateLimit(ip, maxPerMinute, 60 * 1000, true);
-      if (!rateResult.allowed) {
-        return new Response(
-          JSON.stringify({
-            error: "Too many requests. Please wait before trying again.",
-            retryAfterSeconds: rateResult.retryAfterSeconds,
-          }),
-          {
-            status: 429,
-            headers: {
-              "Content-Type": "application/json",
-              "Retry-After": String(rateResult.retryAfterSeconds),
-            },
-          }
-        );
-      }
-
-      return await handler(...args);
-    } catch (err: any) {
-      console.error("[Security Guard] Unhandled error:", err?.message || err);
-      return new Response(
-        JSON.stringify({ error: "An internal error occurred." }),
-        { status: 500, headers: { "Content-Type": "application/json" } }
-      );
-    }
-  }) as T;
 }
