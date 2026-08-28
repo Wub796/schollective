@@ -18,19 +18,32 @@ const arima = Arima({
   weight: ["300", "400", "500", "600", "700"],
 });
 
+const siteUrl = "https://schollective.com";
+const siteTitle = "Schollective | Academic Mentorship for High School Students";
+const siteDescription =
+  "Schollective helps high school students find verified research mentors, understand faculty research, and send thoughtful outreach requests to professors.";
+
 export const metadata: Metadata = {
   title: {
-    default: "Schollective | Academic Mentorship for High School Students",
+    default: siteTitle,
     template: "%s | Schollective",
   },
 
-  description:
-    "Schollective helps high school students find research mentors, understand faculty research, and send thoughtful outreach requests to professors.",
+  description: siteDescription,
+
+  keywords: [
+    "academic mentorship",
+    "research mentors",
+    "high school research",
+    "professor outreach",
+    "student research opportunities",
+    "faculty research",
+  ],
 
   authors: [{ name: "Schollective" }],
   creator: "Schollective",
 
-  metadataBase: new URL("https://schollective.com"),
+  metadataBase: new URL(siteUrl),
 
   alternates: {
     canonical: "/",
@@ -39,11 +52,10 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://schollective.com",
+    url: siteUrl,
     siteName: "Schollective",
-    title: "Schollective | Academic Mentorship for High School Students",
-    description:
-      "Find research mentors, understand faculty research, and send thoughtful outreach requests to professors.",
+    title: siteTitle,
+    description: siteDescription,
     images: [
       {
         url: "/og-image.png",
@@ -56,9 +68,8 @@ export const metadata: Metadata = {
 
   twitter: {
     card: "summary_large_image",
-    title: "Schollective | Academic Mentorship for High School Students",
-    description:
-      "Find research mentors and connect with professors through thoughtful academic outreach.",
+    title: siteTitle,
+    description: siteDescription,
     images: ["/og-image.png"],
   },
 
@@ -113,9 +124,8 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "WebSite",
               name: "Schollective",
-              url: "https://schollective.com",
-              description:
-                "Schollective helps high school students find research mentors, understand faculty research, and send thoughtful outreach requests to professors.",
+              url: siteUrl,
+              description: siteDescription,
               potentialAction: {
                 "@type": "SearchAction",
                 target: {
