@@ -19,7 +19,10 @@ export async function GET(request: NextRequest) {
   const origin = request.nextUrl.origin
   const code = searchParams.get('code')
   // If "next" is in the callback URL, use it; otherwise default to dashboard.
-  const next = searchParams.get('next') ?? '/dashboard'
+  const requestedNext = searchParams.get('next') ?? '/dashboard'
+  const next = requestedNext.startsWith('/') && !requestedNext.startsWith('//')
+    ? requestedNext
+    : '/dashboard'
 
   if (!code) {
     // If no code, check if there's an error from the provider
@@ -118,7 +121,7 @@ export async function GET(request: NextRequest) {
     destination = `${origin}/admin/dashboard`
   } else {
     // Standard student or default
-    destination = next.startsWith('http') ? next : `${origin}${next}`
+    destination = `${origin}${next}`
   }
 
   const response = NextResponse.redirect(destination)

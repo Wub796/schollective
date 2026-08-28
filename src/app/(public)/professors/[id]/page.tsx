@@ -1,4 +1,5 @@
 import React from "react";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
@@ -12,13 +13,13 @@ interface PageProps {
   params: Promise<{ id: string }>;
 }
 
-export async function generateMetadata({ params }: PageProps) {
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { id } = await params;
   const supabase = await createClient();
 
   const { data: professor } = await supabase
     .from("profiles")
-    .select("first_name, last_name, preferred_name, institution, expertise_fields")
+    .select("first_name, last_name, preferred_name, institution, expertise_fields, avatar_url")
     .eq("id", id)
     .eq("role", "professor")
     .eq("status", "approved")
@@ -33,11 +34,27 @@ export async function generateMetadata({ params }: PageProps) {
   return {
     title,
     description,
+    alternates: {
+      canonical: `/professors/${id}`,
+    },
     openGraph: {
       title,
       description,
       type: "profile",
-    }
+      url: `/professors/${id}`,
+      images: [
+        {
+          url: professor.avatar_url?.split("?")[0] || "/og-image.png",
+          alt: `Dr. ${displayName} ${professor.last_name}`,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [professor.avatar_url?.split("?")[0] || "/og-image.png"],
+    },
   };
 }
 

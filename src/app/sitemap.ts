@@ -1,12 +1,13 @@
 import { MetadataRoute } from "next";
 import { createClient } from "@/utils/supabase/server";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = await createClient();
 
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://schollective.com";
+  const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://schollective.com").replace(/\/$/, "");
+  const lastModified = new Date();
 
   // Static marketing routes
   const staticRoutes = [
@@ -17,7 +18,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/features"
   ].map((route) => ({
     url: `${baseUrl}${route}`,
-    lastModified: new Date(),
+    lastModified,
     changeFrequency: "weekly" as const,
     priority: route === "" ? 1.0 : 0.8
   }));

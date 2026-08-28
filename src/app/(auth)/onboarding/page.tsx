@@ -286,6 +286,18 @@ function OnboardingContent() {
       .from("profiles")
       .upsert(payload, { onConflict: "id" });
 
+    // Some deployments have an RLS policy that calls the hardened is_admin()
+    // helper. Onboarding is a self-service write and must not depend on that
+    // admin-only RPC permission; retry with the same user-owned profile data
+    // after refreshing the auth session so the request carries the latest JWT.
+    if (upsertError?.message?.toLowerCase().includes("permission denied for function is_admin")) {
+      await supabase.auth.getSession();
+      const retry = await supabase
+        .from("profiles")
+        .upsert(payload, { onConflict: "id" });
+      upsertError = retry.error;
+    }
+
     if (upsertError && (upsertError.message?.includes("schema cache") || upsertError.message?.includes("academic_interests") || upsertError.message?.includes("extracurriculars") || upsertError.message?.includes("bio") || upsertError.message?.includes("major") || upsertError.message?.includes("coursework") || upsertError.message?.includes("skills_and_tools") || upsertError.message?.includes("portfolio_url") || upsertError.message?.includes("graduation_year") || upsertError.message?.includes("seeking_mentorship_type"))) {
       console.warn("[onboarding] Schema cache error — retrying with core student profile fields:", upsertError.message);
       delete payload.bio;
