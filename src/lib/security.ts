@@ -215,12 +215,18 @@ export function sanitiseEmail(input: unknown): string {
 }
 
 /**
- * Validates a UUID string (for IDs passed from the client).
+ * Validates an ID string (supports standard UUIDs, CUIDs, and Better Auth nanoid strings).
  */
 export function isValidUuid(input: unknown): input is string {
   if (typeof input !== "string") return false;
-  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(input);
+  // Standard UUID format
+  if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(input)) return true;
+  // Better Auth nanoid / alphanumeric ID (alphanumeric, underscores, hyphens, length 8..64)
+  if (/^[a-zA-Z0-9_-]{8,64}$/.test(input)) return true;
+  return false;
 }
+
+export const isValidId = isValidUuid;
 
 /**
  * Sanitises an array of strings (comma-separated or already an array).

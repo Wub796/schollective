@@ -132,6 +132,7 @@ function OnboardingContent() {
   const [loading, setLoading]         = useState(false);
   const [checking, setChecking]       = useState(true);
   const [userName, setUserName]       = useState("");
+  const [userId, setUserId]           = useState("");
   const [institution, setInstitution] = useState("");
   const [error, setError]             = useState<string | null>(null);
   const [isDirty, setIsDirty]         = useState(false);
@@ -176,6 +177,7 @@ function OnboardingContent() {
           return;
         }
 
+        if (user.id) setUserId(user.id);
         if (user.name) setUserName(user.name);
         if (profile?.role === "professor" || profile?.role === "student") {
           setRole(profile.role);
@@ -294,9 +296,9 @@ function OnboardingContent() {
 
     // Auto-run AI Professor Reviewer if the new account is a professor
     let isAutoApproved = false;
-    if (role === "professor") {
+    if (role === "professor" && userId) {
       try {
-        const reviewRes = await scoreApplication(user.id);
+        const reviewRes = await scoreApplication(userId);
         if (reviewRes?.autoApproved) {
           isAutoApproved = true;
         }
