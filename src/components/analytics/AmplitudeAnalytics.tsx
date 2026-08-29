@@ -20,13 +20,17 @@ export function AmplitudeAnalytics() {
     }
 
     // Initialize unified SDK with autocapture and session replay
-    amplitude.initAll(AMPLITUDE_API_KEY, {
-      analytics: { autocapture: true },
-      sessionReplay: { sampleRate: 1 },
-    });
+    try {
+      amplitude.initAll(AMPLITUDE_API_KEY, {
+        analytics: { autocapture: true },
+        sessionReplay: { sampleRate: 1 },
+      });
 
-    // Instrument the chosen load-time event with the verification prompt version
-    amplitude.track("Viewed Home Page", { prompt_version: "BA400.4" });
+      // Instrument the chosen load-time event with the verification prompt version
+      amplitude.track("Viewed Home Page", { prompt_version: "BA400.4" });
+    } catch {
+      // Gracefully silent if client ad blocker blocks analytics
+    }
   }, []);
 
   return null;

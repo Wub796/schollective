@@ -64,6 +64,10 @@ export default async function StudentDashboard() {
     redirect(profile.role === "admin" ? "/admin/dashboard" : "/prof/dashboard");
   }
 
+  if (!isAdminPreviewing && !profile.profile_complete && profile.role !== "admin") {
+    redirect("/onboarding");
+  }
+
   const displayName = profile.preferred_name || profile.first_name || "Scholar";
 
   return (

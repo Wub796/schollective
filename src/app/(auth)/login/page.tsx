@@ -127,7 +127,7 @@ function LoginContent() {
       const profile = profileData?.profile;
 
       // No profile row, or incomplete profile → send to onboarding
-      if (!profile || !profile.role || !profile.first_name) {
+      if (!profile || !profile.role || !profile.first_name || !profile.profile_complete) {
         router.refresh();
         const next = searchParams.get("next");
         const onboardingUrl = next && next !== "/dashboard"
