@@ -74,6 +74,18 @@ export async function getCurrentUserAndProfile(): Promise<{
         RETURNING *;
       `;
       profile = newRows[0] as ProfileRecord;
+    } else if (profile.id !== userId) {
+      // Link migrated profile ID to current auth user ID
+      try {
+        const updatedRows = await sql`
+          UPDATE profiles SET id = ${userId} WHERE email = ${userEmail} RETURNING *;
+        `;
+        if (updatedRows && updatedRows[0]) {
+          profile = updatedRows[0] as ProfileRecord;
+        }
+      } catch {
+        // Keep existing profile if update fails
+      }
     }
 
     return { session, user: session.user, profile: profile || null };
