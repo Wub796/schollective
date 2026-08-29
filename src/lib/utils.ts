@@ -18,6 +18,21 @@ export function errorMessage(err: unknown, fallback = "Something went wrong."): 
 }
 
 /**
+ * Logs the real failure and returns a message that is safe to show a user.
+ *
+ * Prefer this to `errorMessage` anywhere the result crosses the network.
+ * `errorMessage` hands back whatever the thrown value said, and several routes
+ * were returning that straight to the client — which meant a Postgres error, or
+ * `assertStorageConfigured`'s list of missing environment variables, could be
+ * read by anyone who could trigger the failure. The detail belongs in the logs,
+ * where Sentry picks it up; the caller gets a sentence they can act on.
+ */
+export function internalError(context: string, err: unknown, userMessage: string): string {
+  console.error(`[${context}]`, err instanceof Error ? (err.stack ?? err.message) : err);
+  return userMessage;
+}
+
+/**
  * Reads a jsonb string-array column into a JS array.
  *
  * `expertise_fields` and friends are jsonb, and the Neon HTTP driver may hand
