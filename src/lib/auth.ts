@@ -1,5 +1,5 @@
 import { betterAuth } from "better-auth";
-import { Pool } from "pg";
+import { Pool } from "@neondatabase/serverless";
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL_UNPOOLED || process.env.DATABASE_URL,
@@ -7,7 +7,15 @@ const pool = new Pool({
 
 export const auth = betterAuth({
   database: pool,
-  baseURL: process.env.BETTER_AUTH_URL || process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+  baseURL: process.env.BETTER_AUTH_URL || process.env.NEXT_PUBLIC_APP_URL || "https://schollective.com",
+  trustedOrigins: [
+    "https://schollective.com",
+    "https://www.schollective.com",
+    "https://schollective.schollective.workers.dev",
+    "http://localhost:3000",
+    ...(process.env.BETTER_AUTH_URL ? [process.env.BETTER_AUTH_URL] : []),
+    ...(process.env.NEXT_PUBLIC_APP_URL ? [process.env.NEXT_PUBLIC_APP_URL] : []),
+  ],
   secret: process.env.BETTER_AUTH_SECRET || "schollective-auth-secret-key-32-chars-long!",
   socialProviders: {
     ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
