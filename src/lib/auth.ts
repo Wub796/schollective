@@ -1,5 +1,5 @@
 import { betterAuth } from "better-auth";
-import { Pool } from "pg";
+import { Pool } from "@neondatabase/serverless";
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL_UNPOOLED || process.env.DATABASE_URL || "",
