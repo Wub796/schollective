@@ -4,6 +4,7 @@ import React, { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useRouter, useSearchParams } from "next/navigation";
+import { safeInternalPath } from "@/lib/safe-redirect";
 import { authClient, authErrorMessage } from "@/lib/auth-client";
 import { Button } from "@/components/ui/Button";
 import { useHydrated } from "@/lib/use-hydrated";
@@ -41,7 +42,7 @@ function Field({
           fontWeight: 800,
           letterSpacing: "0.22em",
           textTransform: "uppercase",
-          color: focused ? "#4f46e5" : "#0f172a",
+          color: focused ? "var(--accent)" : "var(--text-primary)",
           marginBottom: "0.6rem",
           transition: "color 0.25s",
           fontFamily: "var(--font-sans)",
@@ -61,11 +62,11 @@ function Field({
           style={{
             width: "100%",
             background: "rgba(255, 255, 255, 0.9)",
-            border: `1.5px solid ${focused ? "#4f46e5" : "rgba(99, 102, 241, 0.5)"}`,
+            border: `1.5px solid ${focused ? "var(--accent)" : "rgba(99, 102, 241, 0.5)"}`,
             borderRadius: "100px",
             padding: "1rem 1.75rem",
             fontSize: "0.95rem",
-            color: "#0f172a",
+            color: "var(--text-primary)",
             outline: "none",
             transition: "all 0.3s cubic-bezier(0.22, 1, 0.36, 1)",
             fontFamily: "var(--font-sans)",
@@ -149,7 +150,9 @@ function LoginContent() {
       // No profile row, or incomplete profile (non-admin) → send to onboarding
       if (!profile || !profile.role || (!profile.profile_complete && profile.role !== "admin")) {
         router.refresh();
-        const next = searchParams.get("next");
+        // Validated: `next` comes straight from the URL, and router.push would
+        // happily follow an absolute off-site URL.
+        const next = safeInternalPath(searchParams.get("next"));
         const onboardingUrl = next && next !== "/dashboard"
           ? `/onboarding?next=${encodeURIComponent(next)}`
           : "/onboarding";
@@ -157,7 +160,7 @@ function LoginContent() {
         return;
       }
 
-      const next = searchParams.get("next");
+      const next = safeInternalPath(searchParams.get("next"));
       if (next) {
         router.refresh();
         router.push(next);
@@ -240,7 +243,7 @@ function LoginContent() {
           <Link href={signupHref} style={{ textDecoration: "none" }}>
             <span className="hover:text-indigo-700 transition-colors" style={{
               fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.2em",
-              textTransform: "uppercase", color: "#4f46e5",
+              textTransform: "uppercase", color: "var(--accent)",
               fontFamily: "var(--font-sans)",
               whiteSpace: "nowrap",
             }}>
@@ -270,7 +273,7 @@ function LoginContent() {
             marginBottom: "3.5rem",
           }}>
             Welcome<br />
-            <em style={{ fontStyle: "italic", color: "#4f46e5", fontWeight: 300 }}>back.</em>
+            <em style={{ fontStyle: "italic", color: "var(--accent)", fontWeight: 300 }}>back.</em>
           </motion.h1>
 
           <form onSubmit={handleSubmit} method="post">
@@ -285,7 +288,7 @@ function LoginContent() {
                   label="Password" placeholder="••••••••" required
                   suffix={
                     <Link href="/reset-password" style={{ textDecoration: "none" }}>
-                      <span style={{ fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: "#4f46e5", whiteSpace: "nowrap" }}>
+                      <span style={{ fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--accent)", whiteSpace: "nowrap" }}>
                         Forgot password?
                       </span>
                     </Link>
@@ -341,10 +344,10 @@ function LoginContent() {
               {/* Footer link */}
               <motion.p variants={fadeUp} style={{
                 textAlign: "center", fontSize: "0.82rem", fontWeight: 500,
-                color: "#64748b", fontFamily: "var(--font-sans)",
+                color: "var(--text-tertiary)", fontFamily: "var(--font-sans)",
               }}>
                 New to Schollective?{" "}
-                <Link href={signupHref} className="hover:text-indigo-700 transition-colors" style={{ color: "#4f46e5", fontWeight: 700, textDecoration: "none" }}>
+                <Link href={signupHref} className="hover:text-indigo-700 transition-colors" style={{ color: "var(--accent)", fontWeight: 700, textDecoration: "none" }}>
                   Create an account →
                 </Link>
               </motion.p>
