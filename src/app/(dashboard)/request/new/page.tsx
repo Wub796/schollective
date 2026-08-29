@@ -1,7 +1,8 @@
 import React from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { createClient } from "@/utils/supabase/server";
+import { sql } from "@/lib/neon/db";
+import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { RequestForm } from "./RequestForm";
 import { ArrowLeft, GraduationCap } from "lucide-react";
 
@@ -14,36 +15,34 @@ interface RequestNewPageProps {
 }
 
 export default async function RequestNewPage({ searchParams }: RequestNewPageProps) {
-  const supabase = await createClient();
   const { prof_id } = await searchParams;
 
   if (!prof_id) redirect("/professors");
 
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session) redirect("/login");
+  const { session, user } = await getCurrentUserAndProfile();
+  if (!session || !user) redirect("/login");
 
-  const { data: professor, error } = await supabase
-    .from("profiles")
-    .select("id, first_name, last_name, preferred_name, institution")
-    .eq("id", prof_id)
-    .eq("role", "professor")
-    .eq("status", "approved")
-    .single();
+  const professors = await sql`
+    SELECT id, first_name, last_name, preferred_name, institution
+    FROM profiles
+    WHERE id = ${prof_id} AND role = 'professor' AND status = 'approved'
+    LIMIT 1;
+  `;
+  const professor = professors[0];
 
-  if (error || !professor) {
-    console.error("Invalid professor ID:", error);
+  if (!professor) {
     redirect("/professors");
   }
 
   // Fetch requests count in last 24h
   const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-  const { count: requestCount } = await supabase
-    .from("requests")
-    .select("id", { count: "exact", head: true })
-    .eq("student_id", session.user.id)
-    .gt("created_at", twentyFourHoursAgo);
+  const countResult = await sql`
+    SELECT COUNT(*)::int as count
+    FROM requests
+    WHERE student_id = ${user.id} AND created_at > ${twentyFourHoursAgo};
+  `;
 
-  const requestsToday = requestCount || 0;
+  const requestsToday = countResult[0]?.count || 0;
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "3.5rem", maxWidth: "720px" }}>

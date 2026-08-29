@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/utils/supabase/server";
+import { sql } from "@/lib/neon/db";
+import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { recommendProfessors } from "@/lib/ai/recommender";
 import { checkUserAiRateLimit } from "@/lib/ai/guardrails";
 import { checkRateLimit, getClientIp } from "@/lib/security";
@@ -16,10 +17,9 @@ export async function GET(req: Request) {
       );
     }
 
-    const supabase = await createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const { user, profile: studentProfile } = await getCurrentUserAndProfile();
 
-    if (authError || !user) {
+    if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -32,43 +32,19 @@ export async function GET(req: Request) {
       );
     }
 
-    const { data: studentProfile } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", user.id)
-      .maybeSingle();
-
     const safeStudent = studentProfile || {
       id: user.id,
       email: user.email,
-      first_name: user.user_metadata?.first_name || "",
-      last_name: user.user_metadata?.last_name || "",
+      first_name: "",
+      last_name: "",
     };
 
-    let professors: any[] = [];
-    let { data: primaryProfs, error: primaryErr } = await supabase
-      .from("profiles")
-      .select("id, first_name, last_name, preferred_name, institution, department, academic_title, expertise_fields, is_accepting_requests, bio, lab_website, publications, status, role")
-      .eq("role", "professor")
-      .eq("status", "approved")
-      .limit(30);
-
-    if (primaryErr) {
-      console.warn("[GET /api/ai/recommendations] Primary column query warning, attempting schema fallback query:", primaryErr.message);
-      const { data: fallbackProfs, error: fallbackErr } = await supabase
-        .from("profiles")
-        .select("id, first_name, last_name, institution, expertise_fields, status, role")
-        .eq("role", "professor")
-        .limit(30);
-
-      if (fallbackErr) {
-        console.error("[GET /api/ai/recommendations] Fallback query error:", fallbackErr);
-        return NextResponse.json({ success: true, recommendations: [] });
-      }
-      professors = fallbackProfs || [];
-    } else {
-      professors = primaryProfs || [];
-    }
+    const professors = await sql`
+      SELECT id, first_name, last_name, preferred_name, institution, department, academic_title, expertise_fields, is_accepting_requests, bio, lab_website, publications, status, role
+      FROM profiles
+      WHERE role = 'professor' AND status = 'approved'
+      LIMIT 30;
+    `;
 
     const result = await recommendProfessors(safeStudent, professors);
 

@@ -1,15 +1,14 @@
 "use server";
 
-import { createClient } from "@/utils/supabase/server";
+import { sql } from "@/lib/neon/db";
+import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { revalidatePath } from "next/cache";
 import { filterMessage } from "@/lib/validators";
 import { checkRateLimit, sanitiseText, isValidUuid, LIMITS } from "@/lib/security";
 
-/** Max messages a user can send in a 60-second window */
 const MESSAGE_RATE_LIMIT = 15;
 
 export async function sendMessage(requestId: string, content: string) {
-  // ── Validate & sanitise inputs ─────────────────────────────────
   const reqId = sanitiseText(requestId, 100);
   if (!reqId || !isValidUuid(reqId)) {
     return { error: "Invalid request ID." };
@@ -20,19 +19,15 @@ export async function sendMessage(requestId: string, content: string) {
     return { error: "Message cannot be empty." };
   }
 
-  // ── Content filter ─────────────────────────────────────────────
   const filter = filterMessage(sanitisedContent);
   if (!filter.allowed) {
     return { error: filter.reason ?? "Message blocked by content filter." };
   }
 
   try {
-    const supabase = await createClient();
-
-    const { data: { user } } = await supabase.auth.getUser();
+    const { user } = await getCurrentUserAndProfile();
     if (!user) return { error: "Unauthorized" };
 
-    // ── Rate limit: 15 messages per minute per user ──────────────
     const rateCheck = checkRateLimit(`msg:${user.id}`, MESSAGE_RATE_LIMIT, 60 * 1000);
     if (!rateCheck.allowed) {
       return {
@@ -41,14 +36,15 @@ export async function sendMessage(requestId: string, content: string) {
       };
     }
 
-    // Fetch request to verify it's active
-    const { data: request, error: fetchError } = await supabase
-      .from("requests")
-      .select("status, student_id, professor_id")
-      .eq("id", reqId)
-      .single();
+    const requests = await sql`
+      SELECT status, student_id, professor_id
+      FROM requests
+      WHERE id = ${reqId}
+      LIMIT 1;
+    `;
+    const request = requests[0];
 
-    if (fetchError || !request) return { error: "Thread not found." };
+    if (!request) return { error: "Thread not found." };
     if (request.status !== "active") {
       return { error: "This thread is not active and cannot receive messages." };
     }
@@ -56,22 +52,16 @@ export async function sendMessage(requestId: string, content: string) {
       return { error: "Unauthorized: You are not a participant in this thread." };
     }
 
-    // Insert message
-    const { error } = await supabase
-      .from("messages")
-      .insert({
-        request_id: reqId,
-        sender_id: user.id,
-        content: sanitisedContent,
-      });
+    await sql`
+      INSERT INTO messages (request_id, sender_id, content)
+      VALUES (${reqId}, ${user.id}, ${sanitisedContent});
+    `;
 
-    if (error) throw error;
-
-    // Update request timestamp
-    await supabase
-      .from("requests")
-      .update({ updated_at: new Date().toISOString() })
-      .eq("id", reqId);
+    await sql`
+      UPDATE requests
+      SET updated_at = now()
+      WHERE id = ${reqId};
+    `;
 
     revalidatePath(`/messages/${reqId}`);
     return { success: true };
@@ -87,28 +77,27 @@ export async function closeRequest(requestId: string) {
   }
 
   try {
-    const supabase = await createClient();
-
-    const { data: { user } } = await supabase.auth.getUser();
+    const { user } = await getCurrentUserAndProfile();
     if (!user) return { error: "Unauthorized" };
 
-    const { data: request } = await supabase
-      .from("requests")
-      .select("student_id, professor_id")
-      .eq("id", reqId)
-      .single();
+    const requests = await sql`
+      SELECT student_id, professor_id
+      FROM requests
+      WHERE id = ${reqId}
+      LIMIT 1;
+    `;
+    const request = requests[0];
 
     if (!request) return { error: "Request not found" };
     if (request.student_id !== user.id && request.professor_id !== user.id) {
       return { error: "Unauthorized: You are not a participant in this thread." };
     }
 
-    const { error } = await supabase
-      .from("requests")
-      .update({ status: "closed", updated_at: new Date().toISOString() })
-      .eq("id", reqId);
-
-    if (error) throw error;
+    await sql`
+      UPDATE requests
+      SET status = 'closed', updated_at = now()
+      WHERE id = ${reqId};
+    `;
 
     revalidatePath(`/messages/${reqId}`);
     revalidatePath("/dashboard");
@@ -127,19 +116,16 @@ export async function markRead(requestId: string) {
   }
 
   try {
-    const supabase = await createClient();
-
-    const { data: { user } } = await supabase.auth.getUser();
+    const { user } = await getCurrentUserAndProfile();
     if (!user) return { error: "Unauthorized" };
 
-    const { error } = await supabase
-      .from("messages")
-      .update({ read_at: new Date().toISOString() })
-      .eq("request_id", reqId)
-      .neq("sender_id", user.id)
-      .is("read_at", null);
-
-    if (error) throw error;
+    await sql`
+      UPDATE messages
+      SET read_at = now()
+      WHERE request_id = ${reqId}
+        AND sender_id != ${user.id}
+        AND read_at IS NULL;
+    `;
 
     revalidatePath(`/messages/${reqId}`);
     revalidatePath("/dashboard");

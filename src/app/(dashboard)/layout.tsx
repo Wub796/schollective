@@ -1,6 +1,6 @@
 import { AppShell } from "@/components/layout/AppShell";
 import { AdminViewBanner } from "@/components/ui/AdminViewBanner";
-import { createClient } from "@/utils/supabase/server";
+import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { cookies } from "next/headers";
 
 export const dynamic = "force-dynamic";
@@ -10,14 +10,8 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-
-  let role = "student";
-  if (user) {
-    const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
-    if (profile) role = profile.role;
-  }
+  const { profile } = await getCurrentUserAndProfile();
+  const role = profile?.role || "student";
 
   // Check for admin preview-as mode
   const cookieStore = await cookies();

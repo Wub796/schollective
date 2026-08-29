@@ -1,9 +1,4 @@
-/**
- * Professor profile completeness utility.
- *
- * A profile is "complete" when it has all fields needed to appear
- * credible in the student-facing directory.
- */
+import { sql } from '@/lib/neon/db';
 
 export interface CompletenessResult {
   complete: boolean;
@@ -32,27 +27,25 @@ export function computeProfileComplete(profile: any): CompletenessResult {
   };
 }
 
-export async function updateProfileCompleteness(supabase: any, profileId: string): Promise<boolean> {
+export async function updateProfileCompleteness(profileId: string): Promise<boolean> {
   try {
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("first_name, last_name, institution, expertise_fields, role")
-      .eq("id", profileId)
-      .single();
+    const profiles = await sql`
+      SELECT first_name, last_name, institution, expertise_fields, role
+      FROM profiles
+      WHERE id = ${profileId}
+      LIMIT 1;
+    `;
+    const profile = profiles[0];
 
     if (!profile || profile.role !== "professor") return false;
 
     const { complete } = computeProfileComplete(profile);
 
-    const { error } = await supabase
-      .from("profiles")
-      .update({ profile_complete: complete })
-      .eq("id", profileId);
-
-    if (error) {
-      console.error("[profile-completeness] Failed to update profile_complete:", error.message);
-      return false;
-    }
+    await sql`
+      UPDATE profiles
+      SET profile_complete = ${complete}
+      WHERE id = ${profileId};
+    `;
 
     return complete;
   } catch (err) {

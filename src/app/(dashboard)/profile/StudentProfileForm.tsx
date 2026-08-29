@@ -3,7 +3,7 @@
 import React, { useState, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/utils/supabase/client";
+import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
 import {
   GraduationCap,
@@ -127,7 +127,6 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
   const [activeTab, setActiveTab] = useState<"edit" | "preview">("edit");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
-  const supabase = createClient();
 
   // Custom Cursor Preference (OFF by default)
   const [customCursor, setCustomCursor] = useState(() => {
@@ -148,7 +147,7 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
   };
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
+    await authClient.signOut();
     router.push("/login");
   };
 
@@ -158,10 +157,10 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
   const [preferredName, setPreferredName] = useState(profile?.preferred_name || "");
   const [inst, setInst] = useState(profile?.institution || "");
   const [educationLevel, setEducationLevel] = useState(profile?.education_level || "high-school-senior");
-  const [major, setMajor] = useState(profile?.major || profile?.field_of_study || "");
+  const [major, setMajor] = useState(profile?.major || "");
   const [gradYear, setGradYear] = useState(profile?.graduation_year || "");
   const [bio, setBio] = useState(profile?.bio || "");
-  const [portfolioUrl, setPortfolioUrl] = useState(profile?.portfolio_url || profile?.github_url || "");
+  const [portfolioUrl, setPortfolioUrl] = useState(profile?.portfolio_url || "");
   const [mentorshipType, setMentorshipType] = useState(profile?.seeking_mentorship_type || "");
 
   const [interests, setInterests] = useState(
@@ -177,15 +176,14 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
     Array.isArray(profile?.skills_and_tools) ? profile.skills_and_tools.join(", ") : profile?.skills_and_tools || ""
   );
 
-  // Dynamic Configuration based on Education Level
   const levelConfig = getEducationLevelConfig(educationLevel);
 
   const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file || !profile) return;
+    if (!file) return;
 
     if (!file.type.startsWith("image/")) {
-      toast.error("Please select an image file.");
+      toast.error("Please upload an image file (PNG, JPG, WebP).");
       return;
     }
     if (file.size > 5 * 1024 * 1024) {
@@ -195,27 +193,32 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
 
     setAvatarUploading(true);
     try {
-      const ext = file.name.split(".").pop();
-      const filePath = `${profile.id}/avatar.${ext}`;
+      // 1. Get presigned upload URL from Neon storage
+      const presignRes = await fetch("/api/storage/upload", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ filename: file.name, contentType: file.type }),
+      });
 
-      const { error: uploadError } = await supabase.storage
-        .from("avatars")
-        .upload(filePath, file, { upsert: true, contentType: file.type });
+      if (!presignRes.ok) throw new Error("Failed to generate storage upload URL");
+      const { uploadUrl, publicUrl } = await presignRes.json();
 
-      if (uploadError) throw uploadError;
+      // 2. Direct upload to Neon Object Storage
+      const s3Res = await fetch(uploadUrl, {
+        method: "PUT",
+        headers: { "Content-Type": file.type },
+        body: file,
+      });
 
-      const { data: { publicUrl } } = supabase.storage
-        .from("avatars")
-        .getPublicUrl(filePath);
+      if (!s3Res.ok) throw new Error("Storage upload failed");
 
+      // 3. Save avatar URL in Neon profiles table
       const avatarUrl = `${publicUrl}?t=${Date.now()}`;
-
-      const { error: updateError } = await supabase
-        .from("profiles")
-        .update({ avatar_url: avatarUrl })
-        .eq("id", profile.id);
-
-      if (updateError) throw updateError;
+      await fetch("/api/auth/profile/update", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ avatar_url: avatarUrl }),
+      });
 
       setProfile((p: any) => ({ ...p, avatar_url: avatarUrl }));
       toast.success("Profile picture updated.");
@@ -254,39 +257,30 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
       extracurriculars: extrasArr,
       coursework: courseworkArr,
       skills_and_tools: skillsArr,
+      profile_complete: true,
       updated_at: new Date().toISOString(),
     };
 
-    let { error } = await supabase
-      .from("profiles")
-      .update(updates)
-      .eq("id", profile.id);
+    try {
+      const res = await fetch("/api/auth/profile/update", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updates),
+      });
 
-    // Resilient schema fallback if optional new columns don't exist in Supabase table yet
-    if (error && (error.message?.includes("major") || error.message?.includes("coursework") || error.message?.includes("skills_and_tools") || error.message?.includes("portfolio_url") || error.message?.includes("graduation_year") || error.message?.includes("seeking_mentorship_type"))) {
-      console.warn("[StudentProfileForm] Schema cache fallback — saving core student fields:", error.message);
-      delete updates.major;
-      delete updates.graduation_year;
-      delete updates.coursework;
-      delete updates.skills_and_tools;
-      delete updates.portfolio_url;
-      delete updates.seeking_mentorship_type;
+      if (!res.ok) {
+        const errJson = await res.json();
+        throw new Error(errJson.error || "Failed to update profile");
+      }
 
-      const retry = await supabase
-        .from("profiles")
-        .update(updates)
-        .eq("id", profile.id);
-      error = retry.error;
-    }
-
-    if (error) {
-      console.error("[StudentProfileForm] DB update error:", error);
-      toast.error(`Save failed: ${error.message}`);
-    } else {
       toast.success("Profile saved successfully.");
       setProfile((prev: any) => ({ ...prev, ...updates }));
+    } catch (error: any) {
+      console.error("[StudentProfileForm] update error:", error);
+      toast.error(`Save failed: ${error.message}`);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const displayName = preferredName || firstName || "Scholar";

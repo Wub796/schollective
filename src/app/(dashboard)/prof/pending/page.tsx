@@ -1,6 +1,6 @@
 import React from "react";
 import { redirect } from "next/navigation";
-import { createClient } from "@/utils/supabase/server";
+import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { LottieReview } from "./LottieReview";
 import { PendingActions } from "./PendingActions";
 import { ShieldCheck, Info } from "lucide-react";
@@ -8,15 +8,8 @@ import { ShieldCheck, Info } from "lucide-react";
 export const dynamic = "force-dynamic";
 
 export default async function ProfessorPendingPage() {
-  const supabase = await createClient();
-  const { data: { session } } = await supabase.auth.getSession();
+  const { session, profile } = await getCurrentUserAndProfile();
   if (!session) redirect("/login");
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("status, role, preferred_name, first_name")
-    .eq("id", session.user.id)
-    .single();
 
   if (!profile || profile.role !== "professor") redirect("/dashboard");
   if (profile.status === "approved") redirect("/prof/dashboard");

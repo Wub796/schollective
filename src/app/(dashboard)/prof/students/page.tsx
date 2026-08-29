@@ -1,7 +1,8 @@
 import React from "react";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
-import { createClient } from "@/utils/supabase/server";
+import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
+import { sql } from "@/lib/neon/db";
 import { Users } from "lucide-react";
 import Link from "next/link";
 import { StudentRow } from "@/components/features/StudentRow";
@@ -9,17 +10,8 @@ import { StudentRow } from "@/components/features/StudentRow";
 export const dynamic = "force-dynamic";
 
 export default async function ProfStudentsPage() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("role, preferred_name, first_name, status")
-    .eq("id", user.id)
-    .single();
-
-  if (!profile) redirect("/dashboard");
+  const { user, profile } = await getCurrentUserAndProfile();
+  if (!user || !profile) redirect("/login");
 
   // Allow admins to preview as professor
   const cookieStore = await cookies();
@@ -30,16 +22,26 @@ export default async function ProfStudentsPage() {
 
   const displayName = profile.preferred_name || profile.first_name || "Professor";
 
-  const { data: allRequests } = await supabase
-    .from("requests")
-    .select(`
-      id, status, topic, updated_at, created_at,
-      student:student_id ( id, first_name, last_name, preferred_name, institution ),
-      messages ( content, created_at )
-    `)
-    .eq("professor_id", user.id)
-    .in("status", ["active", "closed"])
-    .order("updated_at", { ascending: false });
+  const allRequests = await sql`
+    SELECT 
+      r.id, r.status, r.topic, r.updated_at, r.created_at,
+      json_build_object(
+        'id', s.id,
+        'first_name', s.first_name,
+        'last_name', s.last_name,
+        'preferred_name', s.preferred_name,
+        'institution', s.institution
+      ) as student,
+      COALESCE(
+        (SELECT json_agg(json_build_object('content', m.content, 'created_at', m.created_at))
+         FROM messages m WHERE m.request_id = r.id), '[]'::json
+      ) as messages
+    FROM requests r
+    LEFT JOIN profiles s ON r.student_id = s.id
+    WHERE r.professor_id = ${user.id}
+      AND r.status IN ('active', 'closed')
+    ORDER BY r.updated_at DESC;
+  `;
 
   const process = (req: any) => {
     const student = Array.isArray(req.student) ? req.student[0] : req.student;
