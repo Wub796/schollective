@@ -171,6 +171,9 @@ function LoginContent() {
         callbackURL: "/auth/callback",
       });
       if (res?.error) {
+        if (res.error.message?.includes("Provider not found") || (res.error as any).status === 404) {
+          throw new Error("Google Sign-In is not configured yet. Please sign in with Email & Password or add GOOGLE_CLIENT_ID to your environment variables.");
+        }
         throw new Error(res.error.message || "Failed to sign in with Google.");
       }
     } catch (err: any) {
