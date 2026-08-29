@@ -115,6 +115,7 @@ function LoginContent() {
       });
 
       if (res.error) {
+        console.error("[login] signIn.email error:", JSON.stringify(res.error));
         throw new Error(res.error.message || "Failed to sign in.");
       }
 
