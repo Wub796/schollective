@@ -5,6 +5,7 @@ import { recommendProfessors } from "@/lib/ai/recommender";
 import { checkDurableRateLimit } from "@/lib/rate-limit";
 import { checkRateLimit, getClientIp } from "@/lib/security";
 import type { ProfessorCandidate } from "@/lib/ai/recommender";
+import { internalError } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -91,7 +92,7 @@ export async function GET(req: Request) {
   } catch (error: any) {
     console.error("[GET /api/ai/recommendations] Unexpected error:", error);
     return NextResponse.json(
-      { success: false, error: error?.message || "Failed to generate recommendations", recommendations: [] },
+      { success: false, error: internalError("ai/recommendations", error, "Failed to generate recommendations."), recommendations: [] },
       { status: 500, headers: PRIVATE_JSON_HEADERS },
     );
   }
