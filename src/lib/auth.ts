@@ -1,11 +1,21 @@
 import { betterAuth } from "better-auth";
 import { Pool, neonConfig } from "@neondatabase/serverless";
 
-// Route database pool queries through HTTP fetch for Cloudflare Workers compatibility
-neonConfig.poolQueryViaFetch = true;
+function getDatabaseConnectionString(): string {
+  const raw =
+    process.env.DATABASE_URL_UNPOOLED ||
+    process.env.DATABASE_URL ||
+    "postgresql://neondb_owner:[REDACTED-ROTATED]@ep-nameless-dream-aefnmhh3.c-2.us-east-2.aws.neon.tech/neondb?sslmode=require";
+  // Strip '-pooler' and 'channel_binding' for Cloudflare Worker WebSocket compatibility
+  return raw
+    .replace("-pooler.", ".")
+    .replace("channel_binding=require&", "")
+    .replace("&channel_binding=require", "")
+    .replace("?channel_binding=require", "?");
+}
 
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL_UNPOOLED || process.env.DATABASE_URL || "",
+  connectionString: getDatabaseConnectionString(),
 });
 
 export const auth = betterAuth({
