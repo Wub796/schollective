@@ -1,9 +1,5 @@
 import { betterAuth } from "better-auth";
-import { Pool, neonConfig } from "@neondatabase/serverless";
-
-// Use stateless HTTP fetch queries for serverless edge / Cloudflare Workers
-neonConfig.poolQueryViaFetch = true;
-neonConfig.fetchEndpoint = (host: string) => `https://${host}/sql`;
+import { Pool } from "pg";
 
 function getDatabaseConnectionString(): string {
   const raw =
@@ -21,6 +17,7 @@ function getDatabaseConnectionString(): string {
 const database = new Pool({
   connectionString: getDatabaseConnectionString(),
   max: 1,
+  idleTimeoutMillis: 1000,
 });
 
 export const auth = betterAuth({
