@@ -16,7 +16,7 @@ const securityHeaders = [
       "font-src 'self' https://fonts.gstatic.com",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
-      "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://generativelanguage.googleapis.com",
+      "connect-src 'self' https://*.neon.tech wss://*.neon.tech https://*.amplitude.com https://generativelanguage.googleapis.com",
       "object-src 'none'",
       "upgrade-insecure-requests",
     ].join("; "),
@@ -42,3 +42,5 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
+
+import('@opennextjs/cloudflare').then(m => m.initOpenNextCloudflareForDev());
