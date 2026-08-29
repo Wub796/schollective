@@ -1,4 +1,8 @@
-import { neon, Pool, type NeonQueryFunction } from "@neondatabase/serverless";
+import { neon, Pool, neonConfig, type NeonQueryFunction } from "@neondatabase/serverless";
+
+// Use stateless HTTP fetch queries for serverless edge / Cloudflare Workers
+neonConfig.poolQueryViaFetch = true;
+neonConfig.fetchEndpoint = (host: string) => `https://${host}/sql`;
 
 /**
  * Lazy Neon Serverless SQL client

@@ -1,12 +1,16 @@
 import { betterAuth } from "better-auth";
 import { Pool, neonConfig } from "@neondatabase/serverless";
 
+// Use stateless HTTP fetch queries for serverless edge / Cloudflare Workers
+neonConfig.poolQueryViaFetch = true;
+neonConfig.fetchEndpoint = (host: string) => `https://${host}/sql`;
+
 function getDatabaseConnectionString(): string {
   const raw =
     process.env.DATABASE_URL_UNPOOLED ||
     process.env.DATABASE_URL ||
     "postgresql://neondb_owner:[REDACTED-ROTATED]@ep-nameless-dream-aefnmhh3.c-2.us-east-2.aws.neon.tech/neondb?sslmode=require";
-  // Strip '-pooler' and 'channel_binding' for Cloudflare Worker WebSocket compatibility
+  // Strip '-pooler' and 'channel_binding' for Cloudflare Worker compatibility
   return raw
     .replace("-pooler.", ".")
     .replace("channel_binding=require&", "")
