@@ -41,14 +41,15 @@ export interface ProfileRecord {
 /**
  * Retrieves the currently authenticated session and matching Neon profile.
  */
-export async function getCurrentUserAndProfile(): Promise<{
+export async function getCurrentUserAndProfile(customHeaders?: Headers): Promise<{
   session: any | null;
   user: any | null;
   profile: ProfileRecord | null;
 }> {
   try {
+    const reqHeaders = customHeaders || (await headers());
     const session = await auth.api.getSession({
-      headers: await headers(),
+      headers: reqHeaders,
     });
 
     if (!session?.user) {
