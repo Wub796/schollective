@@ -34,6 +34,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(`${origin}${next}`);
   } catch (err) {
     console.error('[auth/callback] Error:', err);
-    return NextResponse.redirect(`${origin}/dashboard`);
+    return NextResponse.redirect(`${origin}/login?error=oauth_exchange_failed`);
   }
 }

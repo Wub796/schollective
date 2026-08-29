@@ -188,6 +188,8 @@ function OnboardingContent() {
         if (profile?.first_name && profile?.role && profile?.profile_complete) {
           if (profile.role === "professor") {
             router.replace(profile.status === "approved" ? "/prof/dashboard" : "/prof/pending");
+          } else if (profile.role === "admin") {
+            router.replace("/admin/dashboard");
           } else {
             router.replace("/dashboard");
           }
