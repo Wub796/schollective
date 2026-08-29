@@ -21,13 +21,23 @@ export function AmplitudeAnalytics() {
 
     // Initialize unified SDK with autocapture and session replay
     try {
-      amplitude.initAll(AMPLITUDE_API_KEY, {
-        analytics: { autocapture: true },
-        sessionReplay: { sampleRate: 1 },
-      });
-
-      // Instrument the chosen load-time event with the verification prompt version
-      amplitude.track("Viewed Home Page", { prompt_version: "BA400.4" });
+      amplitude
+        .initAll(AMPLITUDE_API_KEY, {
+          analytics: {
+            autocapture: true,
+            logLevel: amplitude.Types.LogLevel.None,
+            flushMaxRetries: 0,
+          },
+          sessionReplay: {
+            sampleRate: 1,
+          },
+        })
+        .then(() => {
+          amplitude.track("Viewed Home Page", { prompt_version: "BA400.4" });
+        })
+        .catch(() => {
+          // Gracefully silent if client ad blocker blocks analytics
+        });
     } catch {
       // Gracefully silent if client ad blocker blocks analytics
     }
