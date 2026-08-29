@@ -3,6 +3,7 @@ import { Mulish, Arima } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
 import { CustomCursor } from "@/components/ui/CustomCursor";
+import { AmplitudeAnalytics } from "@/components/analytics/AmplitudeAnalytics";
 
 const mulish = Mulish({
   subsets: ["latin"],
@@ -143,6 +144,9 @@ export default function RootLayout({
             Fixed, pointer-events-none. z-index: 0 via .noise-overlay
         ─────────────────────────────────────────────────────── */}
         <div className="noise-overlay" aria-hidden="true" />
+
+        {/* ── Amplitude Analytics & Session Replay ───────────── */}
+        <AmplitudeAnalytics />
 
         {/* ── Layer 50: Custom cursor ─────────────────────────── */}
         <CustomCursor />

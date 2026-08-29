@@ -1,6 +1,7 @@
 import { getGeminiClient } from "./client";
 import { ProfessorMatch, RecommenderResult } from "./types";
 import { StudentProfileData } from "./profile-reviewer";
+import { ai } from "@/lib/amplitude";
 import {
   sanitizeAiPromptInput,
   getCachedAiResult,
@@ -124,44 +125,61 @@ Return ONLY a JSON array matching this schema (sorted by matchScore descending, 
     const gemini = getGeminiClient();
     if (!gemini) throw new Error("GEMINI_API_KEY missing");
 
-    const response = await gemini.models.generateContent({
-      model: modelName,
-      contents: prompt,
-      config: {
-        responseMimeType: "application/json",
-        maxOutputTokens: 700,
-        temperature: 0.1,
-      },
-    });
-
-    const text = response.text;
-    if (!text) throw new Error(`Empty response from ${modelName}`);
-
-    const cleanedText = text.replace(/```json\n?|\n?```/g, "").trim();
-    const matches = JSON.parse(cleanedText) as ProfessorMatch[];
-
-    const validIds = new Set(candidates.map((c) => c.id));
-    const validMatches = matches
-      .filter((m) => validIds.has(m.professorId))
-      .map((m) => {
-        const score = Math.max(40, Math.min(98, m.matchScore || 50));
-        const tier: ProfessorMatch["matchTier"] =
-          score >= 88 ? "Best Fit" : score >= 75 ? "Strong Match" : "Potential Alignment";
-        return {
-          ...m,
-          matchScore: score,
-          matchTier: m.matchTier || tier,
-        };
+    const startTime = performance.now();
+    try {
+      const response = await gemini.models.generateContent({
+        model: modelName,
+        contents: prompt,
+        config: {
+          responseMimeType: "application/json",
+          maxOutputTokens: 700,
+          temperature: 0.1,
+        },
       });
 
-    const result: RecommenderResult = {
-      recommendations: validMatches,
-      generatedAt: new Date().toISOString(),
-      totalEvaluated: candidates.length,
-    };
+      const latencyMs = performance.now() - startTime;
+      const text = response.text;
+      if (!text) throw new Error(`Empty response from ${modelName}`);
 
-    setCachedAiResult(cacheKey, result, 10 * 60 * 1000);
-    return result;
+      // Track AI message in Amplitude Agent Analytics
+      ai.trackAiMessage(text, modelName, "google", latencyMs, {
+        inputTokens: response.usageMetadata?.promptTokenCount,
+        outputTokens: response.usageMetadata?.candidatesTokenCount,
+        totalTokens: response.usageMetadata?.totalTokenCount,
+      });
+
+      const cleanedText = text.replace(/```json\n?|\n?```/g, "").trim();
+      const matches = JSON.parse(cleanedText) as ProfessorMatch[];
+
+      const validIds = new Set(candidates.map((c) => c.id));
+      const validMatches = matches
+        .filter((m) => validIds.has(m.professorId))
+        .map((m) => {
+          const score = Math.max(40, Math.min(98, m.matchScore || 50));
+          const tier: ProfessorMatch["matchTier"] =
+            score >= 88 ? "Best Fit" : score >= 75 ? "Strong Match" : "Potential Alignment";
+          return {
+            ...m,
+            matchScore: score,
+            matchTier: m.matchTier || tier,
+          };
+        });
+
+      const result: RecommenderResult = {
+        recommendations: validMatches,
+        generatedAt: new Date().toISOString(),
+        totalEvaluated: candidates.length,
+      };
+
+      setCachedAiResult(cacheKey, result, 10 * 60 * 1000);
+      return result;
+    } catch (err: any) {
+      ai.trackAiMessage("", modelName, "google", performance.now() - startTime, {
+        isError: true,
+        errorMessage: err?.message || "Unknown LLM error",
+      });
+      throw err;
+    }
   };
 
   return executeHybridAiWithFallback(
