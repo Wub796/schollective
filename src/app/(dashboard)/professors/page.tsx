@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { createClient } from "@/utils/supabase/server";
+import { sql } from "@/lib/neon/db";
 import { ProfessorCard } from "@/components/features/ProfessorCard";
 import { DirectorySearch } from "@/components/features/DirectorySearch";
 import { AiProfessorRecommendations } from "@/components/features/AiProfessorRecommendations";
@@ -21,35 +21,33 @@ interface ProfessorsPageProps {
 }
 
 export default async function ProfessorsPage({ searchParams }: ProfessorsPageProps) {
-  const supabase = await createClient();
   const { query, institution, expertise, accepting, sort } = await searchParams;
   const isAcceptingOnly = accepting !== "false"; // default true
   const currentSort = sort || "relevance";
 
-  let dbQuery = supabase
-    .from("profiles")
-    .select("id, first_name, last_name, preferred_name, institution, expertise_fields, is_accepting_requests, updated_at")
-    .eq("role", "professor")
-    .eq("status", "approved");
+  const rawProfessors = currentSort === "recent"
+    ? await sql`
+        SELECT id, first_name, last_name, preferred_name, institution, expertise_fields, is_accepting_requests, updated_at
+        FROM profiles
+        WHERE role = 'professor' AND status = 'approved'
+        ORDER BY updated_at DESC;
+      `
+    : await sql`
+        SELECT id, first_name, last_name, preferred_name, institution, expertise_fields, is_accepting_requests, updated_at
+        FROM profiles
+        WHERE role = 'professor' AND status = 'approved'
+        ORDER BY last_name ASC;
+      `;
+
+  let professors = (rawProfessors || []) as any[];
 
   if (isAcceptingOnly) {
-    dbQuery = dbQuery.eq("is_accepting_requests", true);
+    professors = professors.filter((p) => p.is_accepting_requests !== false);
   }
 
   if (institution && institution !== "all") {
-    dbQuery = dbQuery.eq("institution", institution);
+    professors = professors.filter((p) => p.institution === institution);
   }
-
-  // Apply sorting based on sort param
-  if (currentSort === "recent") {
-    dbQuery = dbQuery.order("updated_at", { ascending: false });
-  } else {
-    // Relevance / alpha -> order by last name
-    dbQuery = dbQuery.order("last_name", { ascending: true });
-  }
-
-  const { data: rawProfessors } = await dbQuery;
-  let professors = rawProfessors || [];
 
   // Filter by search text query (matches name, institution, OR expertise fields / topics)
   if (query && query.trim()) {
@@ -81,17 +79,13 @@ export default async function ProfessorsPage({ searchParams }: ProfessorsPagePro
   }
 
   // Fetch full dataset for populating filter dropdown options (all approved complete professors)
-  const { data: filterData } = await supabase
-    .from("profiles")
-    .select("institution, expertise_fields")
-    .eq("role", "professor")
-    .eq("status", "approved");
+  const filterData = rawProfessors || [];
 
   const distinctInstitutions = Array.from(
-    new Set(filterData?.map((p) => p.institution).filter(Boolean) as string[])
+    new Set(filterData?.map((p: any) => p.institution).filter(Boolean) as string[])
   ).sort();
   const distinctExpertise = Array.from(
-    new Set(filterData?.flatMap((p) => p.expertise_fields || []))
+    new Set(filterData?.flatMap((p: any) => p.expertise_fields || []))
   ).sort();
 
   return (

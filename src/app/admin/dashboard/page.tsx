@@ -1,7 +1,7 @@
 import React from "react";
 import { redirect } from "next/navigation";
-import { createClient } from "@/utils/supabase/server";
-import { createAdminClient } from "@/utils/supabase/admin";
+import { sql } from "@/lib/neon/db";
+import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { AdminShell } from "@/components/ui/AdminShell";
 import { AdminReviewTable } from "@/components/features/AdminReviewTable";
 import { AdminPreviewControls } from "@/components/features/AdminPreviewControls";
@@ -52,36 +52,33 @@ function StatCard({
 }
 
 export default async function AdminDashboard() {
-  const supabase = await createClient();
-
-  const { data: { session } } = await supabase.auth.getSession();
+  const { session, profile } = await getCurrentUserAndProfile();
   if (!session) redirect("/login");
-
-  const { data: profile } = await supabase
-    .from("profiles").select("*").eq("id", session.user.id).single();
 
   if (!profile || profile.role !== "admin") {
     redirect(profile?.role === "professor" ? "/prof/dashboard" : "/dashboard");
   }
 
-  // Use service-role client for all data queries (bypasses RLS)
-  const adminClient = createAdminClient();
-
   const [
-    { data: allProfessors },
-    { count: studentCount },
-    { count: activeStudentCount },
-    { count: activeThreadsCount },
+    allProfessors,
+    studentCountRes,
+    activeStudentCountRes,
+    activeThreadsCountRes,
   ] = await Promise.all([
-    adminClient
-      .from("profiles")
-      .select("id, first_name, last_name, preferred_name, email, status, institution, expertise_fields, ai_score, ai_level, ai_flags, created_at")
-      .eq("role", "professor")
-      .order("created_at", { ascending: true }),
-    adminClient.from("profiles").select("*", { count: "exact", head: true }).eq("role", "student"),
-    adminClient.from("profiles").select("*", { count: "exact", head: true }).eq("role", "student").eq("status", "active"),
-    adminClient.from("requests").select("*", { count: "exact", head: true }).eq("status", "active"),
+    sql`
+      SELECT id, first_name, last_name, preferred_name, email, status, institution, expertise_fields, ai_score, ai_level, ai_flags, created_at
+      FROM profiles
+      WHERE role = 'professor'
+      ORDER BY created_at ASC;
+    `,
+    sql`SELECT COUNT(*)::int as count FROM profiles WHERE role = 'student';`,
+    sql`SELECT COUNT(*)::int as count FROM profiles WHERE role = 'student' AND (status = 'active' OR status IS NULL);`,
+    sql`SELECT COUNT(*)::int as count FROM requests WHERE status = 'active';`,
   ]);
+
+  const studentCount = studentCountRes[0]?.count || 0;
+  const activeStudentCount = activeStudentCountRes[0]?.count || 0;
+  const activeThreadsCount = activeThreadsCountRes[0]?.count || 0;
 
   const pendingProfessors = (allProfessors ?? []).filter(
     (p) => p.status !== "approved" && p.status !== "rejected" && p.status !== "suspended"

@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { createClient } from "@/utils/supabase/client";
 import { Button } from "@/components/ui/Button";
 import { sendMessage } from "@/app/messages/[id]/actions";
 import { Send, Lock } from "lucide-react";
@@ -31,7 +30,6 @@ export function ChatThread({
   const [inputValue, setInputValue] = useState("");
   const [sending, setSending] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const supabase = createClient();
 
   const scrollToBottom = () => {
     if (scrollRef.current) {
@@ -44,40 +42,27 @@ export function ChatThread({
   }, [messages]);
 
   useEffect(() => {
-    const channel = supabase
-      .channel(`chat:${requestId}`)
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "messages",
-          filter: `request_id=eq.${requestId}`,
-        },
-        (payload) => {
-          const newMessage = payload.new as Message;
-          setMessages((prev) => {
-            // Already have the real message
-            if (prev.find((m) => m.id === newMessage.id)) return prev;
-            // Remove any optimistic placeholder with same content+sender, then add real
-            const withoutOptimistic = prev.filter(
-              (m) =>
-                !(
-                  m.id.startsWith("optimistic-") &&
-                  m.sender_id === newMessage.sender_id &&
-                  m.content === newMessage.content
-                )
-            );
-            return [...withoutOptimistic, newMessage];
-          });
-        }
-      )
-      .subscribe();
+    let mounted = true;
 
-    return () => {
-      supabase.removeChannel(channel);
+    const fetchLatestMessages = async () => {
+      try {
+        const res = await fetch(`/api/messages/${requestId}`);
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data.messages && mounted) {
+          setMessages(data.messages);
+        }
+      } catch (err) {
+        console.error("Messages poll error:", err);
+      }
     };
-  }, [requestId, supabase]);
+
+    const interval = setInterval(fetchLatestMessages, 4000);
+    return () => {
+      mounted = false;
+      clearInterval(interval);
+    };
+  }, [requestId]);
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();

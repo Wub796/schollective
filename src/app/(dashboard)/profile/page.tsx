@@ -2,24 +2,30 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/utils/supabase/client";
 import { AccountSecuritySettings } from "@/components/features/AccountSecuritySettings";
 
 export default function ProfilePage() {
   const router = useRouter();
-  const supabase = createClient();
   const [profile, setProfile] = React.useState<any>(null);
   const [fetching, setFetching] = React.useState(true);
 
   React.useEffect(() => {
     (async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) { router.push("/login"); return; }
-      const { data } = await supabase.from("profiles").select("*").eq("id", user.id).single();
-      setProfile(data);
-      setFetching(false);
+      try {
+        const res = await fetch("/api/auth/profile");
+        if (!res.ok) {
+          router.push("/login");
+          return;
+        }
+        const data = await res.json();
+        setProfile(data.profile);
+      } catch (err) {
+        console.error("Failed to load profile:", err);
+      } finally {
+        setFetching(false);
+      }
     })();
-  }, [router, supabase]);
+  }, [router]);
 
   if (fetching) {
     return (

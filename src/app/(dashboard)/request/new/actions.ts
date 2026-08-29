@@ -1,15 +1,13 @@
 "use server";
 
-import { createClient } from "@/utils/supabase/server";
+import { sql } from "@/lib/neon/db";
+import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { revalidatePath } from "next/cache";
 import { sanitiseText, isValidUuid, LIMITS } from "@/lib/security";
 
 export async function submitMentorshipRequest(formData: FormData) {
-  const supabase = await createClient();
-
-  // 1. Authenticate Session
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session) return { error: "Unauthorized" };
+  const { session, user } = await getCurrentUserAndProfile();
+  if (!session || !user) return { error: "Unauthorized" };
 
   const profId = sanitiseText(formData.get("prof_id"), 100);
   const topic = sanitiseText(formData.get("topic"), LIMITS.topic);
@@ -31,31 +29,26 @@ export async function submitMentorshipRequest(formData: FormData) {
 
   // 1.5. Rate Limiting Check: Max 5 requests per 24 hours
   const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-  const { count, error: countError } = await supabase
-    .from("requests")
-    .select("id", { count: "exact", head: true })
-    .eq("student_id", session.user.id)
-    .gt("created_at", twentyFourHoursAgo);
+  const countResult = await sql`
+    SELECT COUNT(*)::int as count
+    FROM requests
+    WHERE student_id = ${user.id} AND created_at > ${twentyFourHoursAgo};
+  `;
 
-  if (countError) return { error: "Failed to check request rate limit." };
-  if (count !== null && count >= 5) {
+  const count = countResult[0]?.count || 0;
+  if (count >= 5) {
     return { error: "Daily request limit reached. You can send up to 5 requests per day.", limitReached: true };
   }
 
-  // 2. Transactional Insertion
-  const { data: request, error: requestError } = await supabase
-    .from("requests")
-    .insert({
-      student_id: session.user.id,
-      professor_id: profId,
-      status: "pending",
-      topic,
-      expected_outcome: goals,
-    })
-    .select()
-    .single();
+  // 2. Insert request
+  const requestInsert = await sql`
+    INSERT INTO requests (student_id, professor_id, status, topic, expected_outcome)
+    VALUES (${user.id}, ${profId}, 'pending', ${topic}, ${goals})
+    RETURNING id;
+  `;
 
-  if (requestError) return { error: requestError.message };
+  const requestId = requestInsert[0]?.id;
+  if (!requestId) return { error: "Failed to create request." };
 
   // Concatenate message content
   const initialMessageContent = [
@@ -67,18 +60,12 @@ export async function submitMentorshipRequest(formData: FormData) {
   ].join("\n").trim();
 
   // Insert Initial Message
-  const { error: messageError } = await supabase
-    .from("messages")
-    .insert({
-      request_id: request.id,
-      sender_id: session.user.id,
-      content: initialMessageContent,
-    });
-
-  if (messageError) {
-    console.error("Initial message error:", messageError);
-  }
+  await sql`
+    INSERT INTO messages (request_id, sender_id, content)
+    VALUES (${requestId}, ${user.id}, ${initialMessageContent});
+  `;
 
   revalidatePath("/dashboard");
+  revalidatePath("/threads");
   return { success: true };
 }

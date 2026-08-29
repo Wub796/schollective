@@ -1,6 +1,7 @@
 "use server";
 
-import { createClient } from "@/utils/supabase/server";
+import { sql } from "@/lib/neon/db";
+import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { revalidatePath } from "next/cache";
 import { checkRateLimit, sanitiseText, isValidUuid, LIMITS } from "@/lib/security";
 
@@ -14,8 +15,7 @@ export async function updateRequestStatus(requestId: string, status: "active" | 
   }
 
   try {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const { user } = await getCurrentUserAndProfile();
     if (!user) return { error: "Unauthorized" };
 
     // Rate limit: 20 status changes per minute
@@ -24,24 +24,12 @@ export async function updateRequestStatus(requestId: string, status: "active" | 
       return { error: `Please slow down. Try again in ${rate.retryAfterSeconds}s.` };
     }
 
-    const updates: Record<string, any> = {
-      status,
-      updated_at: new Date().toISOString(),
-    };
+    await sql`
+      UPDATE requests
+      SET status = ${status}, updated_at = now()
+      WHERE id = ${reqId} AND professor_id = ${user.id};
+    `;
 
-    if (status === "active") {
-      updates.accepted_at = new Date().toISOString();
-    } else if (status === "declined") {
-      updates.declined_at = new Date().toISOString();
-    }
-
-    const { error } = await supabase
-      .from("requests")
-      .update(updates)
-      .eq("id", reqId)
-      .eq("professor_id", user.id);
-
-    if (error) throw error;
     revalidatePath("/prof/dashboard");
     return { success: true };
   } catch (err: any) {
@@ -56,33 +44,16 @@ export async function markRequestViewed(requestId: string) {
   }
 
   try {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const { user } = await getCurrentUserAndProfile();
     if (!user) return { error: "Unauthorized" };
 
-    const { data: request } = await supabase
-      .from("requests")
-      .select("status, created_at")
-      .eq("id", reqId)
-      .single();
+    await sql`
+      UPDATE requests
+      SET status = 'viewed', updated_at = now()
+      WHERE id = ${reqId} AND professor_id = ${user.id} AND status = 'pending';
+    `;
 
-    if (request && request.status === "pending") {
-      const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
-      if (new Date(request.created_at) < oneHourAgo) {
-        const { error } = await supabase
-          .from("requests")
-          .update({
-            status: "viewed",
-            viewed_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-          })
-          .eq("id", reqId)
-          .eq("professor_id", user.id);
-
-        if (error) throw error;
-        revalidatePath("/prof/dashboard");
-      }
-    }
+    revalidatePath("/prof/dashboard");
     return { success: true };
   } catch (err: any) {
     return { error: err.message || "Failed to mark request as viewed." };
@@ -91,23 +62,20 @@ export async function markRequestViewed(requestId: string) {
 
 export async function toggleAvailability(isAccepting: boolean) {
   try {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const { user } = await getCurrentUserAndProfile();
     if (!user) return { error: "Unauthorized" };
 
-    // Rate limit: 5 toggles per minute
     const rate = checkRateLimit(`toggle:${user.id}`, 5, 60 * 1000);
     if (!rate.allowed) {
       return { error: `Please wait ${rate.retryAfterSeconds}s before toggling again.` };
     }
 
-    const { error } = await supabase
-      .from("profiles")
-      .update({ is_accepting_requests: isAccepting, updated_at: new Date().toISOString() })
-      .eq("id", user.id)
-      .eq("role", "professor");
+    await sql`
+      UPDATE profiles
+      SET is_accepting_requests = ${isAccepting}, updated_at = now()
+      WHERE id = ${user.id} AND role = 'professor';
+    `;
 
-    if (error) throw error;
     revalidatePath("/prof/dashboard");
     return { success: true };
   } catch (err: any) {
@@ -124,36 +92,32 @@ export async function createNotification({
   body?: string;
   requestId?: string;
 }) {
-  const supabase = await createClient();
-
-  // Sanitise all string inputs
-  const safeType = type; // union type — no sanitisation needed
+  const safeType = type;
   const safeTitle = sanitiseText(title, LIMITS.topic);
   const safeBody = body ? sanitiseText(body, LIMITS.messageContent) : null;
   const safeRequestId = requestId && isValidUuid(requestId) ? requestId : null;
 
-  if (!safeTitle) return; // don't store empty notifications
+  if (!safeTitle) return;
 
-  const { error } = await supabase.from("notifications").insert({
-    user_id: userId,
-    type: safeType,
-    title: safeTitle,
-    body: safeBody,
-    request_id: safeRequestId,
-  });
-  if (error) console.error("[notification]", error.message);
+  try {
+    await sql`
+      INSERT INTO notifications (user_id, type, title, message, link)
+      VALUES (${userId}, ${safeType}, ${safeTitle}, ${safeBody || safeTitle}, ${safeRequestId ? '/messages/' + safeRequestId : null});
+    `;
+  } catch (err: any) {
+    console.error("[notification] insert error:", err.message);
+  }
 }
 
 export async function markAllNotificationsRead() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const { user } = await getCurrentUserAndProfile();
   if (!user) return;
 
-  await supabase
-    .from("notifications")
-    .update({ is_read: true })
-    .eq("user_id", user.id)
-    .eq("is_read", false);
+  await sql`
+    UPDATE notifications
+    SET read = true
+    WHERE user_id = ${user.id} AND read = false;
+  `;
 
   revalidatePath("/dashboard");
   revalidatePath("/prof/dashboard");

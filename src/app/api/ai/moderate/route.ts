@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/utils/supabase/server";
-import { createAdminClient } from "@/utils/supabase/admin";
+import { sql } from "@/lib/neon/db";
+import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { scanContentForSafety } from "@/lib/ai/safety-scanner";
 import { checkRateLimit, getClientIp, sanitiseText, isValidUuid, LIMITS } from "@/lib/security";
 
@@ -16,8 +16,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const { user, profile: adminProfile } = await getCurrentUserAndProfile();
 
     let body: Record<string, unknown>;
     try {
@@ -34,14 +33,6 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
       }
 
-      const adminClient = createAdminClient();
-
-      const { data: adminProfile } = await adminClient
-        .from("profiles")
-        .select("role")
-        .eq("id", user.id)
-        .maybeSingle();
-
       if (adminProfile?.role !== "admin") {
         return NextResponse.json({ error: "Access denied: Admin privileges required." }, { status: 403 });
       }
@@ -50,18 +41,11 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: "targetUserId must be a valid UUID" }, { status: 400 });
       }
 
-      const { error: updateError } = await adminClient
-        .from("profiles")
-        .update({
-          status: "suspended",
-          updated_at: new Date().toISOString(),
-        })
-        .eq("id", targetUserId as string);
-
-      if (updateError) {
-        console.error("[POST /api/ai/moderate] Admin update error:", updateError);
-        return NextResponse.json({ error: updateError.message }, { status: 500 });
-      }
+      await sql`
+        UPDATE profiles
+        SET status = 'suspended', updated_at = now()
+        WHERE id = ${targetUserId as string};
+      `;
 
       return NextResponse.json({ success: true, message: "User suspended successfully" });
     }

@@ -2,7 +2,8 @@ import React from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { createClient } from "@/utils/supabase/server";
+import { sql } from "@/lib/neon/db";
+import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { ArrowLeft, GraduationCap, Building2, BookOpen, Mail, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { AppShell } from "@/components/layout/AppShell";
@@ -15,15 +16,14 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { id } = await params;
-  const supabase = await createClient();
 
-  const { data: professor } = await supabase
-    .from("profiles")
-    .select("first_name, last_name, preferred_name, institution, expertise_fields, avatar_url")
-    .eq("id", id)
-    .eq("role", "professor")
-    .eq("status", "approved")
-    .single();
+  const professors = await sql`
+    SELECT first_name, last_name, preferred_name, institution, expertise_fields, avatar_url
+    FROM profiles
+    WHERE id = ${id} AND role = 'professor' AND status = 'approved'
+    LIMIT 1;
+  `;
+  const professor = professors[0];
 
   if (!professor) return { title: "Professor Profile | Schollective" };
 
@@ -348,28 +348,20 @@ function ProfessorDetail({
 
 export default async function PublicProfessorProfilePage({ params }: PageProps) {
   const { id } = await params;
-  const supabase = await createClient();
-
-  // Fetch user (auth bypass)
-  const { data: { user } } = await supabase.auth.getUser();
+  const { user, profile } = await getCurrentUserAndProfile();
 
   // Fetch professor
-  const { data: professor } = await supabase
-    .from("profiles")
-    .select("id, first_name, last_name, preferred_name, institution, expertise_fields, avatar_url, is_accepting_requests")
-    .eq("id", id)
-    .eq("role", "professor")
-    .eq("status", "approved")
-    .single();
+  const professors = await sql`
+    SELECT id, first_name, last_name, preferred_name, institution, academic_title, department, bio, lab_website, office_hours, accepting_student_types, publications, expertise_fields, avatar_url, is_accepting_requests
+    FROM profiles
+    WHERE id = ${id} AND role = 'professor' AND status = 'approved'
+    LIMIT 1;
+  `;
+  const professor = professors[0];
 
   if (!professor) notFound();
 
-  // Check role & profile for user wrapping
-  let userRole = "student";
-  if (user) {
-    const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
-    if (profile) userRole = profile.role;
-  }
+  const userRole = profile?.role || "student";
 
   // Check if student already has active/pending requests
   let hasActiveRequest = false;
@@ -377,13 +369,13 @@ export default async function PublicProfessorProfilePage({ params }: PageProps) 
   let existingRequestId: string | undefined;
 
   if (user) {
-    const { data: existingRequest } = await supabase
-      .from("requests")
-      .select("id, status")
-      .eq("student_id", user.id)
-      .eq("professor_id", id)
-      .in("status", ["pending", "active"])
-      .maybeSingle();
+    const existingRequests = await sql`
+      SELECT id, status
+      FROM requests
+      WHERE student_id = ${user.id} AND professor_id = ${id} AND status IN ('pending', 'active')
+      LIMIT 1;
+    `;
+    const existingRequest = existingRequests[0];
 
     if (existingRequest) {
       hasActiveRequest = true;
@@ -396,29 +388,17 @@ export default async function PublicProfessorProfilePage({ params }: PageProps) 
   let similarProfessors: any[] = [];
   const isAccepting = professor.is_accepting_requests !== false;
   if (!isAccepting && professor.expertise_fields && professor.expertise_fields.length > 0) {
-    const { data: similar } = await supabase
-      .from("profiles")
-      .select("id, first_name, last_name, preferred_name, institution, expertise_fields, avatar_url")
-      .eq("role", "professor")
-      .eq("status", "approved")
-      .eq("is_accepting_requests", true)
-      .neq("id", id)
-      .contains("expertise_fields", [professor.expertise_fields[0]])
-      .limit(3);
+    const similar = await sql`
+      SELECT id, first_name, last_name, preferred_name, institution, expertise_fields, avatar_url
+      FROM profiles
+      WHERE role = 'professor'
+        AND status = 'approved'
+        AND is_accepting_requests = true
+        AND id != ${id}
+      LIMIT 3;
+    `;
 
-    similarProfessors = similar || [];
-
-    if (similarProfessors.length === 0) {
-      const { data: general } = await supabase
-        .from("profiles")
-        .select("id, first_name, last_name, preferred_name, institution, expertise_fields, avatar_url")
-        .eq("role", "professor")
-        .eq("status", "approved")
-        .eq("is_accepting_requests", true)
-        .neq("id", id)
-        .limit(3);
-      similarProfessors = general || [];
-    }
+    similarProfessors = (similar || []) as any[];
   }
 
   if (user) {

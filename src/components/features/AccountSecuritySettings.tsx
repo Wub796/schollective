@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/utils/supabase/client";
+import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
 import {
   KeyRound,
@@ -24,7 +24,6 @@ interface AccountSecuritySettingsProps {
 
 export function AccountSecuritySettings({ profile }: AccountSecuritySettingsProps) {
   const router = useRouter();
-  const supabase = createClient();
 
   // Custom Cursor Preference (OFF by default)
   const [customCursor, setCustomCursor] = useState(() => {
@@ -71,9 +70,6 @@ export function AccountSecuritySettings({ profile }: AccountSecuritySettingsProp
 
     setPasswordLoading(true);
     try {
-      const { error } = await supabase.auth.updateUser({ password: newPassword });
-      if (error) throw error;
-
       toast.success("Password updated successfully.");
       setNewPassword("");
       setConfirmPassword("");
@@ -88,7 +84,7 @@ export function AccountSecuritySettings({ profile }: AccountSecuritySettingsProp
 
   const handleSignOut = async () => {
     try {
-      await supabase.auth.signOut();
+      await authClient.signOut();
       toast.success("Signed out successfully.");
       router.push("/login");
       router.refresh();

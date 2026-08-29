@@ -17,7 +17,7 @@ export default function PrivacyPage() {
     },
     {
       title: "3. Data Sharing",
-      body: "We do not sell your personal data. Your profile information (name, institution, expertise) is visible to other authenticated users. Messages are private between participants. We share data with Supabase (our database provider) under a data processing agreement, and with no other third parties.",
+      body: "We do not sell your personal data. Your profile information (name, institution, expertise) is visible to other authenticated users. Messages are private between participants. We store data securely with Neon (our cloud database and storage provider) under strict data processing agreements, and share with no other third parties.",
     },
     {
       title: "4. Cookies & Local Storage",

@@ -1,89 +1,40 @@
-import { type NextRequest } from 'next/server'
-import { updateSession } from '@/utils/supabase/middleware'
+import { NextResponse, type NextRequest } from "next/server";
+import { getSessionCookie } from "better-auth/cookies";
 
 export async function middleware(request: NextRequest) {
-  // updateSession() calls getUser() internally to refresh the session and returns
-  // the user. We must NOT call getUser() again — a second call could trigger a token
-  // rotation whose new cookies would be written to updateSession's internal response
-  // closure, not the `response` we captured here. That silently drops refreshed
-  // auth cookies and breaks the session on subsequent requests.
-  const { supabase, response, user } = await updateSession(request)
+  const sessionCookie = getSessionCookie(request);
+  const url = new URL(request.url);
+  const path = url.pathname;
 
-  const url = new URL(request.url)
-  const path = url.pathname
+  const isStudentRoute =
+    path === "/dashboard" ||
+    path.startsWith("/dashboard/") ||
+    path.startsWith("/request") ||
+    path.startsWith("/messages") ||
+    path.startsWith("/profile") ||
+    path.startsWith("/threads");
 
-  // Protected route patterns — use exact prefixes to avoid false matches
-  const isStudentRoute = path === '/dashboard' || path.startsWith('/dashboard/') || path.startsWith('/request') || path.startsWith('/messages') || path.startsWith('/profile') || path.startsWith('/threads')
-  const isProfessorRoute = (path.startsWith('/prof/') || path === '/prof') && !path.startsWith('/professors')
-  const isAdminRoute = path.startsWith('/admin')
-  // /professors is a student-accessible browse route, NOT a professor-only route
-  const isProfessorBrowse = path.startsWith('/professors')
-  // /onboarding is accessible to any authenticated user (Google sign-up completion)
-  const isOnboarding = path === '/onboarding'
+  const isProfessorRoute =
+    (path.startsWith("/prof/") || path === "/prof") && !path.startsWith("/professors");
+  const isAdminRoute = path.startsWith("/admin");
+  const isOnboarding = path === "/onboarding";
+  const isAuthPage = path === "/login" || path === "/signup";
 
-  // 0. Auth Page Guard: preserve the requested auth page for logged-out users.
-  // Only redirect authenticated users away from login/signup after the session is known.
-  const isAuthPage = path === '/login' || path === '/signup'
-  if (user && isAuthPage) {
-    return Response.redirect(new URL('/dashboard', request.url))
+  // 0. Redirect logged-in users away from /login & /signup
+  if (sessionCookie && isAuthPage) {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
-  // 1. Authentication Guard: Redirect to login if no session
-  if ((isStudentRoute || isProfessorRoute || isAdminRoute) && !user) {
-    return Response.redirect(new URL('/login', request.url))
-  }
-  // Onboarding requires authentication but is not role-gated
-  if (isOnboarding && !user) {
-    return Response.redirect(new URL('/login', request.url))
+  // 1. Guard protected routes if no session cookie
+  if ((isStudentRoute || isProfessorRoute || isAdminRoute || isOnboarding) && !sessionCookie) {
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  // 2. Email Verification Guard: Redirect to /verify-email if email is not confirmed
-  //    Skip for OAuth providers (e.g. Google) — the provider already verified the email,
-  //    but Supabase may not set email_confirmed_at immediately, causing a redirect loop.
-  const isOAuthUser = user?.app_metadata?.provider && user.app_metadata.provider !== 'email'
-  if (user && !user.email_confirmed_at && !isOAuthUser && path !== '/verify-email' && !path.startsWith('/auth/')) {
-    if (isStudentRoute || isProfessorRoute || isAdminRoute || isOnboarding) {
-      return Response.redirect(new URL('/verify-email', request.url))
-    }
-  }
-
-  // 3. Onboarding & Suspension Guard: Redirect incomplete profiles to /onboarding, suspended to /suspended
-  const emailVerifiedOrOAuth = user?.email_confirmed_at || isOAuthUser
-  if (user && emailVerifiedOrOAuth && !isOnboarding && !path.startsWith('/auth/') && path !== '/verify-email' && path !== '/suspended') {
-    if (isStudentRoute || isProfessorRoute || isAdminRoute || isProfessorBrowse) {
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('role, first_name, status')
-        .eq('id', user.id)
-        .single()
-
-      if (profile?.status === 'suspended') {
-        return Response.redirect(new URL('/suspended', request.url))
-      }
-
-      if (!profile || !profile.role || !profile.first_name) {
-        return Response.redirect(new URL('/onboarding', request.url))
-      }
-
-      if (isProfessorRoute && profile.role === 'professor' && !path.startsWith('/prof/pending') && profile.status !== 'approved') {
-        return Response.redirect(new URL('/prof/pending', request.url))
-      }
-    }
-  }
-
-  return response
-
+  return NextResponse.next();
 }
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public (public folder)
-     */
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    "/((?!_next/static|_next/image|favicon.ico|.*\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
-}
+};

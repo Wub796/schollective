@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/utils/supabase/server";
+import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { reviewStudentProfile } from "@/lib/ai/profile-reviewer";
 import { checkUserAiRateLimit, sanitizeAiPromptInput } from "@/lib/ai/guardrails";
 import { checkRateLimit, getClientIp } from "@/lib/security";
@@ -16,10 +16,9 @@ export async function POST(req: Request) {
       );
     }
 
-    const supabase = await createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const { user, profile } = await getCurrentUserAndProfile();
 
-    if (authError || !user) {
+    if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -49,17 +48,11 @@ export async function POST(req: Request) {
       }
     }
 
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", user.id)
-      .maybeSingle();
-
     const profileToReview = {
       id: user.id,
       email: user.email,
-      first_name: user.user_metadata?.first_name || "",
-      last_name: user.user_metadata?.last_name || "",
+      first_name: "",
+      last_name: "",
       ...profile,
       ...sanitisedBody,
     };

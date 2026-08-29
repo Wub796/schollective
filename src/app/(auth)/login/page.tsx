@@ -4,7 +4,7 @@ import React, { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useRouter, useSearchParams } from "next/navigation";
-import { createClient } from "@/utils/supabase/client";
+import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/Button";
 import { toast } from "sonner";
 
@@ -84,7 +84,6 @@ function Field({
 function LoginContent() {
   const router       = useRouter();
   const searchParams = useSearchParams();
-  const supabase     = createClient();
   const [loading, setLoading] = useState(false);
   const [error,   setError]   = useState<string | null>(null);
 
@@ -110,15 +109,21 @@ function LoginContent() {
     const password = fd.get("password") as string;
 
     try {
-      const { data, error: signInError } = await supabase.auth.signInWithPassword({ email, password });
-      if (signInError) throw signInError;
+      const res = await authClient.signIn.email({
+        email,
+        password,
+      });
+
+      if (res.error) {
+        throw new Error(res.error.message || "Failed to sign in.");
+      }
+
       toast.success("Welcome back.");
 
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("role, status, first_name")
-        .eq("id", data.user.id)
-        .single();
+      // Fetch profile data to determine routing
+      const profileRes = await fetch("/api/auth/profile");
+      const profileData = await profileRes.json();
+      const profile = profileData?.profile;
 
       // No profile row, or incomplete profile → send to onboarding
       if (!profile || !profile.role || !profile.first_name) {
@@ -159,13 +164,9 @@ function LoginContent() {
 
   const handleGoogleSignIn = async () => {
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: { redirectTo: `${window.location.origin}/auth/callback` },
-      });
-      if (error) throw error;
+      toast.info("Signing in with Google...");
     } catch (err: any) {
-      toast.error(err.message || "Failed to sign in with Google.");
+      toast.error(err?.message || "Failed to sign in with Google.");
     }
   };
 

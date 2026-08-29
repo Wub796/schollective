@@ -2,12 +2,11 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/utils/supabase/client";
+import { authClient } from "@/lib/auth-client";
 import { RefreshCw, LogOut } from "lucide-react";
 
 export function PendingActions() {
   const router = useRouter();
-  const supabase = createClient();
   const [refreshing, setRefreshing] = useState(false);
 
   const handleRefresh = async () => {
@@ -19,7 +18,7 @@ export function PendingActions() {
   };
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
+    await authClient.signOut();
     router.push("/login");
   };
 

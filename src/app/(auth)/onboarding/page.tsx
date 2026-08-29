@@ -3,7 +3,6 @@
 import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { createClient } from "@/utils/supabase/client";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/Button";
 import { InstitutionInput } from "@/components/ui/InstitutionInput";
@@ -123,7 +122,6 @@ function TextArea({
 function OnboardingContent() {
   const router       = useRouter();
   const searchParams = useSearchParams();
-  const supabase     = createClient();
 
   // Role can come from: (1) URL param (legacy), (2) localStorage set by signup page before OAuth
   const roleParam = searchParams.get("role");
@@ -160,46 +158,44 @@ function OnboardingContent() {
       setRole(storedRole);
       setHasFixedRole(true);
     }
-    // Clear it so it doesn't persist for future visits
     localStorage.removeItem("signup_role");
 
     (async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) { router.replace("/login"); return; }
-
-      // Pre-fill name from Google account metadata
-      const meta = user.user_metadata;
-      if (meta?.full_name) setUserName(meta.full_name);
-      else if (meta?.name) setUserName(meta.name);
-
-      if (meta?.role === "professor" || meta?.role === "student") {
-        setRole(meta.role);
-        setHasFixedRole(true);
-      }
-
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("first_name, role, status")
-        .eq("id", user.id)
-        .single();
-
-      if (profile?.role === "professor" || profile?.role === "student") {
-        setRole(profile.role);
-        setHasFixedRole(true);
-      }
-
-      // Already onboarded — redirect to the right dashboard
-      // Must match middleware's check: both first_name AND role required
-      if (profile?.first_name && profile?.role) {
-        if (profile.role === "professor") {
-          router.replace(profile.status === "approved" ? "/prof/dashboard" : "/prof/pending");
-        } else {
-          router.replace("/dashboard");
+      try {
+        const res = await fetch("/api/auth/profile");
+        if (!res.ok) {
+          router.replace("/login");
+          return;
         }
-        return;
-      }
+        const data = await res.json();
+        const user = data.user;
+        const profile = data.profile;
 
-      setChecking(false);
+        if (!user) {
+          router.replace("/login");
+          return;
+        }
+
+        if (user.name) setUserName(user.name);
+        if (profile?.role === "professor" || profile?.role === "student") {
+          setRole(profile.role);
+          setHasFixedRole(true);
+        }
+
+        // Already onboarded — redirect to the right dashboard
+        if (profile?.first_name && profile?.role && profile?.profile_complete) {
+          if (profile.role === "professor") {
+            router.replace(profile.status === "approved" ? "/prof/dashboard" : "/prof/pending");
+          } else {
+            router.replace("/dashboard");
+          }
+          return;
+        }
+      } catch (err) {
+        console.error("Failed to check onboarding profile:", err);
+      } finally {
+        setChecking(false);
+      }
     })();
   }, []);
 
@@ -210,13 +206,8 @@ function OnboardingContent() {
 
     const fd = new FormData(e.currentTarget);
 
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) { router.replace("/login"); return; }
-
     // Build the profile upsert payload
     const payload: Record<string, any> = {
-      id:             user.id,
-      email:          user.email ?? "",
       role,
       first_name:     fd.get("first_name") as string,
       preferred_name: fd.get("preferred_name") as string,
@@ -251,6 +242,7 @@ function OnboardingContent() {
       payload.skills_and_tools = skillsRaw
         ? skillsRaw.split(",").map((s) => s.trim()).filter(Boolean)
         : [];
+      payload.profile_complete = true;
     }
     if (role === "professor") {
       payload.academic_title = (fd.get("academic_title") as string ?? "").trim();
@@ -282,49 +274,20 @@ function OnboardingContent() {
       payload.profile_complete = !!(fName.trim() && lName.trim() && inst.trim() && expertise.length > 0);
     }
 
-    let { error: upsertError } = await supabase
-      .from("profiles")
-      .upsert(payload, { onConflict: "id" });
+    try {
+      const updateRes = await fetch("/api/auth/profile/update", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
 
-    // Some deployments have an RLS policy that calls the hardened is_admin()
-    // helper. Onboarding is a self-service write and must not depend on that
-    // admin-only RPC permission; retry with the same user-owned profile data
-    // after refreshing the auth session so the request carries the latest JWT.
-    if (upsertError?.message?.toLowerCase().includes("permission denied for function is_admin")) {
-      await supabase.auth.getSession();
-      const retry = await supabase
-        .from("profiles")
-        .upsert(payload, { onConflict: "id" });
-      upsertError = retry.error;
-    }
-
-    if (upsertError && (upsertError.message?.includes("schema cache") || upsertError.message?.includes("academic_interests") || upsertError.message?.includes("extracurriculars") || upsertError.message?.includes("bio") || upsertError.message?.includes("major") || upsertError.message?.includes("coursework") || upsertError.message?.includes("skills_and_tools") || upsertError.message?.includes("portfolio_url") || upsertError.message?.includes("graduation_year") || upsertError.message?.includes("seeking_mentorship_type"))) {
-      console.warn("[onboarding] Schema cache error — retrying with core student profile fields:", upsertError.message);
-      delete payload.bio;
-      delete payload.academic_interests;
-      delete payload.extracurriculars;
-      delete payload.major;
-      delete payload.graduation_year;
-      delete payload.coursework;
-      delete payload.skills_and_tools;
-      delete payload.portfolio_url;
-      delete payload.seeking_mentorship_type;
-      delete payload.academic_title;
-      delete payload.department;
-      delete payload.lab_website;
-      delete payload.office_hours;
-      delete payload.accepting_student_types;
-      delete payload.publications;
-
-      const retry = await supabase
-        .from("profiles")
-        .upsert(payload, { onConflict: "id" });
-      upsertError = retry.error;
-    }
-
-    if (upsertError) {
-      console.error("[onboarding] upsert error:", upsertError.message, upsertError.details, upsertError.hint);
-      setError(`Save failed: ${upsertError.message}`);
+      if (!updateRes.ok) {
+        const errJson = await updateRes.json();
+        throw new Error(errJson.error || "Failed to update profile");
+      }
+    } catch (err: any) {
+      console.error("[onboarding] save error:", err);
+      setError(`Save failed: ${err.message}`);
       setLoading(false);
       return;
     }

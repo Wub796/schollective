@@ -1,11 +1,9 @@
 import { MetadataRoute } from "next";
-import { createClient } from "@/utils/supabase/server";
+import { sql } from "@/lib/neon/db";
 
 export const revalidate = 3600;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const supabase = await createClient();
-
   const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://schollective.com").replace(/\/$/, "");
   const lastModified = new Date();
 
@@ -24,12 +22,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   // Approved and complete professor profiles
-  const { data: professors } = await supabase
-    .from("profiles")
-    .select("id, updated_at")
-    .eq("role", "professor")
-    .eq("status", "approved")
-    .eq("profile_complete", true);
+  const professors = await sql`
+    SELECT id, updated_at
+    FROM profiles
+    WHERE role = 'professor' AND status = 'approved' AND profile_complete = true;
+  `;
 
   const professorRoutes = (professors || []).map((prof) => ({
     url: `${baseUrl}/professors/${prof.id}`,

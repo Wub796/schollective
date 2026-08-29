@@ -4,7 +4,7 @@ import React, { useState, Suspense } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter, useSearchParams } from "next/navigation";
-import { createClient } from "@/utils/supabase/client";
+import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/Button";
 
@@ -56,11 +56,10 @@ type Step = "request" | "update";
 function ResetPasswordContent() {
   const router       = useRouter();
   const searchParams = useSearchParams();
-  const supabase     = createClient();
 
-  // Supabase sends ?code= on the magic-link redirect
-  const hasCode = Boolean(searchParams.get("code"));
-  const [step, setStep]     = useState<Step>(hasCode ? "update" : "request");
+  // Token on the magic-link redirect
+  const token = searchParams.get("token") || searchParams.get("code");
+  const [step, setStep]     = useState<Step>(token ? "update" : "request");
   const [loading, setLoading] = useState(false);
   const [sent, setSent]     = useState(false);
   const [error, setError]   = useState<string | null>(null);
@@ -73,7 +72,8 @@ function ResetPasswordContent() {
     const fd    = new FormData(e.currentTarget);
     const email = fd.get("email") as string;
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      const { error } = await authClient.forgetPassword({
+        email,
         redirectTo: `${window.location.origin}/reset-password`,
       });
       if (error) throw error;
@@ -102,8 +102,13 @@ function ResetPasswordContent() {
       return;
     }
     try {
-      const { error } = await supabase.auth.updateUser({ password: pw });
-      if (error) throw error;
+      if (token) {
+        const { error } = await authClient.resetPassword({
+          newPassword: pw,
+          token,
+        });
+        if (error) throw error;
+      }
       toast.success("Password updated. Signing you in…");
       router.push("/dashboard");
     } catch (err: any) {

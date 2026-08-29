@@ -1,7 +1,7 @@
 import React from "react";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
-import { createClient } from "@/utils/supabase/server";
+import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { StudentProfileForm } from "@/app/(dashboard)/profile/StudentProfileForm";
 import { InteractiveOnboardingTour, TourStep } from "@/components/features/InteractiveOnboardingTour";
 
@@ -53,17 +53,8 @@ const STUDENT_TOUR_STEPS: TourStep[] = [
 ];
 
 export default async function StudentDashboard() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", user.id)
-    .single();
-
-  if (!profile) redirect("/login");
+  const { user, profile } = await getCurrentUserAndProfile();
+  if (!user || !profile) redirect("/login");
 
   // Allow admins to preview as student
   const cookieStore = await cookies();

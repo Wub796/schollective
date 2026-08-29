@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { createClient } from "@/utils/supabase/client";
+import { authClient } from "@/lib/auth-client";
 import { Sparkles } from "lucide-react";
 
 interface NavItem {
@@ -58,66 +58,81 @@ function NavLink({
         overflow: "hidden",
       }}
       onMouseEnter={(e) => {
-        if (!active) (e.currentTarget as HTMLElement).style.background = "var(--bg-surface-3)";
+        if (!active) {
+          e.currentTarget.style.background = "var(--accent-dim)";
+          e.currentTarget.style.borderColor = "rgba(79, 70, 229, 0.1)";
+        }
       }}
       onMouseLeave={(e) => {
-        if (!active) (e.currentTarget as HTMLElement).style.background = "transparent";
+        if (!active) {
+          e.currentTarget.style.background = "transparent";
+          e.currentTarget.style.borderColor = "transparent";
+        }
       }}
-      aria-current={active ? "page" : undefined}
     >
-      {/* Active indicator dot */}
-      {active && (
-        <span style={{
-          position: "absolute", left: 0, top: "50%", transform: "translateY(-50%)",
-          width: "2px", height: "60%", minHeight: "16px", maxHeight: "28px",
-          background: "var(--accent)", borderRadius: "0 2px 2px 0",
-        }} />
+      <div style={{ display: "flex", flexDirection: "column", gap: "0.08rem", minWidth: 0, flex: 1 }}>
+        <span
+          className="font-display"
+          style={{
+            fontSize: "0.88rem",
+            fontWeight: active ? 700 : 500,
+            color: active ? "var(--accent)" : "var(--text-primary)",
+            lineHeight: 1.2,
+          }}
+        >
+          {label}
+        </span>
+        {sub && (
+          <span
+            style={{
+              fontSize: "0.68rem",
+              color: active ? "var(--accent)" : "var(--text-muted)",
+              opacity: active ? 0.8 : 0.6,
+              lineHeight: 1.2,
+            }}
+          >
+            {sub}
+          </span>
+        )}
+      </div>
+
+      {badge !== undefined && badge > 0 && (
+        <span
+          style={{
+            minWidth: "1.25rem",
+            height: "1.25rem",
+            padding: "0 0.35rem",
+            borderRadius: "999px",
+            background: "#6366f1",
+            color: "#ffffff",
+            fontSize: "0.65rem",
+            fontWeight: 700,
+            display: "inline-flex",
+            alignItems: "center",
+            justifyContent: "center",
+            lineHeight: 1,
+            flexShrink: 0,
+          }}
+        >
+          {badge > 99 ? "99+" : badge}
+        </span>
       )}
 
-      <div style={{ flex: 1, minWidth: 0, display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.5rem" }}>
-        <div>
-          <span style={{
-            display: "block",
-            fontSize: "0.82rem",
-            fontWeight: active ? 600 : 500,
-            color: active ? "var(--accent)" : "var(--text-secondary)",
-            letterSpacing: "0.005em",
-            transition: "color 0.2s",
-            lineHeight: 1.3,
-          }}>
-            {label}
-          </span>
-          {sub && (
-            <span style={{
-              display: "block",
-              fontSize: "0.5rem",
-              fontWeight: 700,
-              letterSpacing: "0.1em",
-              textTransform: "uppercase",
-              color: active ? "rgba(79, 70, 229, 0.6)" : "var(--text-tertiary)",
-              fontFamily: "var(--font-sans, monospace)",
-              lineHeight: 1,
-              marginTop: "0.2rem",
-            }}>
-              {sub}
-            </span>
-          )}
-        </div>
-        {badge && badge > 0 ? (
-          <span style={{
-            background: "rgba(79, 70, 229, 0.15)",
-            color: "#4f46e5",
-            fontSize: "0.62rem",
-            fontWeight: 700,
-            padding: "0.15rem 0.45rem",
-            borderRadius: "100px",
-            fontFamily: "var(--font-sans)",
-            flexShrink: 0,
-          }}>
-            {badge}
-          </span>
-        ) : null}
-      </div>
+      {active && (
+        <motion.div
+          layoutId="sidebar-active-indicator"
+          style={{
+            position: "absolute",
+            left: 0,
+            top: "20%",
+            bottom: "20%",
+            width: "3px",
+            background: "var(--accent)",
+            borderRadius: "0 2px 2px 0",
+          }}
+          transition={{ duration: 0.3, ease: EASE }}
+        />
+      )}
     </Link>
   );
 }
@@ -125,37 +140,21 @@ function NavLink({
 export function Sidebar({ onClose, role = "student" }: SidebarProps) {
   const pathname = usePathname();
   const router   = useRouter();
-  const supabase = createClient();
   const [unreadCount, setUnreadCount] = React.useState(0);
 
   React.useEffect(() => {
     let active = true;
 
     async function fetchUnreadCount() {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user || !active) return;
-
-      const { data: requests } = await supabase
-        .from("requests")
-        .select("id")
-        .or(`student_id.eq.${user.id},professor_id.eq.${user.id}`);
-
-      if (!requests || requests.length === 0 || !active) {
-        setUnreadCount(0);
-        return;
-      }
-
-      const requestIds = requests.map((r) => r.id);
-
-      const { count } = await supabase
-        .from("messages")
-        .select("id", { count: "exact", head: true })
-        .in("request_id", requestIds)
-        .neq("sender_id", user.id)
-        .is("read_at", null);
-
-      if (active) {
-        setUnreadCount(count || 0);
+      try {
+        const res = await fetch("/api/badges");
+        if (!res.ok) return;
+        const data = await res.json();
+        if (active) {
+          setUnreadCount(data.unreadMessages || 0);
+        }
+      } catch (err) {
+        console.error("Failed to fetch unread badge:", err);
       }
     }
 
@@ -173,7 +172,7 @@ export function Sidebar({ onClose, role = "student" }: SidebarProps) {
   };
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
+    await authClient.signOut();
     router.push("/login");
   };
 
