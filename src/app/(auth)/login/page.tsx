@@ -94,6 +94,8 @@ function LoginContent() {
         setError("Failed to sign in with Google. Please try again.");
       } else if (errorParam === "oauth_missing_code") {
         setError("Authentication code missing. Please try again.");
+      } else if (errorParam === "oauth_session_missing") {
+        setError("Your Google session could not be completed. Please try again.");
       } else {
         setError("An error occurred during sign in.");
       }
@@ -123,6 +125,9 @@ function LoginContent() {
 
       // Fetch profile data to determine routing
       const profileRes = await fetch("/api/auth/profile");
+      if (!profileRes.ok) {
+        throw new Error("Signed in, but your session could not be loaded. Please try again.");
+      }
       const profileData = await profileRes.json();
       const profile = profileData?.profile;
 
@@ -169,7 +174,7 @@ function LoginContent() {
       toast.info("Connecting to Google...");
       const res = await authClient.signIn.social({
         provider: "google",
-        callbackURL: "/auth/callback",
+        callbackURL: `${window.location.origin}/auth/callback`,
       });
       if (res?.error) {
         if (res.error.message?.includes("Provider not found") || (res.error as any).status === 404) {

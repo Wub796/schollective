@@ -72,7 +72,7 @@ function ResetPasswordContent() {
     const fd    = new FormData(e.currentTarget);
     const email = fd.get("email") as string;
     try {
-      const { error } = await authClient.forgetPassword({
+      const { error } = await authClient.requestPasswordReset({
         email,
         redirectTo: `${window.location.origin}/reset-password`,
       });
