@@ -1,5 +1,8 @@
 import { betterAuth } from "better-auth";
-import { Pool } from "@neondatabase/serverless";
+import { Pool, neonConfig } from "@neondatabase/serverless";
+
+// Route database pool queries through HTTP fetch for Cloudflare Workers compatibility
+neonConfig.poolQueryViaFetch = true;
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL_UNPOOLED || process.env.DATABASE_URL || "",
