@@ -154,6 +154,8 @@ function SignupContent() {
         setError("Failed to exchange Google account information. Please try again.");
       } else if (errorParam === "oauth_missing_code") {
         setError("The authentication code is missing. Please try again.");
+      } else if (errorParam === "oauth_session_missing") {
+        setError("Your Google session could not be completed. Please try again.");
       } else {
         setError("An error occurred during sign up with Google.");
       }
@@ -216,8 +218,9 @@ function SignupContent() {
       }
 
       // Seed initial profile in Neon
-      await fetch("/api/auth/profile/update", {
+      const profileResponse = await fetch("/api/auth/profile/update", {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           role,
@@ -228,6 +231,9 @@ function SignupContent() {
           institution: institution || (fd.get("institution") as string),
         }),
       });
+      if (!profileResponse.ok) {
+        throw new Error("Account created, but your profile could not be saved. Please sign in again.");
+      }
 
       toast.success("Account created successfully!");
       router.refresh();
@@ -247,7 +253,7 @@ function SignupContent() {
       toast.info("Connecting to Google...");
       const res = await authClient.signIn.social({
         provider: "google",
-        callbackURL: "/auth/callback",
+        callbackURL: `${window.location.origin}/auth/callback`,
       });
       if (res?.error) {
         if (res.error.message?.includes("Provider not found") || (res.error as any).status === 404) {

@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
     const { user, profile } = await getCurrentUserAndProfile(request.headers);
 
     if (!user) {
-      return NextResponse.redirect(`${origin}/login`);
+      return NextResponse.redirect(`${origin}/login?error=oauth_session_missing`);
     }
 
     if (!profile || !profile.first_name || !profile.role || !profile.profile_complete) {
@@ -34,6 +34,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(`${origin}${next}`);
   } catch (err) {
     console.error('[auth/callback] Error:', err);
-    return NextResponse.redirect(`${origin}/dashboard`);
+    return NextResponse.redirect(`${origin}/login?error=oauth_exchange_failed`);
   }
 }
