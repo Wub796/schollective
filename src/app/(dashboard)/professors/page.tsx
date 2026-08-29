@@ -20,6 +20,19 @@ interface ProfessorsPageProps {
   }>;
 }
 
+function parseFields(ef: any): string[] {
+  if (Array.isArray(ef)) return ef;
+  if (typeof ef === "string") {
+    try {
+      const parsed = JSON.parse(ef);
+      if (Array.isArray(parsed)) return parsed;
+    } catch {
+      return ef ? [ef] : [];
+    }
+  }
+  return [];
+}
+
 export default async function ProfessorsPage({ searchParams }: ProfessorsPageProps) {
   const { query, institution, expertise, accepting, sort } = await searchParams;
   const isAcceptingOnly = accepting !== "false"; // default true
@@ -55,7 +68,7 @@ export default async function ProfessorsPage({ searchParams }: ProfessorsPagePro
     professors = professors.filter((p) => {
       const fullName = `${p.first_name || ""} ${p.last_name || ""} ${p.preferred_name || ""}`.toLowerCase();
       const inst = (p.institution || "").toLowerCase();
-      const fields = (p.expertise_fields || []).map((f: string) => f.toLowerCase()).join(" ");
+      const fields = parseFields(p.expertise_fields).map((f: string) => f.toLowerCase()).join(" ");
       return fullName.includes(q) || inst.includes(q) || fields.includes(q);
     });
   }
@@ -70,7 +83,7 @@ export default async function ProfessorsPage({ searchParams }: ProfessorsPagePro
 
     if (selectedExpertise.length > 0) {
       professors = professors.filter((p) => {
-        const profFields = (p.expertise_fields || []).map((f: string) => f.toLowerCase());
+        const profFields = parseFields(p.expertise_fields).map((f: string) => f.toLowerCase());
         return selectedExpertise.some(
           (sel) => profFields.includes(sel) || profFields.some((f: string) => f.includes(sel))
         );
@@ -85,7 +98,7 @@ export default async function ProfessorsPage({ searchParams }: ProfessorsPagePro
     new Set(filterData?.map((p: any) => p.institution).filter(Boolean) as string[])
   ).sort();
   const distinctExpertise = Array.from(
-    new Set(filterData?.flatMap((p: any) => p.expertise_fields || []))
+    new Set(filterData?.flatMap((p: any) => parseFields(p.expertise_fields)))
   ).sort();
 
   return (

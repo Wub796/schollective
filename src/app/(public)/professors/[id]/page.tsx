@@ -14,6 +14,19 @@ interface PageProps {
   params: Promise<{ id: string }>;
 }
 
+function parseArray(val: any): string[] {
+  if (Array.isArray(val)) return val;
+  if (typeof val === "string") {
+    try {
+      const parsed = JSON.parse(val);
+      if (Array.isArray(parsed)) return parsed;
+    } catch {
+      return val ? [val] : [];
+    }
+  }
+  return [];
+}
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { id } = await params;
 
@@ -28,8 +41,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!professor) return { title: "Professor Profile | Schollective" };
 
   const displayName = professor.preferred_name || professor.first_name;
+  const expertiseList = parseArray(professor.expertise_fields);
   const title = `Dr. ${displayName} ${professor.last_name} — ${professor.institution} | Schollective`;
-  const description = `Connect with Dr. ${displayName} ${professor.last_name}, expert in ${professor.expertise_fields?.join(", ") || "academic research"}. Apply for structured mentorship on Schollective.`;
+  const description = `Connect with Dr. ${displayName} ${professor.last_name}, expert in ${expertiseList.length > 0 ? expertiseList.join(", ") : "academic research"}. Apply for structured mentorship on Schollective.`;
 
   return {
     title,
@@ -154,11 +168,11 @@ function ProfessorDetail({
         )}
 
         {/* Research Focus Areas */}
-        {professor.expertise_fields && professor.expertise_fields.length > 0 && (
+        {parseArray(professor.expertise_fields).length > 0 && (
           <div style={{ display: "flex", flexDirection: "column", gap: "0.65rem" }}>
             <div style={{ fontSize: "0.68rem", fontWeight: 800, letterSpacing: "0.18em", textTransform: "uppercase", color: "#4f46e5" }}>Research Focus Areas</div>
             <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
-              {professor.expertise_fields.map((field: string) => (
+              {parseArray(professor.expertise_fields).map((field: string) => (
                 <span key={field} style={{ padding: "0.4rem 0.9rem", border: "1px solid rgba(99, 102, 241, 0.25)", borderRadius: "100px", background: "rgba(99, 102, 241, 0.08)", fontSize: "0.78rem", fontWeight: 700, color: "#4f46e5" }}>
                   {field}
                 </span>
@@ -169,11 +183,11 @@ function ProfessorDetail({
 
         {/* Mentee Levels & Office Hours */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "1.25rem" }}>
-          {professor.accepting_student_types && professor.accepting_student_types.length > 0 && (
+          {parseArray(professor.accepting_student_types).length > 0 && (
             <div style={{ background: "#f8fafc", padding: "1rem 1.25rem", borderRadius: "12px", border: "1px solid #e2e8f0" }}>
               <div style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase", color: "#64748b", marginBottom: "0.45rem" }}>Accepted Mentee Levels</div>
               <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem" }}>
-                {professor.accepting_student_types.map((st: string, idx: number) => (
+                {parseArray(professor.accepting_student_types).map((st: string, idx: number) => (
                   <span key={idx} style={{ background: "#ffffff", border: "1px solid #cbd5e1", color: "#334155", padding: "0.2rem 0.6rem", borderRadius: "6px", fontSize: "0.75rem", fontWeight: 600 }}>
                     {st}
                   </span>
@@ -198,11 +212,11 @@ function ProfessorDetail({
         </div>
 
         {/* Featured Publications */}
-        {professor.publications && professor.publications.length > 0 && (
+        {parseArray(professor.publications).length > 0 && (
           <div style={{ background: "#ffffff", padding: "1.25rem 1.5rem", borderRadius: "14px", border: "1px solid rgba(99, 102, 241, 0.15)" }}>
             <div style={{ fontSize: "0.68rem", fontWeight: 800, letterSpacing: "0.18em", textTransform: "uppercase", color: "#4f46e5", marginBottom: "0.65rem" }}>Featured Publications</div>
             <ul style={{ margin: 0, paddingLeft: "1.25rem", fontSize: "0.85rem", color: "#334155", lineHeight: 1.6 }}>
-              {professor.publications.map((pub: string, idx: number) => (
+              {parseArray(professor.publications).map((pub: string, idx: number) => (
                 <li key={idx} style={{ marginBottom: "0.35rem" }}>{pub}</li>
               ))}
             </ul>
