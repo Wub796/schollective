@@ -243,9 +243,18 @@ function SignupContent() {
 
   const handleGoogleSignIn = async () => {
     try {
-      toast.info("Signing in with Google...");
+      setLoading(true);
+      toast.info("Connecting to Google...");
+      const res = await authClient.signIn.social({
+        provider: "google",
+        callbackURL: "/auth/callback",
+      });
+      if (res?.error) {
+        throw new Error(res.error.message || "Failed to sign up with Google.");
+      }
     } catch (err: any) {
       toast.error(err?.message || "Failed to sign up with Google.");
+      setLoading(false);
     }
   };
 
