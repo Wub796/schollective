@@ -2,6 +2,7 @@ import { AppShell } from "@/components/layout/AppShell";
 import { AdminViewBanner } from "@/components/ui/AdminViewBanner";
 import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
@@ -10,7 +11,10 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { profile } = await getCurrentUserAndProfile();
+  const { user, profile } = await getCurrentUserAndProfile();
+  if (!user) {
+    redirect("/login");
+  }
   const role = profile?.role || "student";
 
   // Check for admin preview-as mode
