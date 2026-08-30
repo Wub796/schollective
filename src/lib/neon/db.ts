@@ -24,6 +24,39 @@ export function getServerlessDbUrl(): string {
   return normalizeServerlessUrl(unpooled || pooled);
 }
 
+/** Variables the auth stack reads. Names only — never log or return the values. */
+const AUTH_ENV_KEYS = [
+  "DATABASE_URL",
+  "DATABASE_URL_UNPOOLED",
+  "BETTER_AUTH_URL",
+  "BETTER_AUTH_SECRET",
+  "GOOGLE_CLIENT_ID",
+  "GOOGLE_CLIENT_SECRET",
+] as const;
+
+/**
+ * Explains a missing connection string in terms of what the running Worker can
+ * actually see. "DATABASE_URL is not set" is not actionable when the operator
+ * believes they have set it — knowing whether the Worker sees *any* of the
+ * expected variables separates "this one variable did not get applied" from
+ * "no environment bindings are reaching this Worker at all".
+ */
+export function describeMissingDbUrl(): string {
+  const visible = AUTH_ENV_KEYS.filter((key) => process.env[key]);
+
+  const seen = visible.length
+    ? `This deployment can currently see: ${visible.join(", ")}.`
+    : "This deployment cannot see any of the variables the app expects, so no environment bindings are reaching it.";
+
+  return (
+    "DATABASE_URL is not configured. " +
+    seen +
+    " Set it on the Worker itself with `wrangler secret put DATABASE_URL` — a build-time variable, " +
+    "or a plain-text variable added in the dashboard while wrangler.jsonc declares no `vars`, does not " +
+    "survive as a runtime binding."
+  );
+}
+
 /**
  * Lazy Neon Serverless SQL client
  * Reads the connection string dynamically at request time to ensure compatibility with Cloudflare Workers.

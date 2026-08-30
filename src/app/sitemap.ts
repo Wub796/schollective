@@ -21,12 +21,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: route === "" ? 1.0 : 0.8
   }));
 
-  // Approved and complete professor profiles
-  const professors = await sql`
-    SELECT id, updated_at
-    FROM profiles
-    WHERE role = 'professor' AND status = 'approved' AND profile_complete = true;
-  `;
+  // Approved and complete professor profiles. This runs during `next build`,
+  // where the database may not be reachable yet — a sitemap missing its
+  // professor entries is worth far more than a failed deploy.
+  let professors: Record<string, any>[] = [];
+  try {
+    professors = await sql`
+      SELECT id, updated_at
+      FROM profiles
+      WHERE role = 'professor' AND status = 'approved' AND profile_complete = true;
+    `;
+  } catch (error) {
+    console.error("[sitemap] Could not list professor profiles:", error);
+  }
 
   const professorRoutes = (professors || []).map((prof) => ({
     url: `${baseUrl}/professors/${prof.id}`,

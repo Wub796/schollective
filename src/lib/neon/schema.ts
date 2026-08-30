@@ -1,5 +1,5 @@
 import { neon } from "@neondatabase/serverless";
-import { getServerlessDbUrl } from "./db";
+import { describeMissingDbUrl, getServerlessDbUrl } from "./db";
 
 /**
  * Idempotent schema bootstrap for the Better Auth tables.
@@ -179,12 +179,7 @@ function isUpToDate(found: Map<string, Set<string>>): boolean {
 
 async function bootstrap(): Promise<void> {
   const url = getServerlessDbUrl();
-  if (!url) {
-    throw new Error(
-      "DATABASE_URL is not configured. Set DATABASE_URL (or DATABASE_URL_UNPOOLED) " +
-        "so authentication can reach Neon.",
-    );
-  }
+  if (!url) throw new Error(describeMissingDbUrl());
 
   const run = neon(url) as unknown as Runner;
   const found = await readSchema(run);
