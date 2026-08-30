@@ -81,14 +81,14 @@ export default async function StudentDashboard() {
         <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: "2rem", flexWrap: "wrap" }}>
           <h1 className="font-display" style={{
             fontSize: "clamp(2.4rem, 4.5vw, 3.6rem)", fontWeight: 900,
-            color: "#0f172a", letterSpacing: "-0.035em", lineHeight: 1.1,
+            color: "var(--text-primary)", letterSpacing: "-0.035em", lineHeight: 1.1,
           }}>
             Welcome back,{" "}
-            <em style={{ fontStyle: "italic", color: "#4f46e5", fontWeight: 300 }}>{displayName}</em>
+            <em style={{ fontStyle: "italic", color: "var(--accent)", fontWeight: 300 }}>{displayName}</em>
           </h1>
         </div>
         <p style={{
-          fontSize: "0.95rem", color: "#475569", opacity: 0.85, fontWeight: 400,
+          fontSize: "0.95rem", color: "var(--text-secondary)", opacity: 0.85, fontWeight: 400,
           maxWidth: "42rem", lineHeight: 1.8, fontFamily: "var(--font-sans)", margin: 0,
         }}>
           Manage your research profile, academic standing, project accomplishments, coursework, skills, and portfolio directly from your dashboard.
