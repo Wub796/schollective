@@ -7,13 +7,20 @@ import { sql } from "@/lib/neon/db";
 import { runAs } from "@/lib/neon/user-context";
 import { parseJsonbArray } from "@/lib/utils";
 import { ThreadCard } from "@/components/features/ThreadCard";
+import {
+  PARTICIPANT_ONGOING,
+  PARTICIPANT_PAST,
+  PARTICIPANT_VISIBLE,
+  asSqlArray,
+  type RequestStatus,
+} from "@/lib/status";
 import { BookOpen, Search } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
 function SectionLabel({ text }: { text: string }) {
   return (
-    <h2 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "#0f172a", letterSpacing: "-0.025em" }}>
+    <h2 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "var(--text-primary)", letterSpacing: "-0.025em" }}>
       {text}
     </h2>
   );
@@ -47,6 +54,7 @@ export default async function ThreadsPage() {
     FROM requests r
     LEFT JOIN profiles p ON r.professor_id = p.id
     WHERE r.student_id = ${user.id}
+      AND r.status = ANY(${asSqlArray(PARTICIPANT_VISIBLE)})
     ORDER BY r.updated_at DESC;
   `);
 
@@ -67,12 +75,18 @@ export default async function ThreadsPage() {
                 new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
             )[0]
           : undefined,
-      hasUnread: req.messages?.some((msg: any) => msg.sender_id !== user.id && !msg.read_at),
+      hasUnread:
+        req.status === "active" &&
+        req.messages?.some((msg: any) => msg.sender_id !== user.id && !msg.read_at),
     };
   });
 
-  const ongoing = processed.filter((r: any) => r.status !== "closed");
-  const past    = processed.filter((r: any) => r.status === "closed");
+  // Bucketed against the explicit status lists rather than "anything that is not
+  // closed". The old negative test put `declined`, `viewed` and admin-`deleted`
+  // threads in the ongoing list — none of which accept messages, so the student
+  // saw live-looking conversations they could not use and could not clear.
+  const ongoing = processed.filter((r: any) => PARTICIPANT_ONGOING.includes(r.status as RequestStatus));
+  const past    = processed.filter((r: any) => PARTICIPANT_PAST.includes(r.status as RequestStatus));
   const displayName = profile.preferred_name || profile.first_name || "Scholar";
 
   return (
@@ -81,15 +95,15 @@ export default async function ThreadsPage() {
       {/* ── Header ── */}
       <header style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
         <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: "2rem", flexWrap: "wrap" }}>
-          <h1 className="font-display" style={{ fontSize: "clamp(2.4rem, 4.5vw, 3.6rem)", fontWeight: 900, color: "#0f172a", letterSpacing: "-0.035em", lineHeight: 1.1 }}>
+          <h1 className="font-display" style={{ fontSize: "clamp(2.4rem, 4.5vw, 3.6rem)", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.035em", lineHeight: 1.1 }}>
             {displayName}&apos;s{" "}
-            <em style={{ fontStyle: "italic", color: "#4f46e5", fontWeight: 300 }}>threads</em>
+            <em style={{ fontStyle: "italic", color: "var(--accent)", fontWeight: 300 }}>threads</em>
           </h1>
           <Link href="/professors" style={{ textDecoration: "none", flexShrink: 0 }}>
             <div style={{
               display: "flex", alignItems: "center", gap: "0.5rem",
               padding: "0.75rem 1.5rem",
-              border: "2px solid #4f46e5", background: "#4f46e5", borderRadius: "100px",
+              border: "2px solid var(--accent)", background: "var(--accent)", borderRadius: "100px",
               fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.15em",
               textTransform: "uppercase", color: "#ffffff",
               fontFamily: "var(--font-sans)", cursor: "pointer",
@@ -101,7 +115,7 @@ export default async function ThreadsPage() {
             </div>
           </Link>
         </div>
-        <p style={{ fontSize: "0.95rem", color: "#475569", opacity: 0.75, fontWeight: 400, maxWidth: "42rem", lineHeight: 1.8, fontFamily: "var(--font-sans)", marginTop: "0.25rem" }}>
+        <p style={{ fontSize: "0.95rem", color: "var(--text-secondary)", opacity: 0.75, fontWeight: 400, maxWidth: "42rem", lineHeight: 1.8, fontFamily: "var(--font-sans)", marginTop: "0.25rem" }}>
           All your mentorship threads in one place — ongoing dialogues and completed sessions.
         </p>
       </header>
@@ -120,13 +134,13 @@ export default async function ThreadsPage() {
             background: "rgba(99, 102, 241, 0.12)",
             display: "flex", flexDirection: "column", gap: "0.5rem",
           }}>
-            <span className="font-display" style={{ fontSize: "2.8rem", fontWeight: 900, color: "#0f172a", letterSpacing: "-0.04em", lineHeight: 1 }}>
+            <span className="font-display" style={{ fontSize: "2.8rem", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.04em", lineHeight: 1 }}>
               {value}
             </span>
-            <div style={{ fontSize: "0.82rem", fontWeight: 700, color: "#0f172a", fontFamily: "var(--font-sans)", lineHeight: 1.4 }}>{label}</div>
+            <div style={{ fontSize: "0.82rem", fontWeight: 700, color: "var(--text-primary)", fontFamily: "var(--font-sans)", lineHeight: 1.4 }}>{label}</div>
             <div style={{
               display: "inline-block", fontSize: "0.58rem", fontWeight: 800, letterSpacing: "0.2em",
-              textTransform: "uppercase", color: "#0f172a", background: "#6366f1",
+              textTransform: "uppercase", color: "var(--text-primary)", background: "var(--accent-blue)",
               padding: "0.25rem 0.75rem", borderRadius: "100px", width: "fit-content", marginTop: "0.5rem",
               fontFamily: "var(--font-sans, monospace)", border: "1px solid rgba(79, 70, 229, 0.6)"
             }}>
@@ -152,20 +166,20 @@ export default async function ThreadsPage() {
             background: "rgba(79, 70, 229, 0.25)", border: "1px solid rgba(79, 70, 229, 0.5)",
             display: "flex", alignItems: "center", justifyContent: "center",
           }}>
-            <BookOpen size={20} style={{ color: "#0f172a" }} />
+            <BookOpen size={20} style={{ color: "var(--text-primary)" }} />
           </div>
           <div>
-            <h3 className="font-display" style={{ fontSize: "1.25rem", fontWeight: 700, color: "#0f172a", marginBottom: "0.5rem", letterSpacing: "-0.02em" }}>
+            <h3 className="font-display" style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: "0.5rem", letterSpacing: "-0.02em" }}>
               No threads yet
             </h3>
-            <p style={{ fontSize: "0.82rem", color: "#475569", opacity: 0.75, maxWidth: "26rem", lineHeight: 1.7, fontFamily: "var(--font-sans)" }}>
+            <p style={{ fontSize: "0.82rem", color: "var(--text-secondary)", opacity: 0.75, maxWidth: "26rem", lineHeight: 1.7, fontFamily: "var(--font-sans)" }}>
               Threads appear here once a professor accepts your mentorship request.
               Start by finding a mentor in the directory.
             </p>
           </div>
           <Link href="/professors" style={{ textDecoration: "none" }}>
             <div style={{
-              padding: "0.8rem 2rem", border: "2px solid #4f46e5", background: "#4f46e5",
+              padding: "0.8rem 2rem", border: "2px solid var(--accent)", background: "var(--accent)",
               borderRadius: "100px", fontSize: "0.62rem", fontWeight: 800,
               letterSpacing: "0.18em", textTransform: "uppercase",
               color: "#ffffff", fontFamily: "var(--font-sans)", cursor: "pointer",
@@ -184,7 +198,7 @@ export default async function ThreadsPage() {
             <SectionLabel text="Ongoing" />
             <span style={{
               marginLeft: "auto", fontSize: "0.6rem", fontWeight: 800, letterSpacing: "0.22em",
-              textTransform: "uppercase", color: "#0f172a", background: "rgba(79, 70, 229, 0.35)",
+              textTransform: "uppercase", color: "var(--text-primary)", background: "rgba(79, 70, 229, 0.35)",
               padding: "0.3rem 0.8rem", borderRadius: "100px", fontFamily: "var(--font-sans, monospace)"
             }}>
               {ongoing.length} thread{ongoing.length !== 1 ? "s" : ""}
@@ -202,10 +216,10 @@ export default async function ThreadsPage() {
       {past.length > 0 && (
         <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-            <h2 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "#0f172a", opacity: 0.6, letterSpacing: "-0.025em" }}>
+            <h2 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "var(--text-primary)", opacity: 0.6, letterSpacing: "-0.025em" }}>
               Past Sessions
             </h2>
-            <span style={{ marginLeft: "auto", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "#475569", opacity: 0.5, fontFamily: "var(--font-sans, monospace)" }}>
+            <span style={{ marginLeft: "auto", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--text-secondary)", opacity: 0.5, fontFamily: "var(--font-sans, monospace)" }}>
               {past.length} completed
             </span>
           </div>
