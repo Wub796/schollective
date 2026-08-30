@@ -153,9 +153,12 @@ function OnboardingContent() {
 
   // Verify the user is logged in; detect role and enforce role-based onboarding view
   useEffect(() => {
-    // Read role from localStorage (set by signup page before Google OAuth redirect)
+    // Read role from localStorage (set by signup page before Google OAuth redirect).
+    // This takes precedence over the auto-seeded profile role (fresh social
+    // accounts default to "student") so professors stay professors.
     const storedRole = localStorage.getItem("signup_role");
-    if (storedRole === "professor" || storedRole === "student") {
+    const hasStoredRole = storedRole === "professor" || storedRole === "student";
+    if (hasStoredRole) {
       setRole(storedRole);
       setHasFixedRole(true);
     }
@@ -179,7 +182,8 @@ function OnboardingContent() {
 
         if (user.id) setUserId(user.id);
         if (user.name) setUserName(user.name);
-        if (profile?.role === "professor" || profile?.role === "student") {
+        // Prefer the role the user chose at signup; fall back to the profile row.
+        if (!hasStoredRole && (profile?.role === "professor" || profile?.role === "student")) {
           setRole(profile.role);
           setHasFixedRole(true);
         }
