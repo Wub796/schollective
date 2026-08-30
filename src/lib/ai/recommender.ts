@@ -141,8 +141,7 @@ Return ONLY a JSON array matching this schema (sorted by matchScore descending, 
       const text = response.text;
       if (!text) throw new Error(`Empty response from ${modelName}`);
 
-      // Track AI message in Amplitude Agent Analytics
-      ai.trackAiMessage(text, modelName, "google", latencyMs, {
+      void ai.trackAiMessage({ content: text, sessionId: "schollective", model: modelName, provider: "google", latencyMs,
         inputTokens: response.usageMetadata?.promptTokenCount,
         outputTokens: response.usageMetadata?.candidatesTokenCount,
         totalTokens: response.usageMetadata?.totalTokenCount,
@@ -174,7 +173,7 @@ Return ONLY a JSON array matching this schema (sorted by matchScore descending, 
       setCachedAiResult(cacheKey, result, 10 * 60 * 1000);
       return result;
     } catch (err: any) {
-      ai.trackAiMessage("", modelName, "google", performance.now() - startTime, {
+      void ai.trackAiMessage({ content: "", sessionId: "schollective", model: modelName, provider: "google", latencyMs: performance.now() - startTime,
         isError: true,
         errorMessage: err?.message || "Unknown LLM error",
       });

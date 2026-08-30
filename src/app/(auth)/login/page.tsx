@@ -4,7 +4,7 @@ import React, { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useRouter, useSearchParams } from "next/navigation";
-import { authClient } from "@/lib/auth-client";
+import { authClient, authErrorMessage } from "@/lib/auth-client";
 import { Button } from "@/components/ui/Button";
 import { toast } from "sonner";
 
@@ -118,7 +118,7 @@ function LoginContent() {
 
       if (res.error) {
         console.error("[login] signIn.email error:", JSON.stringify(res.error));
-        throw new Error(res.error.message || "Failed to sign in.");
+        throw new Error(authErrorMessage(res.error, "Failed to sign in."));
       }
 
       toast.success("Welcome back.");
@@ -177,10 +177,11 @@ function LoginContent() {
         callbackURL: `${window.location.origin}/auth/callback`,
       });
       if (res?.error) {
+        console.error("[login] signIn.social error:", JSON.stringify(res.error));
         if (res.error.message?.includes("Provider not found") || (res.error as any).status === 404) {
           throw new Error("Google Sign-In is not configured yet. Please sign in with Email & Password or add GOOGLE_CLIENT_ID to your environment variables.");
         }
-        throw new Error(res.error.message || "Failed to sign in with Google.");
+        throw new Error(authErrorMessage(res.error, "Failed to sign in with Google."));
       }
     } catch (err: any) {
       toast.error(err?.message || "Failed to sign in with Google.");
