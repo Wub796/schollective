@@ -1,16 +1,58 @@
 import { betterAuth } from "better-auth";
-import { Pool, neonConfig } from "@neondatabase/serverless";
+import { neon } from "@neondatabase/serverless";
+import {
+  CompiledQuery,
+  Kysely,
+  PostgresAdapter,
+  PostgresIntrospector,
+  PostgresQueryCompiler,
+} from "kysely";
 
-// Use stateless HTTP fetch queries (no persistent connections) for Cloudflare Workers
-neonConfig.poolQueryViaFetch = true;
+const PG_DIALECT = {
+  createAdapter: () => new PostgresAdapter(),
+  createQueryCompiler: () => new PostgresQueryCompiler(),
+  createIntrospector: (db: Kysely<any>) => new PostgresIntrospector(db),
+  createDriver: () => {
+    // Stateless HTTP driver: every query goes through the Neon `neon()`
+    // fetch endpoint. Avoids the WebSocket connections that break across
+    // Cloudflare Worker isolate reuse (intermittent 1101 errors).
+    const client = { query: neon(dbUrl(), { fullResults: true }) };
+    let connection: any;
+    return {
+      init: async () => {},
+      acquireConnection: async () => {
+        if (!connection) connection = new NeonConnection(client);
+        return connection;
+      },
+      beginTransaction: async () => { throw new Error("Transactions are not supported with Neon HTTP connections"); },
+      commitTransaction: async () => { throw new Error("Transactions are not supported with Neon HTTP connections"); },
+      rollbackTransaction: async () => { throw new Error("Transactions are not supported with Neon HTTP connections"); },
+      releaseConnection: async () => {},
+      destroy: async () => {},
+    };
+  },
+};
 
-const database = new Pool({
-  connectionString: process.env.DATABASE_URL_UNPOOLED || process.env.DATABASE_URL,
-  max: 1,
-});
+class NeonConnection {
+  private client: any;
+  constructor(client: any) { this.client = client; }
+  async executeQuery(compiledQuery: CompiledQuery) {
+    const result = await this.client.query(compiledQuery.sql, [...compiledQuery.parameters]);
+    if (result.command === "INSERT" || result.command === "UPDATE" || result.command === "DELETE") {
+      const n = BigInt(result.rowCount);
+      return { numUpdatedOrDeletedRows: n, numAffectedRows: n, rows: result.rows ?? [] };
+    }
+    return { rows: result.rows ?? [] };
+  }
+  async *streamQuery() { throw new Error("Streaming is not supported with Neon HTTP connections"); }
+}
+
+function dbUrl(): string {
+  return process.env.DATABASE_URL_UNPOOLED || process.env.DATABASE_URL || "";
+}
 
 export const auth = betterAuth({
-  database,
+  database: { dialect: PG_DIALECT, type: "postgres" },
   baseURL: process.env.BETTER_AUTH_URL || "https://schollective.com",
   trustedOrigins: [
     "https://schollective.com",
