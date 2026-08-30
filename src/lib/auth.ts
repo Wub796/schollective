@@ -1,5 +1,4 @@
 import { betterAuth } from "better-auth";
-import { dash } from "@better-auth/infra";
 import { neon } from "@neondatabase/serverless";
 import {
   CompiledQuery,
@@ -18,11 +17,14 @@ const PG_DIALECT = {
     // Stateless HTTP driver: every query goes through the Neon `neon()`
     // fetch endpoint. Avoids the WebSocket connections that break across
     // Cloudflare Worker isolate reuse (intermittent 1101 errors).
-    const client = { query: neon(getServerlessDbUrl(), { fullResults: true }) };
+    // neon() is deferred to first acquireConnection because process.env
+    // (Worker bindings) is not populated at module-load time in OpenNext.
+    let client: any;
     let connection: any;
     return {
       init: async () => {},
       acquireConnection: async () => {
+        if (!client) client = { query: neon(getServerlessDbUrl(), { fullResults: true }) };
         if (!connection) connection = new NeonConnection(client);
         return connection;
       },
@@ -51,11 +53,6 @@ class NeonConnection {
 
 export const auth = betterAuth({
   database: { dialect: PG_DIALECT, type: "postgres" },
-  plugins: [
-    dash({
-      apiKey: process.env.BETTER_AUTH_API_KEY,
-    }),
-  ],
   baseURL: process.env.BETTER_AUTH_URL || "https://schollective.com",
   trustedOrigins: [
     "https://schollective.com",
@@ -75,6 +72,18 @@ export const auth = betterAuth({
   },
   emailAndPassword: {
     enabled: true,
+    sendResetPassword: async ({ user, url }) => {
+      // TODO: Replace with transactional email service (Resend, SendGrid, etc.)
+      console.log(`[auth] Password reset requested for ${user.email}`);
+      console.log(`[auth] Reset URL: ${url}`);
+    },
+  },
+  emailVerification: {
+    sendVerificationEmail: async ({ user, url }) => {
+      // TODO: Replace with transactional email service (Resend, SendGrid, etc.)
+      console.log(`[auth] Verification email for ${user.email}`);
+      console.log(`[auth] Verify URL: ${url}`);
+    },
   },
   user: {
     additionalFields: {

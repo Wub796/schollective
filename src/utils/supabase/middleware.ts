@@ -29,9 +29,8 @@ export async function updateSession(request: NextRequest) {
         {
           cookieOptions: DEFAULT_COOKIE_OPTIONS,
           cookies: {
-            get(name: string) { return undefined },
-            set(name: string, value: string, options: CookieOptions) {},
-            remove(name: string, options: CookieOptions) {},
+            getAll() { return [] },
+            setAll() {},
           },
         }
       ),
@@ -45,52 +44,25 @@ export async function updateSession(request: NextRequest) {
     {
       cookieOptions: DEFAULT_COOKIE_OPTIONS,
       cookies: {
-        get(name: string) {
-          return request.cookies.get(name)?.value
+        getAll() {
+          return request.cookies.getAll()
         },
-        set(name: string, value: string, options: CookieOptions) {
-          const mergedOptions = {
-            ...DEFAULT_COOKIE_OPTIONS,
-            ...options,
-            maxAge: options?.maxAge ?? ONE_YEAR_IN_SECONDS,
-          }
-          request.cookies.set({
-            name,
-            value,
-            ...mergedOptions,
-          })
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value }) =>
+            request.cookies.set(name, value)
+          )
           response = NextResponse.next({
             request: {
               headers: request.headers,
             },
           })
-          response.cookies.set({
-            name,
-            value,
-            ...mergedOptions,
-          })
-        },
-        remove(name: string, options: CookieOptions) {
-          const mergedOptions = {
-            ...DEFAULT_COOKIE_OPTIONS,
-            ...options,
-            maxAge: 0,
-          }
-          request.cookies.set({
-            name,
-            value: '',
-            ...mergedOptions,
-          })
-          response = NextResponse.next({
-            request: {
-              headers: request.headers,
-            },
-          })
-          response.cookies.set({
-            name,
-            value: '',
-            ...mergedOptions,
-          })
+          cookiesToSet.forEach(({ name, value, options }) =>
+            response.cookies.set(name, value, {
+              ...DEFAULT_COOKIE_OPTIONS,
+              ...options,
+              maxAge: options?.maxAge ?? ONE_YEAR_IN_SECONDS,
+            })
+          )
         },
       },
     }
