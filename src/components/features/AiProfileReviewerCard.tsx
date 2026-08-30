@@ -38,9 +38,12 @@ export function AiProfileReviewerCard({ profileData }: Props) {
         body: JSON.stringify(dynamicPayload),
       });
 
-      const data = await res.json();
-      if (!res.ok || !data.success) {
-        throw new Error(data.error || "Review failed");
+      const contentType = res.headers.get("content-type") || "";
+      const data = contentType.includes("application/json")
+        ? await res.json()
+        : null;
+      if (!res.ok || !data?.success) {
+        throw new Error(data?.error || `Review failed (${res.status})`);
       }
 
       setReview(data.review);
