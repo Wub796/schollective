@@ -17,11 +17,14 @@ const PG_DIALECT = {
     // Stateless HTTP driver: every query goes through the Neon `neon()`
     // fetch endpoint. Avoids the WebSocket connections that break across
     // Cloudflare Worker isolate reuse (intermittent 1101 errors).
-    const client = { query: neon(getServerlessDbUrl(), { fullResults: true }) };
+    // neon() is deferred to first acquireConnection because process.env
+    // (Worker bindings) is not populated at module-load time in OpenNext.
+    let client: any;
     let connection: any;
     return {
       init: async () => {},
       acquireConnection: async () => {
+        if (!client) client = { query: neon(getServerlessDbUrl(), { fullResults: true }) };
         if (!connection) connection = new NeonConnection(client);
         return connection;
       },
