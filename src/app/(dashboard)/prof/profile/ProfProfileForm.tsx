@@ -199,7 +199,7 @@ export function ProfProfileForm({ profile: initialProfile }: Props) {
               justifyContent: "center",
               fontSize: "1.6rem",
               fontWeight: 900,
-              color: "#4f46e5",
+              color: "var(--accent)",
               overflow: "hidden",
             }}
           >
@@ -221,7 +221,7 @@ export function ProfProfileForm({ profile: initialProfile }: Props) {
               width: "1.8rem",
               height: "1.8rem",
               borderRadius: "50%",
-              background: "#4f46e5",
+              background: "var(--accent)",
               border: "2px solid #ffffff",
               color: "#ffffff",
               display: "flex",
@@ -238,13 +238,13 @@ export function ProfProfileForm({ profile: initialProfile }: Props) {
         </div>
 
         <div>
-          <h2 className="font-display" style={{ fontSize: "1.6rem", fontWeight: 900, color: "#0f172a", margin: "0 0 0.2rem 0" }}>
+          <h2 className="font-display" style={{ fontSize: "1.6rem", fontWeight: 900, color: "var(--text-primary)", margin: "0 0 0.2rem 0" }}>
             Dr. {displayName} {lastName}
           </h2>
-          <div style={{ fontSize: "0.85rem", color: "#475569", fontWeight: 600 }}>
+          <div style={{ fontSize: "0.85rem", color: "var(--text-secondary)", fontWeight: 600 }}>
             {title} • {inst}
           </div>
-          <div style={{ fontSize: "0.78rem", color: "#64748b", marginTop: "0.2rem" }}>{profile?.email}</div>
+          <div style={{ fontSize: "0.78rem", color: "var(--text-tertiary)", marginTop: "0.2rem" }}>{profile?.email}</div>
         </div>
       </div>
 
@@ -255,7 +255,7 @@ export function ProfProfileForm({ profile: initialProfile }: Props) {
           onClick={() => setActiveTab("edit")}
           style={{
             background: activeTab === "edit" ? "#ffffff" : "transparent",
-            color: activeTab === "edit" ? "#4f46e5" : "#64748b",
+            color: activeTab === "edit" ? "var(--accent)" : "var(--text-tertiary)",
             border: activeTab === "edit" ? "1px solid rgba(99, 102, 241, 0.2)" : "none",
             borderRadius: "100px",
             padding: "0.55rem 1.25rem",
@@ -277,7 +277,7 @@ export function ProfProfileForm({ profile: initialProfile }: Props) {
           onClick={() => setActiveTab("preview")}
           style={{
             background: activeTab === "preview" ? "#ffffff" : "transparent",
-            color: activeTab === "preview" ? "#4f46e5" : "#64748b",
+            color: activeTab === "preview" ? "var(--accent)" : "var(--text-tertiary)",
             border: activeTab === "preview" ? "1px solid rgba(99, 102, 241, 0.2)" : "none",
             borderRadius: "100px",
             padding: "0.55rem 1.25rem",
@@ -313,15 +313,15 @@ export function ProfProfileForm({ profile: initialProfile }: Props) {
             }}
           >
             <div>
-              <div style={{ fontSize: "0.9rem", fontWeight: 800, color: "#0f172a" }}>Mentorship Acceptance Status</div>
-              <div style={{ fontSize: "0.78rem", color: "#64748b" }}>Control whether students can submit research mentorship requests to your lab.</div>
+              <div style={{ fontSize: "0.9rem", fontWeight: 800, color: "var(--text-primary)" }}>Mentorship Acceptance Status</div>
+              <div style={{ fontSize: "0.78rem", color: "var(--text-tertiary)" }}>Control whether students can submit research mentorship requests to your lab.</div>
             </div>
             <button
               type="button"
               onClick={() => setIsAccepting(!isAccepting)}
               style={{
                 background: isAccepting ? "#10b981" : "#e2e8f0",
-                color: isAccepting ? "#ffffff" : "#64748b",
+                color: isAccepting ? "#ffffff" : "var(--text-tertiary)",
                 border: "none",
                 borderRadius: "100px",
                 padding: "0.5rem 1.25rem",
@@ -357,7 +357,7 @@ export function ProfProfileForm({ profile: initialProfile }: Props) {
 
           {/* Research Bio */}
           <div>
-            <label htmlFor="bio" style={{ display: "flex", alignItems: "center", gap: "0.4rem", fontSize: "0.72rem", fontWeight: 800, color: "#0f172a", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "0.5rem" }}>
+            <label htmlFor="bio" style={{ display: "flex", alignItems: "center", gap: "0.4rem", fontSize: "0.72rem", fontWeight: 800, color: "var(--text-primary)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "0.5rem" }}>
               <FileText size={15} color="#4f46e5" /> Research Overview & Lab Philosophy
             </label>
             <textarea
@@ -374,7 +374,7 @@ export function ProfProfileForm({ profile: initialProfile }: Props) {
                 borderRadius: "14px",
                 padding: "1rem",
                 fontSize: "0.9rem",
-                color: "#0f172a",
+                color: "var(--text-primary)",
                 outline: "none",
                 fontFamily: "var(--font-sans)",
                 lineHeight: 1.6,
@@ -384,7 +384,7 @@ export function ProfProfileForm({ profile: initialProfile }: Props) {
 
           {/* Featured Publications */}
           <div>
-            <label htmlFor="publications" style={{ display: "flex", alignItems: "center", gap: "0.4rem", fontSize: "0.72rem", fontWeight: 800, color: "#0f172a", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "0.5rem" }}>
+            <label htmlFor="publications" style={{ display: "flex", alignItems: "center", gap: "0.4rem", fontSize: "0.72rem", fontWeight: 800, color: "var(--text-primary)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "0.5rem" }}>
               <BookOpen size={15} color="#4f46e5" /> Featured Publications (One paper title per line)
             </label>
             <textarea
@@ -401,7 +401,7 @@ export function ProfProfileForm({ profile: initialProfile }: Props) {
                 borderRadius: "14px",
                 padding: "1rem",
                 fontSize: "0.85rem",
-                color: "#0f172a",
+                color: "var(--text-primary)",
                 outline: "none",
                 fontFamily: "var(--font-sans)",
                 lineHeight: 1.6,
@@ -450,7 +450,7 @@ export function ProfProfileForm({ profile: initialProfile }: Props) {
                   justifyContent: "center",
                   fontSize: "1.2rem",
                   fontWeight: 900,
-                  color: "#4f46e5",
+                  color: "var(--accent)",
                   overflow: "hidden",
                 }}
               >
@@ -462,13 +462,13 @@ export function ProfProfileForm({ profile: initialProfile }: Props) {
                 )}
               </div>
               <div>
-                <h2 className="font-display" style={{ fontSize: "1.6rem", fontWeight: 900, color: "#0f172a", margin: "0 0 0.25rem 0" }}>
+                <h2 className="font-display" style={{ fontSize: "1.6rem", fontWeight: 900, color: "var(--text-primary)", margin: "0 0 0.25rem 0" }}>
                   Dr. {displayName} {lastName}
                 </h2>
-                <div style={{ fontSize: "0.85rem", color: "#475569", fontWeight: 600 }}>
+                <div style={{ fontSize: "0.85rem", color: "var(--text-secondary)", fontWeight: 600 }}>
                   {title} • {dept}
                 </div>
-                <div style={{ fontSize: "0.8rem", color: "#64748b", display: "flex", alignItems: "center", gap: "0.35rem", marginTop: "0.2rem" }}>
+                <div style={{ fontSize: "0.8rem", color: "var(--text-tertiary)", display: "flex", alignItems: "center", gap: "0.35rem", marginTop: "0.2rem" }}>
                   <Building2 size={13} color="#4f46e5" /> {inst}
                 </div>
               </div>
@@ -478,7 +478,7 @@ export function ProfProfileForm({ profile: initialProfile }: Props) {
               <span style={{ padding: "0.35rem 0.85rem", borderRadius: "100px", background: "rgba(16, 185, 129, 0.1)", border: "1px solid rgba(16, 185, 129, 0.3)", color: "#166534", fontSize: "0.72rem", fontWeight: 800, display: "flex", alignItems: "center", gap: "0.3rem" }}>
                 <CheckCircle2 size={13} color="#166534" /> Verified Faculty
               </span>
-              <span style={{ padding: "0.35rem 0.85rem", borderRadius: "100px", background: isAccepting ? "rgba(79, 70, 229, 0.1)" : "rgba(239, 68, 68, 0.1)", border: isAccepting ? "1px solid rgba(79, 70, 229, 0.3)" : "1px solid rgba(239, 68, 68, 0.3)", color: isAccepting ? "#4f46e5" : "#dc2626", fontSize: "0.72rem", fontWeight: 800 }}>
+              <span style={{ padding: "0.35rem 0.85rem", borderRadius: "100px", background: isAccepting ? "rgba(79, 70, 229, 0.1)" : "rgba(239, 68, 68, 0.1)", border: isAccepting ? "1px solid rgba(79, 70, 229, 0.3)" : "1px solid rgba(239, 68, 68, 0.3)", color: isAccepting ? "var(--accent)" : "#dc2626", fontSize: "0.72rem", fontWeight: 800 }}>
                 {isAccepting ? "Accepting Students" : "Currently Full"}
               </span>
             </div>
@@ -489,7 +489,7 @@ export function ProfProfileForm({ profile: initialProfile }: Props) {
           {/* Research Bio */}
           {bio && (
             <div>
-              <span style={{ fontSize: "0.72rem", fontWeight: 800, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.08em", display: "block", marginBottom: "0.4rem" }}>
+              <span style={{ fontSize: "0.72rem", fontWeight: 800, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: "0.08em", display: "block", marginBottom: "0.4rem" }}>
                 Research Overview & Lab Philosophy
               </span>
               <p style={{ fontSize: "0.9rem", color: "#334155", lineHeight: 1.65, margin: 0 }}>{bio}</p>
@@ -499,12 +499,12 @@ export function ProfProfileForm({ profile: initialProfile }: Props) {
           {/* Focus Areas */}
           {expertiseArray.length > 0 && (
             <div>
-              <span style={{ fontSize: "0.72rem", fontWeight: 800, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.08em", display: "block", marginBottom: "0.5rem" }}>
+              <span style={{ fontSize: "0.72rem", fontWeight: 800, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: "0.08em", display: "block", marginBottom: "0.5rem" }}>
                 Research Focus Areas
               </span>
               <div style={{ display: "flex", flexWrap: "wrap", gap: "0.45rem" }}>
                 {expertiseArray.map((exp: string, i: number) => (
-                  <span key={i} style={{ background: "rgba(99, 102, 241, 0.08)", border: "1px solid rgba(99, 102, 241, 0.25)", color: "#4f46e5", padding: "0.3rem 0.75rem", borderRadius: "100px", fontSize: "0.78rem", fontWeight: 700 }}>
+                  <span key={i} style={{ background: "rgba(99, 102, 241, 0.08)", border: "1px solid rgba(99, 102, 241, 0.25)", color: "var(--accent)", padding: "0.3rem 0.75rem", borderRadius: "100px", fontSize: "0.78rem", fontWeight: 700 }}>
                     {exp}
                   </span>
                 ))}
@@ -515,12 +515,12 @@ export function ProfProfileForm({ profile: initialProfile }: Props) {
           {/* Accepted Mentee Levels */}
           {studentTypesArray.length > 0 && (
             <div>
-              <span style={{ fontSize: "0.72rem", fontWeight: 800, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.08em", display: "block", marginBottom: "0.5rem" }}>
+              <span style={{ fontSize: "0.72rem", fontWeight: 800, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: "0.08em", display: "block", marginBottom: "0.5rem" }}>
                 Accepted Mentee Levels
               </span>
               <div style={{ display: "flex", flexWrap: "wrap", gap: "0.45rem" }}>
                 {studentTypesArray.map((st: string, i: number) => (
-                  <span key={i} style={{ background: "#f8fafc", border: "1px solid #cbd5e1", color: "#334155", padding: "0.25rem 0.65rem", borderRadius: "8px", fontSize: "0.75rem", fontWeight: 600 }}>
+                  <span key={i} style={{ background: "#f8fafc", border: "1px solid var(--border-hover)", color: "#334155", padding: "0.25rem 0.65rem", borderRadius: "8px", fontSize: "0.75rem", fontWeight: 600 }}>
                     {st}
                   </span>
                 ))}
@@ -531,19 +531,19 @@ export function ProfProfileForm({ profile: initialProfile }: Props) {
           {/* Office Hours & Lab Site */}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem" }}>
             {officeHrs && (
-              <div style={{ background: "#f8fafc", padding: "0.85rem 1rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
-                <span style={{ fontSize: "0.68rem", fontWeight: 800, color: "#64748b", textTransform: "uppercase", display: "flex", alignItems: "center", gap: "0.3rem" }}>
+              <div style={{ background: "#f8fafc", padding: "0.85rem 1rem", borderRadius: "10px", border: "1px solid var(--border)" }}>
+                <span style={{ fontSize: "0.68rem", fontWeight: 800, color: "var(--text-tertiary)", textTransform: "uppercase", display: "flex", alignItems: "center", gap: "0.3rem" }}>
                   <Clock size={12} color="#4f46e5" /> Office Hours
                 </span>
-                <span style={{ fontSize: "0.82rem", fontWeight: 700, color: "#0f172a" }}>{officeHrs}</span>
+                <span style={{ fontSize: "0.82rem", fontWeight: 700, color: "var(--text-primary)" }}>{officeHrs}</span>
               </div>
             )}
             {labSite && (
-              <div style={{ background: "#f8fafc", padding: "0.85rem 1rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
-                <span style={{ fontSize: "0.68rem", fontWeight: 800, color: "#64748b", textTransform: "uppercase", display: "flex", alignItems: "center", gap: "0.3rem" }}>
+              <div style={{ background: "#f8fafc", padding: "0.85rem 1rem", borderRadius: "10px", border: "1px solid var(--border)" }}>
+                <span style={{ fontSize: "0.68rem", fontWeight: 800, color: "var(--text-tertiary)", textTransform: "uppercase", display: "flex", alignItems: "center", gap: "0.3rem" }}>
                   <Globe size={12} color="#4f46e5" /> Lab Website
                 </span>
-                <a href={labSite.startsWith("http") ? labSite : `https://${labSite}`} target="_blank" rel="noopener noreferrer" style={{ fontSize: "0.82rem", fontWeight: 700, color: "#4f46e5", wordBreak: "break-all", overflowWrap: "break-word", maxWidth: "100%", display: "block" }}>
+                <a href={labSite.startsWith("http") ? labSite : `https://${labSite}`} target="_blank" rel="noopener noreferrer" style={{ fontSize: "0.82rem", fontWeight: 700, color: "var(--accent)", wordBreak: "break-all", overflowWrap: "break-word", maxWidth: "100%", display: "block" }}>
                   {labSite}
                 </a>
               </div>
@@ -553,10 +553,10 @@ export function ProfProfileForm({ profile: initialProfile }: Props) {
           {/* Publications */}
           {publicationsArray.length > 0 && (
             <div>
-              <span style={{ fontSize: "0.72rem", fontWeight: 800, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.08em", display: "block", marginBottom: "0.5rem" }}>
+              <span style={{ fontSize: "0.72rem", fontWeight: 800, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: "0.08em", display: "block", marginBottom: "0.5rem" }}>
                 Featured Publications
               </span>
-              <ul style={{ margin: 0, paddingLeft: "1.25rem", fontSize: "0.82rem", color: "#475569", lineHeight: 1.6 }}>
+              <ul style={{ margin: 0, paddingLeft: "1.25rem", fontSize: "0.82rem", color: "var(--text-secondary)", lineHeight: 1.6 }}>
                 {publicationsArray.map((pub: string, i: number) => (
                   <li key={i} style={{ marginBottom: "0.3rem" }}>{pub}</li>
                 ))}
@@ -572,7 +572,7 @@ export function ProfProfileForm({ profile: initialProfile }: Props) {
 function FieldInput({ id, name, label, value, onChange, placeholder, icon }: { id: string; name: string; label: string; value: string; onChange: (e: any) => void; placeholder: string; icon: React.ReactNode }) {
   return (
     <div>
-      <label htmlFor={id} style={{ display: "flex", alignItems: "center", gap: "0.4rem", fontSize: "0.72rem", fontWeight: 800, color: "#0f172a", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "0.5rem" }}>
+      <label htmlFor={id} style={{ display: "flex", alignItems: "center", gap: "0.4rem", fontSize: "0.72rem", fontWeight: 800, color: "var(--text-primary)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "0.5rem" }}>
         {icon} {label}
       </label>
       <input
@@ -589,7 +589,7 @@ function FieldInput({ id, name, label, value, onChange, placeholder, icon }: { i
           borderRadius: "100px",
           padding: "0.75rem 1.25rem",
           fontSize: "0.88rem",
-          color: "#0f172a",
+          color: "var(--text-primary)",
           outline: "none",
           fontFamily: "var(--font-sans)",
         }}
