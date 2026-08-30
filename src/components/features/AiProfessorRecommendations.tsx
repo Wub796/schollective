@@ -31,10 +31,15 @@ export function AiProfessorRecommendations() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("/api/ai/recommendations");
-      const data = await res.json();
-      if (!res.ok || !data.success) {
-        throw new Error(data.error || "Failed to load recommendations");
+      const res = await fetch("/api/ai/recommendations", {
+        headers: { Accept: "application/json" },
+      });
+      const contentType = res.headers.get("content-type") || "";
+      const data = contentType.includes("application/json")
+        ? await res.json()
+        : null;
+      if (!res.ok || !data?.success) {
+        throw new Error(data?.error || `Failed to load recommendations (${res.status})`);
       }
       setRecommendations(data.recommendations || []);
     } catch (err: any) {
