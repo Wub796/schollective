@@ -251,6 +251,9 @@ function SignupContent() {
     try {
       setLoading(true);
       toast.info("Connecting to Google...");
+      // Persist the chosen role across the Google OAuth redirect so onboarding
+      // can restore it (a fresh social account defaults to "student").
+      localStorage.setItem("signup_role", role);
       const res = await authClient.signIn.social({
         provider: "google",
         callbackURL: `${window.location.origin}/auth/callback`,

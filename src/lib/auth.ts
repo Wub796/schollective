@@ -1,4 +1,5 @@
 import { betterAuth } from "better-auth";
+import { dash } from "@better-auth/infra";
 import { neon } from "@neondatabase/serverless";
 import {
   CompiledQuery,
@@ -50,6 +51,11 @@ class NeonConnection {
 
 export const auth = betterAuth({
   database: { dialect: PG_DIALECT, type: "postgres" },
+  plugins: [
+    dash({
+      apiKey: process.env.BETTER_AUTH_API_KEY,
+    }),
+  ],
   baseURL: process.env.BETTER_AUTH_URL || "https://schollective.com",
   trustedOrigins: [
     "https://schollective.com",
