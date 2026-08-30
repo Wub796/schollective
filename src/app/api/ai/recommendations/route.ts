@@ -47,7 +47,10 @@ export async function GET(req: Request) {
       LIMIT 30;
     `) as ProfessorCandidate[];
 
-    const result = await recommendProfessors(safeStudent, professors);
+    const result = await recommendProfessors(safeStudent, professors).catch((error) => {
+      console.error("[GET /api/ai/recommendations] Recommender failed:", error);
+      return { recommendations: [], generatedAt: new Date().toISOString(), totalEvaluated: professors.length };
+    });
 
     const profMap = new Map(professors.map((p) => [p.id, p]));
     const enrichedRecommendations = result.recommendations.map((rec) => {
