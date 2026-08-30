@@ -49,6 +49,8 @@ _legacy_vanilla/
 
 # Database migration scripts (run manually, not part of the app)
 *.sql
+# ...except the checked-in schema the app needs to boot.
+!db/migrations/*.sql
 
 # Dev utility scripts
 scripts/

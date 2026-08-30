@@ -4,7 +4,7 @@ import React, { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter, useSearchParams } from "next/navigation";
-import { authClient } from "@/lib/auth-client";
+import { authClient, authErrorMessage } from "@/lib/auth-client";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/Button";
 import { InstitutionInput } from "@/components/ui/InstitutionInput";
@@ -214,7 +214,8 @@ function SignupContent() {
       });
 
       if (res.error) {
-        throw new Error(res.error.message || "Failed to create account.");
+        console.error("[signup] signUp.email error:", JSON.stringify(res.error));
+        throw new Error(authErrorMessage(res.error, "Failed to create account."));
       }
 
       // Seed initial profile in Neon
@@ -232,7 +233,12 @@ function SignupContent() {
         }),
       });
       if (!profileResponse.ok) {
-        throw new Error("Account created, but your profile could not be saved. Please sign in again.");
+        const detail = await profileResponse.json().catch(() => null);
+        throw new Error(
+          detail?.error
+            ? `Account created, but your profile could not be saved: ${detail.error}`
+            : "Account created, but your profile could not be saved. Please sign in again.",
+        );
       }
 
       toast.success("Account created successfully!");
@@ -259,10 +265,11 @@ function SignupContent() {
         callbackURL: `${window.location.origin}/auth/callback`,
       });
       if (res?.error) {
+        console.error("[signup] signIn.social error:", JSON.stringify(res.error));
         if (res.error.message?.includes("Provider not found") || (res.error as any).status === 404) {
           throw new Error("Google Sign-In is not configured yet. Please sign up with Email & Password or add GOOGLE_CLIENT_ID to your environment variables.");
         }
-        throw new Error(res.error.message || "Failed to sign up with Google.");
+        throw new Error(authErrorMessage(res.error, "Failed to sign up with Google."));
       }
     } catch (err: any) {
       toast.error(err?.message || "Failed to sign up with Google.");
