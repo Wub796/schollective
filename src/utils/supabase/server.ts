@@ -24,9 +24,8 @@ export async function createClient() {
       {
         cookieOptions: DEFAULT_COOKIE_OPTIONS,
         cookies: {
-          get(name: string) { return undefined },
-          set(name: string, value: string, options: CookieOptions) {},
-          remove(name: string, options: CookieOptions) {},
+          getAll() { return [] },
+          setAll() {},
         },
       }
     )
@@ -38,33 +37,21 @@ export async function createClient() {
     {
       cookieOptions: DEFAULT_COOKIE_OPTIONS,
       cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value
+        getAll() {
+          return cookieStore.getAll()
         },
-        set(name: string, value: string, options: CookieOptions) {
+        setAll(cookiesToSet) {
           try {
-            cookieStore.set({
-              name,
-              value,
-              ...DEFAULT_COOKIE_OPTIONS,
-              ...options,
-              maxAge: options?.maxAge ?? ONE_YEAR_IN_SECONDS,
-            })
-          } catch (error) {
-            // Can be ignored if handled by middleware
-          }
-        },
-        remove(name: string, options: CookieOptions) {
-          try {
-            cookieStore.set({
-              name,
-              value: '',
-              ...DEFAULT_COOKIE_OPTIONS,
-              ...options,
-              maxAge: 0,
-            })
-          } catch (error) {
-            // Can be ignored if handled by middleware
+            cookiesToSet.forEach(({ name, value, options }) =>
+              cookieStore.set(name, value, {
+                ...DEFAULT_COOKIE_OPTIONS,
+                ...options,
+                maxAge: options?.maxAge ?? ONE_YEAR_IN_SECONDS,
+              })
+            )
+          } catch {
+            // The `setAll` method was called from a Server Component.
+            // This can be ignored if middleware is refreshing user sessions.
           }
         },
       },

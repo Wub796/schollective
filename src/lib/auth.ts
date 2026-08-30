@@ -72,6 +72,18 @@ export const auth = betterAuth({
   },
   emailAndPassword: {
     enabled: true,
+    sendResetPassword: async ({ user, url }) => {
+      // TODO: Replace with transactional email service (Resend, SendGrid, etc.)
+      console.log(`[auth] Password reset requested for ${user.email}`);
+      console.log(`[auth] Reset URL: ${url}`);
+    },
+  },
+  emailVerification: {
+    sendVerificationEmail: async ({ user, url }) => {
+      // TODO: Replace with transactional email service (Resend, SendGrid, etc.)
+      console.log(`[auth] Verification email for ${user.email}`);
+      console.log(`[auth] Verify URL: ${url}`);
+    },
   },
   user: {
     additionalFields: {
