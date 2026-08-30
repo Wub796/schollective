@@ -7,6 +7,7 @@ import {
   PostgresIntrospector,
   PostgresQueryCompiler,
 } from "kysely";
+import { getServerlessDbUrl } from "@/lib/neon/db";
 
 const PG_DIALECT = {
   createAdapter: () => new PostgresAdapter(),
@@ -16,7 +17,7 @@ const PG_DIALECT = {
     // Stateless HTTP driver: every query goes through the Neon `neon()`
     // fetch endpoint. Avoids the WebSocket connections that break across
     // Cloudflare Worker isolate reuse (intermittent 1101 errors).
-    const client = { query: neon(dbUrl(), { fullResults: true }) };
+    const client = { query: neon(getServerlessDbUrl(), { fullResults: true }) };
     let connection: any;
     return {
       init: async () => {},
@@ -45,10 +46,6 @@ class NeonConnection {
     return { rows: result.rows ?? [] };
   }
   async *streamQuery() { throw new Error("Streaming is not supported with Neon HTTP connections"); }
-}
-
-function dbUrl(): string {
-  return process.env.DATABASE_URL_UNPOOLED || process.env.DATABASE_URL || "";
 }
 
 export const auth = betterAuth({
