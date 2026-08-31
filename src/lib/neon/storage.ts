@@ -7,29 +7,72 @@ import {
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 /**
- * Neon Object Storage S3 Client
- * Configured with branch-aware credentials and custom endpoint.
+ * Neon Object Storage (S3-compatible).
+ *
+ * The bucket is private, so nothing here hands out a bare object URL: uploads
+ * go through a presigned PUT and reads come back through a presigned GET.
  */
-export const s3 = new S3Client({
-  region: process.env.AWS_REGION || "us-east-2",
-  endpoint: process.env.AWS_ENDPOINT_URL_S3,
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "",
-  },
-  forcePathStyle: true,
-});
 
 export const UPLOADS_BUCKET = "uploads";
 
 /** Largest avatar we will presign for, in bytes. */
 export const MAX_AVATAR_BYTES = 5 * 1024 * 1024;
 
+const REQUIRED_STORAGE_KEYS = [
+  "AWS_ENDPOINT_URL_S3",
+  "AWS_ACCESS_KEY_ID",
+  "AWS_SECRET_ACCESS_KEY",
+] as const;
+
+export function missingStorageKeys(): string[] {
+  return REQUIRED_STORAGE_KEYS.filter((key) => !process.env[key]);
+}
+
+export function isStorageConfigured(): boolean {
+  return missingStorageKeys().length === 0;
+}
+
 /**
- * Generates a presigned PUT URL for direct client-to-storage uploads.
+ * Throws with the names of whatever is absent.
  *
- * The signature covers `ContentType`, so the browser cannot swap in a different
- * one; `ContentLength` caps the upload the same way.
+ * Signing succeeds against blank credentials and an undefined endpoint, which
+ * previously produced an upload URL pointing at real AWS and an avatar recorded
+ * as the literal string "undefined/uploads/…". Failing here keeps that
+ * unusable state out of the database.
+ */
+export function assertStorageConfigured(): void {
+  const missing = missingStorageKeys();
+  if (missing.length) {
+    throw new Error(
+      `Object storage is not configured — missing ${missing.join(", ")}. ` +
+        "Copy these from the Neon console (Object Storage) and set them on the Worker.",
+    );
+  }
+}
+
+/**
+ * Built per call rather than at module load: on Cloudflare, process.env is
+ * populated from the Worker bindings when the first request arrives, so a
+ * client constructed at import time would capture empty credentials.
+ */
+function client(): S3Client {
+  assertStorageConfigured();
+  return new S3Client({
+    region: process.env.AWS_REGION || "us-east-2",
+    endpoint: process.env.AWS_ENDPOINT_URL_S3,
+    credentials: {
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+    },
+    forcePathStyle: true,
+  });
+}
+
+/**
+ * Presigned PUT for a direct browser upload.
+ *
+ * `ContentType` and `ContentLength` are part of the signature, so the browser
+ * cannot substitute a different type or a larger file than we approved.
  */
 export async function getUploadUrl(
   key: string,
@@ -43,27 +86,16 @@ export async function getUploadUrl(
     ContentType: contentType,
     ...(contentLength ? { ContentLength: contentLength } : {}),
   });
-  return getSignedUrl(s3, command, { expiresIn: expiresInSeconds });
+  return getSignedUrl(client(), command, { expiresIn: expiresInSeconds });
 }
 
-/**
- * Generates a presigned GET URL for private object retrieval.
- */
+/** Presigned GET, the only way to read from this private bucket. */
 export async function getDownloadUrl(key: string, expiresInSeconds = 3600) {
-  const command = new GetObjectCommand({
-    Bucket: UPLOADS_BUCKET,
-    Key: key,
-  });
-  return getSignedUrl(s3, command, { expiresIn: expiresInSeconds });
+  const command = new GetObjectCommand({ Bucket: UPLOADS_BUCKET, Key: key });
+  return getSignedUrl(client(), command, { expiresIn: expiresInSeconds });
 }
 
-/**
- * Deletes an object from the uploads bucket.
- */
 export async function deleteObject(key: string) {
-  const command = new DeleteObjectCommand({
-    Bucket: UPLOADS_BUCKET,
-    Key: key,
-  });
-  return s3.send(command);
+  const command = new DeleteObjectCommand({ Bucket: UPLOADS_BUCKET, Key: key });
+  return client().send(command);
 }

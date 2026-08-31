@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
-import { getUploadUrl, MAX_AVATAR_BYTES } from "@/lib/neon/storage";
+import { assertStorageConfigured, getUploadUrl, MAX_AVATAR_BYTES } from "@/lib/neon/storage";
 import { isSuspended } from "@/lib/authz";
 import { checkRateLimit } from "@/lib/security";
 
@@ -36,6 +36,10 @@ export async function POST(req: Request) {
   }
 
   try {
+    // Fail before minting anything: signing works fine against blank
+    // credentials, and the resulting URL would be useless.
+    assertStorageConfigured();
+
     const { contentType, contentLength } = await req.json();
 
     const extension = typeof contentType === "string" ? ALLOWED_IMAGE_TYPES[contentType] : undefined;
@@ -57,11 +61,17 @@ export async function POST(req: Request) {
     // The key is built entirely from trusted values — no user-supplied path.
     const key = `avatars/${user.id}/${Date.now()}.${extension}`;
     const uploadUrl = await getUploadUrl(key, contentType, 3600, size);
-    const publicUrl = `${process.env.AWS_ENDPOINT_URL_S3}/uploads/${key}`;
+
+    // The bucket is private, so the stored avatar points at our own route,
+    // which signs a read on demand. A bare bucket URL would 403 for viewers.
+    const publicUrl = `/api/storage/avatar/${key}`;
 
     return NextResponse.json({ uploadUrl, publicUrl, key });
   } catch (error: any) {
-    console.error("[storage] Presign error:", error);
-    return NextResponse.json({ error: "Failed to create upload URL." }, { status: 500 });
+    console.error("[storage] Presign error:", error?.message ?? error);
+    return NextResponse.json(
+      { error: error?.message || "Failed to create upload URL." },
+      { status: 500 },
+    );
   }
 }
