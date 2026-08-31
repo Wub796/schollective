@@ -102,10 +102,13 @@ export function ProfProfileForm({ profile: initialProfile }: Props) {
       const presignRes = await fetch("/api/storage/upload", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ filename: file.name, contentType: file.type }),
+        body: JSON.stringify({ contentType: file.type, contentLength: file.size }),
       });
 
-      if (!presignRes.ok) throw new Error("Failed to generate storage upload URL");
+      if (!presignRes.ok) {
+        const detail = await presignRes.json().catch(() => null);
+        throw new Error(detail?.error || "Failed to generate storage upload URL");
+      }
       const { uploadUrl, publicUrl } = await presignRes.json();
 
       // 2. Direct upload to Neon Object Storage
@@ -129,7 +132,7 @@ export function ProfProfileForm({ profile: initialProfile }: Props) {
       toast.success("Profile picture updated!");
     } catch (err: any) {
       console.error(err);
-      toast.error("Upload failed. Please try again.");
+      toast.error(err?.message || "Upload failed. Please try again.");
     } finally {
       setAvatarUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = "";

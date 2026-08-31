@@ -8,8 +8,13 @@ stateless HTTP driver, which is what makes it work inside a Cloudflare Worker.
 | Table | Owner | Purpose |
 | --- | --- | --- |
 | `user`, `session`, `account`, `verification` | Better Auth | Credentials, sessions, OAuth links, one-time tokens |
+| `rateLimit` | Better Auth | Shared counters for the auth rate limiter |
 | `profiles` | The app | Role, institution, onboarding answers |
 | `requests`, `messages`, `notifications` | The app | Mentorship requests and threads |
+
+The bootstrap also creates the indexes these tables are queried by. The rate
+limiter is deliberately database-backed: an in-memory counter is per Worker
+isolate, which on Cloudflare is close to no limit at all.
 
 ## Migrations
 
@@ -37,7 +42,11 @@ Authentication needs these set on the Worker (`wrangler secret put <NAME>`):
 | `DATABASE_URL` | yes | Neon connection string. `DATABASE_URL_UNPOOLED` is preferred when set — the HTTP `/sql` endpoint lives on the compute host, not the `-pooler` host. |
 | `BETTER_AUTH_SECRET` | yes | Session signing key. Changing it signs everyone out. |
 | `BETTER_AUTH_URL` | yes | The origin the app is served from. Google's redirect URI is derived from it, so it must match the URI registered in the Google console (`<BETTER_AUTH_URL>/api/auth/callback/google`). |
-| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | for Google sign-in | From the Google Cloud console OAuth client. |
+| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | for Google sign-in | From the Google Cloud console OAuth client. Google sign-in is offered only when both are set; without them the button reports itself as unconfigured rather than failing mid-handshake. |
+| `RESEND_API_KEY` / `EMAIL_FROM` | for password reset | Without them, reset and verification emails are logged instead of delivered — so nobody can recover an account. `EMAIL_FROM` must use a domain verified in Resend. |
+| `AUTH_SCHEMA_AUTO_MIGRATE` | no | Set to `false` to manage the schema by hand. |
 
-When any of these is missing, `/api/auth/*` now answers with a JSON body naming
-the problem instead of an empty HTTP 500.
+None of these have in-code fallbacks: a secret committed to the repository is a
+secret everyone has. When `DATABASE_URL` is missing, `/api/auth/*` answers with a
+JSON body naming the problem — and listing which variables the deployment can
+actually see — instead of an empty HTTP 500.

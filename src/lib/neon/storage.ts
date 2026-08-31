@@ -22,14 +22,26 @@ export const s3 = new S3Client({
 
 export const UPLOADS_BUCKET = "uploads";
 
+/** Largest avatar we will presign for, in bytes. */
+export const MAX_AVATAR_BYTES = 5 * 1024 * 1024;
+
 /**
  * Generates a presigned PUT URL for direct client-to-storage uploads.
+ *
+ * The signature covers `ContentType`, so the browser cannot swap in a different
+ * one; `ContentLength` caps the upload the same way.
  */
-export async function getUploadUrl(key: string, contentType: string, expiresInSeconds = 3600) {
+export async function getUploadUrl(
+  key: string,
+  contentType: string,
+  expiresInSeconds = 3600,
+  contentLength?: number,
+) {
   const command = new PutObjectCommand({
     Bucket: UPLOADS_BUCKET,
     Key: key,
     ContentType: contentType,
+    ...(contentLength ? { ContentLength: contentLength } : {}),
   });
   return getSignedUrl(s3, command, { expiresIn: expiresInSeconds });
 }

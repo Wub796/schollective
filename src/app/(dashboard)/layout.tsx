@@ -1,6 +1,7 @@
 import { AppShell } from "@/components/layout/AppShell";
 import { AdminViewBanner } from "@/components/ui/AdminViewBanner";
 import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
+import { isSuspended } from "@/lib/authz";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -14,6 +15,10 @@ export default async function DashboardLayout({
   const { user, profile } = await getCurrentUserAndProfile();
   if (!user) {
     redirect("/login");
+  }
+  // Suspending an account has to remove access, not just change a label.
+  if (isSuspended(profile)) {
+    redirect("/suspended");
   }
   const role = profile?.role || "student";
 

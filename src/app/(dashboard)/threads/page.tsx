@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { sql } from "@/lib/neon/db";
+import { parseJsonbArray } from "@/lib/utils";
 import { ThreadCard } from "@/components/features/ThreadCard";
 import { BookOpen, Search } from "lucide-react";
 
@@ -37,7 +38,7 @@ export default async function ThreadsPage() {
         'first_name', p.first_name,
         'last_name', p.last_name,
         'preferred_name', p.preferred_name,
-        'expertise', COALESCE(p.expertise, array_to_string(p.expertise_fields, ', '))
+        'expertise_fields', p.expertise_fields
       ) as professor,
       COALESCE(
         (SELECT json_agg(json_build_object('content', m.content, 'created_at', m.created_at, 'read_at', m.read_at, 'sender_id', m.sender_id))
@@ -57,7 +58,7 @@ export default async function ThreadsPage() {
         first_name: prof?.first_name ?? "Unknown",
         last_name: prof?.last_name ?? null,
         preferred_name: prof?.preferred_name ?? null,
-        detail: prof?.expertise ?? "Professor",
+        detail: parseJsonbArray(prof?.expertise_fields).join(", ") || "Professor",
       },
       latest_message:
         req.messages?.length > 0
