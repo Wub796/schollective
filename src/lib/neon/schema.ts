@@ -64,10 +64,17 @@ const REQUIRED_COLUMNS: Record<string, ColumnSpec[]> = {
     { name: "createdAt", ddl: `"createdAt" timestamptz not null default CURRENT_TIMESTAMP` },
     { name: "updatedAt", ddl: `"updatedAt" timestamptz not null default CURRENT_TIMESTAMP` },
   ],
+  // Backs the shared rate limiter configured in src/lib/auth.ts.
+  rateLimit: [
+    { name: "id", ddl: `"id" text not null primary key` },
+    { name: "key", ddl: `"key" text not null unique` },
+    { name: "count", ddl: `"count" integer not null default 0` },
+    { name: "lastRequest", ddl: `"lastRequest" bigint not null default 0` },
+  ],
 };
 
 // Order matters: "session" and "account" reference "user".
-const TABLE_ORDER = ["user", "session", "account", "verification"] as const;
+const TABLE_ORDER = ["user", "session", "account", "verification", "rateLimit"] as const;
 
 const INDEX_STATEMENTS = [
   `CREATE INDEX IF NOT EXISTS "session_userId_idx" ON "session" ("userId")`,
@@ -92,6 +99,30 @@ const BACKFILL_ISSUER = `
      END
    WHERE "issuer" IS NULL
 `;
+
+/**
+ * Indexes for the app's own tables. Every query below filters or orders on
+ * these columns, and without them each one is a sequential scan that gets
+ * slower with every request, message and notification the beta produces.
+ */
+const APP_INDEXES: Record<string, string[]> = {
+  profiles: [
+    `CREATE INDEX IF NOT EXISTS "profiles_role_status_idx" ON profiles (role, status)`,
+    `CREATE INDEX IF NOT EXISTS "profiles_email_idx" ON profiles (email)`,
+  ],
+  requests: [
+    `CREATE INDEX IF NOT EXISTS "requests_student_id_idx" ON requests (student_id)`,
+    `CREATE INDEX IF NOT EXISTS "requests_professor_id_idx" ON requests (professor_id)`,
+    `CREATE INDEX IF NOT EXISTS "requests_professor_status_idx" ON requests (professor_id, status)`,
+  ],
+  messages: [
+    `CREATE INDEX IF NOT EXISTS "messages_request_id_created_at_idx" ON messages (request_id, created_at)`,
+    `CREATE INDEX IF NOT EXISTS "messages_sender_id_idx" ON messages (sender_id)`,
+  ],
+  notifications: [
+    `CREATE INDEX IF NOT EXISTS "notifications_user_id_created_at_idx" ON notifications (user_id, created_at DESC)`,
+  ],
+};
 
 // Emitted only when the app's own profile table is absent (a brand new database).
 // An existing profiles table is never altered here.
@@ -147,33 +178,72 @@ async function exec(run: Runner, statement: string): Promise<void> {
   }
 }
 
-/** One round trip that tells us every table/column we care about. */
-async function readSchema(run: Runner): Promise<Map<string, Set<string>>> {
-  const names = [...TABLE_ORDER, "profiles"];
-  const rows = await run(
-    `SELECT table_name::text AS table_name, column_name::text AS column_name
-       FROM information_schema.columns
-      WHERE table_schema = current_schema()
-        AND table_name::text = ANY($1::text[])`,
-    [names],
-  );
-  const found = new Map<string, Set<string>>();
-  for (const row of rows as Array<{ table_name: string; column_name: string }>) {
-    if (!found.has(row.table_name)) found.set(row.table_name, new Set());
-    found.get(row.table_name)!.add(row.column_name);
-  }
-  return found;
+interface SchemaSnapshot {
+  /** table name -> column names */
+  columns: Map<string, Set<string>>;
+  /** every index name on the tables we manage */
+  indexes: Set<string>;
 }
 
-function isUpToDate(found: Map<string, Set<string>>): boolean {
-  if (!found.has("profiles")) return false;
+/** One round trip that tells us every table, column and index we care about. */
+async function readSchema(run: Runner): Promise<SchemaSnapshot> {
+  const names = [...TABLE_ORDER, ...Object.keys(APP_INDEXES)];
+  const rows = await run(
+    `SELECT 'column' AS kind, table_name::text AS name, column_name::text AS detail
+       FROM information_schema.columns
+      WHERE table_schema = current_schema()
+        AND table_name::text = ANY($1::text[])
+     UNION ALL
+     SELECT 'index' AS kind, tablename::text AS name, indexname::text AS detail
+       FROM pg_indexes
+      WHERE schemaname = current_schema()
+        AND tablename::text = ANY($1::text[])`,
+    [names],
+  );
+
+  const columns = new Map<string, Set<string>>();
+  const indexes = new Set<string>();
+  for (const row of rows as Array<{ kind: string; name: string; detail: string }>) {
+    if (row.kind === "index") {
+      indexes.add(row.detail);
+      continue;
+    }
+    if (!columns.has(row.name)) columns.set(row.name, new Set());
+    columns.get(row.name)!.add(row.detail);
+  }
+  return { columns, indexes };
+}
+
+/** Index name out of a `CREATE [UNIQUE] INDEX IF NOT EXISTS "name" ...` statement. */
+function indexNameOf(statement: string): string | null {
+  return statement.match(/INDEX IF NOT EXISTS "([^"]+)"/i)?.[1] ?? null;
+}
+
+function isUpToDate({ columns, indexes }: SchemaSnapshot): boolean {
+  if (!columns.has("profiles")) return false;
+
   for (const table of TABLE_ORDER) {
-    const columns = found.get(table);
-    if (!columns) return false;
+    const present = columns.get(table);
+    if (!present) return false;
     for (const column of REQUIRED_COLUMNS[table]) {
-      if (!columns.has(column.name)) return false;
+      if (!present.has(column.name)) return false;
     }
   }
+
+  for (const statement of INDEX_STATEMENTS) {
+    const name = indexNameOf(statement);
+    if (name && !indexes.has(name)) return false;
+  }
+
+  // Only demand indexes on tables this database actually has.
+  for (const [table, statements] of Object.entries(APP_INDEXES)) {
+    if (!columns.has(table)) continue;
+    for (const statement of statements) {
+      const name = indexNameOf(statement);
+      if (name && !indexes.has(name)) return false;
+    }
+  }
+
   return true;
 }
 
@@ -182,10 +252,11 @@ async function bootstrap(): Promise<void> {
   if (!url) throw new Error(describeMissingDbUrl());
 
   const run = neon(url) as unknown as Runner;
-  const found = await readSchema(run);
-  if (isUpToDate(found)) return;
+  const snapshot = await readSchema(run);
+  if (isUpToDate(snapshot)) return;
 
-  console.log("[auth] Repairing authentication schema in Neon…");
+  const found = snapshot.columns;
+  console.log("[auth] Repairing database schema in Neon…");
 
   for (const table of TABLE_ORDER) {
     const columns = found.get(table);
@@ -217,9 +288,21 @@ async function bootstrap(): Promise<void> {
 
   if (!found.has("profiles")) {
     await exec(run, PROFILES_TABLE);
+    found.set("profiles", new Set());
   }
 
-  console.log("[auth] Authentication schema is ready.");
+  for (const [table, statements] of Object.entries(APP_INDEXES)) {
+    if (!found.has(table)) continue;
+    for (const statement of statements) {
+      try {
+        await exec(run, statement);
+      } catch (error: any) {
+        console.warn(`[auth] Could not index ${table}:`, error?.message ?? error);
+      }
+    }
+  }
+
+  console.log("[auth] Database schema is ready.");
 }
 
 let inFlight: Promise<void> | null = null;

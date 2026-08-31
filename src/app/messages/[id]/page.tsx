@@ -6,6 +6,8 @@ import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { ChatThread } from "@/components/features/ChatThread";
 import { CloseThreadButton } from "@/components/features/CloseThreadButton";
 import { ArrowLeft, ShieldCheck } from "lucide-react";
+import { getThreadAccess, isSuspended } from "@/lib/authz";
+import { parseJsonbArray } from "@/lib/utils";
 import { markRead } from "./actions";
 
 export const dynamic = "force-dynamic";
@@ -16,25 +18,22 @@ interface MessagePageProps {
 
 export default async function MessagePage({ params }: MessagePageProps) {
   const { id: requestId } = await params;
-  const { session, user } = await getCurrentUserAndProfile();
+  const { session, user, profile } = await getCurrentUserAndProfile();
   if (!session || !user) redirect("/login");
+  // This route is outside the (dashboard) group, so it carries its own gate.
+  if (isSuspended(profile)) redirect("/suspended");
+
+  // A thread belongs to its student and professor alone. Anyone else gets the
+  // same 404 as a thread that does not exist, so ids cannot be probed.
+  const { request, isParticipant } = await getThreadAccess(requestId, user.id);
+  if (!request || !isParticipant) return notFound();
 
   // Mark incoming messages as read
   await markRead(requestId);
 
-  const requests = await sql`
-    SELECT id, status, topic, student_id, professor_id
-    FROM requests
-    WHERE id = ${requestId}
-    LIMIT 1;
-  `;
-  const request = requests[0];
-
-  if (!request) return notFound();
-
   const [studentRows, professorRows] = await Promise.all([
     sql`SELECT id, first_name, last_name, preferred_name, role FROM profiles WHERE id = ${request.student_id} LIMIT 1;`,
-    sql`SELECT id, first_name, last_name, preferred_name, role, expertise_fields, expertise FROM profiles WHERE id = ${request.professor_id} LIMIT 1;`,
+    sql`SELECT id, first_name, last_name, preferred_name, role, expertise_fields FROM profiles WHERE id = ${request.professor_id} LIMIT 1;`,
   ]);
 
   const studentProfile = studentRows[0];
@@ -104,7 +103,7 @@ export default async function MessagePage({ params }: MessagePageProps) {
                 {participant.role === "professor" && <ShieldCheck size={12} style={{ color: "#4f46e5", flexShrink: 0 }} />}
               </div>
               <div style={{ fontSize: "0.58rem", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: "#4f46e5", fontFamily: "var(--font-sans, monospace)" }}>
-                {participant.role === "professor" ? ((participant as any).expertise || (participant as any).expertise_fields?.[0] || "Faculty") : "Student"}
+                {participant.role === "professor" ? (parseJsonbArray((participant as any).expertise_fields)[0] || "Faculty") : "Student"}
               </div>
             </div>
           </div>

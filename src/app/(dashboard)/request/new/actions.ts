@@ -4,10 +4,12 @@ import { sql } from "@/lib/neon/db";
 import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { revalidatePath } from "next/cache";
 import { sanitiseText, isValidUuid, LIMITS } from "@/lib/security";
+import { isSuspended } from "@/lib/authz";
 
 export async function submitMentorshipRequest(formData: FormData) {
-  const { session, user } = await getCurrentUserAndProfile();
+  const { session, user, profile } = await getCurrentUserAndProfile();
   if (!session || !user) return { error: "Unauthorized" };
+  if (isSuspended(profile)) return { error: "Your account is suspended." };
 
   const profId = sanitiseText(formData.get("prof_id"), 100);
   const topic = sanitiseText(formData.get("topic"), LIMITS.topic);
@@ -38,6 +40,17 @@ export async function submitMentorshipRequest(formData: FormData) {
   const count = countResult[0]?.count || 0;
   if (count >= 5) {
     return { error: "Daily request limit reached. You can send up to 5 requests per day.", limitReached: true };
+  }
+
+  // The professor id arrives from the client, so confirm it really is an
+  // approved professor before creating a thread against it.
+  const professors = await sql`
+    SELECT id FROM profiles
+    WHERE id = ${profId} AND role = 'professor' AND status = 'approved'
+    LIMIT 1;
+  `;
+  if (!professors[0]) {
+    return { error: "That professor is not accepting requests." };
   }
 
   // 2. Insert request

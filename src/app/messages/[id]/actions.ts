@@ -5,6 +5,7 @@ import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { revalidatePath } from "next/cache";
 import { filterMessage } from "@/lib/validators";
 import { checkRateLimit, sanitiseText, isValidUuid, LIMITS } from "@/lib/security";
+import { getThreadAccess, isSuspended } from "@/lib/authz";
 
 const MESSAGE_RATE_LIMIT = 15;
 
@@ -25,8 +26,9 @@ export async function sendMessage(requestId: string, content: string) {
   }
 
   try {
-    const { user } = await getCurrentUserAndProfile();
+    const { user, profile } = await getCurrentUserAndProfile();
     if (!user) return { error: "Unauthorized" };
+    if (isSuspended(profile)) return { error: "Your account is suspended." };
 
     const rateCheck = checkRateLimit(`msg:${user.id}`, MESSAGE_RATE_LIMIT, 60 * 1000);
     if (!rateCheck.allowed) {
@@ -36,20 +38,10 @@ export async function sendMessage(requestId: string, content: string) {
       };
     }
 
-    const requests = await sql`
-      SELECT status, student_id, professor_id
-      FROM requests
-      WHERE id = ${reqId}
-      LIMIT 1;
-    `;
-    const request = requests[0];
-
-    if (!request) return { error: "Thread not found." };
+    const { request, isParticipant } = await getThreadAccess(reqId, user.id);
+    if (!request || !isParticipant) return { error: "Thread not found." };
     if (request.status !== "active") {
       return { error: "This thread is not active and cannot receive messages." };
-    }
-    if (request.student_id !== user.id && request.professor_id !== user.id) {
-      return { error: "Unauthorized: You are not a participant in this thread." };
     }
 
     await sql`
@@ -80,18 +72,8 @@ export async function closeRequest(requestId: string) {
     const { user } = await getCurrentUserAndProfile();
     if (!user) return { error: "Unauthorized" };
 
-    const requests = await sql`
-      SELECT student_id, professor_id
-      FROM requests
-      WHERE id = ${reqId}
-      LIMIT 1;
-    `;
-    const request = requests[0];
-
-    if (!request) return { error: "Request not found" };
-    if (request.student_id !== user.id && request.professor_id !== user.id) {
-      return { error: "Unauthorized: You are not a participant in this thread." };
-    }
+    const { request, isParticipant } = await getThreadAccess(reqId, user.id);
+    if (!request || !isParticipant) return { error: "Request not found" };
 
     await sql`
       UPDATE requests
@@ -118,6 +100,10 @@ export async function markRead(requestId: string) {
   try {
     const { user } = await getCurrentUserAndProfile();
     if (!user) return { error: "Unauthorized" };
+
+    // Without this, anyone could clear the unread state on someone else's thread.
+    const { isParticipant } = await getThreadAccess(reqId, user.id);
+    if (!isParticipant) return { error: "Request not found" };
 
     await sql`
       UPDATE messages
