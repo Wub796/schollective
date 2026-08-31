@@ -142,16 +142,16 @@ export function ActivitiesListBuilder({
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              color: "#4f46e5",
+              color: "var(--accent)",
             }}
           >
             <Briefcase size={20} />
           </div>
           <div>
-            <h3 style={{ fontSize: "1.05rem", fontWeight: 800, color: "#0f172a", margin: 0 }}>
+            <h3 style={{ fontSize: "1.05rem", fontWeight: 800, color: "var(--text-primary)", margin: 0 }}>
               Activities & Experience
             </h3>
-            <p style={{ fontSize: "0.76rem", color: "#64748b", margin: 0 }}>
+            <p style={{ fontSize: "0.76rem", color: "var(--text-tertiary)", margin: 0 }}>
               Research, technical projects, teams, and leadership roles
             </p>
           </div>
@@ -162,7 +162,7 @@ export function ActivitiesListBuilder({
             type="button"
             onClick={handleStartAdd}
             style={{
-              background: "#4f46e5",
+              background: "var(--accent)",
               color: "#ffffff",
               border: "none",
               borderRadius: "8px",
@@ -194,7 +194,7 @@ export function ActivitiesListBuilder({
                   key={item.id}
                   style={{
                     background: "#f8fafc",
-                    border: "1.5px solid #4f46e5",
+                    border: "1.5px solid var(--accent)",
                     borderRadius: "12px",
                     padding: "1.25rem",
                     display: "flex",
@@ -203,13 +203,13 @@ export function ActivitiesListBuilder({
                   }}
                 >
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                    <span style={{ fontSize: "0.75rem", fontWeight: 800, color: "#4f46e5", textTransform: "uppercase" }}>
+                    <span style={{ fontSize: "0.75rem", fontWeight: 800, color: "var(--accent)", textTransform: "uppercase" }}>
                       Edit Activity
                     </span>
                     <button
                       type="button"
                       onClick={resetForm}
-                      style={{ background: "none", border: "none", color: "#64748b", cursor: "pointer" }}
+                      style={{ background: "none", border: "none", color: "var(--text-tertiary)", cursor: "pointer" }}
                     >
                       <X size={16} />
                     </button>
@@ -217,31 +217,31 @@ export function ActivitiesListBuilder({
 
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "0.75rem" }}>
                     <div>
-                      <label style={{ fontSize: "0.65rem", fontWeight: 700, color: "#475569", display: "block", marginBottom: "0.25rem" }}>Title / Role</label>
+                      <label style={{ fontSize: "0.65rem", fontWeight: 700, color: "var(--text-secondary)", display: "block", marginBottom: "0.25rem" }}>Title / Role</label>
                       <input
                         type="text"
                         value={formTitle}
                         onChange={(e) => setFormTitle(e.target.value)}
                         placeholder="e.g. Lead Developer"
-                        style={{ width: "100%", padding: "0.6rem 0.75rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.85rem", background: "#fff" }}
+                        style={{ width: "100%", padding: "0.6rem 0.75rem", borderRadius: "6px", border: "1px solid var(--border-hover)", fontSize: "0.85rem", background: "#fff" }}
                       />
                     </div>
                     <div>
-                      <label style={{ fontSize: "0.65rem", fontWeight: 700, color: "#475569", display: "block", marginBottom: "0.25rem" }}>Organization / Context</label>
+                      <label style={{ fontSize: "0.65rem", fontWeight: 700, color: "var(--text-secondary)", display: "block", marginBottom: "0.25rem" }}>Organization / Context</label>
                       <input
                         type="text"
                         value={formOrg}
                         onChange={(e) => setFormOrg(e.target.value)}
                         placeholder="e.g. Robotics Club"
-                        style={{ width: "100%", padding: "0.6rem 0.75rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.85rem", background: "#fff" }}
+                        style={{ width: "100%", padding: "0.6rem 0.75rem", borderRadius: "6px", border: "1px solid var(--border-hover)", fontSize: "0.85rem", background: "#fff" }}
                       />
                     </div>
                     <div>
-                      <label style={{ fontSize: "0.65rem", fontWeight: 700, color: "#475569", display: "block", marginBottom: "0.25rem" }}>Category</label>
+                      <label style={{ fontSize: "0.65rem", fontWeight: 700, color: "var(--text-secondary)", display: "block", marginBottom: "0.25rem" }}>Category</label>
                       <Select
                         value={formCategory}
                         onChange={(e) => setFormCategory(e.target.value)}
-                        style={{ width: "100%", padding: "0.6rem 0.75rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.85rem", background: "#fff" }}
+                        style={{ width: "100%", padding: "0.6rem 0.75rem", borderRadius: "6px", border: "1px solid var(--border-hover)", fontSize: "0.85rem", background: "#fff" }}
                       >
                         {CATEGORY_OPTIONS.map((c) => (
                           <option key={c} value={c}>{c}</option>
@@ -249,25 +249,25 @@ export function ActivitiesListBuilder({
                       </Select>
                     </div>
                     <div>
-                      <label style={{ fontSize: "0.65rem", fontWeight: 700, color: "#475569", display: "block", marginBottom: "0.25rem" }}>Date Range</label>
+                      <label style={{ fontSize: "0.65rem", fontWeight: 700, color: "var(--text-secondary)", display: "block", marginBottom: "0.25rem" }}>Date Range</label>
                       <input
                         type="text"
                         value={formDateRange}
                         onChange={(e) => setFormDateRange(e.target.value)}
                         placeholder="e.g. Sep 2024 - Present"
-                        style={{ width: "100%", padding: "0.6rem 0.75rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.85rem", background: "#fff" }}
+                        style={{ width: "100%", padding: "0.6rem 0.75rem", borderRadius: "6px", border: "1px solid var(--border-hover)", fontSize: "0.85rem", background: "#fff" }}
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label style={{ fontSize: "0.65rem", fontWeight: 700, color: "#475569", display: "block", marginBottom: "0.25rem" }}>Description / Key Highlight (Optional)</label>
+                    <label style={{ fontSize: "0.65rem", fontWeight: 700, color: "var(--text-secondary)", display: "block", marginBottom: "0.25rem" }}>Description / Key Highlight (Optional)</label>
                     <input
                       type="text"
                       value={formDescription}
                       onChange={(e) => setFormDescription(e.target.value)}
                       placeholder="e.g. Designed autonomous navigation algorithms; qualified for state finals"
-                      style={{ width: "100%", padding: "0.6rem 0.75rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.85rem", background: "#fff" }}
+                      style={{ width: "100%", padding: "0.6rem 0.75rem", borderRadius: "6px", border: "1px solid var(--border-hover)", fontSize: "0.85rem", background: "#fff" }}
                     />
                   </div>
 
@@ -275,14 +275,14 @@ export function ActivitiesListBuilder({
                     <button
                       type="button"
                       onClick={resetForm}
-                      style={{ background: "#e2e8f0", color: "#475569", border: "none", borderRadius: "6px", padding: "0.45rem 0.85rem", fontSize: "0.78rem", fontWeight: 600, cursor: "pointer" }}
+                      style={{ background: "#e2e8f0", color: "var(--text-secondary)", border: "none", borderRadius: "6px", padding: "0.45rem 0.85rem", fontSize: "0.78rem", fontWeight: 600, cursor: "pointer" }}
                     >
                       Cancel
                     </button>
                     <button
                       type="button"
                       onClick={handleSaveItem}
-                      style={{ background: "#4f46e5", color: "#ffffff", border: "none", borderRadius: "6px", padding: "0.45rem 0.95rem", fontSize: "0.78rem", fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: "0.3rem" }}
+                      style={{ background: "var(--accent)", color: "#ffffff", border: "none", borderRadius: "6px", padding: "0.45rem 0.95rem", fontSize: "0.78rem", fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: "0.3rem" }}
                     >
                       <Check size={14} /> Update Activity
                     </button>
@@ -296,7 +296,7 @@ export function ActivitiesListBuilder({
                 key={item.id}
                 style={{
                   background: "#ffffff",
-                  border: "1px solid #e2e8f0",
+                  border: "1px solid var(--border)",
                   borderRadius: "12px",
                   padding: "1rem 1.25rem",
                   display: "flex",
@@ -308,11 +308,11 @@ export function ActivitiesListBuilder({
               >
                 <div style={{ display: "flex", flexDirection: "column", gap: "0.3rem", flex: 1 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", flexWrap: "wrap" }}>
-                    <span style={{ fontSize: "0.92rem", fontWeight: 700, color: "#0f172a" }}>
+                    <span style={{ fontSize: "0.92rem", fontWeight: 700, color: "var(--text-primary)" }}>
                       {item.title}
                     </span>
                     {item.organization && (
-                      <span style={{ fontSize: "0.85rem", color: "#475569", fontWeight: 500 }}>
+                      <span style={{ fontSize: "0.85rem", color: "var(--text-secondary)", fontWeight: 500 }}>
                         · {item.organization}
                       </span>
                     )}
@@ -334,7 +334,7 @@ export function ActivitiesListBuilder({
                   </div>
 
                   {item.date_range && (
-                    <div style={{ display: "flex", alignItems: "center", gap: "0.35rem", fontSize: "0.74rem", color: "#64748b" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.35rem", fontSize: "0.74rem", color: "var(--text-tertiary)" }}>
                       <Calendar size={12} />
                       <span>{item.date_range}</span>
                     </div>
@@ -351,7 +351,7 @@ export function ActivitiesListBuilder({
                   <button
                     type="button"
                     onClick={() => handleStartEdit(item)}
-                    style={{ background: "none", border: "none", color: "#64748b", padding: "0.3rem", borderRadius: "6px", cursor: "pointer" }}
+                    style={{ background: "none", border: "none", color: "var(--text-tertiary)", padding: "0.3rem", borderRadius: "6px", cursor: "pointer" }}
                     title="Edit activity"
                   >
                     <Edit2 size={15} />
@@ -376,7 +376,7 @@ export function ActivitiesListBuilder({
         <div
           style={{
             background: "#f8fafc",
-            border: "1.5px dashed #4f46e5",
+            border: "1.5px dashed var(--accent)",
             borderRadius: "12px",
             padding: "1.25rem",
             display: "flex",
@@ -385,13 +385,13 @@ export function ActivitiesListBuilder({
           }}
         >
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <span style={{ fontSize: "0.75rem", fontWeight: 800, color: "#4f46e5", textTransform: "uppercase" }}>
+            <span style={{ fontSize: "0.75rem", fontWeight: 800, color: "var(--accent)", textTransform: "uppercase" }}>
               New Activity Details
             </span>
             <button
               type="button"
               onClick={resetForm}
-              style={{ background: "none", border: "none", color: "#64748b", cursor: "pointer" }}
+              style={{ background: "none", border: "none", color: "var(--text-tertiary)", cursor: "pointer" }}
             >
               <X size={16} />
             </button>
@@ -399,31 +399,31 @@ export function ActivitiesListBuilder({
 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "0.75rem" }}>
             <div>
-              <label style={{ fontSize: "0.65rem", fontWeight: 700, color: "#475569", display: "block", marginBottom: "0.25rem" }}>Title / Role</label>
+              <label style={{ fontSize: "0.65rem", fontWeight: 700, color: "var(--text-secondary)", display: "block", marginBottom: "0.25rem" }}>Title / Role</label>
               <input
                 type="text"
                 value={formTitle}
                 onChange={(e) => setFormTitle(e.target.value)}
                 placeholder="e.g. Lead Developer or Independent Researcher"
-                style={{ width: "100%", padding: "0.6rem 0.75rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.85rem", background: "#fff" }}
+                style={{ width: "100%", padding: "0.6rem 0.75rem", borderRadius: "6px", border: "1px solid var(--border-hover)", fontSize: "0.85rem", background: "#fff" }}
               />
             </div>
             <div>
-              <label style={{ fontSize: "0.65rem", fontWeight: 700, color: "#475569", display: "block", marginBottom: "0.25rem" }}>Organization / Context</label>
+              <label style={{ fontSize: "0.65rem", fontWeight: 700, color: "var(--text-secondary)", display: "block", marginBottom: "0.25rem" }}>Organization / Context</label>
               <input
                 type="text"
                 value={formOrg}
                 onChange={(e) => setFormOrg(e.target.value)}
                 placeholder="e.g. Robotics Club or Local University Lab"
-                style={{ width: "100%", padding: "0.6rem 0.75rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.85rem", background: "#fff" }}
+                style={{ width: "100%", padding: "0.6rem 0.75rem", borderRadius: "6px", border: "1px solid var(--border-hover)", fontSize: "0.85rem", background: "#fff" }}
               />
             </div>
             <div>
-              <label style={{ fontSize: "0.65rem", fontWeight: 700, color: "#475569", display: "block", marginBottom: "0.25rem" }}>Category</label>
+              <label style={{ fontSize: "0.65rem", fontWeight: 700, color: "var(--text-secondary)", display: "block", marginBottom: "0.25rem" }}>Category</label>
               <Select
                 value={formCategory}
                 onChange={(e) => setFormCategory(e.target.value)}
-                style={{ width: "100%", padding: "0.6rem 0.75rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.85rem", background: "#fff" }}
+                style={{ width: "100%", padding: "0.6rem 0.75rem", borderRadius: "6px", border: "1px solid var(--border-hover)", fontSize: "0.85rem", background: "#fff" }}
               >
                 {CATEGORY_OPTIONS.map((c) => (
                   <option key={c} value={c}>{c}</option>
@@ -431,25 +431,25 @@ export function ActivitiesListBuilder({
               </Select>
             </div>
             <div>
-              <label style={{ fontSize: "0.65rem", fontWeight: 700, color: "#475569", display: "block", marginBottom: "0.25rem" }}>Date Range</label>
+              <label style={{ fontSize: "0.65rem", fontWeight: 700, color: "var(--text-secondary)", display: "block", marginBottom: "0.25rem" }}>Date Range</label>
               <input
                 type="text"
                 value={formDateRange}
                 onChange={(e) => setFormDateRange(e.target.value)}
                 placeholder="e.g. Sep 2024 - Present"
-                style={{ width: "100%", padding: "0.6rem 0.75rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.85rem", background: "#fff" }}
+                style={{ width: "100%", padding: "0.6rem 0.75rem", borderRadius: "6px", border: "1px solid var(--border-hover)", fontSize: "0.85rem", background: "#fff" }}
               />
             </div>
           </div>
 
           <div>
-            <label style={{ fontSize: "0.65rem", fontWeight: 700, color: "#475569", display: "block", marginBottom: "0.25rem" }}>Description / Key Highlight (Optional)</label>
+            <label style={{ fontSize: "0.65rem", fontWeight: 700, color: "var(--text-secondary)", display: "block", marginBottom: "0.25rem" }}>Description / Key Highlight (Optional)</label>
             <input
               type="text"
               value={formDescription}
               onChange={(e) => setFormDescription(e.target.value)}
               placeholder="e.g. Designed and trained convolutional neural nets to detect plant leaf diseases"
-              style={{ width: "100%", padding: "0.6rem 0.75rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.85rem", background: "#fff" }}
+              style={{ width: "100%", padding: "0.6rem 0.75rem", borderRadius: "6px", border: "1px solid var(--border-hover)", fontSize: "0.85rem", background: "#fff" }}
             />
           </div>
 
@@ -457,14 +457,14 @@ export function ActivitiesListBuilder({
             <button
               type="button"
               onClick={resetForm}
-              style={{ background: "#e2e8f0", color: "#475569", border: "none", borderRadius: "6px", padding: "0.45rem 0.85rem", fontSize: "0.78rem", fontWeight: 600, cursor: "pointer" }}
+              style={{ background: "#e2e8f0", color: "var(--text-secondary)", border: "none", borderRadius: "6px", padding: "0.45rem 0.85rem", fontSize: "0.78rem", fontWeight: 600, cursor: "pointer" }}
             >
               Cancel
             </button>
             <button
               type="button"
               onClick={handleSaveItem}
-              style={{ background: "#4f46e5", color: "#ffffff", border: "none", borderRadius: "6px", padding: "0.45rem 0.95rem", fontSize: "0.78rem", fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: "0.3rem" }}
+              style={{ background: "var(--accent)", color: "#ffffff", border: "none", borderRadius: "6px", padding: "0.45rem 0.95rem", fontSize: "0.78rem", fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: "0.3rem" }}
             >
               <Plus size={14} /> Add to Profile
             </button>
@@ -476,7 +476,7 @@ export function ActivitiesListBuilder({
       {activities.length === 0 && !isAdding && (
         <div
           style={{
-            border: "1px dashed #cbd5e1",
+            border: "1px dashed var(--border-hover)",
             borderRadius: "12px",
             padding: "1.75rem 1rem",
             textAlign: "center",
@@ -487,7 +487,7 @@ export function ActivitiesListBuilder({
           }}
         >
           <Layers size={28} color="#94a3b8" />
-          <span style={{ fontSize: "0.85rem", fontWeight: 600, color: "#475569" }}>
+          <span style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--text-secondary)" }}>
             No activities or experience listed yet
           </span>
           <p style={{ fontSize: "0.75rem", color: "#94a3b8", margin: 0, maxWidth: "340px" }}>
@@ -500,7 +500,7 @@ export function ActivitiesListBuilder({
               marginTop: "0.5rem",
               background: "rgba(99, 102, 241, 0.1)",
               border: "1px solid rgba(99, 102, 241, 0.25)",
-              color: "#4f46e5",
+              color: "var(--accent)",
               borderRadius: "8px",
               padding: "0.45rem 0.85rem",
               fontSize: "0.78rem",
