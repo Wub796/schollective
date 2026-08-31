@@ -1,16 +1,14 @@
-import {
-  S3Client,
-  PutObjectCommand,
-  GetObjectCommand,
-  DeleteObjectCommand,
-} from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { presignS3Url } from "./s3-presign";
 
 /**
  * Neon Object Storage (S3-compatible).
  *
  * The bucket is private, so nothing here hands out a bare object URL: uploads
- * go through a presigned PUT and reads come back through a presigned GET.
+ * go through a presigned PUT and reads through a presigned GET.
+ *
+ * Signing is done by `presignS3Url` on Web Crypto rather than the AWS SDK — the
+ * SDK reads the shared config file through `fs.readFile` while resolving client
+ * config, which a Cloudflare Worker cannot do.
  */
 
 export const UPLOADS_BUCKET = "uploads";
@@ -33,12 +31,9 @@ export function isStorageConfigured(): boolean {
 }
 
 /**
- * Throws with the names of whatever is absent.
- *
- * Signing succeeds against blank credentials and an undefined endpoint, which
- * previously produced an upload URL pointing at real AWS and an avatar recorded
- * as the literal string "undefined/uploads/…". Failing here keeps that
- * unusable state out of the database.
+ * Throws naming whatever is absent. Signing succeeds against blank credentials,
+ * so without this an upload URL would be minted that no one can use — and the
+ * avatar recorded against it would be permanently broken.
  */
 export function assertStorageConfigured(): void {
   const missing = missingStorageKeys();
@@ -50,29 +45,23 @@ export function assertStorageConfigured(): void {
   }
 }
 
-/**
- * Built per call rather than at module load: on Cloudflare, process.env is
- * populated from the Worker bindings when the first request arrives, so a
- * client constructed at import time would capture empty credentials.
- */
-function client(): S3Client {
+/** Read config at call time: Worker bindings are not in process.env at import. */
+function config() {
   assertStorageConfigured();
-  return new S3Client({
+  return {
+    endpoint: process.env.AWS_ENDPOINT_URL_S3!,
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
     region: process.env.AWS_REGION || "us-east-2",
-    endpoint: process.env.AWS_ENDPOINT_URL_S3,
-    credentials: {
-      accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
-    },
-    forcePathStyle: true,
-  });
+    bucket: UPLOADS_BUCKET,
+  };
 }
 
 /**
  * Presigned PUT for a direct browser upload.
  *
- * `ContentType` and `ContentLength` are part of the signature, so the browser
- * cannot substitute a different type or a larger file than we approved.
+ * `content-length` is folded into the signature, so a client holding this URL
+ * cannot upload a larger file than the size we approved.
  */
 export async function getUploadUrl(
   key: string,
@@ -80,22 +69,16 @@ export async function getUploadUrl(
   expiresInSeconds = 3600,
   contentLength?: number,
 ) {
-  const command = new PutObjectCommand({
-    Bucket: UPLOADS_BUCKET,
-    Key: key,
-    ContentType: contentType,
-    ...(contentLength ? { ContentLength: contentLength } : {}),
+  return presignS3Url({
+    method: "PUT",
+    ...config(),
+    key,
+    expiresInSeconds,
+    signedHeaders: contentLength ? { "content-length": String(contentLength) } : {},
   });
-  return getSignedUrl(client(), command, { expiresIn: expiresInSeconds });
 }
 
-/** Presigned GET, the only way to read from this private bucket. */
+/** Presigned GET — the only way to read from this private bucket. */
 export async function getDownloadUrl(key: string, expiresInSeconds = 3600) {
-  const command = new GetObjectCommand({ Bucket: UPLOADS_BUCKET, Key: key });
-  return getSignedUrl(client(), command, { expiresIn: expiresInSeconds });
-}
-
-export async function deleteObject(key: string) {
-  const command = new DeleteObjectCommand({ Bucket: UPLOADS_BUCKET, Key: key });
-  return client().send(command);
+  return presignS3Url({ method: "GET", ...config(), key, expiresInSeconds });
 }
