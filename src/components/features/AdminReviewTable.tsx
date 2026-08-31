@@ -206,14 +206,14 @@ export function AdminReviewTable({ applicants }: AdminReviewTableProps) {
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <div style={{ background: "#4f46e5", borderRadius: "8px", padding: "0.4rem", color: "#ffffff" }}>
+          <div style={{ background: "var(--accent)", borderRadius: "8px", padding: "0.4rem", color: "#ffffff" }}>
             <Sparkles size={16} />
           </div>
           <div>
-            <div style={{ fontSize: "0.85rem", fontWeight: 800, color: "#0f172a" }}>
+            <div style={{ fontSize: "0.85rem", fontWeight: 800, color: "var(--text-primary)" }}>
               Automated AI Application Reviewer
             </div>
-            <div style={{ fontSize: "0.75rem", color: "#475569" }}>
+            <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)" }}>
               Auto-approves legitimate verified faculty applications. Suspicious applications are kept in queue and flagged for manual admin inspection (never auto-rejected).
             </div>
           </div>
@@ -224,7 +224,7 @@ export function AdminReviewTable({ applicants }: AdminReviewTableProps) {
           onClick={handleBatchAiReview}
           disabled={batchProcessing}
           style={{
-            background: "#4f46e5",
+            background: "var(--accent)",
             color: "#ffffff",
             border: "1px solid rgba(79, 70, 229, 0.5)",
             borderRadius: "100px",
