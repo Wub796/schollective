@@ -68,7 +68,7 @@ export function ThreadCard({ request, viewerRole, hasUnread }: ThreadCardProps) 
         {/* Top shimmer line */}
         <div style={{
           position: "absolute", insetInline: 0, top: 0, height: "2px",
-          background: "linear-gradient(90deg, transparent, #4f46e5, #6366f1, transparent)",
+          background: "linear-gradient(90deg, transparent, var(--accent), var(--accent-blue), transparent)",
         }} />
 
         {/* Header row */}
@@ -80,7 +80,7 @@ export function ThreadCard({ request, viewerRole, hasUnread }: ThreadCardProps) 
               background: "rgba(79, 70, 229, 0.1)",
               border: "1px solid rgba(79, 70, 229, 0.25)",
               display: "flex", alignItems: "center", justifyContent: "center",
-              fontSize: "0.75rem", fontWeight: 700, color: "#4f46e5",
+              fontSize: "0.75rem", fontWeight: 700, color: "var(--accent)",
               letterSpacing: "0.05em", flexShrink: 0,
               fontFamily: "var(--font-sans)",
             }}>
@@ -89,7 +89,7 @@ export function ThreadCard({ request, viewerRole, hasUnread }: ThreadCardProps) 
             <div style={{ minWidth: 0 }}>
               <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
                 <span className="font-display" style={{ 
-                  fontSize: "0.92rem", fontWeight: 700, color: "#0f172a", 
+                  fontSize: "0.92rem", fontWeight: 700, color: "var(--text-primary)", 
                   lineHeight: 1.3, fontFamily: "var(--font-sans)",
                   overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap"
                 }}>
@@ -100,7 +100,7 @@ export function ThreadCard({ request, viewerRole, hasUnread }: ThreadCardProps) 
                     width: "9px",
                     height: "9px",
                     borderRadius: "50%",
-                    backgroundColor: "#6366f1",
+                    backgroundColor: "var(--accent-blue)",
                     border: "1px solid #0f172a",
                     flexShrink: 0,
                     boxShadow: "0 0 8px rgba(79, 70, 229, 0.6)"
@@ -109,7 +109,7 @@ export function ThreadCard({ request, viewerRole, hasUnread }: ThreadCardProps) 
               </div>
               <div style={{
                 fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.2em",
-                textTransform: "uppercase", color: "#4f46e5",
+                textTransform: "uppercase", color: "var(--accent)",
                 marginTop: "0.25rem", fontFamily: "var(--font-sans, monospace)",
                 overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap"
               }}>
@@ -142,14 +142,14 @@ export function ThreadCard({ request, viewerRole, hasUnread }: ThreadCardProps) 
         <div style={{ flex: 1, marginBottom: "1.25rem" }}>
           <div style={{
             fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.25em",
-            textTransform: "uppercase", color: "#475569", opacity: 0.6,
+            textTransform: "uppercase", color: "var(--text-secondary)", opacity: 0.6,
             marginBottom: "0.5rem", fontFamily: "var(--font-sans, monospace)",
           }}>
             Research Topic
           </div>
           <p className="font-display" style={{
             fontSize: "0.95rem", lineHeight: 1.6,
-            color: "#0f172a", fontStyle: "italic", fontWeight: 500,
+            color: "var(--text-primary)", fontStyle: "italic", fontWeight: 500,
             display: "-webkit-box", WebkitLineClamp: 3,
             WebkitBoxOrient: "vertical", overflow: "hidden",
           }}>
@@ -165,15 +165,15 @@ export function ThreadCard({ request, viewerRole, hasUnread }: ThreadCardProps) 
             marginTop: "auto",
           }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.4rem" }}>
-              <span style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "#4f46e5", fontFamily: "var(--font-sans, monospace)" }}>
+              <span style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--accent)", fontFamily: "var(--font-sans, monospace)" }}>
                 Last activity
               </span>
-              <span style={{ fontSize: "0.62rem", color: "#475569", opacity: 0.7, fontFamily: "var(--font-sans)", fontWeight: 600 }}>
+              <span style={{ fontSize: "0.62rem", color: "var(--text-secondary)", opacity: 0.7, fontFamily: "var(--font-sans)", fontWeight: 600 }}>
                 {new Date(request.latest_message.created_at).toLocaleDateString()}
               </span>
             </div>
             <p style={{
-              fontSize: "0.78rem", color: "#0f172a", opacity: 0.75,
+              fontSize: "0.78rem", color: "var(--text-primary)", opacity: 0.75,
               overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
               fontFamily: "var(--font-sans)", lineHeight: 1.5,
             }}>
@@ -182,7 +182,7 @@ export function ThreadCard({ request, viewerRole, hasUnread }: ThreadCardProps) 
           </div>
         ) : (
           <div style={{ marginTop: "auto", paddingTop: "1rem", borderTop: "1px solid rgba(99, 102, 241, 0.4)" }}>
-            <span style={{ fontSize: "0.65rem", color: "#475569", opacity: 0.6, fontFamily: "var(--font-sans)", fontStyle: "italic" }}>
+            <span style={{ fontSize: "0.65rem", color: "var(--text-secondary)", opacity: 0.6, fontFamily: "var(--font-sans)", fontStyle: "italic" }}>
               No messages yet
             </span>
           </div>

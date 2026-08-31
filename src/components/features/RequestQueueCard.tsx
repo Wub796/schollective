@@ -93,7 +93,7 @@ export function RequestQueueCard({ request }: RequestQueueCardProps) {
               const isHS = edu.includes("high-school");
               const isCol = edu.includes("undergraduate") || edu === "college";
               return (
-                <div style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", fontSize: "0.62rem", color: "#4f46e5", background: "rgba(79, 70, 229, 0.08)", padding: "0.2rem 0.6rem", borderRadius: "100px", border: "1px solid rgba(79, 70, 229, 0.2)", fontWeight: 700, marginTop: "0.25rem", fontFamily: "var(--font-sans)" }}>
+                <div style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", fontSize: "0.62rem", color: "var(--accent)", background: "rgba(79, 70, 229, 0.08)", padding: "0.2rem 0.6rem", borderRadius: "100px", border: "1px solid rgba(79, 70, 229, 0.2)", fontWeight: 700, marginTop: "0.25rem", fontFamily: "var(--font-sans)" }}>
                   {isHS ? "🎓 High School" : isCol ? "🏛️ College Undergrad" : "🔬 Graduate"}
                   {edu && <span style={{ opacity: 0.7 }}>· {edu.replace(/-/g, " ")}</span>}
                 </div>
@@ -117,7 +117,7 @@ export function RequestQueueCard({ request }: RequestQueueCardProps) {
 
       {/* Student Major & Grad Year */}
       {(request.student as any)?.major && (
-        <div style={{ fontSize: "0.78rem", fontWeight: 700, color: "#4f46e5", marginBottom: "0.75rem", fontFamily: "var(--font-sans)" }}>
+        <div style={{ fontSize: "0.78rem", fontWeight: 700, color: "var(--accent)", marginBottom: "0.75rem", fontFamily: "var(--font-sans)" }}>
           {(request.student as any).major} {(request.student as any).graduation_year ? `· Class of ${(request.student as any).graduation_year}` : ""}
         </div>
       )}
@@ -140,7 +140,7 @@ export function RequestQueueCard({ request }: RequestQueueCardProps) {
               padding: "0.3rem 0.7rem", borderRadius: "100px",
               border: "1px solid rgba(79, 70, 229, 0.2)",
               background: "rgba(79, 70, 229, 0.06)",
-              fontSize: "0.62rem", fontWeight: 600, color: "#4f46e5",
+              fontSize: "0.62rem", fontWeight: 600, color: "var(--accent)",
               fontFamily: "var(--font-sans)",
             }}>
               {interest}
@@ -174,7 +174,7 @@ export function RequestQueueCard({ request }: RequestQueueCardProps) {
       {(request.student as any)?.portfolio_url && (
         <div style={{ marginBottom: "1.25rem", fontSize: "0.75rem" }}>
           <span style={{ fontSize: "0.52rem", color: "rgba(79, 70, 229, 0.4)", textTransform: "uppercase", letterSpacing: "0.22em", fontWeight: 700, display: "block", marginBottom: "0.3rem", fontFamily: "var(--font-sans, monospace)" }}>Portfolio</span>
-          <a href={(request.student as any).portfolio_url.startsWith("http") ? (request.student as any).portfolio_url : `https://${(request.student as any).portfolio_url}`} target="_blank" rel="noopener noreferrer" style={{ color: "#4f46e5", fontWeight: 600, textDecoration: "underline" }}>
+          <a href={(request.student as any).portfolio_url.startsWith("http") ? (request.student as any).portfolio_url : `https://${(request.student as any).portfolio_url}`} target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent)", fontWeight: 600, textDecoration: "underline" }}>
             {(request.student as any).portfolio_url}
           </a>
         </div>
