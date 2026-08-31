@@ -5,6 +5,21 @@ export async function middleware(request: NextRequest) {
   const url = new URL(request.url);
   const path = url.pathname;
 
+  // Serve one canonical host.
+  //
+  // Cookies are host-only, but Google is always sent back to BETTER_AUTH_URL.
+  // Someone who starts signing in on www gets their OAuth state cookie stored
+  // there and the callback delivered to the apex, which cannot read it — the
+  // handshake then fails with `state_mismatch`. The same split would strand a
+  // session cookie, so a visitor signed in on one host looks signed out on the
+  // other. Redirecting up front keeps every request on a single origin.
+  const host = request.headers.get("host") ?? url.host;
+  if (host.startsWith("www.")) {
+    const canonical = new URL(request.url);
+    canonical.host = host.slice(4);
+    return NextResponse.redirect(canonical, 308);
+  }
+
   // Never intercept Better Auth API routes
   if (path.startsWith("/api/auth")) {
     return NextResponse.next();
