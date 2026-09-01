@@ -446,7 +446,7 @@ function OnboardingContent() {
           </motion.div>
         )}
 
-        <form onSubmit={handleSubmit} onChange={() => setIsDirty(true)}>
+        <form onSubmit={handleSubmit} method="post" onChange={() => setIsDirty(true)}>
           <motion.div variants={fadeUp} style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }}>
 
             {/* Name row */}

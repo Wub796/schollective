@@ -1,33 +1,58 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
-const CONSENT_COOKIE = "schollective-cookie-consent";
-const MAX_AGE = 60 * 60 * 24 * 365;
-
-function readConsent() {
-  return document.cookie
-    .split("; ")
-    .find((cookie) => cookie.startsWith(`${CONSENT_COOKIE}=`))
-    ?.split("=")[1];
-}
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { readConsent, startOptionalAnalytics, writeConsent, type ConsentValue } from "@/lib/consent";
 
 export function CookieBanner() {
   const [visible, setVisible] = useState(false);
+  const ref = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     setVisible(!readConsent());
   }, []);
 
-  const choose = (value: "accepted" | "declined") => {
-    document.cookie = `${CONSENT_COOKIE}=${value}; Max-Age=${MAX_AGE}; Path=/; SameSite=Lax${location.protocol === "https:" ? "; Secure" : ""}`;
+  /**
+   * The banner is fixed to the bottom of the viewport, so without reserving
+   * space it sits on top of whatever is down there — on the signup form that
+   * is the submit button, which cannot be clicked until the banner is
+   * dismissed. Pad the page by the banner's real height instead of guessing,
+   * and keep it in step with wrapping at narrow widths.
+   */
+  useLayoutEffect(() => {
+    if (!visible) {
+      document.body.style.removeProperty("padding-bottom");
+      return;
+    }
+    const element = ref.current;
+    if (!element) return;
+
+    const apply = () => {
+      document.body.style.paddingBottom = `${element.offsetHeight + 32}px`;
+    };
+    apply();
+
+    const observer = new ResizeObserver(apply);
+    observer.observe(element);
+    window.addEventListener("resize", apply);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", apply);
+      document.body.style.removeProperty("padding-bottom");
+    };
+  }, [visible]);
+
+  const choose = useCallback((value: ConsentValue) => {
+    writeConsent(value);
     setVisible(false);
-  };
+    if (value === "accepted") void startOptionalAnalytics();
+  }, []);
 
   if (!visible) return null;
 
   return (
     <aside
+      ref={ref}
       role="dialog"
       aria-label="Cookie preferences"
       style={{
@@ -35,7 +60,9 @@ export function CookieBanner() {
         left: "1rem",
         right: "1rem",
         bottom: "1rem",
-        zIndex: 60,
+        // Above the home page's mobile sticky bar (z-890), which would
+        // otherwise cover these buttons and leave the banner undismissable.
+        zIndex: 900,
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",

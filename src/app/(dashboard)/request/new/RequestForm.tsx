@@ -125,7 +125,7 @@ export function RequestForm({ professor, requestsToday }: RequestFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }}>
+    <form onSubmit={handleSubmit} method="post" style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }}>
       <input type="hidden" name="prof_id" value={professor.id} />
 
       {/* Professor preview strip */}

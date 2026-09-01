@@ -120,7 +120,10 @@ export const auth = betterAuth({
     max: 60,
     customRules: {
       "/sign-in/email": { window: 60, max: 8 },
-      "/sign-up/email": { window: 3600, max: 10 },
+      // Per IP, and universities NAT whole campuses behind one address — a
+      // cohort signing up together must not lock each other out. Still far
+      // below what scripted account creation would need.
+      "/sign-up/email": { window: 3600, max: 30 },
       "/request-password-reset": { window: 3600, max: 5 },
       "/reset-password": { window: 3600, max: 10 },
     },

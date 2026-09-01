@@ -17,7 +17,28 @@ interface ChatThreadProps {
   requestId: string;
   initialMessages: Message[];
   currentUserId: string;
-  status: "pending" | "active" | "closed";
+  status: "pending" | "viewed" | "active" | "declined" | "closed";
+}
+
+/**
+ * Wording for a thread that cannot be written to yet.
+ *
+ * A request moves pending -> viewed the moment a professor opens the card, so
+ * "viewed" means they have seen it and not yet decided. Treating anything that
+ * is not "active" as closed told students their request had been closed when
+ * the professor had merely looked at it.
+ */
+function statusNotice(status: string): string {
+  switch (status) {
+    case "pending":
+      return "Messaging unlocks once the professor accepts the request.";
+    case "viewed":
+      return "The professor has seen your request. Messaging unlocks once they accept it.";
+    case "declined":
+      return "This request was declined, so the thread is read-only.";
+    default:
+      return "This thread has been closed.";
+  }
 }
 
 export function ChatThread({
@@ -194,9 +215,7 @@ export function ChatThread({
               fontSize: "0.76rem", color: "rgba(15, 23, 42, 0.35)",
               fontStyle: "italic", fontFamily: "var(--font-display)",
             }}>
-              {status === "pending"
-                ? "Messaging unlocks once the professor accepts the request."
-                : "This thread has been closed."}
+              {statusNotice(status)}
             </span>
           </div>
         ) : (

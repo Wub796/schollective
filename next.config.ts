@@ -17,7 +17,7 @@ const securityHeaders = [
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com https://cdn.amplitude.com https://accounts.google.com https://apis.google.com",
       "worker-src 'self' blob:",
-      "connect-src 'self' https://*.neon.tech wss://*.neon.tech https://*.amplitude.com https://api2.amplitude.com https://sr-client-cfg.amplitude.com https://generativelanguage.googleapis.com https://accounts.google.com https://static.cloudflareinsights.com https://us.i.posthog.com https://us-assets.i.posthog.com",
+      "connect-src 'self' https://*.neon.tech wss://*.neon.tech https://*.amplitude.com https://api2.amplitude.com https://sr-client-cfg.amplitude.com https://generativelanguage.googleapis.com https://accounts.google.com https://static.cloudflareinsights.com https://us.i.posthog.com https://us-assets.i.posthog.com https://*.ingest.us.sentry.io https://*.ingest.sentry.io",
       "object-src 'none'",
       "upgrade-insecure-requests",
     ].join("; "),
@@ -29,10 +29,12 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  // Sentry stays external: measured at 3.28 MiB gzipped vs 3.37 MiB bundled,
+  // and it is the layout Sentry documents.
+  serverExternalPackages: ["@sentry/nextjs"],
   typescript: {
     ignoreBuildErrors: true,
   },
-  serverExternalPackages: ["@sentry/nextjs", "posthog-node"],
   async headers() {
     return [
       {
