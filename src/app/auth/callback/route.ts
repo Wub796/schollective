@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(`${origin}/login?error=oauth_session_missing`);
     }
 
-    if (!profile || !profile.first_name || !profile.role || !profile.profile_complete) {
+    if (!profile || !profile.role || !profile.profile_complete) {
       const onboardingUrl = new URL('/onboarding', origin);
       if (next && next !== '/dashboard') {
         onboardingUrl.searchParams.set('next', next);
