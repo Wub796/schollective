@@ -5,6 +5,7 @@ import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { revalidatePath } from "next/cache";
 import { sanitiseText, isValidUuid, LIMITS } from "@/lib/security";
 import { isSuspended } from "@/lib/authz";
+import { getPostHogClient } from "@/lib/posthog-server";
 
 export async function submitMentorshipRequest(formData: FormData) {
   const { session, user, profile } = await getCurrentUserAndProfile();
@@ -80,5 +81,20 @@ export async function submitMentorshipRequest(formData: FormData) {
 
   revalidatePath("/dashboard");
   revalidatePath("/threads");
+
+  // Track mentorship request on the server
+  const posthog = getPostHogClient();
+  if (posthog) {
+    posthog.capture({
+      distinctId: user.id,
+      event: "mentorship_request_submitted",
+      properties: {
+        professor_id: profId,
+        request_id: requestId,
+      },
+    });
+    await posthog.flush().catch(() => undefined);
+  }
+
   return { success: true };
 }

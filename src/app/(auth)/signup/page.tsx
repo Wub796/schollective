@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/Button";
 import { InstitutionInput } from "@/components/ui/InstitutionInput";
 import { validateEmail, type EmailValidationResult } from "@/lib/validators-client";
+import posthog from "posthog-js";
 
 
 export const dynamic = "force-dynamic";
@@ -240,6 +241,15 @@ function SignupContent() {
             : "Account created, but your profile could not be saved. Please sign in again.",
         );
       }
+
+      // Identify user and capture signup event
+      posthog.identify(res.data?.user?.id ?? emailInput, {
+        role,
+      });
+      posthog.capture("user_signed_up", {
+        role,
+        signup_method: "email",
+      });
 
       toast.success("Account created successfully!");
       router.refresh();

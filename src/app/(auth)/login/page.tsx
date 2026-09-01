@@ -7,6 +7,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { authClient, authErrorMessage } from "@/lib/auth-client";
 import { Button } from "@/components/ui/Button";
 import { toast } from "sonner";
+import posthog from "posthog-js";
 
 export const dynamic = "force-dynamic";
 
@@ -130,6 +131,15 @@ function LoginContent() {
       }
       const profileData = await profileRes.json();
       const profile = profileData?.profile;
+
+      // Identify user and capture login event (after profile fetch so we have role)
+      posthog.identify(res.data?.user?.id ?? email, {
+        role: profile?.role,
+      });
+      posthog.capture("user_logged_in", {
+        login_method: "email",
+        role: profile?.role,
+      });
 
       // No profile row, or incomplete profile → send to onboarding
       if (!profile || !profile.role || !profile.first_name || !profile.profile_complete) {
