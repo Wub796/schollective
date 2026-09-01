@@ -17,7 +17,7 @@ const securityHeaders = [
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com https://cdn.amplitude.com https://accounts.google.com https://apis.google.com",
       "worker-src 'self' blob:",
-      "connect-src 'self' https://*.neon.tech wss://*.neon.tech https://*.amplitude.com https://api2.amplitude.com https://sr-client-cfg.amplitude.com https://generativelanguage.googleapis.com https://accounts.google.com https://static.cloudflareinsights.com",
+      "connect-src 'self' https://*.neon.tech wss://*.neon.tech https://*.amplitude.com https://api2.amplitude.com https://sr-client-cfg.amplitude.com https://generativelanguage.googleapis.com https://accounts.google.com https://static.cloudflareinsights.com https://us.i.posthog.com https://us-assets.i.posthog.com",
       "object-src 'none'",
       "upgrade-insecure-requests",
     ].join("; "),
@@ -32,6 +32,7 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  serverExternalPackages: ["@sentry/nextjs", "posthog-node"],
   async headers() {
     return [
       {
@@ -40,6 +41,24 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  async rewrites() {
+    return [
+      {
+        source: "/ingest/static/:path*",
+        destination: "https://us-assets.i.posthog.com/static/:path*",
+      },
+      {
+        source: "/ingest/array/:path*",
+        destination: "https://us-assets.i.posthog.com/array/:path*",
+      },
+      {
+        source: "/ingest/:path*",
+        destination: "https://us.i.posthog.com/:path*",
+      },
+    ];
+  },
+  // Required to support PostHog trailing slash API requests
+  skipTrailingSlashRedirect: true,
 };
 
 export default nextConfig;

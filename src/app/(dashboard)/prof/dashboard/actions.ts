@@ -4,6 +4,7 @@ import { sql } from "@/lib/neon/db";
 import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { revalidatePath } from "next/cache";
 import { checkRateLimit, sanitiseText, isValidUuid, LIMITS } from "@/lib/security";
+import { getPostHogClient } from "@/lib/posthog-server";
 
 export async function updateRequestStatus(requestId: string, status: "active" | "declined") {
   const reqId = sanitiseText(requestId, 100);
@@ -29,6 +30,18 @@ export async function updateRequestStatus(requestId: string, status: "active" | 
       SET status = ${status}, updated_at = now()
       WHERE id = ${reqId} AND professor_id = ${user.id};
     `;
+
+    // Track accept/decline on the server
+    const posthog = getPostHogClient();
+    if (posthog) {
+      const eventName = status === "active" ? "professor_request_accepted" : "professor_request_declined";
+      posthog.capture({
+        distinctId: user.id,
+        event: eventName,
+        properties: { request_id: reqId },
+      });
+      await posthog.flush().catch(() => undefined);
+    }
 
     revalidatePath("/prof/dashboard");
     return { success: true };
@@ -75,6 +88,17 @@ export async function toggleAvailability(isAccepting: boolean) {
       SET is_accepting_requests = ${isAccepting}, updated_at = now()
       WHERE id = ${user.id} AND role = 'professor';
     `;
+
+    // Track availability toggle on the server
+    const posthog = getPostHogClient();
+    if (posthog) {
+      posthog.capture({
+        distinctId: user.id,
+        event: "professor_availability_toggled",
+        properties: { is_accepting: isAccepting },
+      });
+      await posthog.flush().catch(() => undefined);
+    }
 
     revalidatePath("/prof/dashboard");
     return { success: true };

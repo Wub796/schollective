@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/Button";
 import { InstitutionInput } from "@/components/ui/InstitutionInput";
 import { scoreApplication } from "@/app/admin/dashboard/actions";
+import posthog from "posthog-js";
 
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 const fadeUp = {
@@ -315,6 +316,15 @@ function OnboardingContent() {
 
     // Clear dirty state to allow normal navigation
     setIsDirty(false);
+
+    // Identify user with role and capture onboarding completed event
+    if (userId) {
+      posthog.identify(userId, { role });
+    }
+    posthog.capture("onboarding_completed", {
+      role,
+      auto_approved: isAutoApproved,
+    });
 
     if (role === "professor" && isAutoApproved) {
       toast.success("Welcome to Schollective! Your academic credentials have been verified.");
