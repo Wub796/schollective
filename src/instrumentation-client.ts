@@ -1,32 +1,26 @@
-// This file configures the initialization of Sentry on the client.
-// The added config here will be used whenever a users loads a page in their browser.
-// https://docs.sentry.io/platforms/javascript/guides/nextjs/
-
+/**
+ * Client instrumentation, loaded by Next.js on every page.
+ *
+ * Next resolves `src/instrumentation-client` ahead of a root-level file and
+ * loads only the first match, so everything client-side starts here. PostHog
+ * previously lived in a root-level file that was never loaded, which meant
+ * every capture() call in the app was silently discarded.
+ */
 import * as Sentry from "@sentry/nextjs";
+import { readConsent, startOptionalAnalytics } from "@/lib/consent";
 
+// Error reporting runs for everyone: it carries no analytics identity and is
+// what makes a failure in front of a beta tester diagnosable. Session replay
+// is added by startOptionalAnalytics() only after consent.
 Sentry.init({
   dsn: "https://ea8c26bfcedaa4ebcdbb726dd3a9b1f5@o4512008580825088.ingest.us.sentry.io/4512008591441920",
-
-  // Add optional integrations for additional features
-  integrations: [Sentry.replayIntegration()],
-
-  // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
   tracesSampleRate: 1,
-
-  // Define how likely Replay events are sampled.
-  // This sets the sample rate to be 10%. You may want this to be 100% while
-  // in development and sample at a lower rate in production
   replaysSessionSampleRate: 0.1,
-
-  // Define how likely Replay events are sampled when an error occurs.
   replaysOnErrorSampleRate: 1.0,
-
-  dataCollection: {
-    // To disable sending user data and HTTP bodies, uncomment the lines below. For more info visit:
-    // https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/options/#dataCollection
-    // userInfo: false,
-    // httpBodies: [],
-  },
 });
+
+if (readConsent() === "accepted") {
+  void startOptionalAnalytics();
+}
 
 export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;
