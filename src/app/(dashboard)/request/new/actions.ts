@@ -5,6 +5,7 @@ import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { revalidatePath } from "next/cache";
 import { sanitiseText, isValidUuid, LIMITS } from "@/lib/security";
 import { isSuspended } from "@/lib/authz";
+import { captureServerEvent } from "@/lib/posthog-server";
 
 export async function submitMentorshipRequest(formData: FormData) {
   const { session, user, profile } = await getCurrentUserAndProfile();
@@ -78,6 +79,7 @@ export async function submitMentorshipRequest(formData: FormData) {
     VALUES (${requestId}, ${user.id}, ${initialMessageContent});
   `;
 
+  await captureServerEvent(user.id, "mentorship_request_submitted", { professor_id: profId, request_id: requestId });
   revalidatePath("/dashboard");
   revalidatePath("/threads");
 
