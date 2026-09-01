@@ -345,7 +345,7 @@ export const AiProfileReviewerCard = React.memo(function AiProfileReviewerCard({
           style={{
             background: cooldownSeconds > 0
               ? "linear-gradient(135deg, #d97706 0%, #f59e0b 100%)"
-              : "linear-gradient(135deg, #4f46e5 0%, #6366f1 100%)",
+              : "linear-gradient(135deg, var(--accent) 0%, var(--accent-blue) 100%)",
             boxShadow: cooldownSeconds > 0
               ? "0 4px 14px rgba(217, 119, 6, 0.25)"
               : "0 4px 14px rgba(79, 70, 229, 0.25)",
