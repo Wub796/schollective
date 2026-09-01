@@ -39,7 +39,7 @@ export function ScrollProgress() {
         left: 0,
         height: "3px",
         width: "0%",
-        background: "linear-gradient(90deg, #4f46e5 0%, #818cf8 50%, #a5b4fc 100%)",
+        background: "linear-gradient(90deg, var(--accent) 0%, #818cf8 50%, #a5b4fc 100%)",
         boxShadow: "0 0 12px rgba(79, 70, 229, 0.8), 0 0 24px rgba(99, 102, 241, 0.4)",
         zIndex: 999999,
         pointerEvents: "none",
