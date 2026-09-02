@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, CheckCircle2, AlertTriangle, RefreshCw, ShieldCheck, Plus } from "lucide-react";
 import { ProfileReviewResult } from "@/lib/ai/types";
@@ -10,12 +10,149 @@ interface Props {
   profileData?: any;
 }
 
+type ReviewJobStatus = "pending" | "processing" | "completed" | "error";
+
+interface ReviewJob {
+  id: string;
+  status: ReviewJobStatus;
+  result: ProfileReviewResult | null;
+  error: string | null;
+}
+
+function waitForNextPoll(ms: number, signal: AbortSignal): Promise<boolean> {
+  return new Promise((resolve) => {
+    if (signal.aborted) {
+      resolve(false);
+      return;
+    }
+
+    const timeout = window.setTimeout(() => {
+      signal.removeEventListener("abort", abort);
+      resolve(true);
+    }, ms);
+    const abort = () => {
+      window.clearTimeout(timeout);
+      resolve(false);
+    };
+    signal.addEventListener("abort", abort, { once: true });
+  });
+}
+
 export function AiProfileReviewerCard({ profileData }: Props) {
   const [loading, setLoading] = useState(false);
   const [review, setReview] = useState<ProfileReviewResult | null>(null);
+  const [jobId, setJobId] = useState<string | null>(null);
+  const pollAbortRef = useRef<AbortController | null>(null);
+
+  const applyJob = (job: ReviewJob) => {
+    setJobId(job.id);
+    // A newly submitted job has no result yet. Clear a previous completed
+    // review so stale feedback is never shown while the new request runs.
+    setReview(job.result);
+    return job;
+  };
+
+  const pollJob = async (
+    id: string,
+    signal: AbortSignal,
+    notifyOnError: boolean,
+  ): Promise<void> => {
+    while (!signal.aborted) {
+      if (!(await waitForNextPoll(1500, signal))) return;
+
+      try {
+        const res = await fetch(`/api/ai/review-profile?jobId=${encodeURIComponent(id)}`, {
+          headers: { Accept: "application/json" },
+          cache: "no-store",
+          signal,
+        });
+        const contentType = res.headers.get("content-type") || "";
+        const data = contentType.includes("application/json") ? await res.json() : null;
+
+        if (!res.ok || !data?.success || !data.job) {
+          // A transient server/rate-limit response must not make the durable
+          // job look abandoned. Keep polling and let the next request recover
+          // the result; authentication/not-found errors remain terminal.
+          if (res.status === 408 || res.status === 429 || res.status >= 500) {
+            const retryAfter = Number(res.headers.get("retry-after"));
+            const retryDelay = Number.isFinite(retryAfter)
+              ? Math.min(30_000, Math.max(1_500, retryAfter * 1_000))
+              : 2_000;
+            if (!(await waitForNextPoll(retryDelay, signal))) return;
+            continue;
+          }
+
+          if (notifyOnError) toast.error(data?.error || `Review status failed (${res.status})`);
+          setLoading(false);
+          return;
+        }
+        if (signal.aborted) return;
+
+        const job = applyJob(data.job as ReviewJob);
+        if (job.status === "completed") {
+          setLoading(false);
+          if (notifyOnError) toast.success("AI Profile Review complete!");
+          return;
+        }
+        if (job.status === "error") {
+          setLoading(false);
+          if (notifyOnError) toast.error(job.error || "Failed to analyze profile.");
+          return;
+        }
+      } catch (error: any) {
+        if (signal.aborted || error?.name === "AbortError") return;
+        // Keep polling through transient network failures. The job is durable
+        // on the server, so a brief offline period should not lose the review.
+        console.error("[AiProfileReviewer] Status poll error:", error);
+        if (!(await waitForNextPoll(2_000, signal))) return;
+      }
+    }
+  };
+
+  useEffect(() => {
+    const controller = new AbortController();
+    pollAbortRef.current = controller;
+
+    const restoreLatestReview = async () => {
+      try {
+        const res = await fetch("/api/ai/review-profile", {
+          headers: { Accept: "application/json" },
+          cache: "no-store",
+          signal: controller.signal,
+        });
+        const contentType = res.headers.get("content-type") || "";
+        const data = contentType.includes("application/json") ? await res.json() : null;
+        if (!res.ok || !data?.success || !data.job || controller.signal.aborted) return;
+
+        const job = applyJob(data.job as ReviewJob);
+        if (job.status === "pending" || job.status === "processing") {
+          setLoading(true);
+          await pollJob(job.id, controller.signal, false);
+        }
+      } catch (error: any) {
+        if (error?.name !== "AbortError") {
+          console.error("[AiProfileReviewer] Failed to restore review:", error);
+        }
+      }
+    };
+
+    void restoreLatestReview();
+    return () => {
+      controller.abort();
+      // The initial restore controller is replaced when the user starts a new
+      // review. Abort whichever request is current so unmounting never leaves
+      // a fetch or polling loop running against a removed component.
+      pollAbortRef.current?.abort();
+      pollAbortRef.current = null;
+    };
+  }, []);
 
   const handleReview = async () => {
+    pollAbortRef.current?.abort();
+    const controller = new AbortController();
+    pollAbortRef.current = controller;
     setLoading(true);
+
     try {
       const bioEl = typeof document !== "undefined" ? (document.getElementById("bio") as HTMLTextAreaElement) : null;
       const instEl = typeof document !== "undefined" ? (document.getElementById("institution") as HTMLInputElement) : null;
@@ -36,23 +173,28 @@ export function AiProfileReviewerCard({ profileData }: Props) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(dynamicPayload),
+        signal: controller.signal,
       });
 
       const contentType = res.headers.get("content-type") || "";
-      const data = contentType.includes("application/json")
-        ? await res.json()
-        : null;
-      if (!res.ok || !data?.success) {
+      const data = contentType.includes("application/json") ? await res.json() : null;
+      if (!res.ok || !data?.success || !data.job) {
         throw new Error(data?.error || `Review failed (${res.status})`);
       }
 
-      setReview(data.review);
-      toast.success("AI Profile Review complete!");
+      const job = applyJob(data.job as ReviewJob);
+      if (job.status === "completed" && job.result) {
+        setLoading(false);
+        toast.success("AI Profile Review complete!");
+        return;
+      }
+
+      await pollJob(job.id, controller.signal, true);
     } catch (err: any) {
+      if (err?.name === "AbortError") return;
       console.error(err);
-      toast.error(err.message || "Failed to analyze profile.");
-    } finally {
       setLoading(false);
+      toast.error(err.message || "Failed to start profile review.");
     }
   };
 

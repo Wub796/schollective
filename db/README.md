@@ -11,6 +11,7 @@ stateless HTTP driver, which is what makes it work inside a Cloudflare Worker.
 | `rateLimit` | Better Auth | Shared counters for the auth rate limiter |
 | `profiles` | The app | Role, institution, onboarding answers |
 | `requests`, `messages`, `notifications` | The app | Mentorship requests and threads |
+| `ai_profile_review_jobs` | The app | Durable AI profile-review requests and results |
 
 The bootstrap also creates the indexes these tables are queried by. The rate
 limiter is deliberately database-backed: an in-memory counter is per Worker
@@ -26,11 +27,16 @@ authenticated request an isolate serves runs the check in
 database migrated against an older Better Auth release does not have yet. The
 check costs one query once the schema is current.
 
+The durable AI profile-review table and its recovery indexes are defined in
+`db/migrations/0002_ai_profile_review_jobs.sql`. The same runtime bootstrap
+creates them automatically when `AUTH_SCHEMA_AUTO_MIGRATE` is enabled.
+
 To manage the schema by hand instead, set `AUTH_SCHEMA_AUTO_MIGRATE=false` and
 apply the file yourself. Every statement is idempotent:
 
 ```bash
 psql "$DATABASE_URL" -f db/migrations/0001_better_auth.sql
+psql "$DATABASE_URL" -f db/migrations/0002_ai_profile_review_jobs.sql
 ```
 
 ## Environment
