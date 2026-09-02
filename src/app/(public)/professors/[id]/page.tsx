@@ -8,7 +8,8 @@ import { ArrowLeft, GraduationCap, Building2, BookOpen, Mail, ShieldCheck } from
 import { Button } from "@/components/ui/Button";
 import { AppShell } from "@/components/layout/AppShell";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
+export const dynamicParams = true;
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -364,6 +365,8 @@ export default async function PublicProfessorProfilePage({ params }: PageProps) 
   const { id } = await params;
   const { user, profile } = await getCurrentUserAndProfile();
 
+  // Public professor data is revalidated periodically; private request state
+  // remains request-scoped and is never included in a public cache response.
   // Fetch professor
   const professors = await sql`
     SELECT id, first_name, last_name, preferred_name, institution, academic_title, department, bio, lab_website, office_hours, accepting_student_types, publications, expertise_fields, avatar_url, is_accepting_requests
