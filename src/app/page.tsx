@@ -45,7 +45,7 @@ function PageLoader() {
           transition={{ duration: 2, ease: "easeInOut", repeat: Infinity }}
           className="absolute w-14 h-14 rounded-2xl bg-white border border-indigo-600/15 flex items-center justify-center overflow-hidden p-2"
         >
-          <Image src="/logo.png" alt="Schollective" width={38} height={38} className="rounded-xl object-cover" priority />
+          <Image src="/logo.png" alt="Schollective" width={38} height={38} className="rounded-xl object-cover -translate-y-0.5" priority />
         </motion.div>
       </div>
       <div className="text-center">

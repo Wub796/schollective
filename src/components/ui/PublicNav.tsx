@@ -145,7 +145,7 @@ export function PublicNav() {
             <Link
               href="/"
               data-nav-item="true"
-              style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "0.65rem" }}
+              style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "0.42rem" }}
               className="group select-none"
             >
               <SchollectiveLogo size={32} />
