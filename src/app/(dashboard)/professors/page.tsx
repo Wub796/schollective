@@ -8,7 +8,8 @@ import { AiProfessorRecommendations } from "@/components/features/AiProfessorRec
 import { Button } from "@/components/ui/Button";
 import { ArrowLeft } from "lucide-react";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
+export const dynamicParams = true;
 
 interface ProfessorsPageProps {
   searchParams: Promise<{
