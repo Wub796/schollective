@@ -148,7 +148,7 @@ export function PublicNav() {
               style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "0.42rem" }}
               className="group select-none"
             >
-              <SchollectiveLogo size={32} />
+              <SchollectiveLogo size={32} className="-translate-y-0.5" />
               <span className="font-display font-bold text-slate-900 tracking-tight transition-colors group-hover:text-indigo-600" style={{ fontSize: "1.12rem" }}>
                 Schollective
               </span>
