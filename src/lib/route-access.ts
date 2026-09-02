@@ -29,6 +29,10 @@ export const PROTECTED_PREFIXES = [
   "/messages",
   "/profile",
   "/threads",
+  "/friends",
+  // A student's profile. Only the subtree: `/prof/students` is a different
+  // page, and this prefix does not match it.
+  "/students/",
   "/prof/",
   "/admin",
 ] as const;
