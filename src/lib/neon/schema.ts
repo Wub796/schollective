@@ -105,6 +105,40 @@ const BACKFILL_ISSUER = `
  * these columns, and without them each one is a sequential scan that gets
  * slower with every request, message and notification the beta produces.
  */
+const APP_REQUIRED_COLUMNS: Record<string, ColumnSpec[]> = {
+  ai_profile_review_jobs: [
+    { name: "id", ddl: `id text primary key` },
+    { name: "user_id", ddl: `user_id text not null` },
+    { name: "status", ddl: `status text not null default 'pending'` },
+    { name: "profile_data", ddl: `profile_data jsonb not null` },
+    { name: "result", ddl: `result jsonb` },
+    { name: "error", ddl: `error text` },
+    { name: "processing_token", ddl: `processing_token text` },
+    { name: "created_at", ddl: `created_at timestamptz not null default now()` },
+    { name: "started_at", ddl: `started_at timestamptz` },
+    { name: "completed_at", ddl: `completed_at timestamptz` },
+    { name: "updated_at", ddl: `updated_at timestamptz not null default now()` },
+  ],
+};
+
+const APP_TABLES: Record<string, string> = {
+  ai_profile_review_jobs: `
+    CREATE TABLE IF NOT EXISTS ai_profile_review_jobs (
+      id text PRIMARY KEY,
+      user_id text NOT NULL,
+      status text NOT NULL DEFAULT 'pending',
+      profile_data jsonb NOT NULL,
+      result jsonb,
+      error text,
+      processing_token text,
+      created_at timestamptz NOT NULL DEFAULT now(),
+      started_at timestamptz,
+      completed_at timestamptz,
+      updated_at timestamptz NOT NULL DEFAULT now()
+    )
+  `,
+};
+
 const APP_INDEXES: Record<string, string[]> = {
   profiles: [
     `CREATE INDEX IF NOT EXISTS "profiles_role_status_idx" ON profiles (role, status)`,
@@ -121,6 +155,11 @@ const APP_INDEXES: Record<string, string[]> = {
   ],
   notifications: [
     `CREATE INDEX IF NOT EXISTS "notifications_user_id_created_at_idx" ON notifications (user_id, created_at DESC)`,
+  ],
+  ai_profile_review_jobs: [
+    `CREATE UNIQUE INDEX IF NOT EXISTS "ai_profile_review_jobs_active_user_uidx" ON ai_profile_review_jobs (user_id) WHERE status IN ('pending', 'processing')`,
+    `CREATE INDEX IF NOT EXISTS "ai_profile_review_jobs_user_created_idx" ON ai_profile_review_jobs (user_id, created_at DESC)`,
+    `CREATE INDEX IF NOT EXISTS "ai_profile_review_jobs_status_updated_idx" ON ai_profile_review_jobs (status, updated_at)`,
   ],
 };
 
@@ -187,7 +226,7 @@ interface SchemaSnapshot {
 
 /** One round trip that tells us every table, column and index we care about. */
 async function readSchema(run: Runner): Promise<SchemaSnapshot> {
-  const names = [...TABLE_ORDER, ...Object.keys(APP_INDEXES)];
+  const names = [...TABLE_ORDER, ...Object.keys(APP_TABLES), ...Object.keys(APP_INDEXES)];
   const rows = await run(
     `SELECT 'column' AS kind, table_name::text AS name, column_name::text AS detail
        FROM information_schema.columns
@@ -235,6 +274,15 @@ function isUpToDate({ columns, indexes }: SchemaSnapshot): boolean {
     if (name && !indexes.has(name)) return false;
   }
 
+  for (const table of Object.keys(APP_TABLES)) {
+    if (!columns.has(table)) return false;
+  }
+
+  for (const [table, requiredColumns] of Object.entries(APP_REQUIRED_COLUMNS)) {
+    const present = columnsSnapshot(requiredColumns, columns.get(table));
+    if (!present) return false;
+  }
+
   // Only demand indexes on tables this database actually has.
   for (const [table, statements] of Object.entries(APP_INDEXES)) {
     if (!columns.has(table)) continue;
@@ -245,6 +293,11 @@ function isUpToDate({ columns, indexes }: SchemaSnapshot): boolean {
   }
 
   return true;
+}
+
+function columnsSnapshot(columns: ColumnSpec[], present: Set<string> | undefined): boolean {
+  if (!present) return false;
+  return columns.every((column) => present.has(column.name));
 }
 
 async function bootstrap(): Promise<void> {
@@ -289,6 +342,25 @@ async function bootstrap(): Promise<void> {
   if (!found.has("profiles")) {
     await exec(run, PROFILES_TABLE);
     found.set("profiles", new Set());
+  }
+
+  for (const [table, statement] of Object.entries(APP_TABLES)) {
+    const columns = found.get(table);
+    if (!columns) {
+      await exec(run, statement);
+      found.set(table, new Set(APP_REQUIRED_COLUMNS[table]?.map((column) => column.name) || []));
+      continue;
+    }
+
+    for (const column of APP_REQUIRED_COLUMNS[table] || []) {
+      if (columns.has(column.name)) continue;
+      // Existing job rows make adding a new NOT NULL column unsafe without a
+      // migration-specific backfill, so widen the patch and let the job query
+      // surface a clear error rather than failing schema bootstrap entirely.
+      const ddl = column.ddl.replace(/\s+not null/i, "").replace(/\s+primary key/i, "");
+      await exec(run, `ALTER TABLE "${table}" ADD COLUMN IF NOT EXISTS ${ddl}`);
+      columns.add(column.name);
+    }
   }
 
   for (const [table, statements] of Object.entries(APP_INDEXES)) {

@@ -27,6 +27,60 @@ export interface StudentProfileData {
   expertise_fields?: string[] | string | null;
 }
 
+function normaliseScore(value: unknown): number {
+  const numericValue = typeof value === "number" || typeof value === "string" ? Number(value) : NaN;
+  return Number.isFinite(numericValue)
+    ? Math.round(Math.max(0, Math.min(100, numericValue)))
+    : 50;
+}
+
+function normaliseText(value: unknown, maxChars: number, fallback = ""): string {
+  const text = typeof value === "string" ? sanitizeAiPromptInput(value, maxChars) : "";
+  return text || fallback;
+}
+
+function normaliseStringList(value: unknown, maxItems: number, maxItemChars: number): string[] {
+  if (!Array.isArray(value)) return [];
+  return value
+    .filter((item): item is string => typeof item === "string")
+    .map((item) => sanitizeAiPromptInput(item, maxItemChars))
+    .filter(Boolean)
+    .slice(0, maxItems);
+}
+
+function normaliseProfileReviewResult(raw: Record<string, unknown>): ProfileReviewResult {
+  const improvements = Array.isArray(raw.improvements)
+    ? raw.improvements.slice(0, 6).flatMap((item) => {
+        if (!item || typeof item !== "object") return [];
+        const improvement = item as Record<string, unknown>;
+        return [{
+          field: normaliseText(improvement.field, 100, "Profile"),
+          issue: normaliseText(improvement.issue, 240, "Needs more detail"),
+          suggestion: normaliseText(improvement.suggestion, 400, "Add a specific detail that strengthens this section."),
+        }];
+      })
+    : [];
+
+  const readiness = raw.outreachReadiness === "ready" ||
+    raw.outreachReadiness === "needs_work" ||
+    raw.outreachReadiness === "incomplete"
+    ? raw.outreachReadiness
+    : "needs_work";
+
+  return {
+    overallScore: normaliseScore(raw.overallScore),
+    clarityScore: normaliseScore(raw.clarityScore),
+    academicToneScore: normaliseScore(raw.academicToneScore),
+    alignmentScore: normaliseScore(raw.alignmentScore),
+    completenessScore: normaliseScore(raw.completenessScore),
+    summary: normaliseText(raw.summary, 600, "Your profile has been reviewed. Add more specific academic detail to strengthen it."),
+    strengths: normaliseStringList(raw.strengths, 5, 240),
+    improvements,
+    suggestedInterests: normaliseStringList(raw.suggestedInterests, 6, 120),
+    outreachReadiness: readiness,
+  };
+}
+
 /**
  * Reviews a student profile using Gemini AI with prompt injection defense & rate limit fallback.
  */
@@ -127,16 +181,14 @@ Return ONLY valid JSON:
       });
 
       const cleanedText = text.replace(/```json\n?|\n?```/g, "").trim();
-      const parsed = JSON.parse(cleanedText) as ProfileReviewResult;
+      const parsed = JSON.parse(cleanedText) as unknown;
+      if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+        throw new Error("Gemini returned an invalid profile review payload");
+      }
+      const normalised = normaliseProfileReviewResult(parsed as Record<string, unknown>);
 
-      parsed.overallScore = Math.max(0, Math.min(100, parsed.overallScore || 50));
-      parsed.clarityScore = Math.max(0, Math.min(100, parsed.clarityScore || 50));
-      parsed.academicToneScore = Math.max(0, Math.min(100, parsed.academicToneScore || 50));
-      parsed.alignmentScore = Math.max(0, Math.min(100, parsed.alignmentScore || 50));
-      parsed.completenessScore = Math.max(0, Math.min(100, parsed.completenessScore || 50));
-
-      setCachedAiResult(cacheKey, parsed, 15 * 60 * 1000);
-      return parsed;
+      setCachedAiResult(cacheKey, normalised, 15 * 60 * 1000);
+      return normalised;
     } catch (err: any) {
       void ai.trackAiMessage({ content: "", sessionId: "schollective", model: modelName, provider: "google", latencyMs: performance.now() - startTime,
         isError: true,

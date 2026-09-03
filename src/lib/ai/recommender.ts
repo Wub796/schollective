@@ -12,6 +12,7 @@ import {
 export interface ProfessorCandidate {
   id: string;
   first_name?: string | null;
+  preferred_name?: string | null;
   last_name?: string | null;
   institution?: string | null;
   department?: string | null;
@@ -23,8 +24,62 @@ export interface ProfessorCandidate {
 }
 
 /**
- * Recommends top matching professors using Gemini AI with cybersecurity safeguards & automatic rate limit fallback.
+ * Recommends top matching professors using Gemini AI with cybersecurity safeguards
+ * and a deterministic fallback when the model is unavailable.
  */
+
+function isAccepting(candidate: ProfessorCandidate): boolean {
+  // A missing value uses the same default as the public UI and database schema.
+  return candidate.is_accepting_requests !== false;
+}
+
+function sanitiseCandidateText(value: unknown, maxChars: number): string {
+  return sanitizeAiPromptInput(typeof value === "string" ? value : "", maxChars);
+}
+
+function sanitiseStringList(value: unknown, maxChars: number): string[] {
+  if (Array.isArray(value)) {
+    return value
+      .filter((item): item is string => typeof item === "string")
+      .map((item) => sanitizeAiPromptInput(item, maxChars))
+      .filter(Boolean)
+      .slice(0, 20);
+  }
+  if (typeof value === "string") {
+    const item = sanitizeAiPromptInput(value, maxChars);
+    return item ? [item] : [];
+  }
+  return [];
+}
+
+function normaliseModelMatch(raw: unknown, validIds: Set<string>): ProfessorMatch | null {
+  if (!raw || typeof raw !== "object") return null;
+  const item = raw as Record<string, unknown>;
+  const professorId = typeof item.professorId === "string" ? item.professorId : "";
+  if (!validIds.has(professorId)) return null;
+
+  const numericScore = typeof item.matchScore === "number"
+    ? item.matchScore
+    : Number(item.matchScore);
+  const matchScore = Number.isFinite(numericScore)
+    ? Math.round(Math.max(50, Math.min(98, numericScore)))
+    : 50;
+  const keyOverlaps = sanitiseStringList(item.keyOverlaps, 120);
+  const matchReasons = sanitiseStringList(item.matchReasons, 240);
+  const suggestedOutreachAngle = sanitiseCandidateText(item.suggestedOutreachAngle, 400)
+    || "Explain how your interests connect to this professor's listed research areas.";
+
+  return {
+    professorId,
+    matchScore,
+    // Derive the tier from the trusted, normalised score rather than trusting
+    // a contradictory or malformed label returned by the model.
+    matchTier: matchScore >= 88 ? "Best Fit" : matchScore >= 75 ? "Strong Match" : "Potential Alignment",
+    matchReasons,
+    keyOverlaps,
+    suggestedOutreachAngle,
+  };
+}
 export async function recommendProfessors(
   student: StudentProfileData,
   candidates: ProfessorCandidate[]
@@ -61,25 +116,30 @@ export async function recommendProfessors(
   const sanitizedSkills = sanitizeAiPromptInput(rawSkills, 300);
   const sanitizedBio = sanitizeAiPromptInput(student.bio, 350);
 
-  // Include bio, major, skills & extracurriculars in cacheKey so recommendations update dynamically
-  const cacheKey = `rec_v7_hybrid_${student.id || student.email || "anon"}_${sanitizedLevel}_${sanitizedMajor}_${sanitizedInterests}_${sanitizedExtras}_${sanitizedSkills}_${sanitizedBio}`;
+  const truncatedCandidates = candidates.slice(0, 12).map((c) => ({
+    id: c.id,
+    name: sanitiseCandidateText(
+      `Dr. ${c.preferred_name || c.first_name || ""} ${c.last_name || ""}`,
+      100,
+    ),
+    title: sanitiseCandidateText(c.academic_title, 60),
+    institution: sanitiseCandidateText(c.institution, 60),
+    department: sanitiseCandidateText(c.department, 60),
+    expertise: Array.isArray(c.expertise_fields)
+      ? sanitiseStringList(c.expertise_fields, 120).join(", ")
+      : sanitiseCandidateText(c.expertise_fields, 120),
+    accepting: isAccepting(c),
+    researchSummary: sanitiseCandidateText(c.bio, 180),
+  }));
+
+  // Include the candidate snapshot in the key. Faculty edits and directory
+  // changes must invalidate a student's cached recommendations.
+  const candidateSignature = JSON.stringify(truncatedCandidates);
+  const cacheKey = `rec_v8_hybrid_${student.id || student.email || "anon"}_${sanitizedLevel}_${sanitizedMajor}_${sanitizedInterests}_${sanitizedExtras}_${sanitizedSkills}_${sanitizedBio}_${candidateSignature}`;
   const cached = getCachedAiResult<RecommenderResult>(cacheKey);
   if (cached) {
     return cached;
   }
-
-  const truncatedCandidates = candidates.slice(0, 12).map((c) => ({
-    id: c.id,
-    name: `Dr. ${c.first_name || ""} ${c.last_name || ""}`.trim(),
-    title: sanitizeAiPromptInput(c.academic_title, 60),
-    institution: sanitizeAiPromptInput(c.institution, 60),
-    department: sanitizeAiPromptInput(c.department, 60),
-    expertise: Array.isArray(c.expertise_fields)
-      ? c.expertise_fields.join(", ")
-      : sanitizeAiPromptInput(c.expertise_fields, 120),
-    accepting: c.is_accepting_requests ?? true,
-    researchSummary: sanitizeAiPromptInput(c.bio, 180),
-  }));
 
   const prompt = `You are an expert academic matchmaking advisor on Schollective.
 CRITICAL CYBERSECURITY & SAFETY INSTRUCTIONS:
@@ -148,21 +208,24 @@ Return ONLY a JSON array matching this schema (sorted by matchScore descending, 
       });
 
       const cleanedText = text.replace(/```json\n?|\n?```/g, "").trim();
-      const matches = JSON.parse(cleanedText) as ProfessorMatch[];
+      const matches = JSON.parse(cleanedText) as unknown;
+      if (!Array.isArray(matches)) throw new Error("Gemini returned an invalid recommendations payload");
 
-      const validIds = new Set(candidates.map((c) => c.id));
+      const validIds = new Set(truncatedCandidates.map((candidate) => candidate.id));
+      const seenIds = new Set<string>();
       const validMatches = matches
-        .filter((m) => validIds.has(m.professorId))
-        .map((m) => {
-          const score = Math.max(40, Math.min(98, m.matchScore || 50));
-          const tier: ProfessorMatch["matchTier"] =
-            score >= 88 ? "Best Fit" : score >= 75 ? "Strong Match" : "Potential Alignment";
-          return {
-            ...m,
-            matchScore: score,
-            matchTier: m.matchTier || tier,
-          };
-        });
+        .map((match) => normaliseModelMatch(match, validIds))
+        .filter((match): match is ProfessorMatch => {
+          if (!match || seenIds.has(match.professorId)) return false;
+          seenIds.add(match.professorId);
+          return true;
+        })
+        .sort((a, b) => b.matchScore - a.matchScore)
+        .slice(0, 5);
+
+      // An empty or entirely malformed model response is not a successful
+      // recommendation. Let the deterministic engine provide usable matches.
+      if (validMatches.length === 0) throw new Error("Gemini returned no valid professor matches");
 
       const result: RecommenderResult = {
         recommendations: validMatches,
@@ -205,8 +268,9 @@ function computeRuleBasedProfessorMatches(
   candidates: ProfessorCandidate[]
 ): ProfessorMatch[] {
   let studentFields: string[] = [];
-  if (Array.isArray(student.academic_interests)) studentFields = student.academic_interests;
-  else if (typeof student.academic_interests === "string") {
+  if (Array.isArray(student.academic_interests)) {
+    studentFields = student.academic_interests.filter((field): field is string => typeof field === "string");
+  } else if (typeof student.academic_interests === "string") {
     studentFields = student.academic_interests.split(",").map((s) => s.trim()).filter(Boolean);
   }
 
@@ -216,21 +280,35 @@ function computeRuleBasedProfessorMatches(
     ? student.extracurriculars
     : "";
 
+  const rawSkills = Array.isArray(student.skills_and_tools)
+    ? student.skills_and_tools.join(" ")
+    : typeof student.skills_and_tools === "string"
+    ? student.skills_and_tools
+    : "";
+  const rawCoursework = Array.isArray(student.coursework)
+    ? student.coursework.join(" ")
+    : typeof student.coursework === "string"
+    ? student.coursework
+    : "";
+
   const studentTokens = new Set([
     ...(student.education_level || "").toLowerCase().split(/\s+/),
+    ...(student.major || "").toLowerCase().split(/\s+/),
     ...(student.bio || "").toLowerCase().split(/\s+/),
     ...rawExtras.toLowerCase().split(/\s+/),
+    ...rawSkills.toLowerCase().split(/\s+/),
+    ...rawCoursework.toLowerCase().split(/\s+/),
     ...studentFields.map((f) => f.toLowerCase()),
   ].filter((w) => w.length > 3));
 
   const scored: Array<{ candidate: ProfessorCandidate; score: number; overlaps: string[] }> = [];
 
   for (const c of candidates) {
-    let candidateFields: string[] = [];
-    if (Array.isArray(c.expertise_fields)) candidateFields = c.expertise_fields;
-    else if (typeof c.expertise_fields === "string") {
-      candidateFields = c.expertise_fields.split(",").map((s) => s.trim()).filter(Boolean);
-    }
+    const candidateFields = Array.isArray(c.expertise_fields)
+      ? c.expertise_fields.filter((field): field is string => typeof field === "string")
+      : typeof c.expertise_fields === "string"
+      ? c.expertise_fields.split(",").map((s) => s.trim()).filter(Boolean)
+      : [];
 
     const overlaps: string[] = [];
     let matchScore = 55;
@@ -257,7 +335,7 @@ function computeRuleBasedProfessorMatches(
       matchScore += 12;
     }
 
-    if (c.is_accepting_requests) {
+    if (isAccepting(c)) {
       matchScore += 8;
     } else {
       matchScore -= 12;
@@ -279,7 +357,7 @@ function computeRuleBasedProfessorMatches(
       matchTier: tier,
       matchReasons: [
         `Subfield alignment in ${mainOverlap}`,
-        candidate.is_accepting_requests ? "Currently accepting research mentorship requests" : "Active faculty mentor",
+        candidate.is_accepting_requests !== false ? "Currently accepting research mentorship requests" : "Active faculty mentor",
       ],
       keyOverlaps: overlaps.length > 0 ? overlaps : [candidate.department || "Academic Research"],
       suggestedOutreachAngle: `Focus your request on ${mainOverlap} and how your background connects to their department research.`,

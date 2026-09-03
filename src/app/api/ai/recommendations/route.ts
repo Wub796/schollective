@@ -6,6 +6,12 @@ import { checkUserAiRateLimit } from "@/lib/ai/guardrails";
 import { checkRateLimit, getClientIp } from "@/lib/security";
 import type { ProfessorCandidate } from "@/lib/ai/recommender";
 
+export const dynamic = "force-dynamic";
+
+const PRIVATE_JSON_HEADERS = {
+  "Cache-Control": "private, no-store",
+};
+
 export async function GET(req: Request) {
   try {
     // ── Rate limit: 5 per minute per IP ──────────────────────────
@@ -14,14 +20,16 @@ export async function GET(req: Request) {
     if (!rate.allowed) {
       return NextResponse.json(
         { error: "Too many requests. Please wait before trying again." },
-        { status: 429, headers: { "Retry-After": String(rate.retryAfterSeconds) } }
+        {
+          status: 429,
+          headers: { ...PRIVATE_JSON_HEADERS, "Retry-After": String(rate.retryAfterSeconds) },
+        },
       );
     }
 
-    const { user, profile: studentProfile } = await getCurrentUserAndProfile();
-
+    const { user, profile: studentProfile } = await getCurrentUserAndProfile(req.headers);
     if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401, headers: PRIVATE_JSON_HEADERS });
     }
 
     // User-specific AI rate limit
@@ -29,7 +37,10 @@ export async function GET(req: Request) {
     if (!rateCheck.allowed) {
       return NextResponse.json(
         { error: `AI recommendation limit reached. Please wait ${rateCheck.retryAfterSeconds} seconds.` },
-        { status: 429 }
+        {
+          status: 429,
+          headers: { ...PRIVATE_JSON_HEADERS, "Retry-After": String(rateCheck.retryAfterSeconds) },
+        },
       );
     }
 
@@ -44,6 +55,7 @@ export async function GET(req: Request) {
       SELECT id, first_name, last_name, preferred_name, institution, department, academic_title, expertise_fields, is_accepting_requests, bio, lab_website, publications, status, role
       FROM profiles
       WHERE role = 'professor' AND status = 'approved'
+      ORDER BY updated_at DESC, last_name ASC, id ASC
       LIMIT 30;
     `) as ProfessorCandidate[];
 
@@ -57,26 +69,29 @@ export async function GET(req: Request) {
         professor: prof
           ? {
               id: prof.id,
-              name: `Prof. ${prof.first_name || ""} ${prof.last_name || ""}`.trim(),
+              name: `Prof. ${prof.preferred_name || prof.first_name || ""} ${prof.last_name || ""}`.trim(),
               institution: prof.institution || "Academic Faculty",
               department: prof.department || "",
               expertise_fields: prof.expertise_fields || [],
-              is_accepting_requests: prof.is_accepting_requests ?? true,
+              is_accepting_requests: prof.is_accepting_requests !== false,
             }
           : null,
       };
     });
 
-    return NextResponse.json({
-      success: true,
-      recommendations: enrichedRecommendations.filter((r) => r.professor !== null),
-      generatedAt: result.generatedAt,
-    });
-  } catch (err: any) {
-    console.error("[GET /api/ai/recommendations] Unexpected error:", err);
     return NextResponse.json(
-      { success: false, error: err.message || "Failed to generate recommendations", recommendations: [] },
-      { status: 500 }
+      {
+        success: true,
+        recommendations: enrichedRecommendations.filter((r) => r.professor !== null),
+        generatedAt: result.generatedAt,
+      },
+      { headers: PRIVATE_JSON_HEADERS },
+    );
+  } catch (error: any) {
+    console.error("[GET /api/ai/recommendations] Unexpected error:", error);
+    return NextResponse.json(
+      { success: false, error: error?.message || "Failed to generate recommendations", recommendations: [] },
+      { status: 500, headers: PRIVATE_JSON_HEADERS },
     );
   }
 }
