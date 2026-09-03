@@ -11,6 +11,8 @@ stateless HTTP driver, which is what makes it work inside a Cloudflare Worker.
 | `rateLimit` | Better Auth | Shared counters for the auth rate limiter |
 | `profiles` | The app | Role, institution, onboarding answers |
 | `requests`, `messages`, `notifications` | The app | Mentorship requests and threads |
+| `request_members`, `thread_reads` | The app | Co-students on a group thread; each participant's read position |
+| `friendships`, `user_blocks` | The app | Student friend requests and friends; one-directional blocks |
 | `ai_profile_review_jobs` | The app | Durable AI profile-review requests and results |
 
 The bootstrap also creates the indexes these tables are queried by. The rate
@@ -67,6 +69,30 @@ psql "$DATABASE_URL" -f db/migrations/0002_ai_profile_review_jobs.sql
 psql "$DATABASE_URL" -f db/migrations/0003_rls_policies.sql
 psql "$DATABASE_URL" -f db/migrations/0004_rls_activate.sql   # requires the schollective_app role to exist
 ```
+
+### 0008 — friends and group threads
+
+`0008_friends_and_group_mentorship.sql` must be applied, as `neondb_owner`,
+**before** the application code that uses it is deployed: the thread list,
+unread badges and friends page all read its tables. It refuses to run as a role
+subject to RLS.
+
+- A request's `student_id` is the thread's **lead**. Other students are rows in
+  `request_members` (`invited` → `joined` → `left`/`removed`, or `declined`); only
+  accepted friends can be invited, and only into an open request.
+- Unread state is per user in `thread_reads`. `messages.read_at` could only mean
+  "the other party read this", which breaks with three participants; existing
+  read state is backfilled from it and the column is no longer written.
+- Membership lookups inside policies go through `SECURITY DEFINER` helpers
+  (`app_is_thread_participant`, `app_can_view_request`, `app_is_connected_to`) to
+  avoid policy recursion. Each answers only about the calling user.
+- Student discovery is `app_search_students`, and names for students the caller
+  is not connected to come from `app_student_cards`. Both return a fixed set of
+  safe columns, so `profiles_select` never has to expose grades or scores to
+  make search work. A pending friend request reveals the requester's profile to
+  the addressee, never the reverse.
+- Legal membership and friendship transitions are enforced by triggers, mirrored
+  in `src/lib/collaboration.ts` (and tested in `tests/collaboration.test.mjs`).
 
 ## Environment
 
