@@ -1,12 +1,13 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { getCurrentUserAndProfile } from '@/lib/neon/profiles';
+import { safeInternalPath } from '@/lib/safe-redirect';
 
 export async function GET(request: NextRequest) {
   const origin = request.nextUrl.origin;
-  const requestedNext = request.nextUrl.searchParams.get('next') ?? '/dashboard';
-  const next = requestedNext.startsWith('/') && !requestedNext.startsWith('//')
-    ? requestedNext
-    : '/dashboard';
+  // The shared validator, not a local `startsWith('/')` check: that one let
+  // `/\evil.example` through, which browsers normalise to `//evil.example` —
+  // an open redirect straight out of the sign-in flow.
+  const next = safeInternalPath(request.nextUrl.searchParams.get('next')) ?? '/dashboard';
 
   try {
     const { user, profile } = await getCurrentUserAndProfile(request.headers);
