@@ -71,7 +71,7 @@ export async function GET(req: Request) {
         professor: prof
           ? {
               id: prof.id,
-              name: `Prof. ${prof.preferred_name || prof.first_name || ""} ${prof.last_name || ""}`.trim(),
+              name: `Dr. ${prof.preferred_name || prof.first_name || ""} ${prof.last_name || ""}`.trim(),
               institution: prof.institution || "Academic Faculty",
               department: prof.department || "",
               expertise_fields: prof.expertise_fields || [],

@@ -3,6 +3,7 @@ import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { checkDurableRateLimit } from "@/lib/rate-limit";
 import { parseResumePdf } from "@/lib/ai/resume-parser";
 import { isGeminiTransientError } from "@/lib/ai/client";
+import { internalError } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
@@ -88,21 +89,21 @@ export async function POST(req: NextRequest) {
       data: parsedData,
     });
   } catch (error: any) {
-    console.error("[parse-resume] Error processing resume PDF:", error);
-    let message = "Failed to parse resume PDF. Please try again.";
-    if (
+    // The raw error message used to be passed straight to the client, which
+    // could include configuration detail such as a missing API key. The detail
+    // is logged; the browser gets a sentence it can act on.
+    const transient =
       isGeminiTransientError(error) ||
       error?.message?.includes("503") ||
       error?.message?.includes("high demand") ||
-      error?.message?.includes("UNAVAILABLE")
-    ) {
-      message = "The AI service is currently experiencing temporary high demand. Please try again in a few moments.";
-    } else if (typeof error?.message === "string" && !error.message.startsWith("{")) {
-      message = error.message;
-    }
-    return NextResponse.json(
-      { error: message },
-      { status: 500 }
+      error?.message?.includes("UNAVAILABLE");
+    const message = internalError(
+      "parse-resume",
+      error,
+      transient
+        ? "The AI service is currently experiencing temporary high demand. Please try again in a few moments."
+        : "Failed to parse resume PDF. Please try again.",
     );
+    return NextResponse.json({ error: message }, { status: transient ? 503 : 500 });
   }
 }
