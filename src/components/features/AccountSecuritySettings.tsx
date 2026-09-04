@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { authClient } from "@/lib/auth-client";
+import { authClient, authErrorMessage } from "@/lib/auth-client";
 import { toast } from "sonner";
 import {
   KeyRound,
@@ -45,6 +45,7 @@ export function AccountSecuritySettings({ profile }: AccountSecuritySettingsProp
   };
 
   // Password change state
+  const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordLoading, setPasswordLoading] = useState(false);
@@ -70,7 +71,20 @@ export function AccountSecuritySettings({ profile }: AccountSecuritySettingsProp
 
     setPasswordLoading(true);
     try {
-      toast.success("Password updated successfully.");
+      // This form used to report success without calling anything: the toast
+      // appeared and the password never changed. Better Auth re-checks the
+      // current password, and revokeOtherSessions signs out every other device,
+      // which is what someone changing their password normally wants.
+      const { error } = await authClient.changePassword({
+        currentPassword,
+        newPassword,
+        revokeOtherSessions: true,
+      });
+      if (error) {
+        throw new Error(authErrorMessage(error, "Failed to update password."));
+      }
+      toast.success("Password updated. Your other devices have been signed out.");
+      setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
     } catch (err: any) {
@@ -199,6 +213,35 @@ export function AccountSecuritySettings({ profile }: AccountSecuritySettingsProp
             </div>
           )}
 
+          <div>
+            <label htmlFor="current-password" style={{ fontSize: "0.65rem", fontWeight: 800, color: "var(--text-secondary)", textTransform: "uppercase", display: "block", marginBottom: "0.45rem", letterSpacing: "0.15em" }}>
+              Current Password
+            </label>
+            <div style={{ position: "relative", maxWidth: "24rem" }}>
+              <input
+                id="current-password"
+                type="password"
+                autoComplete="current-password"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                placeholder="Your current password"
+                required
+                style={{
+                  width: "100%",
+                  padding: "0.8rem 1rem 0.8rem 2.5rem",
+                  borderRadius: "100px",
+                  border: "1.5px solid rgba(99, 102, 241, 0.4)",
+                  background: "rgba(255, 255, 255, 0.95)",
+                  fontSize: "0.9rem",
+                  color: "var(--text-primary)",
+                  outline: "none",
+                  fontFamily: "var(--font-sans)",
+                }}
+              />
+              <Lock size={15} color="#6366f1" style={{ position: "absolute", left: "1rem", top: "50%", transform: "translateY(-50%)", opacity: 0.7 }} />
+            </div>
+          </div>
+
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "1.25rem" }}>
             <div>
               <label style={{ fontSize: "0.65rem", fontWeight: 800, color: "var(--text-secondary)", textTransform: "uppercase", display: "block", marginBottom: "0.45rem", letterSpacing: "0.15em" }}>
@@ -258,7 +301,7 @@ export function AccountSecuritySettings({ profile }: AccountSecuritySettingsProp
           <div style={{ marginTop: "0.5rem" }}>
             <Button
               type="submit"
-              disabled={passwordLoading || !newPassword}
+              disabled={passwordLoading || !newPassword || !currentPassword}
               size="md"
               icon={passwordLoading ? <Loader2 size={16} className="animate-spin" /> : <KeyRound size={16} />}
             >
