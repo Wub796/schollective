@@ -1,12 +1,16 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
+import { CollaboratorPicker } from "@/components/features/CollaboratorPicker";
 import { submitMentorshipRequest } from "./actions";
 import { Loader2, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import posthog from "posthog-js";
+import { MAX_COLLABORATORS } from "@/lib/collaboration";
+import type { StudentCard } from "@/lib/neon/social";
 
 interface RequestFormProps {
   professor: {
@@ -17,6 +21,8 @@ interface RequestFormProps {
     institution: string | null;
   };
   requestsToday: number;
+  /** The student's accepted friends — the only students who can be added as collaborators. */
+  friends: StudentCard[];
 }
 
 function FormField({
@@ -96,9 +102,10 @@ function FormField({
   );
 }
 
-export function RequestForm({ professor, requestsToday }: RequestFormProps) {
+export function RequestForm({ professor, requestsToday, friends }: RequestFormProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [collaboratorIds, setCollaboratorIds] = useState<string[]>([]);
   const profDisplayName = professor.preferred_name || professor.first_name;
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -113,9 +120,15 @@ export function RequestForm({ professor, requestsToday }: RequestFormProps) {
         posthog.capture("request_form_submitted", {
           professor_id: professor.id,
           professor_institution: professor.institution ?? undefined,
+          collaborator_count: collaboratorIds.length,
         });
-        toast.success("Request sent successfully!");
-        router.push("/dashboard");
+        if (result?.invitesFailed) {
+          toast.warning("Request sent, but your collaborators couldn't be invited. You can invite them from the thread.");
+        } else {
+          toast.success(collaboratorIds.length > 0 ? "Request sent. Your collaborators have been invited." : "Request sent successfully!");
+        }
+        // The thread list is where the new request, and the group's invitations, show up.
+        router.push("/threads");
       }
     } catch {
       toast.error("Failed to submit request.");
@@ -196,6 +209,45 @@ export function RequestForm({ professor, requestsToday }: RequestFormProps) {
           placeholder="e.g. Seeking expert feedback on my science fair project design, research paper draft, or advice on university lab research..."
           required
           type="textarea"
+        />
+      </div>
+
+      {/* Collaborators */}
+      <div style={{ display: "flex", flexDirection: "column", gap: "0.8rem" }}>
+        <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: "1rem", flexWrap: "wrap" }}>
+          <span style={{
+            fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.22em",
+            textTransform: "uppercase", color: "var(--text-tertiary)",
+            fontFamily: "var(--font-sans, monospace)",
+          }}>
+            Collaborators (Optional)
+          </span>
+          {friends.length > 0 && (
+            <span style={{ fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", color: "rgba(79, 70, 229, 0.6)", fontFamily: "var(--font-sans, monospace)" }}>
+              {collaboratorIds.length} of {MAX_COLLABORATORS} added
+            </span>
+          )}
+        </div>
+        <p style={{ fontSize: "0.8rem", color: "rgba(15, 23, 42, 0.5)", lineHeight: 1.7, fontFamily: "var(--font-sans)" }}>
+          Working on this with classmates? Add friends and they&apos;ll be invited to join the thread.
+          Dr. {profDisplayName} {professor.last_name} will see that this is a group request.
+        </p>
+        <CollaboratorPicker
+          candidates={friends}
+          selected={collaboratorIds}
+          onChange={setCollaboratorIds}
+          max={MAX_COLLABORATORS}
+          inputName="collaborator_ids"
+          disabled={loading}
+          emptyMessage={
+            <>
+              You haven&apos;t added any friends yet.{" "}
+              <Link href="/friends" style={{ color: "var(--accent)", fontWeight: 700, textDecoration: "none" }}>
+                Find classmates
+              </Link>{" "}
+              to collaborate with on a request.
+            </>
+          }
         />
       </div>
 
