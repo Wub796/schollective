@@ -7,6 +7,7 @@ import { sql } from "@/lib/neon/db";
 import { runAs } from "@/lib/neon/user-context";
 import { toIso } from "@/lib/neon/social";
 import { parseJsonbArray } from "@/lib/utils";
+import { givenName } from "@/lib/people";
 import { ThreadCard, type ThreadCardStatus } from "@/components/features/ThreadCard";
 import { GroupInviteCard, type GroupInvite } from "@/components/features/GroupInviteCard";
 import type { PersonSummary } from "@/components/features/PersonRow";
@@ -211,7 +212,7 @@ export default async function ThreadsPage() {
   // saw live-looking conversations they could not use and could not clear.
   const ongoing = processed.filter((t) => PARTICIPANT_ONGOING.includes(t.request.status));
   const past    = processed.filter((t) => PARTICIPANT_PAST.includes(t.request.status));
-  const displayName = profile.preferred_name || profile.first_name || "Scholar";
+  const displayName = givenName(profile, "Scholar");
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "3.5rem" }}>
