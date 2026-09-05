@@ -4,6 +4,7 @@ import { assertStorageConfigured, getUploadUrl, MAX_AVATAR_BYTES } from "@/lib/n
 import { isSuspended } from "@/lib/authz";
 import { checkRateLimit } from "@/lib/security";
 import { internalError } from "@/lib/utils";
+import { avatarRouteFor } from "@/lib/avatar";
 
 export const dynamic = "force-dynamic";
 
@@ -65,7 +66,7 @@ export async function POST(req: Request) {
 
     // The bucket is private, so the stored avatar points at our own route,
     // which signs a read on demand. A bare bucket URL would 403 for viewers.
-    const publicUrl = `/api/storage/avatar/${key}`;
+    const publicUrl = avatarRouteFor(key);
 
     return NextResponse.json({ uploadUrl, publicUrl, key });
   } catch (error: any) {

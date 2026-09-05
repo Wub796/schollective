@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/Button";
 import { useHydrated } from "@/lib/use-hydrated";
 import { InstitutionInput } from "@/components/ui/InstitutionInput";
+import { PreferredNameHint } from "@/components/profile/PreferredNameHint";
 import { validateEmail, type EmailValidationResult } from "@/lib/validators-client";
 import posthog from "posthog-js";
 
@@ -177,6 +178,8 @@ function SignupContent() {
   const [institution, setInstitution] = useState("");
   const [emailVal, setEmailVal] = useState<EmailValidationResult | null>(null);
   const [emailDirty, setEmailDirty] = useState(false);
+  // What has been typed into the name fields, so the preferred-name hint can say how it reads.
+  const [typedNames, setTypedNames] = useState<{ first_name?: string; last_name?: string; preferred_name?: string }>({});
 
   const handleEmailBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     const val = e.target.value;
@@ -386,7 +389,16 @@ function SignupContent() {
             ))}
           </motion.div>
 
-          <form onSubmit={handleSubmit} method="post">
+          <form
+            onSubmit={handleSubmit}
+            method="post"
+            onChange={(e) => {
+              const field = e.target as HTMLInputElement;
+              if (field.name === "first_name" || field.name === "last_name" || field.name === "preferred_name") {
+                setTypedNames((prev) => ({ ...prev, [field.name]: field.value }));
+              }
+            }}
+          >
             <div style={{ display: "flex", flexDirection: "column", gap: "3rem" }}>
 
               {/* Name row */}
@@ -397,6 +409,13 @@ function SignupContent() {
 
               <motion.div variants={fadeUp}>
                 <Field id="preferred_name" name="preferred_name" label="Preferred Name (optional)" placeholder="Janey" />
+                <PreferredNameHint
+                  firstName={typedNames.first_name ?? ""}
+                  lastName={typedNames.last_name ?? ""}
+                  preferredName={typedNames.preferred_name ?? ""}
+                  honorific={role === "professor" ? "Dr." : undefined}
+                  style={{ paddingLeft: "1.75rem" }}
+                />
               </motion.div>
 
               <motion.div variants={fadeUp}>
