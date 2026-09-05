@@ -8,6 +8,7 @@ import {
   setCachedAiResult,
   executeHybridAiWithFallback,
 } from "./guardrails";
+import { facultyName } from "@/lib/people";
 
 export interface ProfessorCandidate {
   id: string;
@@ -118,10 +119,7 @@ export async function recommendProfessors(
 
   const truncatedCandidates = candidates.slice(0, 12).map((c) => ({
     id: c.id,
-    name: sanitiseCandidateText(
-      `Dr. ${c.preferred_name || c.first_name || ""} ${c.last_name || ""}`,
-      100,
-    ),
+    name: sanitiseCandidateText(facultyName(c), 100),
     title: sanitiseCandidateText(c.academic_title, 60),
     institution: sanitiseCandidateText(c.institution, 60),
     department: sanitiseCandidateText(c.department, 60),
