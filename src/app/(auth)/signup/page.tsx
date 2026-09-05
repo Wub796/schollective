@@ -144,10 +144,19 @@ function FieldSelect({
 function SignupContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [role, setRole] = useState<Role>("student");
+  const roleParam = searchParams.get("role");
+  const [role, setRole] = useState<Role>(roleParam === "professor" ? "professor" : "student");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const hydrated = useHydrated();
+
+  // Sync role if URL search parameter changes
+  useEffect(() => {
+    const r = searchParams.get("role");
+    if (r === "professor" || r === "student") {
+      setRole(r);
+    }
+  }, [searchParams]);
 
   // If there's an error in the URL (e.g. from OAuth callback), show it
   useEffect(() => {
