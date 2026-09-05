@@ -4,6 +4,7 @@ import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { LottieReview } from "./LottieReview";
 import { PendingActions } from "./PendingActions";
 import { ShieldCheck, Info } from "lucide-react";
+import { givenName } from "@/lib/people";
 
 export const dynamic = "force-dynamic";
 
@@ -14,7 +15,7 @@ export default async function ProfessorPendingPage() {
   if (!profile || profile.role !== "professor") redirect("/dashboard");
   if (profile.status === "approved") redirect("/prof/dashboard");
 
-  const displayName = profile.preferred_name || profile.first_name || "Professor";
+  const displayName = givenName(profile, "Professor");
 
   return (
     <div className="page-bg flex items-center justify-center p-8" data-no-morph="true" style={{ minHeight: "100vh" }}>
