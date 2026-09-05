@@ -29,6 +29,7 @@ import {
   sanitiseText,
   sanitiseUrl,
 } from "@/lib/security";
+import { avatarKeyFromRoute, avatarOwner } from "@/lib/avatar";
 
 /** Fields the account owner may set about themselves. */
 export interface SanitisedProfileInput {
@@ -104,6 +105,26 @@ function urlField(get: Source, key: string): string | undefined {
   return sanitiseUrl(raw);
 }
 
+/**
+ * A profile picture: a path to one of our own uploads, which `sanitiseUrl` would
+ * reject for having no host, or an https image elsewhere such as a Google account
+ * photo. Given `ownerId`, an upload must be the caller's own, since the serving
+ * route is public and any account's key would otherwise be claimable.
+ *
+ * Anything else is dropped, and `rejectedProfileField` reports it.
+ */
+function avatarField(get: Source, ownerId: string | undefined): string | undefined {
+  const raw = get("avatar_url");
+  if (raw === undefined || raw === null) return undefined;
+  if (typeof raw !== "string") return undefined;
+  const value = raw.trim();
+  if (!value) return "";
+  const key = avatarKeyFromRoute(value);
+  if (key) return !ownerId || avatarOwner(key) === ownerId ? value : undefined;
+  const url = sanitiseUrl(value);
+  return /^https:\/\//i.test(url) ? url : undefined;
+}
+
 function tagField(get: Source, key: string, max: number): string[] | undefined {
   const raw = get(key);
   if (raw === undefined || raw === null) return undefined;
@@ -148,7 +169,7 @@ function jsonField(get: Source, key: string, maxItems: number, maxChars: number)
   return clean(raw, 0);
 }
 
-function build(get: Source): SanitisedProfileInput {
+function build(get: Source, ownerId?: string): SanitisedProfileInput {
   const out: SanitisedProfileInput = {
     first_name: textField(get, "first_name", LIMITS.name),
     last_name: textField(get, "last_name", LIMITS.name),
@@ -165,7 +186,7 @@ function build(get: Source): SanitisedProfileInput {
 
     lab_website: urlField(get, "lab_website"),
     portfolio_url: urlField(get, "portfolio_url"),
-    avatar_url: urlField(get, "avatar_url"),
+    avatar_url: avatarField(get, ownerId),
 
     academic_interests: tagField(get, "academic_interests", LIMITS.expertiseField),
     expertise_fields: tagField(get, "expertise_fields", LIMITS.expertiseField),
@@ -193,8 +214,8 @@ function build(get: Source): SanitisedProfileInput {
     out.is_accepting_requests = sanitiseBool(accepting);
   }
 
-  // Drop keys the caller did not send, so `upsertProfile`'s COALESCE keeps the
-  // stored value instead of overwriting it with an empty string.
+  // Drop keys the caller did not send, so `upsertProfile` keeps the stored value.
+  // A key sent empty stays as "": that is a deliberate clear, stored as NULL.
   for (const key of Object.keys(out) as (keyof SanitisedProfileInput)[]) {
     if (out[key] === undefined) delete out[key];
   }
@@ -206,30 +227,117 @@ function hasText(value: unknown): boolean {
   return typeof value === "string" && value.trim().length > 0;
 }
 
+function isFilled(value: unknown): boolean {
+  return Array.isArray(value) ? value.some(hasText) : hasText(value);
+}
+
+/** What each single-value text field is called on screen. */
+const TEXT_FIELD_LABELS = {
+  first_name: "First name",
+  last_name: "Last name",
+  preferred_name: "Preferred name",
+  institution: "Institution",
+  education_level: "Education level",
+  department: "Department",
+  academic_title: "Academic title",
+  major: "Major",
+  graduation_year: "Graduation year",
+  bio: "Bio",
+  lab_website: "Lab website",
+  portfolio_url: "Portfolio link",
+  office_hours: "Office hours",
+  seeking_mentorship_type: "Mentorship type",
+  avatar_url: "Profile picture",
+} as const satisfies Partial<Record<keyof SanitisedProfileInput, string>>;
+
+/**
+ * The single-value text columns. Sent as "", each is cleared: `upsertProfile`
+ * stores NULL instead of keeping the old value, which COALESCE alone cannot tell
+ * apart from a field that was not sent at all.
+ */
+export const CLEARABLE_PROFILE_TEXT_FIELDS = Object.keys(TEXT_FIELD_LABELS) as (keyof typeof TEXT_FIELD_LABELS)[];
+
+const URL_FIELDS: ReadonlySet<string> = new Set(["lab_website", "portfolio_url"]);
+
+type RequiredField = "first_name" | "last_name" | "institution" | "education_level" | "expertise_fields";
+
 /** The fields a profile needs before it counts as set up, by role. */
+const REQUIRED_BY_ROLE: Record<string, readonly RequiredField[]> = {
+  student: ["first_name", "education_level"],
+  professor: ["first_name", "last_name", "institution", "expertise_fields"],
+};
+
+const BLANKED_MESSAGES: Record<RequiredField, string> = {
+  first_name: "Your first name can't be left blank.",
+  last_name: "Your last name can't be left blank.",
+  institution: "Your institution can't be left blank.",
+  education_level: "Choose your education level.",
+  expertise_fields: "Add at least one area of expertise.",
+};
+
+function requiredFieldsFor(role: string | null | undefined): readonly RequiredField[] | null {
+  return role && Object.prototype.hasOwnProperty.call(REQUIRED_BY_ROLE, role) ? REQUIRED_BY_ROLE[role] : null;
+}
+
 export function meetsProfileRequirements(
   role: string | null | undefined,
-  profile: {
-    first_name?: unknown;
-    last_name?: unknown;
-    institution?: unknown;
-    education_level?: unknown;
-    expertise_fields?: unknown;
-  },
+  profile: Partial<Record<RequiredField, unknown>>,
 ): boolean {
-  if (role === "student") {
-    return hasText(profile.first_name) && hasText(profile.education_level);
+  const required = requiredFieldsFor(role);
+  return required !== null && required.every((field) => isFilled(profile[field]));
+}
+
+/** A field a write refused, and the sentence to show the person who sent it. */
+export interface ProfileFieldProblem {
+  field: string;
+  message: string;
+}
+
+/**
+ * A required field this update would empty. Clearing a field is a real edit (see
+ * CLEARABLE_PROFILE_TEXT_FIELDS), so without this a saved profile could fall
+ * below what onboarding accepted. Only a field that has a value can be blanked,
+ * so an older profile already missing one can still save other changes.
+ */
+export function blankedRequiredField(
+  role: string | null | undefined,
+  stored: Partial<Record<RequiredField, unknown>>,
+  update: SanitisedProfileInput,
+): ProfileFieldProblem | null {
+  for (const field of requiredFieldsFor(role) ?? []) {
+    if (update[field] !== undefined && !isFilled(update[field]) && isFilled(stored[field])) {
+      return { field, message: BLANKED_MESSAGES[field] };
+    }
   }
-  if (role === "professor") {
-    return (
-      hasText(profile.first_name) &&
-      hasText(profile.last_name) &&
-      hasText(profile.institution) &&
-      Array.isArray(profile.expertise_fields) &&
-      profile.expertise_fields.some(hasText)
-    );
+  return null;
+}
+
+/**
+ * A field the caller filled in that sanitisation emptied: a web address that is
+ * not one, a profile picture that is not the caller's upload, text that was only
+ * markup. Stored as-is it would clear the field or keep the old value; either
+ * way what was typed is not what gets saved, and the save still reports success.
+ * So the write paths refuse, naming the field.
+ */
+export function rejectedProfileField(
+  source: Record<string, unknown> | FormData,
+  clean: SanitisedProfileInput,
+): ProfileFieldProblem | null {
+  for (const field of CLEARABLE_PROFILE_TEXT_FIELDS) {
+    const raw = source instanceof FormData ? source.get(field) : source[field];
+    if (!hasText(raw) || hasText(clean[field])) continue;
+    if (field === "avatar_url") {
+      return { field, message: "That profile picture could not be saved. Please upload it again." };
+    }
+    const label = TEXT_FIELD_LABELS[field];
+    return {
+      field,
+      message: URL_FIELDS.has(field)
+        ? `${label} must be a web address, like https://example.com.`
+        : `${label} could not be saved as entered.`,
+    };
   }
-  return false;
+  return null;
 }
 
 export interface ProfileCompletionInput {
@@ -263,15 +371,17 @@ export function resolveProfileCompletion(input: ProfileCompletionInput): boolean
 }
 
 /** Sanitises a faculty/student form submission. */
-export function sanitiseProfileFormData(formData: FormData): SanitisedProfileInput {
-  return build((key) => (formData.has(key) ? formData.get(key) : undefined));
+export function sanitiseProfileFormData(formData: FormData, ownerId?: string): SanitisedProfileInput {
+  return build((key) => (formData.has(key) ? formData.get(key) : undefined), ownerId);
 }
 
 /** Sanitises a JSON request body, ignoring every privileged field. */
-export function sanitiseProfileBody(body: unknown): SanitisedProfileInput {
+export function sanitiseProfileBody(body: unknown, ownerId?: string): SanitisedProfileInput {
   const record = (body && typeof body === "object" ? body : {}) as Record<string, unknown>;
   const privileged = new Set<string>(PRIVILEGED_PROFILE_FIELDS);
-  return build((key) =>
-    privileged.has(key) ? undefined : Object.prototype.hasOwnProperty.call(record, key) ? record[key] : undefined,
+  return build(
+    (key) =>
+      privileged.has(key) ? undefined : Object.prototype.hasOwnProperty.call(record, key) ? record[key] : undefined,
+    ownerId,
   );
 }
