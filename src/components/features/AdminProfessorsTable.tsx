@@ -6,6 +6,7 @@ import { Search, Mail, GraduationCap, Calendar, ChevronDown, RotateCcw, Ban, Che
 import { revokeVerification, setUserSuspended } from "@/app/admin/dashboard/admin-actions";
 import { updateProfessorStatus } from "@/app/admin/dashboard/actions";
 import { toast } from "sonner";
+import { fullName } from "@/lib/people";
 
 export interface ProfessorRecord {
   id: string;
@@ -183,7 +184,7 @@ export function AdminProfessorsTable({ professors }: { professors: ProfessorReco
               {filtered.length === 0 ? (
                 <tr><td colSpan={7} style={{ padding: "3rem 1.1rem", textAlign: "center", fontSize: "0.75rem", color: "rgba(15, 23, 42,0.2)", fontFamily: "var(--font-sans)" }}>No professors match the current filters.</td></tr>
               ) : filtered.map((p) => {
-                const name = `${p.preferred_name ?? p.first_name} ${p.last_name}`;
+                const name = fullName(p, "Professor");
                 const isBusy = busy === p.id;
                 const status = effectiveStatus(p);
                 const isSuspended = status === "suspended";
