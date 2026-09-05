@@ -5,7 +5,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { AvatarStack } from "@/components/ui/Avatar";
 import type { PersonSummary } from "@/components/features/PersonRow";
-import { listNames } from "@/lib/people";
+import { fullName, listNames } from "@/lib/people";
 
 /** The statuses a participant's thread list can contain. */
 export type ThreadCardStatus = 'pending' | 'viewed' | 'active' | 'declined' | 'closed';
@@ -42,7 +42,7 @@ const statusConfig = {
 };
 
 export function ThreadCard({ request, viewerRole, hasUnread, groupmates = [] }: ThreadCardProps) {
-  const displayName = request.participant.preferred_name || request.participant.first_name;
+  const participantName = fullName(request.participant);
   const prefix = viewerRole === "student" ? "Dr. " : "";
   const status = statusConfig[request.status];
   const initials = `${request.participant.first_name[0]}${request.participant.last_name?.[0] ?? ""}`;
@@ -101,7 +101,7 @@ export function ThreadCard({ request, viewerRole, hasUnread, groupmates = [] }: 
                   lineHeight: 1.3, fontFamily: "var(--font-sans)",
                   overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap"
                 }}>
-                  {prefix}{displayName} {request.participant.last_name}
+                  {prefix}{participantName}
                 </span>
                 {hasUnread && (
                   <span style={{
