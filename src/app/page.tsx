@@ -17,51 +17,47 @@ import { MobileStickyBar } from "@/components/ui/MobileStickyBar";
 
 /* ── Page Loader ───────────────────────────────────────────────────────── */
 function PageLoader() {
-  const letters = "SCHOLLECTIVE".split("");
   return (
     <motion.div
       key="loader"
       initial={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
+      transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
       className="fixed inset-0 z-[99999] flex flex-col items-center justify-center select-none"
       style={{ background: "#faf9f7" }}
     >
-      <div className="relative w-48 h-48 flex items-center justify-center mb-8">
-        <motion.svg animate={{ rotate: 360 }} transition={{ duration: 6, ease: "linear", repeat: Infinity }} className="absolute w-48 h-48 pointer-events-none" viewBox="0 0 200 200">
-          <circle cx="100" cy="100" r="96" stroke="rgba(79, 70, 229, 0.1)" strokeWidth="1" fill="none" strokeDasharray="4 4" />
-          <circle cx="100" cy="4" r="3.5" fill="#4f46e5" />
-        </motion.svg>
-        <motion.svg animate={{ rotate: -360 }} transition={{ duration: 4.5, ease: "linear", repeat: Infinity }} className="absolute w-36 h-36 pointer-events-none" viewBox="0 0 160 160">
-          <circle cx="80" cy="80" r="76" stroke="rgba(79, 70, 229, 0.15)" strokeWidth="1.2" fill="none" strokeDasharray="4 12" />
-          <circle cx="80" cy="4" r="4.5" fill="#4338ca" />
-        </motion.svg>
-        <motion.svg animate={{ rotate: 360 }} transition={{ duration: 3, ease: "linear", repeat: Infinity }} className="absolute w-24 h-24 pointer-events-none" viewBox="0 0 100 100">
-          <circle cx="50" cy="50" r="46" stroke="rgba(79, 70, 229, 0.2)" strokeWidth="1.5" fill="none" strokeDasharray="15 8" />
-          <circle cx="82.5" cy="17.5" r="2.5" fill="#818cf8" />
-        </motion.svg>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.94 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+        className="w-16 h-16 rounded-2xl bg-white border border-slate-200/80 shadow-[0_8px_30px_rgba(15,23,42,0.06)] flex items-center justify-center p-2.5 mb-5"
+      >
+        <Image
+          src="/logo.png"
+          alt="Schollective"
+          width={44}
+          height={44}
+          className="rounded-xl object-cover"
+          priority
+        />
+      </motion.div>
+
+      <motion.span
+        initial={{ opacity: 0, y: 6 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+        className="font-display text-2xl font-bold tracking-tight text-slate-900 select-none"
+      >
+        Schollective
+      </motion.span>
+
+      <div className="w-28 h-[1.5px] bg-slate-200/80 relative overflow-hidden mt-5 rounded-full">
         <motion.div
-          animate={{ scale: [0.96, 1.04, 0.96], boxShadow: ["0 0 12px rgba(79,70,229,0.05)", "0 0 28px rgba(79,70,229,0.15)", "0 0 12px rgba(79,70,229,0.05)"] }}
-          transition={{ duration: 2, ease: "easeInOut", repeat: Infinity }}
-          className="absolute w-14 h-14 rounded-2xl bg-white border border-indigo-600/15 flex items-center justify-center overflow-hidden p-2"
-        >
-          <Image src="/logo.png" alt="Schollective" width={38} height={38} className="rounded-xl object-cover -translate-y-0.5" priority />
-        </motion.div>
-      </div>
-      <div className="text-center">
-        <div className="flex justify-center gap-0.5 overflow-hidden py-1 mb-1">
-          {letters.map((char, i) => (
-            <motion.span key={i} initial={{ y: "100%", opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.1 + i * 0.04 }} className="font-mono text-xs font-bold uppercase tracking-[0.25em] text-indigo-600">
-              {char}
-            </motion.span>
-          ))}
-        </div>
-        <motion.p initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: "easeOut", delay: 0.6 }} className="font-mono text-[0.52rem] uppercase tracking-[0.25em] text-slate-400/80 m-0 mt-2">
-          Academic Mentorship Platform
-        </motion.p>
-      </div>
-      <div className="w-32 h-[1px] bg-slate-200/60 relative overflow-hidden mt-6 rounded-full">
-        <motion.div initial={{ scaleX: 0, originX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }} className="absolute inset-0 bg-indigo-600" />
+          initial={{ scaleX: 0, originX: 0 }}
+          animate={{ scaleX: 1 }}
+          transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1] }}
+          className="absolute inset-0 bg-indigo-600 rounded-full"
+        />
       </div>
     </motion.div>
   );
@@ -123,12 +119,12 @@ export default function LandingPage() {
       setPhase("done");
       return;
     }
-    // First visit — show loader, then reveal page after 1.8s
+    // First visit — show loader, then reveal page after 1.2s
     setPhase("loading");
     const t = setTimeout(() => {
       setPhase("done");
       sessionStorage.setItem(LOADER_KEY, "1");
-    }, 1800);
+    }, 1200);
     return () => clearTimeout(t);
   }, []);
 
