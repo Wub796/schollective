@@ -8,6 +8,7 @@ import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { ArrowLeft, GraduationCap, Building2, BookOpen, Mail, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { AppShell } from "@/components/layout/AppShell";
+import { PARTICIPANT_ONGOING, asSqlArray } from "@/lib/status";
 
 export const revalidate = 300;
 export const dynamicParams = true;
@@ -380,10 +381,24 @@ export default async function PublicProfessorProfilePage({ params }: PageProps) 
     // RLS scopes requests to their participants: without the student's
     // database identity this lookup sees no rows and the "request pending"
     // state never displays.
+    //
+    // Matches the rule submitMentorshipRequest enforces: any ongoing request
+    // (a `viewed` one included — it was missing here, so the button showed and
+    // the submit then failed), whether the student leads it or has joined it as
+    // a collaborator.
     const existingRequests = await runAs(user.id, async () => sql`
-      SELECT id, status
-      FROM requests
-      WHERE student_id = ${user.id} AND professor_id = ${id} AND status IN ('pending', 'active')
+      SELECT r.id, r.status
+      FROM requests r
+      WHERE r.professor_id = ${id}
+        AND r.status = ANY(${asSqlArray(PARTICIPANT_ONGOING)})
+        AND (
+          r.student_id = ${user.id}
+          OR EXISTS (
+            SELECT 1 FROM request_members m
+            WHERE m.request_id = r.id AND m.student_id = ${user.id} AND m.status = 'joined'
+          )
+        )
+      ORDER BY r.created_at DESC
       LIMIT 1;
     `);
     const existingRequest = existingRequests[0];
