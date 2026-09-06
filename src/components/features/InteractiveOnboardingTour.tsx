@@ -36,6 +36,26 @@ export function InteractiveOnboardingTour({ role, steps }: InteractiveOnboarding
     setMounted(true);
   }, []);
 
+  // Broadcast tour active status to window so headers/banners can react
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(
+        new CustomEvent("schollective:tour-status", {
+          detail: { active: isOpen, role },
+        })
+      );
+    }
+    return () => {
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(
+          new CustomEvent("schollective:tour-status", {
+            detail: { active: false, role },
+          })
+        );
+      }
+    };
+  }, [isOpen, role]);
+
   // Check if first-time user OR triggered via ?tour=true query param
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -47,14 +67,30 @@ export function InteractiveOnboardingTour({ role, steps }: InteractiveOnboarding
       const completed = localStorage.getItem(tourKey) === "completed";
 
       if (forceTour || !completed) {
+        window.dispatchEvent(
+          new CustomEvent("schollective:tour-status", {
+            detail: { active: true, role },
+          })
+        );
         const timer = setTimeout(() => {
           setIsOpen(true);
           setCurrentStepIndex(-1); // start with welcome splash
+
+          if (forceTour && window.history?.replaceState) {
+            const cleanUrl = new URL(window.location.href);
+            cleanUrl.searchParams.delete("tour");
+            const newSearch = cleanUrl.searchParams.toString();
+            window.history.replaceState(
+              {},
+              document.title,
+              cleanUrl.pathname + (newSearch ? `?${newSearch}` : "")
+            );
+          }
         }, 650);
         return () => clearTimeout(timer);
       }
     }
-  }, [tourKey]);
+  }, [tourKey, role]);
 
   // Listen for on-demand tour launch events (e.g. from Admin preview banner or sidebar)
   useEffect(() => {
@@ -175,7 +211,13 @@ export function InteractiveOnboardingTour({ role, steps }: InteractiveOnboarding
   };
 
   // ─── Replay Button (shown whenever tour is closed) ────────────
-  if (!isOpen && mounted) {
+  const isUrlTourQueued =
+    typeof window !== "undefined" &&
+    (new URLSearchParams(window.location.search).get("tour") === "true" ||
+      new URLSearchParams(window.location.search).get("tour") === "1" ||
+      new URLSearchParams(window.location.search).get("tour") === "open");
+
+  if (!isOpen && mounted && !isUrlTourQueued) {
     return (
       <button
         type="button"
