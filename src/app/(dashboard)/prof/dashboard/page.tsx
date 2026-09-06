@@ -124,17 +124,6 @@ export default async function ProfessorDashboard() {
 
       {/* ── Header ──────────────────────────────────────────────── */}
       <header data-tour="tour-prof-header" style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <span style={{ width: "1.5rem", height: "1px", background: "rgba(15, 23, 42, 0.2)", display: "block" }} />
-          <span style={{
-            fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.2em",
-            textTransform: "uppercase", color: "rgba(15, 23, 42, 0.3)",
-            fontFamily: "var(--font-sans, monospace)",
-          }}>
-            Faculty Portal
-          </span>
-        </div>
-
         <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: "2rem", flexWrap: "wrap" }}>
           <h1 className="font-display" style={{
             fontSize: "clamp(2.6rem, 5vw, 4rem)", fontWeight: 900,
@@ -185,7 +174,6 @@ export default async function ProfessorDashboard() {
       {/* ── Request Queue ─────────────────────────────────────── */}
       <div data-tour="tour-request-queue" style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <span style={{ width: "1rem", height: "1px", background: "rgba(15, 23, 42, 0.2)", display: "block" }} />
           <h2 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "rgba(15, 23, 42, 0.85)", letterSpacing: "-0.025em" }}>
             Incoming Request Queue
           </h2>
@@ -226,12 +214,9 @@ export default async function ProfessorDashboard() {
 
       {/* ── Faculty Profile Manager ─────────────────────────────── */}
       <div data-tour="tour-prof-profile-section" style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <span style={{ width: "1.5rem", height: "2px", background: "#6366f1", display: "block" }} />
-          <h2 className="font-display" style={{ fontSize: "1.3rem", fontWeight: 800, color: "#0f172a", letterSpacing: "-0.025em" }}>
-            Faculty Profile & Preferences
-          </h2>
-        </div>
+        <h2 className="font-display" style={{ fontSize: "1.3rem", fontWeight: 800, color: "#0f172a", letterSpacing: "-0.025em" }}>
+          Faculty Profile & Preferences
+        </h2>
         <ProfProfileForm profile={profile} />
       </div>
 

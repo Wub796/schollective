@@ -237,22 +237,6 @@ export function AiProfileReviewerCard({ profileData }: Props) {
     >
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1.25rem" }}>
         <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
-            <span style={{ width: "1.2rem", height: "2px", background: "#6366f1", display: "block" }} />
-            <span
-              style={{
-                fontSize: "0.62rem",
-                fontWeight: 800,
-                letterSpacing: "0.22em",
-                textTransform: "uppercase",
-                color: "#4f46e5",
-                fontFamily: "var(--font-sans, monospace)",
-              }}
-            >
-              AI Academic Advisor
-            </span>
-          </div>
-
           <h3 className="font-display" style={{ fontSize: "1.35rem", fontWeight: 800, color: "#0f172a", margin: 0, letterSpacing: "-0.02em" }}>
             Profile <em style={{ fontStyle: "italic", color: "#4f46e5", fontWeight: 300 }}>Reviewer</em>
           </h3>

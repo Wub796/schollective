@@ -12,12 +12,9 @@ export const dynamic = "force-dynamic";
 
 function SectionLabel({ text }: { text: string }) {
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-      <span style={{ width: "1rem", height: "2px", background: "#6366f1", display: "block" }} />
-      <h2 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "#0f172a", letterSpacing: "-0.025em" }}>
-        {text}
-      </h2>
-    </div>
+    <h2 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "#0f172a", letterSpacing: "-0.025em" }}>
+      {text}
+    </h2>
   );
 }
 
@@ -80,12 +77,6 @@ export default async function ThreadsPage() {
 
       {/* ── Header ── */}
       <header style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <span style={{ width: "1.5rem", height: "2px", background: "#6366f1", display: "block" }} />
-          <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: "#4f46e5", fontFamily: "var(--font-sans, monospace)" }}>
-            Student Portal
-          </span>
-        </div>
         <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: "2rem", flexWrap: "wrap" }}>
           <h1 className="font-display" style={{ fontSize: "clamp(2.4rem, 4.5vw, 3.6rem)", fontWeight: 900, color: "#0f172a", letterSpacing: "-0.035em", lineHeight: 1.1 }}>
             {displayName}&apos;s{" "}
@@ -208,12 +199,9 @@ export default async function ThreadsPage() {
       {past.length > 0 && (
         <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-              <span style={{ width: "1rem", height: "2px", background: "#818cf8", display: "block" }} />
-              <h2 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "#0f172a", opacity: 0.6, letterSpacing: "-0.025em" }}>
-                Past Sessions
-              </h2>
-            </div>
+            <h2 className="font-display" style={{ fontSize: "1.2rem", fontWeight: 700, color: "#0f172a", opacity: 0.6, letterSpacing: "-0.025em" }}>
+              Past Sessions
+            </h2>
             <span style={{ marginLeft: "auto", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "#475569", opacity: 0.5, fontFamily: "var(--font-sans, monospace)" }}>
               {past.length} completed
             </span>
