@@ -176,6 +176,15 @@ export const PROFILE_STATUSES = [
   "rejected",
   /** Account retains its session but loses product access. */
   "suspended",
+  /**
+   * Disabled by its own owner through Settings, inside a grace window.
+   *
+   * Distinct from 'suspended', which is a moderation decision: this one is
+   * reversible by the user, who is told in writing when the data disappears.
+   * Nothing reads product access off it — the middleware and every guard treat
+   * it as no access, exactly like suspended (see src/lib/account-deletion.ts).
+   */
+  "deactivated",
 ] as const;
 
 export type ProfileStatus = (typeof PROFILE_STATUSES)[number];
