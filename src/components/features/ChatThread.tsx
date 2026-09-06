@@ -13,12 +13,28 @@ interface Message {
   created_at: string;
 }
 
+export interface ThreadParticipant {
+  name: string;
+  role: "lead" | "member" | "professor";
+}
+
 export interface ChatThreadProps {
   requestId: string;
   initialMessages: Message[];
   currentUserId: string;
   status: "pending" | "viewed" | "active" | "declined" | "closed";
+  /**
+   * Everyone who can have posted, keyed by user id. Passed for group threads,
+   * where "not mine" no longer identifies who wrote a message; a one-to-one
+   * thread omits it and renders exactly as before.
+   */
+  participants?: Record<string, ThreadParticipant>;
 }
+
+const ROLE_TAG: Partial<Record<ThreadParticipant["role"], string>> = {
+  professor: "Professor",
+  lead: "Lead",
+};
 
 /**
  * Wording for a thread that cannot be written to yet.
@@ -46,7 +62,9 @@ export function ChatThread({
   initialMessages,
   currentUserId,
   status,
+  participants,
 }: ChatThreadProps) {
+  const isGroup = Boolean(participants);
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [inputValue, setInputValue] = useState("");
   const [sending, setSending] = useState(false);
@@ -69,7 +87,10 @@ export function ChatThread({
     let mounted = true;
 
     const fetchLatestMessages = async () => {
-      if (sendingRef.current) return;
+      // A hidden tab is not being read: polling it would waste a request and,
+      // since each poll records the viewer's read position, clear unread
+      // badges for messages nobody has seen.
+      if (sendingRef.current || document.hidden) return;
       try {
         const res = await fetch(`/api/messages/${requestId}`);
         if (!res.ok) return;
@@ -161,8 +182,12 @@ export function ChatThread({
             </p>
           </div>
         ) : (
-          messages.map((msg) => {
+          messages.map((msg, index) => {
             const isOwn = msg.sender_id === currentUserId;
+            // Name the author once per run of consecutive messages.
+            const showAuthor = isGroup && !isOwn && messages[index - 1]?.sender_id !== msg.sender_id;
+            const author = participants?.[msg.sender_id];
+            const roleTag = author ? ROLE_TAG[author.role] : undefined;
             return (
               <div
                 key={msg.id}
@@ -172,6 +197,26 @@ export function ChatThread({
                   alignItems: isOwn ? "flex-end" : "flex-start",
                 }}
               >
+                {showAuthor && (
+                  <span style={{
+                    display: "flex", alignItems: "center", gap: "0.4rem",
+                    margin: "0 0 0.3rem 0.2rem",
+                    fontSize: "0.66rem", fontWeight: 700, color: "rgba(15, 23, 42, 0.6)",
+                    fontFamily: "var(--font-sans)",
+                  }}>
+                    {author?.name ?? "Former participant"}
+                    {roleTag && (
+                      <span style={{
+                        fontSize: "0.48rem", fontWeight: 800, letterSpacing: "0.18em", textTransform: "uppercase",
+                        color: "var(--accent)", background: "rgba(79, 70, 229, 0.08)",
+                        border: "1px solid rgba(79, 70, 229, 0.2)", borderRadius: "100px",
+                        padding: "0.1rem 0.45rem", fontFamily: "var(--font-sans, monospace)",
+                      }}>
+                        {roleTag}
+                      </span>
+                    )}
+                  </span>
+                )}
                 <div style={{
                   padding: "0.75rem 1.1rem",
                   borderRadius: isOwn ? "16px 16px 3px 16px" : "16px 16px 16px 3px",
