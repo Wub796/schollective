@@ -20,6 +20,10 @@ export const PROTECTED_EXACT = [
   "/onboarding",
   "/professors",
   "/prof",
+  // The restore offer for an account its owner disabled. It has no product
+  // surface behind it, but restore is a write, so the shell stays behind the
+  // session wall with every other signed-in page.
+  "/deactivated",
 ] as const;
 
 /** Paths whose whole subtree is protected. */

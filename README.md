@@ -65,9 +65,11 @@ psql "$DATABASE_URL" -f db/migrations/0006_rls_scope_profiles_and_grants.sql
 ```
 
 Apply them as a role that owns the tables (`neondb_owner`), not as the role the
-app connects with. `0008` (friends and group threads) and `0009` (live schema
-drift) must be applied **before** deploying the code that depends on them — see
-[`db/README.md`](db/README.md).
+app connects with. `0008` (friends and group threads), `0009` (live schema
+drift) and `0010` (self-service account deletion) must be applied **before**
+deploying the code that depends on them — see [`db/README.md`](db/README.md).
+Deleting a disabled account past its grace window is a maintenance script rather
+than anything scheduled, because the Worker declares no cron triggers.
 
 Row-level security is **enforcing**: `0004` transfers table ownership to the
 non-`BYPASSRLS` role `schollective_app` and expresses the app's authorization
@@ -130,6 +132,10 @@ Three modules are worth reading before changing behaviour:
 - [`src/lib/collaboration.ts`](src/lib/collaboration.ts) — who may invite,
   remove, leave and close on a group thread. The database enforces the same
   membership transitions; read this before changing either side.
+- [`src/lib/account-deletion.ts`](src/lib/account-deletion.ts) — the grace
+  window, the confirmation phrases and the status a restore returns to. The
+  email, the restore page and `db/maintenance/002` all quote these constants, so
+  change them here and nothing has to be found by grepping.
 
 ## Known gaps
 
