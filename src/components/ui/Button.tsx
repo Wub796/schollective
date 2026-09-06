@@ -38,57 +38,6 @@ const Button = React.forwardRef<HTMLElement, ButtonProps>(
       lg: "px-9 py-4.5 text-base font-semibold",
     };
 
-    // Determine rolling content.
-    // If children is a string, split and roll char by char.
-    // Otherwise roll the whole node.
-    const isString = typeof children === "string";
-    const chars = isString ? (children as string).split("") : [];
-
-    const layer2Color = variant === "primary" ? "#ffffff" : "#4f46e5";
-
-    const rollContent = isString ? (
-      <>
-        {/* Layer 1 — slides up and out */}
-        <span className="flex relative" style={{ alignItems: "center", justifyContent: "center" }}>
-          <span className="flex" style={{ overflow: "hidden", padding: "0.1em 0.1em" }}>
-            {chars.map((ch, i) => (
-              <span
-                key={i}
-                className="inline-block transition-transform duration-[450ms] ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:-translate-y-[110%]"
-                style={{ fontWeight: 600, transitionDelay: `${i * 12}ms`, willChange: "transform" }}
-              >
-                {ch === " " ? "\u00A0" : ch}
-              </span>
-            ))}
-          </span>
-        </span>
-
-        {/* Layer 2 — slides up and in */}
-        <span className="flex" style={{ position: "absolute", inset: 0, alignItems: "center", justifyContent: "center", color: layer2Color, pointerEvents: "none" }}>
-          <span className="flex" style={{ overflow: "hidden", padding: "0.1em 0.1em" }}>
-            {chars.map((ch, i) => (
-              <span
-                key={i}
-                className="inline-block translate-y-[110%] group-hover:translate-y-0 transition-transform duration-[450ms] ease-[cubic-bezier(0.19,1,0.22,1)]"
-                style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontWeight: 400, transitionDelay: `${i * 12}ms`, willChange: "transform" }}
-              >
-                {ch === " " ? "\u00A0" : ch}
-              </span>
-            ))}
-          </span>
-        </span>
-      </>
-    ) : (
-      <>
-        <span className="flex transition-transform duration-[450ms] ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:-translate-y-full" style={{ alignItems: "center", justifyContent: "center" }}>
-          <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}>{children}</span>
-        </span>
-        <span className="flex translate-y-full group-hover:translate-y-0 transition-transform duration-[450ms] ease-[cubic-bezier(0.19,1,0.22,1)]" style={{ position: "absolute", inset: 0, alignItems: "center", justifyContent: "center", pointerEvents: "none" }}>
-          <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}>{children}</span>
-        </span>
-      </>
-    );
-
     const mergedClassName = cn(
       "group relative inline-flex items-center justify-center rounded-full overflow-hidden whitespace-nowrap cursor-pointer",
       "transition-[background,border-color,opacity,transform] duration-300",
@@ -100,11 +49,9 @@ const Button = React.forwardRef<HTMLElement, ButtonProps>(
     );
 
     const content = (
-      <span className="inline-flex items-center justify-center gap-2" style={{ position: "relative", zIndex: 1, overflow: "hidden" }}>
+      <span className="inline-flex items-center justify-center gap-2 relative z-[1]">
         {icon && <span className="flex-shrink-0 flex items-center justify-center">{icon}</span>}
-        <span className="relative inline-flex items-center justify-center" style={{ overflow: "hidden" }}>
-          {rollContent}
-        </span>
+        <span>{children}</span>
       </span>
     );
 
