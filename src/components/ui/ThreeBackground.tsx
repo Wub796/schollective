@@ -31,21 +31,45 @@ export function ThreeBackground() {
     el.appendChild(renderer.domElement);
 
     /* ── Background particle field (stars) ──────────────────────── */
+    // Helper to generate a soft circular particle texture so points render as round stars
+    const createStarTexture = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = 32;
+      canvas.height = 32;
+      const ctx = canvas.getContext("2d");
+      if (ctx) {
+        const gradient = ctx.createRadialGradient(16, 16, 0, 16, 16, 16);
+        gradient.addColorStop(0, "rgba(255, 255, 255, 1)");
+        gradient.addColorStop(0.5, "rgba(255, 255, 255, 0.6)");
+        gradient.addColorStop(1, "rgba(255, 255, 255, 0)");
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(16, 16, 16, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      return new THREE.CanvasTexture(canvas);
+    };
+
+    const starTexture = createStarTexture();
     const starCount = 900;
     const starPos = new Float32Array(starCount * 3);
     for (let i = 0; i < starCount; i++) {
       starPos[i * 3]     = (Math.random() - 0.5) * 140;
       starPos[i * 3 + 1] = (Math.random() - 0.5) * 100;
-      starPos[i * 3 + 2] = (Math.random() - 0.5) * 80;
+      // Keep stars strictly in the background plane (z: -10 to -60), well behind
+      // the camera at z = 38 and hub at z = 0, preventing near-lens square magnification.
+      starPos[i * 3 + 2] = -10 - Math.random() * 50;
     }
     const starGeo = new THREE.BufferGeometry();
     starGeo.setAttribute("position", new THREE.BufferAttribute(starPos, 3));
     const starMat = new THREE.PointsMaterial({
-      size: 0.12,
+      size: 0.22,
       color: 0xa5b4fc,  // indigo-tinted stars
       transparent: true,
       opacity: 0.5,
       sizeAttenuation: true,
+      map: starTexture,
+      depthWrite: false,
     });
     scene.add(new THREE.Points(starGeo, starMat));
 
@@ -225,6 +249,9 @@ export function ThreeBackground() {
       cancelAnimationFrame(animId);
       window.removeEventListener("mousemove", onMouseMove);
       window.removeEventListener("resize", onResize);
+      starTexture.dispose();
+      starGeo.dispose();
+      starMat.dispose();
       renderer.dispose();
       if (el.contains(renderer.domElement)) el.removeChild(renderer.domElement);
     };
