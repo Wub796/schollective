@@ -96,7 +96,7 @@ async function loadJobs() {
           }));
           b.onLoad({ filter: /.*/, namespace: "neon-stub" }, () => ({
             loader: "js",
-            contents: "export const sql = () => {}; export const ensureAuthSchema = async () => {};",
+            contents: "export const sql = () => {}; export const ensureAuthSchema = async () => {}; export const runAs = (uid, fn) => fn();",
           }));
         },
       },
