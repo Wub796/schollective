@@ -364,22 +364,10 @@ function SignupContent() {
           animate="show"
           style={{ width: "100%", maxWidth: "480px" }}
         >
-          {/* Eyebrow */}
-          <motion.div variants={fadeUp} style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.75rem" }}>
-            <span style={{ width: "1.5rem", height: "1px", background: "rgba(79, 70, 229, 0.4)", display: "block" }} />
-            <span style={{
-              fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.38em",
-              textTransform: "uppercase", color: "rgba(79, 70, 229, 0.7)",
-              fontFamily: "var(--font-sans)",
-            }}>
-              Join the Collective
-            </span>
-          </motion.div>
-
           {/* Headline */}
           <motion.h1 variants={fadeUp} className="font-display" style={{ fontSize: "clamp(2.6rem, 6vw, 3.8rem)", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.035em", lineHeight: 0.95, marginBottom: "3.5rem" }}>
             Create your<br />
-            <em style={{ fontStyle: "italic", color: "rgba(15, 23, 42, 0.38)" }}>account.</em>
+            <em style={{ fontStyle: "italic", color: "#4f46e5", fontWeight: 300 }}>account.</em>
           </motion.h1>
 
           {/* Role selector — pill tabs */}
@@ -582,22 +570,18 @@ function SignupContent() {
                 </Button>
               </motion.div>
 
-              <motion.p variants={fadeUp} style={{ textAlign: "center", fontSize: "0.55rem", fontWeight: 600, letterSpacing: "0.1em", color: "rgba(15, 23, 42, 0.22)", fontFamily: "var(--font-sans)" }}>
+              <motion.p variants={fadeUp} style={{
+                textAlign: "center", fontSize: "0.82rem", fontWeight: 500,
+                color: "#64748b", fontFamily: "var(--font-sans)",
+              }}>
                 Already have an account?{" "}
-                <Link href="/login" style={{ color: "rgba(15, 23, 42, 0.55)", textDecoration: "none" }}>
+                <Link href="/login" className="hover:text-indigo-700 transition-colors" style={{ color: "#4f46e5", fontWeight: 700, textDecoration: "none" }}>
                   Sign in →
                 </Link>
               </motion.p>
             </div>
           </form>
         </motion.div>
-      </div>
-
-      {/* Footer note */}
-      <div style={{ position: "relative", zIndex: 1, textAlign: "center", padding: "1.5rem" }}>
-        <span style={{ fontSize: "0.5rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.14)", fontFamily: "var(--font-sans)" }}>
-          Manually verified · Institutionally credentialed · © 2025 Schollective
-        </span>
       </div>
     </div>
   );

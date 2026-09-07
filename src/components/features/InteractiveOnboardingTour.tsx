@@ -205,50 +205,6 @@ export function InteractiveOnboardingTour({ role, steps }: InteractiveOnboarding
     handleComplete();
   };
 
-  const handleReplay = () => {
-    setCurrentStepIndex(-1);
-    setIsOpen(true);
-  };
-
-  // ─── Replay Button (shown whenever tour is closed) ────────────
-  const isUrlTourQueued =
-    typeof window !== "undefined" &&
-    (new URLSearchParams(window.location.search).get("tour") === "true" ||
-      new URLSearchParams(window.location.search).get("tour") === "1" ||
-      new URLSearchParams(window.location.search).get("tour") === "open");
-
-  if (!isOpen && mounted && !isUrlTourQueued) {
-    return (
-      <button
-        type="button"
-        onClick={handleReplay}
-        style={{
-          position: "fixed",
-          bottom: "1.5rem",
-          right: "1.5rem",
-          zIndex: 40,
-          background: "#ffffff",
-          border: "1.5px solid rgba(99, 102, 241, 0.3)",
-          borderRadius: "100px",
-          padding: "0.55rem 1.15rem",
-          display: "flex",
-          alignItems: "center",
-          gap: "0.45rem",
-          fontSize: "0.75rem",
-          fontWeight: 700,
-          color: "#4f46e5",
-          cursor: "pointer",
-          boxShadow: "0 4px 18px rgba(79, 70, 229, 0.12)",
-          fontFamily: "var(--font-sans)",
-        }}
-        title="Launch Product Tour"
-      >
-        <Sparkles size={14} color="#4f46e5" />
-        <span>Product Tour</span>
-      </button>
-    );
-  }
-
   if (!isOpen) return null;
 
   // ─── Tour Modes ───────────────────────────────────────────────

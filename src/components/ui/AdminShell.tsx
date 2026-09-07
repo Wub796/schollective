@@ -15,9 +15,7 @@ import {
   Menu,
   X,
   ChevronRight,
-  Sparkles,
 } from "lucide-react";
-import { setAdminViewAs } from "@/app/admin/dashboard/admin-actions";
 
 /* ─── Nav items ──────────────────────────────────────────────────────────── */
 const NAV = [
@@ -202,103 +200,6 @@ function AdminSidebarContent({ onClose }: { onClose?: () => void }) {
         {/* Divider */}
         <div style={{ height: "1px", background: "var(--border)", marginBottom: "1.5rem", marginLeft: "0.85rem", marginRight: "0.85rem" }} />
 
-        {/* ── Tour Sandbox ── */}
-        <p style={{
-          fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.15em",
-          textTransform: "uppercase", color: "var(--text-tertiary)",
-          marginBottom: "0.6rem", paddingLeft: "0.85rem",
-          fontFamily: "var(--font-sans, monospace)",
-        }}>
-          Tour Sandbox
-        </p>
-        <motion.ul
-          variants={stagger} initial="hidden" animate="show"
-          style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "0.25rem", marginBottom: "2rem" }}
-        >
-          <motion.li variants={itemVariant}>
-            <button
-              onClick={() => {
-                if (onClose) onClose();
-                setAdminViewAs("student", true);
-              }}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "0.85rem",
-                width: "100%",
-                padding: "0.75rem 1rem",
-                borderRadius: "10px",
-                background: "rgba(79, 70, 229, 0.05)",
-                border: "1px solid rgba(79, 70, 229, 0.15)",
-                cursor: "pointer",
-                textAlign: "left",
-                transition: "all 0.2s",
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.background = "rgba(79, 70, 229, 0.12)";
-                (e.currentTarget as HTMLElement).style.borderColor = "rgba(79, 70, 229, 0.35)";
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.background = "rgba(79, 70, 229, 0.05)";
-                (e.currentTarget as HTMLElement).style.borderColor = "rgba(79, 70, 229, 0.15)";
-              }}
-            >
-              <Sparkles size={14} color="#4f46e5" style={{ flexShrink: 0 }} />
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <span style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#4f46e5", lineHeight: 1.3 }}>
-                  Test Student Tour
-                </span>
-                <span style={{ display: "block", fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "rgba(79, 70, 229, 0.6)", fontFamily: "var(--font-sans, monospace)", lineHeight: 1, marginTop: "0.15rem" }}>
-                  Scholar Walkthrough
-                </span>
-              </div>
-            </button>
-          </motion.li>
-
-          <motion.li variants={itemVariant}>
-            <button
-              onClick={() => {
-                if (onClose) onClose();
-                setAdminViewAs("professor", true);
-              }}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "0.85rem",
-                width: "100%",
-                padding: "0.75rem 1rem",
-                borderRadius: "10px",
-                background: "rgba(99, 102, 241, 0.05)",
-                border: "1px solid rgba(99, 102, 241, 0.15)",
-                cursor: "pointer",
-                textAlign: "left",
-                transition: "all 0.2s",
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.background = "rgba(99, 102, 241, 0.12)";
-                (e.currentTarget as HTMLElement).style.borderColor = "rgba(99, 102, 241, 0.35)";
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.background = "rgba(99, 102, 241, 0.05)";
-                (e.currentTarget as HTMLElement).style.borderColor = "rgba(99, 102, 241, 0.15)";
-              }}
-            >
-              <Sparkles size={14} color="#6366f1" style={{ flexShrink: 0 }} />
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <span style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#6366f1", lineHeight: 1.3 }}>
-                  Test Faculty Tour
-                </span>
-                <span style={{ display: "block", fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "rgba(99, 102, 241, 0.6)", fontFamily: "var(--font-sans, monospace)", lineHeight: 1, marginTop: "0.15rem" }}>
-                  Professor Walkthrough
-                </span>
-              </div>
-            </button>
-          </motion.li>
-        </motion.ul>
-
-        {/* Divider */}
-        <div style={{ height: "1px", background: "var(--border)", marginBottom: "1.5rem", marginLeft: "0.85rem", marginRight: "0.85rem" }} />
-
         {/* Account Settings */}
         <p style={{
           fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.15em",
@@ -440,77 +341,8 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           </span>
         </Link>
 
-        {/* Quick Tour Testing Buttons in Header */}
-        <div className="hidden sm:flex" style={{ alignItems: "center", gap: "0.5rem", marginLeft: "auto", marginRight: "0.5rem" }}>
-          <button
-            onClick={() => setAdminViewAs("student", true)}
-            style={{
-              height: "28px",
-              padding: "0 0.85rem",
-              display: "flex",
-              alignItems: "center",
-              gap: "0.35rem",
-              borderRadius: "100px",
-              border: "1px solid rgba(79, 70, 229, 0.3)",
-              background: "linear-gradient(135deg, rgba(79, 70, 229, 0.08), rgba(99, 102, 241, 0.15))",
-              fontSize: "0.55rem",
-              fontWeight: 800,
-              letterSpacing: "0.08em",
-              textTransform: "uppercase",
-              color: "#4f46e5",
-              fontFamily: "var(--font-sans)",
-              cursor: "pointer",
-              transition: "all 0.2s",
-            }}
-            onMouseEnter={(e) => {
-              (e.currentTarget as HTMLElement).style.background = "linear-gradient(135deg, rgba(79, 70, 229, 0.18), rgba(99, 102, 241, 0.28))";
-              (e.currentTarget as HTMLElement).style.borderColor = "rgba(79, 70, 229, 0.5)";
-            }}
-            onMouseLeave={(e) => {
-              (e.currentTarget as HTMLElement).style.background = "linear-gradient(135deg, rgba(79, 70, 229, 0.08), rgba(99, 102, 241, 0.15))";
-              (e.currentTarget as HTMLElement).style.borderColor = "rgba(79, 70, 229, 0.3)";
-            }}
-          >
-            <Sparkles size={11} color="#4f46e5" />
-            Test Student Tour
-          </button>
-
-          <button
-            onClick={() => setAdminViewAs("professor", true)}
-            style={{
-              height: "28px",
-              padding: "0 0.85rem",
-              display: "flex",
-              alignItems: "center",
-              gap: "0.35rem",
-              borderRadius: "100px",
-              border: "1px solid rgba(99, 102, 241, 0.3)",
-              background: "linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(129, 140, 248, 0.15))",
-              fontSize: "0.55rem",
-              fontWeight: 800,
-              letterSpacing: "0.08em",
-              textTransform: "uppercase",
-              color: "#6366f1",
-              fontFamily: "var(--font-sans)",
-              cursor: "pointer",
-              transition: "all 0.2s",
-            }}
-            onMouseEnter={(e) => {
-              (e.currentTarget as HTMLElement).style.background = "linear-gradient(135deg, rgba(99, 102, 241, 0.18), rgba(129, 140, 248, 0.28))";
-              (e.currentTarget as HTMLElement).style.borderColor = "rgba(99, 102, 241, 0.5)";
-            }}
-            onMouseLeave={(e) => {
-              (e.currentTarget as HTMLElement).style.background = "linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(129, 140, 248, 0.15))";
-              (e.currentTarget as HTMLElement).style.borderColor = "rgba(99, 102, 241, 0.3)";
-            }}
-          >
-            <Sparkles size={11} color="#6366f1" />
-            Test Faculty Tour
-          </button>
-        </div>
-
         {/* Right: back to site */}
-        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexShrink: 0 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginLeft: "auto", flexShrink: 0 }}>
           <Link href="/dashboard" style={{ textDecoration: "none" }}>
             <div
               style={{
