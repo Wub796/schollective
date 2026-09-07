@@ -1,4 +1,5 @@
 import { sql } from "./db";
+import { runAs } from "./user-context";
 import { ensureAuthSchema } from "./schema";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
@@ -117,6 +118,11 @@ export async function getCurrentUserAndProfile(customHeaders?: Headers): Promise
     return { session: null, user: null, profile: null };
   }
 
+  // The profile queries run under the signed-in user's database identity so
+  // the RLS policies can scope them (the auto-insert and the email-claim
+  // update write the user's own row). runAs rather than ambient context:
+  // workerd does not implement AsyncLocalStorage.enterWith.
+  return runAs(session.user.id, async () => {
   try {
     const userId = session.user.id;
     const userEmail = session.user.email;
@@ -158,6 +164,7 @@ export async function getCurrentUserAndProfile(customHeaders?: Headers): Promise
     console.error("[auth] Failed to load profile:", error);
     return { session, user: session.user, profile: null };
   }
+  });
 }
 
 export async function getProfileById(id: string): Promise<ProfileRecord | null> {
@@ -170,7 +177,15 @@ export async function getProfileByEmail(email: string): Promise<ProfileRecord | 
   return (rows[0] as ProfileRecord) || null;
 }
 
+/**
+ * Runs under the row owner's database identity: the RLS policies allow the
+ * signed-in user to write their own profile row (and, through the email
+ * branch, adopt a pre-migration row carrying their address). The ambient
+ * request context cannot be relied on here — Next.js severs it across
+ * request-body reads in API routes — so the identity is applied explicitly.
+ */
 export async function upsertProfile(profile: Partial<ProfileRecord> & { id: string; email: string }) {
+  return runAs(profile.id, async () => {
   await ensureAuthSchema();
 
   let derivedExtras = profile.extracurriculars;
@@ -264,4 +279,5 @@ export async function upsertProfile(profile: Partial<ProfileRecord> & { id: stri
   `;
 
   return rows[0] as ProfileRecord;
+  });
 }

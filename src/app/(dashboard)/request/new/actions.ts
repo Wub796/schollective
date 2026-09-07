@@ -1,6 +1,7 @@
 "use server";
 
 import { sql } from "@/lib/neon/db";
+import { runAs } from "@/lib/neon/user-context";
 import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { revalidatePath } from "next/cache";
 import { sanitiseText, isValidUuid, LIMITS } from "@/lib/security";
@@ -30,6 +31,9 @@ export async function submitMentorshipRequest(formData: FormData) {
     return { error: "Please describe your mentorship goals." };
   }
 
+  // All DB work runs under the student's database identity (RLS): creating a
+  // request and its opening message are owner-scoped writes.
+  return runAs(user.id, async () => {
   // 1.5. Rate Limiting Check: Max 5 requests per 24 hours
   const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
   const countResult = await sql`
@@ -85,4 +89,5 @@ export async function submitMentorshipRequest(formData: FormData) {
 
 
   return { success: true };
+  });
 }

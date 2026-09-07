@@ -1,6 +1,7 @@
 "use server";
 
 import { sql } from "@/lib/neon/db";
+import { runAs } from "@/lib/neon/user-context";
 import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { revalidatePath } from "next/cache";
 import { filterMessage } from "@/lib/validators";
@@ -44,19 +45,21 @@ export async function sendMessage(requestId: string, content: string) {
       return { error: "This thread is not active and cannot receive messages." };
     }
 
-    await sql`
-      INSERT INTO messages (request_id, sender_id, content)
-      VALUES (${reqId}, ${user.id}, ${sanitisedContent});
-    `;
+    return runAs(user.id, async () => {
+      await sql`
+        INSERT INTO messages (request_id, sender_id, content)
+        VALUES (${reqId}, ${user.id}, ${sanitisedContent});
+      `;
 
-    await sql`
-      UPDATE requests
-      SET updated_at = now()
-      WHERE id = ${reqId};
-    `;
+      await sql`
+        UPDATE requests
+        SET updated_at = now()
+        WHERE id = ${reqId};
+      `;
 
-    revalidatePath(`/messages/${reqId}`);
-    return { success: true };
+      revalidatePath(`/messages/${reqId}`);
+      return { success: true };
+    });
   } catch (err: any) {
     return { error: err.message || "Failed to send message." };
   }
@@ -75,17 +78,19 @@ export async function closeRequest(requestId: string) {
     const { request, isParticipant } = await getThreadAccess(reqId, user.id);
     if (!request || !isParticipant) return { error: "Request not found" };
 
-    await sql`
-      UPDATE requests
-      SET status = 'closed', updated_at = now()
-      WHERE id = ${reqId};
-    `;
+    return runAs(user.id, async () => {
+      await sql`
+        UPDATE requests
+        SET status = 'closed', updated_at = now()
+        WHERE id = ${reqId};
+      `;
 
-    revalidatePath(`/messages/${reqId}`);
-    revalidatePath("/dashboard");
-    revalidatePath("/prof/dashboard");
+      revalidatePath(`/messages/${reqId}`);
+      revalidatePath("/dashboard");
+      revalidatePath("/prof/dashboard");
 
-    return { success: true };
+      return { success: true };
+    });
   } catch (err: any) {
     return { error: err.message || "Failed to close request." };
   }
@@ -105,19 +110,21 @@ export async function markRead(requestId: string) {
     const { isParticipant } = await getThreadAccess(reqId, user.id);
     if (!isParticipant) return { error: "Request not found" };
 
-    await sql`
-      UPDATE messages
-      SET read_at = now()
-      WHERE request_id = ${reqId}
-        AND sender_id != ${user.id}
-        AND read_at IS NULL;
-    `;
+    return runAs(user.id, async () => {
+      await sql`
+        UPDATE messages
+        SET read_at = now()
+        WHERE request_id = ${reqId}
+          AND sender_id != ${user.id}
+          AND read_at IS NULL;
+      `;
 
-    revalidatePath(`/messages/${reqId}`);
-    revalidatePath("/dashboard");
-    revalidatePath("/prof/dashboard");
+      revalidatePath(`/messages/${reqId}`);
+      revalidatePath("/dashboard");
+      revalidatePath("/prof/dashboard");
 
-    return { success: true };
+      return { success: true };
+    });
   } catch (err: any) {
     return { error: err.message || "Failed to mark messages as read." };
   }

@@ -1,4 +1,5 @@
 import { neon, neonConfig, type NeonQueryFunction } from "@neondatabase/serverless";
+import { getDbUserContext } from "./user-context";
 
 // Use stateless HTTP fetch queries for serverless edge / Cloudflare Workers.
 // neon() already speaks HTTP to https://<host>/sql; poolQueryViaFetch makes
@@ -60,8 +61,25 @@ export function describeMissingDbUrl(): string {
 /**
  * Lazy Neon Serverless SQL client
  * Reads the connection string dynamically at request time to ensure compatibility with Cloudflare Workers.
+ *
+ * Row-level security: when the request carries a signed-in user (set by
+ * `getCurrentUserAndProfile`, or `runAs` for the background worker), every
+ * query is executed inside a one-shot transaction that first sets the
+ * `app.user_id` setting the RLS policies in db/migrations/0004 read. The Neon
+ * HTTP driver has no session state between calls, so the setting must travel
+ * with each query — the batch below is a single HTTP round trip, and the
+ * transaction scope guarantees the setting cannot leak into any other query.
+ * Unauthenticated queries run bare and see only what the policies declare
+ * public.
  */
-export const sql: NeonQueryFunction<false, false> = ((strings: TemplateStringsArray, ...values: any[]) => {
+export const sql: NeonQueryFunction<false, false> = (async (strings: any, ...values: any[]) => {
   const fn = neon(getServerlessDbUrl());
-  return (fn as any)(strings, ...values);
+  const userId = getDbUserContext();
+  if (!userId) return fn(strings, ...values);
+
+  const results = await fn.transaction([
+    fn`SELECT set_config('app.user_id', ${userId}, true)`,
+    fn(strings, ...values),
+  ]);
+  return results[1];
 }) as any;

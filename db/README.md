@@ -31,12 +31,41 @@ The durable AI profile-review table and its recovery indexes are defined in
 `db/migrations/0002_ai_profile_review_jobs.sql`. The same runtime bootstrap
 creates them automatically when `AUTH_SCHEMA_AUTO_MIGRATE` is enabled.
 
+## Row-Level Security
+
+All tables carry row-level security, enforced through two migrations:
+
+- `db/migrations/0003_rls_policies.sql` enabled RLS on every table while the
+  app still connected as `neondb_owner` (whose BYPASSRLS attribute makes
+  policies inert) — pure staging, zero behavior change.
+- `db/migrations/0004_rls_activate.sql` activates enforcement: every table is
+  owned by the least-privilege `schollective_app` role (no BYPASSRLS), the app
+  tables are `FORCE`d so their owner is subject to policy, and the policies
+  mirror the app's authorization model, keyed on the `app.user_id` setting the
+  sql wrapper (`src/lib/neon/db.ts`) attaches per query via
+  `src/lib/neon/user-context.ts`.
+
+Notes for future changes:
+
+- Better Auth tables are deliberately NOT `FORCE`d — their owner (the app
+  role) must read and write sessions across users for the library to work.
+- `notifications` inserts are allowed for any authenticated user because the
+  app writes them on behalf of other users (a professor accepting a request
+  notifies the student); `INSERT .. RETURNING` on that table would apply the
+  SELECT policy to the returned row and must be avoided there.
+- Admin powers at the database layer come from the caller's `role = 'admin'`
+  in the `user` table, re-checked inside `app_is_admin()`.
+- The role's password lives only in `.env.local` and the Worker secrets —
+  never in git. Rollback is a connection-string change back to `neondb_owner`.
+
 To manage the schema by hand instead, set `AUTH_SCHEMA_AUTO_MIGRATE=false` and
-apply the file yourself. Every statement is idempotent:
+apply the files yourself. Every statement is idempotent:
 
 ```bash
 psql "$DATABASE_URL" -f db/migrations/0001_better_auth.sql
 psql "$DATABASE_URL" -f db/migrations/0002_ai_profile_review_jobs.sql
+psql "$DATABASE_URL" -f db/migrations/0003_rls_policies.sql
+psql "$DATABASE_URL" -f db/migrations/0004_rls_activate.sql   # requires the schollective_app role to exist
 ```
 
 ## Environment

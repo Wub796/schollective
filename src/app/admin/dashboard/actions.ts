@@ -1,6 +1,7 @@
 "use server";
 
 import { sql } from "@/lib/neon/db";
+import { runAs } from "@/lib/neon/user-context";
 import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { revalidatePath } from "next/cache";
 import { scoreProfessorApplication } from "@/lib/validators";
@@ -13,6 +14,23 @@ export async function scoreApplication(profileId: string) {
   }
 
   try {
+    // Server actions are publicly invokable endpoints — this write path is
+    // admin-only, so resolve the caller and run under their identity. The RLS
+    // admin branch then enforces the same rule at the database layer.
+    const { user, profile: adminProfile } = await getCurrentUserAndProfile();
+    if (!user || adminProfile?.role !== "admin") {
+      return { error: "Access denied: Admin privileges required." };
+    }
+
+    return runAs(user.id, async () => await scoreApplicationFor(pid));
+  } catch (err: any) {
+    console.error("[scoreApplication] Unexpected error:", err);
+    return { error: err.message || "Scoring failed" };
+  }
+}
+
+/** The scoring body — runs under the caller's database identity. */
+async function scoreApplicationFor(pid: string) {
     const profiles = await sql`
       SELECT id, email, institution, expertise_fields, first_name, last_name, lab_website, publications, status, role
       FROM profiles
@@ -64,14 +82,16 @@ export async function scoreApplication(profileId: string) {
     revalidatePath("/professors");
 
     return { success: true, autoApproved, result: { score: result.score, level: result.level, flags: result.flags, signals: result.signals } };
-  } catch (err: any) {
-    console.error("[scoreApplication] Unexpected error:", err);
-    return { error: err.message || "Scoring failed" };
-  }
 }
 
 export async function autoReviewAllPendingProfessors() {
   try {
+    const { user, profile: adminProfile } = await getCurrentUserAndProfile();
+    if (!user || adminProfile?.role !== "admin") {
+      return { error: "Access denied: Admin privileges required." };
+    }
+
+    return runAs(user.id, async () => {
     const pending = await sql`
       SELECT id
       FROM profiles
@@ -86,7 +106,7 @@ export async function autoReviewAllPendingProfessors() {
     let flaggedCount = 0;
 
     for (const item of pending) {
-      const res = await scoreApplication(item.id);
+      const res = await scoreApplicationFor(item.id);
       if (res?.autoApproved) autoApprovedCount++;
       else flaggedCount++;
     }
@@ -96,6 +116,7 @@ export async function autoReviewAllPendingProfessors() {
     revalidatePath("/professors");
 
     return { success: true, processed: pending.length, autoApprovedCount, flaggedCount };
+    });
   } catch (err: any) {
     console.error("[autoReviewAllPendingProfessors] Error:", err);
     return { error: err.message || "Batch review failed" };
@@ -114,21 +135,25 @@ export async function updateProfessorStatus(profileId: string, newStatus: 'appro
     }
 
     if (newStatus === "approved") {
-      await sql`
-        UPDATE profiles
-        SET status = ${newStatus},
-            profile_complete = true,
-            is_accepting_requests = true,
-            updated_at = now()
-        WHERE id = ${pid};
-      `;
+      await runAs(user.id, async () => {
+        await sql`
+          UPDATE profiles
+          SET status = ${newStatus},
+              profile_complete = true,
+              is_accepting_requests = true,
+              updated_at = now()
+          WHERE id = ${pid};
+        `;
+      });
     } else {
-      await sql`
-        UPDATE profiles
-        SET status = ${newStatus},
-            updated_at = now()
-        WHERE id = ${pid};
-      `;
+      await runAs(user.id, async () => {
+        await sql`
+          UPDATE profiles
+          SET status = ${newStatus},
+              updated_at = now()
+          WHERE id = ${pid};
+        `;
+      });
     }
 
     revalidatePath("/admin/dashboard");

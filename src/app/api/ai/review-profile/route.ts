@@ -10,6 +10,7 @@ import {
 import type { StudentProfileData } from "@/lib/ai/profile-reviewer";
 import { checkUserAiRateLimit, sanitizeAiPromptInput } from "@/lib/ai/guardrails";
 import { checkRateLimit, getClientIp } from "@/lib/security";
+import { runAs } from "@/lib/neon/user-context";
 
 export const dynamic = "force-dynamic";
 
@@ -19,7 +20,11 @@ const PRIVATE_JSON_HEADERS = { "Cache-Control": "private, no-store" };
 
 async function runProfileReview(job: ProfileReviewJob, userId: string): Promise<void> {
   try {
-    await processProfileReviewJob(job.id, userId);
+    // `after` runs outside the request's async chain, so the database identity
+    // the RLS policies read must be re-established explicitly. The worker only
+    // ever touches this user's job rows, which is exactly what the job policies
+    // then allow.
+    await runAs(userId, () => processProfileReviewJob(job.id, userId));
   } catch (error) {
     console.error("[profile-review-job] Background execution failed:", error);
   }

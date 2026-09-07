@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { sql } from "@/lib/neon/db";
+import { runAs } from "@/lib/neon/user-context";
 import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { scanContentForSafety } from "@/lib/ai/safety-scanner";
 import { checkRateLimit, getClientIp, sanitiseText, isValidUuid, LIMITS } from "@/lib/security";
@@ -41,11 +42,15 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: "targetUserId must be a valid UUID" }, { status: 400 });
       }
 
-      await sql`
-        UPDATE profiles
-        SET status = 'suspended', updated_at = now()
-        WHERE id = ${targetUserId as string};
-      `;
+      // Body already read above, which severs the ambient request context —
+      // apply the admin identity explicitly so the RLS admin branch engages.
+      await runAs(user.id, async () => {
+        await sql`
+          UPDATE profiles
+          SET status = 'suspended', updated_at = now()
+          WHERE id = ${targetUserId as string};
+        `;
+      });
 
       return NextResponse.json({ success: true, message: "User suspended successfully" });
     }
