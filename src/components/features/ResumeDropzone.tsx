@@ -33,9 +33,11 @@ export function ResumeDropzone({ onParsed, disabled }: ResumeDropzoneProps) {
     setError(null);
     setSuccessMessage(null);
 
-    // 1. Validation
-    if (file.type !== "application/pdf" && !file.name.toLowerCase().endsWith(".pdf")) {
-      setError("Please upload a PDF document (.pdf). Word and image files are not supported.");
+    // 1. Validation: Strictly reject non-PDF MIME types and extensions
+    const hasPdfExt = file.name.toLowerCase().endsWith(".pdf");
+    const isNonPdfMime = Boolean(file.type && file.type !== "application/pdf");
+    if (!hasPdfExt || isNonPdfMime) {
+      setError("Please upload a valid PDF document (.pdf). Word, text, and image files are not supported.");
       return;
     }
 

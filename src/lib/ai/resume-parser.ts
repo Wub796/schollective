@@ -397,3 +397,106 @@ export async function parseResumePdf(pdfBuffer: Buffer): Promise<ParsedResumePro
     throw err;
   }
 }
+
+export interface CurrentProfileDraft {
+  first_name?: string | null;
+  last_name?: string | null;
+  preferred_name?: string | null;
+  institution?: string | null;
+  education_level?: string | null;
+  major?: string | null;
+  graduation_year?: string | null;
+  bio?: string | null;
+  academic_stats?: AcademicStats | null;
+  activities?: ActivityItem[] | null;
+  honors_awards?: HonorAwardItem[] | null;
+  skills_and_tools?: string[] | null;
+  academic_interests?: string[] | null;
+  languages?: LanguageItem[] | null;
+  social_links?: SocialLinks | null;
+}
+
+/**
+ * Merges parsed resume information into an existing profile draft non-destructively:
+ * - Preserves existing non-empty primitive strings
+ * - Deduplicates incoming array items (coursework, activities, honors, skills, interests)
+ */
+export function mergeResumeIntoProfile(
+  current: CurrentProfileDraft,
+  incoming: ParsedResumeProfile
+): CurrentProfileDraft {
+  const isFilled = (val?: string | null) => Boolean(val && val.trim());
+
+  // Existing advanced coursework
+  const existingCourses = current.academic_stats?.advanced_coursework || [];
+  const existingCourseSet = new Set(existingCourses.map((c) => c.toLowerCase().trim()));
+  const newCourses = (incoming.academic_stats?.advanced_coursework || []).filter(
+    (c) => c.trim() && !existingCourseSet.has(c.toLowerCase().trim())
+  );
+
+  // Existing activities
+  const existingActivities = current.activities || [];
+  const existingActivitySet = new Set(
+    existingActivities.map((a) => (a.title || "").toLowerCase().trim()).filter(Boolean)
+  );
+  const newActivities = (incoming.activities || []).filter(
+    (a) => a.title && !existingActivitySet.has((a.title || "").toLowerCase().trim())
+  );
+
+  // Existing honors
+  const existingHonors = current.honors_awards || [];
+  const existingHonorSet = new Set(
+    existingHonors.map((h) => (h.title || "").toLowerCase().trim()).filter(Boolean)
+  );
+  const newHonors = (incoming.honors_awards || []).filter(
+    (h) => h.title && !existingHonorSet.has((h.title || "").toLowerCase().trim())
+  );
+
+  // Existing skills
+  const existingSkills = current.skills_and_tools || [];
+  const existingSkillSet = new Set(existingSkills.map((s) => s.toLowerCase().trim()).filter(Boolean));
+  const newSkills = (incoming.skills_and_tools || []).filter(
+    (s) => s.trim() && !existingSkillSet.has(s.toLowerCase().trim())
+  );
+
+  // Existing interests
+  const existingInterests = current.academic_interests || [];
+  const existingInterestSet = new Set(existingInterests.map((i) => i.toLowerCase().trim()).filter(Boolean));
+  const newInterests = (incoming.academic_interests || []).filter(
+    (i) => i.trim() && !existingInterestSet.has(i.toLowerCase().trim())
+  );
+
+  // Existing languages
+  const existingLanguages = current.languages || [];
+  const existingLanguageSet = new Set(existingLanguages.map((l) => l.language.toLowerCase().trim()).filter(Boolean));
+  const newLanguages = (incoming.languages || []).filter(
+    (l) => l.language && !existingLanguageSet.has(l.language.toLowerCase().trim())
+  );
+
+  return {
+    first_name: isFilled(current.first_name) ? current.first_name : incoming.first_name || current.first_name || "",
+    last_name: isFilled(current.last_name) ? current.last_name : incoming.last_name || current.last_name || "",
+    preferred_name: isFilled(current.preferred_name) ? current.preferred_name : incoming.preferred_name || current.preferred_name || "",
+    institution: isFilled(current.institution) ? current.institution : incoming.institution || current.institution || "",
+    education_level: isFilled(current.education_level) && current.education_level !== "high-school-senior"
+      ? current.education_level
+      : incoming.education_level || current.education_level || "high-school-senior",
+    major: isFilled(current.major) ? current.major : incoming.major || current.major || "",
+    graduation_year: isFilled(current.graduation_year) ? current.graduation_year : incoming.graduation_year || current.graduation_year || "",
+    bio: isFilled(current.bio) ? current.bio : incoming.bio || current.bio || "",
+    academic_stats: {
+      unweighted_gpa: current.academic_stats?.unweighted_gpa || incoming.academic_stats?.unweighted_gpa,
+      weighted_gpa: current.academic_stats?.weighted_gpa || incoming.academic_stats?.weighted_gpa,
+      advanced_coursework: [...existingCourses, ...newCourses],
+    },
+    activities: [...existingActivities, ...newActivities],
+    honors_awards: [...existingHonors, ...newHonors],
+    skills_and_tools: [...existingSkills, ...newSkills],
+    academic_interests: [...existingInterests, ...newInterests],
+    languages: [...existingLanguages, ...newLanguages],
+    social_links: {
+      ...incoming.social_links,
+      ...current.social_links,
+    },
+  };
+}

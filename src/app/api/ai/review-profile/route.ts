@@ -13,6 +13,7 @@ import { checkRateLimit, getClientIp } from "@/lib/security";
 import { runAs } from "@/lib/neon/user-context";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 30;
 
 const REVIEW_STATUS_POLL_LIMIT = 60;
 const REVIEW_STATUS_POLL_WINDOW_MS = 60 * 1000;
