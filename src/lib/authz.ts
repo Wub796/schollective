@@ -1,4 +1,5 @@
 import { sql } from "@/lib/neon/db";
+import { runAs } from "@/lib/neon/user-context";
 import type { ProfileRecord } from "@/lib/neon/profiles";
 
 /**
@@ -37,18 +38,20 @@ export interface ThreadAccess {
  * `isParticipant` rather than on being signed in.
  */
 export async function getThreadAccess(requestId: string, userId: string): Promise<ThreadAccess> {
-  const rows = await sql`
-    SELECT id, status, topic, student_id, professor_id
-    FROM requests
-    WHERE id = ${requestId}
-    LIMIT 1;
-  `;
+  return runAs(userId, async () => {
+    const rows = await sql`
+      SELECT id, status, topic, student_id, professor_id
+      FROM requests
+      WHERE id = ${requestId}
+      LIMIT 1;
+    `;
 
-  const request = (rows[0] as ThreadAccess["request"]) ?? null;
-  if (!request) return { request: null, isParticipant: false };
+    const request = (rows[0] as ThreadAccess["request"]) ?? null;
+    if (!request) return { request: null, isParticipant: false };
 
-  return {
-    request,
-    isParticipant: request.student_id === userId || request.professor_id === userId,
-  };
+    return {
+      request,
+      isParticipant: request.student_id === userId || request.professor_id === userId,
+    };
+  });
 }
