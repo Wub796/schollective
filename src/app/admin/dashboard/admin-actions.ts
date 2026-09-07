@@ -38,7 +38,7 @@ export async function clearAdminNonAdminData(adminUserId: string): Promise<void>
           lab_website = NULL,
           office_hours = NULL,
           is_accepting_requests = true,
-          profile_complete = false,
+          profile_complete = true,
           ai_score = NULL,
           ai_level = NULL,
           ai_flags = NULL,
@@ -53,7 +53,7 @@ export async function clearAdminNonAdminData(adminUserId: string): Promise<void>
           OR coursework IS NOT NULL OR skills_and_tools IS NOT NULL
           OR portfolio_url IS NOT NULL OR seeking_mentorship_type IS NOT NULL
           OR department IS NOT NULL OR academic_title IS NOT NULL
-          OR publications IS NOT NULL OR profile_complete = true
+          OR publications IS NOT NULL OR profile_complete = false
           OR ai_score IS NOT NULL OR avatar_url IS NOT NULL
         );
     `;

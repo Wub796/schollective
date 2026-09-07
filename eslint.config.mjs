@@ -14,7 +14,7 @@ const compat = new FlatCompat({
  */
 const eslintConfig = [
   {
-    ignores: [".agent/**", ".next/**", "node_modules/**", "_legacy_vanilla/**", "public/**"],
+    ignores: [".agent/**", ".next/**", ".open-next/**", ".wrangler/**", "node_modules/**", "_legacy_vanilla/**", "public/**"],
   },
   ...compat.extends("next/core-web-vitals"),
   {

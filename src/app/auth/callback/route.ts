@@ -15,7 +15,19 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(`${origin}/login?error=oauth_session_missing`);
     }
 
-    if (!profile || !profile.role || !profile.profile_complete) {
+    if (!profile || !profile.role) {
+      const onboardingUrl = new URL('/onboarding', origin);
+      if (next && next !== '/dashboard') {
+        onboardingUrl.searchParams.set('next', next);
+      }
+      return NextResponse.redirect(onboardingUrl.toString());
+    }
+
+    if (profile.role === 'admin') {
+      return NextResponse.redirect(`${origin}/admin/dashboard`);
+    }
+
+    if (!profile.profile_complete) {
       const onboardingUrl = new URL('/onboarding', origin);
       if (next && next !== '/dashboard') {
         onboardingUrl.searchParams.set('next', next);
@@ -25,10 +37,6 @@ export async function GET(request: NextRequest) {
 
     if (profile.role === 'professor') {
       return NextResponse.redirect(profile.status === 'approved' ? `${origin}/prof/dashboard` : `${origin}/prof/pending`);
-    }
-
-    if (profile.role === 'admin') {
-      return NextResponse.redirect(`${origin}/admin/dashboard`);
     }
 
     return NextResponse.redirect(`${origin}${next}`);

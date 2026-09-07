@@ -189,6 +189,12 @@ function OnboardingContent() {
           setHasFixedRole(true);
         }
 
+        // Admins never need student/faculty onboarding
+        if (profile?.role === "admin") {
+          router.replace("/admin/dashboard");
+          return;
+        }
+
         // Already onboarded — redirect to the right dashboard
         if (profile?.first_name && profile?.role && profile?.profile_complete) {
           if (profile.role === "professor") {

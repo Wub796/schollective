@@ -11,8 +11,9 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json();
+    const { role: _role, status: _status, ...safeUpdates } = body;
     const updated = await upsertProfile({
-      ...body,
+      ...safeUpdates,
       id: user.id,
       email: user.email,
     });

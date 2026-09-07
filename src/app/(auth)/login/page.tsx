@@ -146,8 +146,8 @@ function LoginContent() {
         role: profile?.role,
       });
 
-      // No profile row, or incomplete profile → send to onboarding
-      if (!profile || !profile.role || !profile.profile_complete) {
+      // No profile row, or incomplete profile (non-admin) → send to onboarding
+      if (!profile || !profile.role || (!profile.profile_complete && profile.role !== "admin")) {
         router.refresh();
         const next = searchParams.get("next");
         const onboardingUrl = next && next !== "/dashboard"
@@ -262,17 +262,6 @@ function LoginContent() {
           animate="show"
           style={{ width: "100%", maxWidth: "480px" }}
         >
-          {/* Eyebrow */}
-          <motion.div variants={fadeUp} style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.75rem" }}>
-            <span style={{ width: "1.5rem", height: "1px", background: "rgba(79, 70, 229, 0.4)", display: "block" }} />
-            <span style={{
-              fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.38em",
-              textTransform: "uppercase", color: "rgba(79, 70, 229, 0.7)",
-              fontFamily: "var(--font-sans)",
-            }}>
-              Scholar Portal
-            </span>
-          </motion.div>
 
           {/* Headline */}
           <motion.h1 variants={fadeUp} className="font-display" style={{
@@ -281,7 +270,7 @@ function LoginContent() {
             marginBottom: "3.5rem",
           }}>
             Welcome<br />
-            <em style={{ fontStyle: "italic", color: "rgba(15, 23, 42, 0.38)" }}>back.</em>
+            <em style={{ fontStyle: "italic", color: "#4f46e5", fontWeight: 300 }}>back.</em>
           </motion.h1>
 
           <form onSubmit={handleSubmit} method="post">
@@ -351,12 +340,11 @@ function LoginContent() {
 
               {/* Footer link */}
               <motion.p variants={fadeUp} style={{
-                textAlign: "center", fontSize: "0.58rem", fontWeight: 600,
-                letterSpacing: "0.1em", color: "rgba(15, 23, 42, 0.22)",
-                fontFamily: "var(--font-sans)",
+                textAlign: "center", fontSize: "0.82rem", fontWeight: 500,
+                color: "#64748b", fontFamily: "var(--font-sans)",
               }}>
                 New to Schollective?{" "}
-                <Link href={signupHref} style={{ color: "rgba(15, 23, 42, 0.55)", textDecoration: "none" }}>
+                <Link href={signupHref} className="hover:text-indigo-700 transition-colors" style={{ color: "#4f46e5", fontWeight: 700, textDecoration: "none" }}>
                   Create an account →
                 </Link>
               </motion.p>
@@ -365,15 +353,6 @@ function LoginContent() {
         </motion.div>
       </div>
 
-      {/* Footer note */}
-      <div style={{
-        position: "relative", zIndex: 1,
-        textAlign: "center", padding: "1.5rem",
-      }}>
-        <span style={{ fontSize: "0.5rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.14)", fontFamily: "var(--font-sans)" }}>
-          Manually verified · Institutionally credentialed · © 2025 Schollective
-        </span>
-      </div>
     </div>
   );
 }
