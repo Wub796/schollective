@@ -24,10 +24,8 @@ function FadeIn({ children, delay = 0, className = "" }: { children: React.React
 
 function Eyebrow({ children }: { children: string }) {
   return (
-    <div className="flex items-center justify-center gap-3 mb-6">
-      <span className="w-6 h-[2px] bg-indigo-500 block flex-shrink-0" />
+    <div className="inline-flex items-center justify-center rounded-full bg-indigo-600/5 border border-indigo-600/10 py-1.5 px-4 mb-6 select-none">
       <span className="text-[0.62rem] font-extrabold tracking-[0.22em] uppercase text-indigo-600 font-sans">{children}</span>
-      <span className="w-6 h-[2px] bg-indigo-500 block flex-shrink-0" />
     </div>
   );
 }
@@ -95,8 +93,8 @@ export default function ForStudentsPage() {
           <div className="w-full">
             {HOW_IT_WORKS.map((s, i) => (
               <FadeIn key={s.n} delay={i * 0.06}>
-                <div className="grid grid-cols-[3.5rem_1fr] gap-8 p-8 md:p-10 mb-6 border border-indigo-300/40 rounded-2xl bg-white/90 text-left items-start shadow-xs">
-                  <span className="font-mono text-[0.68rem] font-bold tracking-[0.2em] text-slate-900 bg-indigo-500 px-2.5 py-1 rounded-full text-center mt-1">{s.n}</span>
+                <div className="grid grid-cols-[2.5rem_1fr] md:grid-cols-[3rem_1fr] gap-6 md:gap-8 p-8 md:p-10 mb-6 border border-indigo-300/40 rounded-2xl bg-white/90 text-left items-start shadow-xs">
+                  <span className="w-9 h-9 rounded-full bg-indigo-50 border border-indigo-200/80 text-indigo-600 font-sans font-bold text-xs flex items-center justify-center flex-shrink-0 mt-0.5">{s.n}</span>
                   <div>
                     <h3 className="font-display text-[1.35rem] font-bold text-slate-900 tracking-[-0.02em] mb-2">{s.title}</h3>
                     <p className="text-[0.95rem] text-slate-600/80 leading-relaxed font-sans">{s.body}</p>
@@ -143,12 +141,9 @@ export default function ForStudentsPage() {
                   Join thousands of students getting real guidance from verified professors.
                 </p>
               </div>
-              <div className="flex gap-4 flex-wrap justify-center">
+              <div className="flex justify-center">
                 <Button href="/signup" variant="primary" size="lg">
                   Create Account →
-                </Button>
-                <Button href="/signup" variant="ghost" size="lg">
-                  Browse Mentors
                 </Button>
               </div>
             </div>
