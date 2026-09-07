@@ -652,6 +652,17 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
             academic_stats: academicStats,
             education_level: educationLevel,
           }}
+          onAddAcademicInterest={(tag) => {
+            const trimmed = tag.trim();
+            if (!trimmed) return;
+            if (interests.length >= 5) {
+              toast.error("You can select up to 5 academic interests.");
+              return;
+            }
+            if (!interests.includes(trimmed)) {
+              setInterests((prev) => [...prev, trimmed]);
+            }
+          }}
         />
       </div>
 

@@ -2,14 +2,14 @@ import { sql } from "@/lib/neon/db";
 import { runAs } from "@/lib/neon/user-context";
 import { ensureAuthSchema } from "@/lib/neon/schema";
 import { reviewStudentProfile, type StudentProfileData } from "./profile-reviewer";
-import type { ProfileReviewResult } from "./types";
+import type { PillarScores, ProfileReviewOutput } from "./types";
 
 export type ProfileReviewJobStatus = "pending" | "processing" | "completed" | "error";
 
 export interface ProfileReviewJob {
   id: string;
   status: ProfileReviewJobStatus;
-  result: ProfileReviewResult | null;
+  result: ProfileReviewOutput | null;
   error: string | null;
   createdAt: string;
   startedAt: string | null;
@@ -20,7 +20,7 @@ export interface ProfileReviewJob {
 interface ProfileReviewJobRow {
   id: string;
   status: ProfileReviewJobStatus;
-  result: ProfileReviewResult | string | null;
+  result: ProfileReviewOutput | Record<string, unknown> | string | null;
   error: string | null;
   created_at: string;
   started_at: string | null;
@@ -30,16 +30,92 @@ interface ProfileReviewJobRow {
 
 const STALE_PROCESSING_MS = 5 * 60 * 1000;
 
-function parseResult(value: ProfileReviewJobRow["result"]): ProfileReviewResult | null {
+export function adaptLegacyReviewResult(legacy: Record<string, unknown>): ProfileReviewOutput {
+  const overall = Number(legacy.overallScore) || 60;
+  const clarity = Number(legacy.clarityScore) || 60;
+  const tone = Number(legacy.academicToneScore) || 60;
+  const alignment = Number(legacy.alignmentScore) || 60;
+  const completeness = Number(legacy.completenessScore) || 60;
+
+  const pillarScores: PillarScores = {
+    academic_rigor: Math.round((tone + overall) / 2),
+    domain_alignment: alignment,
+    leadership_initiative: Math.round((clarity + overall) / 2),
+    completeness: completeness,
+  };
+
+  const avg =
+    (pillarScores.academic_rigor +
+      pillarScores.domain_alignment +
+      pillarScores.leadership_initiative +
+      pillarScores.completeness) /
+    4;
+  const isReady =
+    legacy.outreachReadiness === "ready" ||
+    (avg >= 80 &&
+      pillarScores.academic_rigor >= 75 &&
+      pillarScores.domain_alignment >= 75 &&
+      pillarScores.leadership_initiative >= 75);
+
+  const rawImprovements = Array.isArray(legacy.improvements) ? legacy.improvements : [];
+  const flags = rawImprovements
+    .flatMap((imp: unknown) => {
+      if (!imp || typeof imp !== "object") return [];
+      const item = imp as Record<string, unknown>;
+      return [`${item.field ? `${item.field}: ` : ""}${item.issue || item.suggestion || ""}`];
+    })
+    .filter(Boolean)
+    .slice(0, 3);
+
+  const nextSteps = rawImprovements
+    .flatMap((imp: unknown) => {
+      if (!imp || typeof imp !== "object") return [];
+      const item = imp as Record<string, unknown>;
+      return typeof item.suggestion === "string" ? [item.suggestion] : [];
+    })
+    .filter(Boolean)
+    .slice(0, 3);
+
+  const rawStrengths = Array.isArray(legacy.strengths) ? legacy.strengths : [];
+  const strengths = rawStrengths
+    .filter((s): s is string => typeof s === "string")
+    .slice(0, 3);
+
+  const rawInterests = Array.isArray(legacy.suggestedInterests) ? legacy.suggestedInterests : [];
+  const recommendedTopics = rawInterests
+    .filter((s): s is string => typeof s === "string")
+    .slice(0, 4);
+
+  return {
+    status: isReady ? "Ready for Outreach" : "Needs Edits",
+    summary: typeof legacy.summary === "string" ? legacy.summary : "Profile review complete.",
+    pillar_scores: pillarScores,
+    strengths: strengths.length > 0 ? strengths : ["Registered academic standing."],
+    flags: flags.length > 0 ? flags : ["Provide tangible metrics and specific tools for current projects."],
+    next_steps: nextSteps.length > 0 ? nextSteps : ["Add relevant advanced coursework and software tools."],
+    recommended_topics: recommendedTopics.length > 0 ? recommendedTopics : ["Computer Science", "Biology", "Mathematics", "Physics"],
+  };
+}
+
+function parseResult(value: ProfileReviewJobRow["result"]): ProfileReviewOutput | null {
   if (!value) return null;
+  let raw: Record<string, unknown> | null = null;
   if (typeof value === "string") {
     try {
-      return JSON.parse(value) as ProfileReviewResult;
+      raw = JSON.parse(value) as Record<string, unknown>;
     } catch {
       return null;
     }
+  } else if (typeof value === "object") {
+    raw = value as Record<string, unknown>;
   }
-  return value;
+  if (!raw) return null;
+
+  if (raw.pillar_scores && typeof raw.pillar_scores === "object" && raw.status) {
+    return raw as unknown as ProfileReviewOutput;
+  }
+
+  return adaptLegacyReviewResult(raw);
 }
 
 function toJob(row: ProfileReviewJobRow): ProfileReviewJob {
