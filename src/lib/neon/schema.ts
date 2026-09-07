@@ -106,6 +106,13 @@ const BACKFILL_ISSUER = `
  * slower with every request, message and notification the beta produces.
  */
 const APP_REQUIRED_COLUMNS: Record<string, ColumnSpec[]> = {
+  profiles: [
+    { name: "academic_stats", ddl: "academic_stats jsonb" },
+    { name: "activities", ddl: "activities jsonb" },
+    { name: "honors_awards", ddl: "honors_awards jsonb" },
+    { name: "languages", ddl: "languages jsonb" },
+    { name: "social_links", ddl: "social_links jsonb" },
+  ],
   ai_profile_review_jobs: [
     { name: "id", ddl: `id text primary key` },
     { name: "user_id", ddl: `user_id text not null` },
@@ -198,6 +205,11 @@ const PROFILES_TABLE = `
     ai_score integer,
     ai_level text,
     ai_flags jsonb,
+    academic_stats jsonb,
+    activities jsonb,
+    honors_awards jsonb,
+    languages jsonb,
+    social_links jsonb,
     created_at timestamptz DEFAULT now(),
     updated_at timestamptz DEFAULT now()
   )

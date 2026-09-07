@@ -90,6 +90,44 @@ function buildProfileToReview(
   profile: Record<string, unknown> | null,
   body: Record<string, unknown>,
 ): StudentProfileData {
+  let extras = sanitiseListField(body, profile, "extracurriculars", 600);
+  if (!extras || (Array.isArray(extras) && extras.length === 0)) {
+    const activitiesRaw = parseBodyValue(body, profile, "activities");
+    const honorsRaw = parseBodyValue(body, profile, "honors_awards");
+    const combined: string[] = [];
+    if (Array.isArray(activitiesRaw)) {
+      for (const act of activitiesRaw) {
+        if (act && typeof act === "object" && "title" in act) {
+          const item = act as any;
+          const desc = item.description ? `: ${item.description}` : "";
+          const org = item.organization ? ` at ${item.organization}` : "";
+          combined.push(`${item.title}${org}${desc}`);
+        }
+      }
+    }
+    if (Array.isArray(honorsRaw)) {
+      for (const hon of honorsRaw) {
+        if (hon && typeof hon === "object" && "title" in hon) {
+          const item = hon as any;
+          const issuer = item.issuer_or_level ? ` (${item.issuer_or_level})` : "";
+          const yr = item.year ? ` - ${item.year}` : "";
+          combined.push(`Award: ${item.title}${issuer}${yr}`);
+        }
+      }
+    }
+    if (combined.length > 0) {
+      extras = combined;
+    }
+  }
+
+  let coursework = sanitiseListField(body, profile, "coursework", 300);
+  if (!coursework || (Array.isArray(coursework) && coursework.length === 0)) {
+    const stats = parseBodyValue(body, profile, "academic_stats") as any;
+    if (stats?.advanced_coursework && Array.isArray(stats.advanced_coursework)) {
+      coursework = stats.advanced_coursework;
+    }
+  }
+
   return {
     // Identity must come from the authenticated session, never the request body.
     id: user.id,
@@ -103,8 +141,8 @@ function buildProfileToReview(
     graduation_year: sanitiseTextField(body, profile, "graduation_year", 30),
     bio: sanitiseTextField(body, profile, "bio", 500),
     academic_interests: sanitiseListField(body, profile, "academic_interests", 300),
-    extracurriculars: sanitiseListField(body, profile, "extracurriculars", 600),
-    coursework: sanitiseListField(body, profile, "coursework", 300),
+    extracurriculars: extras,
+    coursework: coursework,
     skills_and_tools: sanitiseListField(body, profile, "skills_and_tools", 300),
     portfolio_url: sanitiseTextField(body, profile, "portfolio_url", 500),
     expertise_fields: sanitiseListField(body, profile, "expertise_fields", 300),
