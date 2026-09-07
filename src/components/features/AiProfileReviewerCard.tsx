@@ -15,10 +15,11 @@ import {
   FileCheck,
 } from "lucide-react";
 import { ProfileReviewOutput } from "@/lib/ai/types";
+import type { StudentProfileData } from "@/lib/ai/profile-reviewer";
 import { toast } from "sonner";
 
 interface Props {
-  profileData?: any;
+  profileData?: StudentProfileData | Record<string, unknown> | null;
   onAddAcademicInterest?: (tag: string) => void;
 }
 
@@ -58,7 +59,10 @@ function getPillarTierLabel(score: number): { label: string; color: string } {
   return { label: "Needs Data", color: "#e11d48" };
 }
 
-export function AiProfileReviewerCard({ profileData, onAddAcademicInterest }: Props) {
+export const AiProfileReviewerCard = React.memo(function AiProfileReviewerCard({
+  profileData,
+  onAddAcademicInterest,
+}: Props) {
   const [loading, setLoading] = useState(false);
   const [review, setReview] = useState<ProfileReviewOutput | null>(null);
   const [jobId, setJobId] = useState<string | null>(null);
@@ -511,7 +515,7 @@ export function AiProfileReviewerCard({ profileData, onAddAcademicInterest }: Pr
       </AnimatePresence>
     </div>
   );
-}
+});
 
 interface PillarMeterProps {
   title: string;

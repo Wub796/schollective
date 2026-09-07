@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
@@ -25,7 +25,8 @@ import { HonorsAwardsBuilder } from "@/components/profile/HonorsAwardsBuilder";
 import { SkillsAndLinksCard } from "@/components/profile/SkillsAndLinksCard";
 import { FacultyPreviewCard } from "@/components/profile/FacultyPreviewCard";
 import type { ParsedResumeProfile } from "@/lib/ai/resume-parser";
-import type {
+import {
+  ProfileRecord,
   AcademicStats,
   ActivityItem,
   HonorAwardItem,
@@ -34,7 +35,7 @@ import type {
 } from "@/lib/neon/profiles";
 
 interface Props {
-  profile: any;
+  profile: ProfileRecord | null | undefined;
 }
 
 export function getEducationLevelConfig(level: string) {
@@ -130,11 +131,12 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
   // Section 2: Research Pitch & Interests
   const [bio, setBio] = useState(profile?.bio || "");
   const [interests, setInterests] = useState<string[]>(() => {
-    if (Array.isArray(profile?.academic_interests)) {
-      return profile.academic_interests;
+    const raw = profile?.academic_interests as unknown;
+    if (Array.isArray(raw)) {
+      return raw.filter((s): s is string => typeof s === "string");
     }
-    if (typeof profile?.academic_interests === "string") {
-      return profile.academic_interests.split(",").map((s: string) => s.trim()).filter(Boolean);
+    if (typeof raw === "string") {
+      return raw.split(",").map((s) => s.trim()).filter(Boolean);
     }
     return [];
   });
@@ -149,6 +151,7 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
       return profile.extracurriculars.map((item: string, idx: number) => ({
         id: `legacy_act_${idx}`,
         title: item,
+        organization: "",
         category: "Other",
       }));
     }
@@ -165,11 +168,12 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
 
   // Section 5: Skills, Languages & Social Links
   const [skills, setSkills] = useState<string[]>(() => {
-    if (Array.isArray(profile?.skills_and_tools)) {
-      return profile.skills_and_tools;
+    const raw = profile?.skills_and_tools as unknown;
+    if (Array.isArray(raw)) {
+      return raw.filter((s): s is string => typeof s === "string");
     }
-    if (typeof profile?.skills_and_tools === "string") {
-      return profile.skills_and_tools.split(",").map((s: string) => s.trim()).filter(Boolean);
+    if (typeof raw === "string") {
+      return raw.split(",").map((s) => s.trim()).filter(Boolean);
     }
     return [];
   });
@@ -217,6 +221,31 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
     (academicStats?.advanced_coursework?.length || 0) > 0 ||
     major.trim()
   );
+
+  const handleAddAcademicInterest = useCallback((tag: string) => {
+    const trimmed = tag.trim();
+    if (!trimmed) return;
+    setInterests((prev) => {
+      if (prev.includes(trimmed)) return prev;
+      if (prev.length >= 5) {
+        toast.error("You can select up to 5 academic interests.");
+        return prev;
+      }
+      return [...prev, trimmed];
+    });
+  }, []);
+
+  const reviewerProfileData = useMemo(() => ({
+    ...profile,
+    first_name: firstName,
+    last_name: lastName,
+    bio,
+    academic_interests: interests,
+    activities,
+    honors_awards: honors,
+    academic_stats: academicStats,
+    education_level: educationLevel,
+  }), [profile, firstName, lastName, bio, interests, activities, honors, academicStats, educationLevel]);
 
   const applyResumeData = (data: ParsedResumeProfile, overwrite: boolean = false) => {
     if (overwrite) {
@@ -641,28 +670,8 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
       {/* AI Profile Reviewer Card Embedded directly */}
       <div data-tour="tour-ai-reviewer">
         <AiProfileReviewerCard
-          profileData={{
-            ...profile,
-            first_name: firstName,
-            last_name: lastName,
-            bio,
-            academic_interests: interests,
-            activities,
-            honors_awards: honors,
-            academic_stats: academicStats,
-            education_level: educationLevel,
-          }}
-          onAddAcademicInterest={(tag) => {
-            const trimmed = tag.trim();
-            if (!trimmed) return;
-            if (interests.length >= 5) {
-              toast.error("You can select up to 5 academic interests.");
-              return;
-            }
-            if (!interests.includes(trimmed)) {
-              setInterests((prev) => [...prev, trimmed]);
-            }
-          }}
+          profileData={reviewerProfileData}
+          onAddAcademicInterest={handleAddAcademicInterest}
         />
       </div>
 
