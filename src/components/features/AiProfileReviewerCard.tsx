@@ -2,12 +2,24 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, CheckCircle2, AlertTriangle, RefreshCw, ShieldCheck, Plus } from "lucide-react";
-import { ProfileReviewResult } from "@/lib/ai/types";
+import {
+  Sparkles,
+  CheckCircle2,
+  AlertTriangle,
+  RefreshCw,
+  ShieldCheck,
+  Plus,
+  GraduationCap,
+  Target,
+  Compass,
+  FileCheck,
+} from "lucide-react";
+import { ProfileReviewOutput } from "@/lib/ai/types";
 import { toast } from "sonner";
 
 interface Props {
   profileData?: any;
+  onAddAcademicInterest?: (tag: string) => void;
 }
 
 type ReviewJobStatus = "pending" | "processing" | "completed" | "error";
@@ -15,7 +27,7 @@ type ReviewJobStatus = "pending" | "processing" | "completed" | "error";
 interface ReviewJob {
   id: string;
   status: ReviewJobStatus;
-  result: ProfileReviewResult | null;
+  result: ProfileReviewOutput | null;
   error: string | null;
 }
 
@@ -38,16 +50,22 @@ function waitForNextPoll(ms: number, signal: AbortSignal): Promise<boolean> {
   });
 }
 
-export function AiProfileReviewerCard({ profileData }: Props) {
+function getPillarTierLabel(score: number): { label: string; color: string } {
+  if (score >= 92) return { label: "Top 5% Tier", color: "#059669" };
+  if (score >= 78) return { label: "Lab Ready", color: "#10b981" };
+  if (score >= 65) return { label: "Competitive", color: "#4f46e5" };
+  if (score >= 40) return { label: "Developing", color: "#d97706" };
+  return { label: "Needs Data", color: "#e11d48" };
+}
+
+export function AiProfileReviewerCard({ profileData, onAddAcademicInterest }: Props) {
   const [loading, setLoading] = useState(false);
-  const [review, setReview] = useState<ProfileReviewResult | null>(null);
+  const [review, setReview] = useState<ProfileReviewOutput | null>(null);
   const [jobId, setJobId] = useState<string | null>(null);
   const pollAbortRef = useRef<AbortController | null>(null);
 
   const applyJob = (job: ReviewJob) => {
     setJobId(job.id);
-    // A newly submitted job has no result yet. Clear a previous completed
-    // review so stale feedback is never shown while the new request runs.
     setReview(job.result);
     return job;
   };
@@ -70,9 +88,6 @@ export function AiProfileReviewerCard({ profileData }: Props) {
         const data = contentType.includes("application/json") ? await res.json() : null;
 
         if (!res.ok || !data?.success || !data.job) {
-          // A transient server/rate-limit response must not make the durable
-          // job look abandoned. Keep polling and let the next request recover
-          // the result; authentication/not-found errors remain terminal.
           if (res.status === 408 || res.status === 429 || res.status >= 500) {
             const retryAfter = Number(res.headers.get("retry-after"));
             const retryDelay = Number.isFinite(retryAfter)
@@ -101,8 +116,6 @@ export function AiProfileReviewerCard({ profileData }: Props) {
         }
       } catch (error: any) {
         if (signal.aborted || error?.name === "AbortError") return;
-        // Keep polling through transient network failures. The job is durable
-        // on the server, so a brief offline period should not lose the review.
         console.error("[AiProfileReviewer] Status poll error:", error);
         if (!(await waitForNextPoll(2_000, signal))) return;
       }
@@ -139,9 +152,6 @@ export function AiProfileReviewerCard({ profileData }: Props) {
     void restoreLatestReview();
     return () => {
       controller.abort();
-      // The initial restore controller is replaced when the user starts a new
-      // review. Abort whichever request is current so unmounting never leaves
-      // a fetch or polling loop running against a removed component.
       pollAbortRef.current?.abort();
       pollAbortRef.current = null;
     };
@@ -199,49 +209,60 @@ export function AiProfileReviewerCard({ profileData }: Props) {
   };
 
   const addInterestTag = (tag: string) => {
-    const interestsEl = document.getElementById("academic_interests") as HTMLInputElement;
-    if (interestsEl) {
-      const current = interestsEl.value.trim();
-      const existing = current ? current.split(",").map((s) => s.trim()) : [];
-      if (!existing.includes(tag)) {
-        const newInterests = current ? `${current}, ${tag}` : tag;
-        interestsEl.value = newInterests;
-        interestsEl.dispatchEvent(new Event("input", { bubbles: true }));
-        interestsEl.dispatchEvent(new Event("change", { bubbles: true }));
+    // 1. Direct React state callback (cleanest & preferred)
+    if (onAddAcademicInterest) {
+      onAddAcademicInterest(tag);
+    } else {
+      // 2. DOM backward-compatible fallback
+      const interestsEl = document.getElementById("academic_interests") as HTMLInputElement;
+      if (interestsEl) {
+        const current = interestsEl.value.trim();
+        const existing = current ? current.split(",").map((s) => s.trim()) : [];
+        if (!existing.includes(tag)) {
+          const newInterests = current ? `${current}, ${tag}` : tag;
+          interestsEl.value = newInterests;
+          interestsEl.dispatchEvent(new Event("input", { bubbles: true }));
+          interestsEl.dispatchEvent(new Event("change", { bubbles: true }));
+        }
       }
     }
 
-    // Dismiss duplicate toasts and show single clean notification
     toast.success(`Added "${tag}" to Academic Interests!`, { id: `tag-${tag}` });
 
-    // Safely update state without triggering re-render loops
+    // Update local state to remove the selected topic pill gracefully
     setReview((prev) => {
-      if (!prev || !prev.suggestedInterests) return prev;
+      if (!prev || !prev.recommended_topics) return prev;
       return {
         ...prev,
-        suggestedInterests: prev.suggestedInterests.filter((t) => t !== tag),
+        recommended_topics: prev.recommended_topics.filter((t) => t !== tag),
       };
     });
   };
 
   return (
-    <div
-      style={{
-        background: "rgba(99, 102, 241, 0.06)",
-        border: "1px solid rgba(99, 102, 241, 0.15)",
-        borderRadius: "16px",
-        padding: "1.75rem 2rem",
-        marginBottom: "2.5rem",
-        position: "relative",
-      }}
-    >
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1.25rem" }}>
-        <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-          <h3 className="font-display" style={{ fontSize: "1.35rem", fontWeight: 800, color: "#0f172a", margin: 0, letterSpacing: "-0.02em" }}>
-            Profile <em style={{ fontStyle: "italic", color: "#4f46e5", fontWeight: 300 }}>Reviewer</em>
-          </h3>
-          <p style={{ fontSize: "0.85rem", color: "#475569", margin: 0, opacity: 0.85 }}>
-            Evaluates your Short Bio, Academic Interests, Extracurriculars, & Education Level.
+    <div className="mb-10 space-y-6">
+      {/* Top Action Header Bar */}
+      <div
+        style={{
+          background: "linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(248, 250, 252, 0.9) 100%)",
+          border: "1px solid rgba(99, 102, 241, 0.18)",
+          borderRadius: "16px",
+          padding: "1.5rem 1.75rem",
+          boxShadow: "0 4px 20px rgba(99, 102, 241, 0.04)",
+        }}
+        className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
+      >
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center px-2 py-0.5 rounded text-[0.65rem] font-black uppercase tracking-wider bg-indigo-100 text-indigo-700">
+              Admissions Calibration
+            </span>
+            <h3 className="font-display text-xl font-extrabold text-slate-900 m-0 tracking-tight">
+              AI Profile <span className="font-light italic text-indigo-600">Reviewer</span>
+            </h3>
+          </div>
+          <p className="text-xs sm:text-sm text-slate-600 m-0">
+            Calibrated on Harvard admissions 1–6 rubric: Academic Rigor, Domain Alignment, Leadership, & Completeness.
           </p>
         </div>
 
@@ -250,26 +271,14 @@ export function AiProfileReviewerCard({ profileData }: Props) {
           onClick={handleReview}
           disabled={loading}
           style={{
-            background: "#6366f1",
-            color: "#ffffff",
-            border: "1px solid rgba(79, 70, 229, 0.6)",
-            borderRadius: "100px",
-            padding: "0.65rem 1.35rem",
-            fontSize: "0.8rem",
-            fontWeight: 800,
-            letterSpacing: "0.03em",
-            fontFamily: "var(--font-sans)",
-            cursor: loading ? "not-allowed" : "pointer",
-            display: "flex",
-            alignItems: "center",
-            gap: "0.5rem",
-            boxShadow: "0 4px 12px rgba(99, 102, 241, 0.25)",
-            transition: "all 0.2s ease",
+            background: "linear-gradient(135deg, #4f46e5 0%, #6366f1 100%)",
+            boxShadow: "0 4px 14px rgba(79, 70, 229, 0.25)",
           }}
+          className="w-full sm:w-auto text-white rounded-full px-5 py-2.5 text-xs font-extrabold tracking-wide cursor-pointer flex items-center justify-center gap-2 transition-all hover:opacity-95 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading ? (
             <>
-              <RefreshCw size={14} className="animate-spin" /> Analyzing...
+              <RefreshCw size={14} className="animate-spin" /> Analyzing Rubric...
             </>
           ) : (
             <>
@@ -282,106 +291,216 @@ export function AiProfileReviewerCard({ profileData }: Props) {
       <AnimatePresence>
         {review && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.35 }}
-            style={{ marginTop: "1.75rem", borderTop: "1px solid rgba(99, 102, 241, 0.2)", paddingTop: "1.5rem" }}
+            transition={{ duration: 0.3 }}
+            className="space-y-5"
           >
-            {/* Score Grid */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(110px, 1fr))", gap: "0.85rem", marginBottom: "1.5rem" }}>
-              <ScoreBadge label="Overall" score={review.overallScore} isPrimary />
-              <ScoreBadge label="Completeness" score={review.completenessScore} />
-              <ScoreBadge label="Academic Tone" score={review.academicToneScore} />
-              <ScoreBadge label="Clarity" score={review.clarityScore} />
-              <ScoreBadge label="Alignment" score={review.alignmentScore} />
-            </div>
-
-            {/* Suggested Academic Interest Topic Recommendations */}
-            {review.suggestedInterests && review.suggestedInterests.length > 0 && (
-              <div style={{ marginBottom: "1.25rem" }}>
-                <span style={{ fontSize: "0.72rem", fontWeight: 800, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.08em", display: "block", marginBottom: "0.4rem" }}>
-                  Recommended Topics to Explore (Click to add)
-                </span>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem" }}>
-                  {review.suggestedInterests.map((tag, i) => (
-                    <button
-                      key={tag || i}
-                      type="button"
-                      onClick={() => addInterestTag(tag)}
-                      style={{
-                        background: "#ffffff",
-                        border: "1px solid rgba(99, 102, 241, 0.3)",
-                        color: "#4f46e5",
-                        borderRadius: "100px",
-                        padding: "0.25rem 0.65rem",
-                        fontSize: "0.75rem",
-                        fontWeight: 700,
-                        cursor: "pointer",
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: "0.25rem",
-                        transition: "all 0.2s ease",
-                      }}
-                    >
-                      <Plus size={12} /> {tag}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Summary Banner */}
+            {/* CARD 1: Executive Verdict & 4-Pillar Grid */}
             <div
               style={{
                 background: "#ffffff",
-                borderRadius: "12px",
-                padding: "1rem 1.25rem",
-                border: `1px solid ${review.outreachReadiness === "ready" ? "rgba(16, 185, 129, 0.4)" : "rgba(245, 158, 11, 0.4)"}`,
-                marginBottom: "1.25rem",
+                borderRadius: "16px",
+                border: "1px solid rgba(226, 232, 240, 0.9)",
+                boxShadow: "0 4px 24px rgba(0, 0, 0, 0.03)",
+                padding: "1.75rem",
               }}
+              className="space-y-6"
             >
-              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>
-                {review.outreachReadiness === "ready" ? (
-                  <ShieldCheck size={16} color="#10b981" />
-                ) : (
-                  <AlertTriangle size={16} color="#f59e0b" />
-                )}
-                <span style={{ fontSize: "0.82rem", fontWeight: 800, color: "#0f172a" }}>
-                  Status: {review.outreachReadiness === "ready" ? "Outreach Ready ✓" : "Refinement Recommended"}
-                </span>
+              {/* Verdict Header */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-5 border-b border-slate-100">
+                <div className="flex items-center gap-3">
+                  <div
+                    className={`p-2.5 rounded-xl ${
+                      review.status === "Ready for Outreach"
+                        ? "bg-emerald-50 text-emerald-600 border border-emerald-200"
+                        : "bg-amber-50 text-amber-600 border border-amber-200"
+                    }`}
+                  >
+                    {review.status === "Ready for Outreach" ? (
+                      <ShieldCheck size={24} />
+                    ) : (
+                      <AlertTriangle size={24} />
+                    )}
+                  </div>
+                  <div>
+                    <div className="text-[0.7rem] font-bold text-slate-500 uppercase tracking-wider">
+                      Executive Outreach Status
+                    </div>
+                    <div
+                      className={`text-lg font-black tracking-tight ${
+                        review.status === "Ready for Outreach" ? "text-emerald-700" : "text-amber-700"
+                      }`}
+                    >
+                      {review.status === "Ready for Outreach"
+                        ? "Ready for Faculty Outreach ✓"
+                        : "Edits Recommended Before Outreach"}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-slate-500 font-medium">Outreach Gate:</span>
+                  <span
+                    className={`px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider ${
+                      review.status === "Ready for Outreach"
+                        ? "bg-emerald-100 text-emerald-800"
+                        : "bg-amber-100 text-amber-800"
+                    }`}
+                  >
+                    {review.status}
+                  </span>
+                </div>
               </div>
-              <p style={{ fontSize: "0.85rem", color: "#475569", margin: 0, lineHeight: 1.6 }}>{review.summary}</p>
+
+              {/* 2-Sentence Mentor Summary */}
+              <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-4">
+                <div className="flex items-center gap-2 mb-1 text-slate-700 font-bold text-xs">
+                  <Compass size={14} className="text-indigo-600" /> Mentor Assessment
+                </div>
+                <p className="text-sm text-slate-700 leading-relaxed m-0 font-normal">
+                  {review.summary}
+                </p>
+              </div>
+
+              {/* 4-Pillar Grid */}
+              <div>
+                <div className="text-[0.7rem] font-extrabold uppercase tracking-wider text-slate-400 mb-3">
+                  4-Pillar Admissions Calibration Grid
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+                  <PillarMeter
+                    title="Academic Rigor"
+                    subtitle="Coursework & STEM depth"
+                    icon={<GraduationCap size={16} />}
+                    score={review.pillar_scores.academic_rigor}
+                  />
+                  <PillarMeter
+                    title="Domain Alignment"
+                    subtitle="Interests vs. activities"
+                    icon={<Target size={16} />}
+                    score={review.pillar_scores.domain_alignment}
+                  />
+                  <PillarMeter
+                    title="Leadership & Initiative"
+                    subtitle="Agency & sustained craft"
+                    icon={<Sparkles size={16} />}
+                    score={review.pillar_scores.leadership_initiative}
+                  />
+                  <PillarMeter
+                    title="Profile Completeness"
+                    subtitle="Faculty-evaluation readiness"
+                    icon={<FileCheck size={16} />}
+                    score={review.pillar_scores.completeness}
+                  />
+                </div>
+              </div>
             </div>
 
-            {/* Strengths & Improvements */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "1rem" }}>
-              {/* Strengths */}
-              {review.strengths?.length > 0 && (
-                <div style={{ background: "#ffffff", borderRadius: "12px", padding: "1.1rem 1.25rem", border: "1px solid rgba(226, 232, 240, 0.9)" }}>
-                  <h4 style={{ fontSize: "0.82rem", fontWeight: 800, color: "#166534", margin: "0 0 0.65rem 0", display: "flex", alignItems: "center", gap: "0.4rem" }}>
-                    <CheckCircle2 size={15} color="#166534" /> Key Strengths
-                  </h4>
-                  <ul style={{ margin: 0, paddingLeft: "1.1rem", fontSize: "0.8rem", color: "#334155", lineHeight: 1.6 }}>
+            {/* CARD 2: Admissions Mentorship Breakdown (Split Strengths vs Flags) */}
+            <div
+              style={{
+                background: "#ffffff",
+                borderRadius: "16px",
+                border: "1px solid rgba(226, 232, 240, 0.9)",
+                boxShadow: "0 4px 24px rgba(0, 0, 0, 0.03)",
+                padding: "1.75rem",
+              }}
+            >
+              <div className="text-[0.7rem] font-extrabold uppercase tracking-wider text-slate-400 mb-4">
+                Admissions Mentorship Breakdown
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                {/* High-Impact Hooks (Strengths) */}
+                <div className="bg-emerald-50/50 border border-emerald-200/70 rounded-xl p-4.5 space-y-3">
+                  <div className="flex items-center gap-2 text-emerald-900 font-extrabold text-sm">
+                    <CheckCircle2 size={17} className="text-emerald-600" />
+                    High-Impact Hooks (Strengths)
+                  </div>
+                  <ul className="space-y-2 m-0 p-0 list-none">
                     {review.strengths.map((str, idx) => (
-                      <li key={idx} style={{ marginBottom: "0.3rem" }}>{str}</li>
+                      <li key={idx} className="text-xs text-slate-700 flex items-start gap-2 leading-relaxed">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 flex-shrink-0" />
+                        <span>{str}</span>
+                      </li>
                     ))}
                   </ul>
                 </div>
-              )}
 
-              {/* Improvements */}
-              {review.improvements?.length > 0 && (
-                <div style={{ background: "#ffffff", borderRadius: "12px", padding: "1.1rem 1.25rem", border: "1px solid rgba(226, 232, 240, 0.9)" }}>
-                  <h4 style={{ fontSize: "0.82rem", fontWeight: 800, color: "#991b1b", margin: "0 0 0.65rem 0", display: "flex", alignItems: "center", gap: "0.4rem" }}>
-                    <AlertTriangle size={15} color="#991b1b" /> Actionable Recommendations
-                  </h4>
-                  <div style={{ display: "flex", flexDirection: "column", gap: "0.55rem" }}>
-                    {review.improvements.map((imp, idx) => (
-                      <div key={idx} style={{ fontSize: "0.78rem" }}>
-                        <span style={{ fontWeight: 800, color: "#0f172a" }}>{imp.field}: </span>
-                        <span style={{ color: "#475569" }}>{imp.suggestion}</span>
-                      </div>
+                {/* Areas to Tighten (Flags) */}
+                <div className="bg-amber-50/50 border border-amber-200/70 rounded-xl p-4.5 space-y-3">
+                  <div className="flex items-center gap-2 text-amber-900 font-extrabold text-sm">
+                    <AlertTriangle size={17} className="text-amber-600" />
+                    Areas to Tighten (Critiques)
+                  </div>
+                  <ul className="space-y-2 m-0 p-0 list-none">
+                    {review.flags.map((flag, idx) => (
+                      <li key={idx} className="text-xs text-slate-700 flex items-start gap-2 leading-relaxed">
+                        <span className="w-1.5 h-1.5 rounded-full bg-amber-500 mt-1.5 flex-shrink-0" />
+                        <span>{flag}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* CARD 3: Actionable Next Steps & Interactive Topic Pills */}
+            <div
+              style={{
+                background: "#ffffff",
+                borderRadius: "16px",
+                border: "1px solid rgba(226, 232, 240, 0.9)",
+                boxShadow: "0 4px 24px rgba(0, 0, 0, 0.03)",
+                padding: "1.75rem",
+              }}
+              className="space-y-5"
+            >
+              <div className="text-[0.7rem] font-extrabold uppercase tracking-wider text-slate-400">
+                Actionable Next Steps & Curriculum Expansion
+              </div>
+
+              {/* Concrete Rewrites List */}
+              <div className="space-y-2.5">
+                {review.next_steps.map((step, idx) => (
+                  <div
+                    key={idx}
+                    className="flex items-start gap-3 p-3 rounded-xl bg-slate-50 border border-slate-200/80 text-xs text-slate-700 leading-relaxed"
+                  >
+                    <div className="w-5 h-5 rounded-full bg-indigo-100 text-indigo-700 font-black text-[0.65rem] flex items-center justify-center flex-shrink-0 mt-0.5">
+                      {idx + 1}
+                    </div>
+                    <div>{step}</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Interactive Recommended Topic Pills */}
+              {review.recommended_topics && review.recommended_topics.length > 0 && (
+                <div className="pt-3 border-t border-slate-100">
+                  <div className="flex items-center justify-between mb-2.5">
+                    <span className="text-xs font-bold text-slate-600 flex items-center gap-1.5">
+                      <Sparkles size={13} className="text-indigo-600" />
+                      Recommended Technical Sub-Fields (Click to append to interests)
+                    </span>
+                    <span className="text-[0.65rem] text-slate-400 font-medium">
+                      Adds directly to active pitch
+                    </span>
+                  </div>
+
+                  <div className="flex flex-wrap gap-2">
+                    {review.recommended_topics.map((topic, i) => (
+                      <button
+                        key={topic || i}
+                        type="button"
+                        onClick={() => addInterestTag(topic)}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-indigo-50/80 text-indigo-700 border border-indigo-200 hover:bg-indigo-100 hover:border-indigo-300 transition-all cursor-pointer shadow-sm active:scale-95"
+                      >
+                        <Plus size={12} className="text-indigo-600" />
+                        {topic}
+                      </button>
                     ))}
                   </div>
                 </div>
@@ -394,23 +513,48 @@ export function AiProfileReviewerCard({ profileData }: Props) {
   );
 }
 
-function ScoreBadge({ label, score, isPrimary = false }: { label: string; score: number; isPrimary?: boolean }) {
-  const color = score >= 75 ? "#10b981" : score >= 50 ? "#f59e0b" : "#ef4444";
+interface PillarMeterProps {
+  title: string;
+  subtitle: string;
+  icon: React.ReactNode;
+  score: number;
+}
+
+function PillarMeter({ title, subtitle, icon, score }: PillarMeterProps) {
+  const { label, color } = getPillarTierLabel(score);
+
   return (
-    <div
-      style={{
-        background: isPrimary ? "#ffffff" : "rgba(255, 255, 255, 0.75)",
-        borderRadius: "12px",
-        padding: "0.75rem 0.5rem",
-        textAlign: "center",
-        border: `1px solid ${isPrimary ? "#6366f1" : "rgba(226, 232, 240, 0.8)"}`,
-      }}
-    >
-      <div style={{ fontSize: "1.3rem", fontWeight: 900, color: isPrimary ? "#4f46e5" : color, lineHeight: 1 }}>
-        {score}%
+    <div className="p-3.5 rounded-xl border border-slate-200 bg-slate-50/70 flex flex-col justify-between gap-3">
+      <div className="flex items-start justify-between gap-2">
+        <div className="space-y-0.5">
+          <div className="flex items-center gap-1.5 text-xs font-extrabold text-slate-800">
+            <span className="text-indigo-600">{icon}</span>
+            <span>{title}</span>
+          </div>
+          <p className="text-[0.65rem] text-slate-500 m-0 leading-tight line-clamp-1">{subtitle}</p>
+        </div>
       </div>
-      <div style={{ fontSize: "0.6rem", fontWeight: 800, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.08em", marginTop: "0.3rem" }}>
-        {label}
+
+      <div className="space-y-1.5">
+        <div className="flex items-baseline justify-between">
+          <span className="text-xl font-black tracking-tight" style={{ color }}>
+            {score}%
+          </span>
+          <span
+            className="text-[0.65rem] font-bold px-2 py-0.5 rounded-full"
+            style={{ color, background: `${color}15` }}
+          >
+            {label}
+          </span>
+        </div>
+
+        {/* Meter bar */}
+        <div className="h-1.5 w-full bg-slate-200 rounded-full overflow-hidden">
+          <div
+            className="h-full rounded-full transition-all duration-500"
+            style={{ width: `${Math.max(5, Math.min(100, score))}%`, background: color }}
+          />
+        </div>
       </div>
     </div>
   );

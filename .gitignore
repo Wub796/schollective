@@ -55,7 +55,8 @@ _legacy_vanilla/
 !db/migrations/*.sql
 
 # Dev utility scripts
-scripts/
+/scripts/
+!.agents/**/scripts/
 
 # IDE settings
 .vscode/

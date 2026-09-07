@@ -1,5 +1,5 @@
 import { executeWithGeminiFailover } from "./client";
-import { ProfileReviewResult } from "./types";
+import { PillarScores, ProfileReviewOutput } from "./types";
 import { ai } from "@/lib/amplitude";
 import {
   sanitizeAiPromptInput,
@@ -27,66 +27,206 @@ export interface StudentProfileData {
   expertise_fields?: string[] | string | null;
 }
 
-function normaliseScore(value: unknown): number {
-  const numericValue = typeof value === "number" || typeof value === "string" ? Number(value) : NaN;
-  return Number.isFinite(numericValue)
-    ? Math.round(Math.max(0, Math.min(100, numericValue)))
-    : 50;
+// Word ban list as per prompt guidelines
+const BANNED_WORD_REPLACEMENTS: Array<[RegExp, string]> = [
+  [/\bdelve\s+into\b/gi, "explore"],
+  [/\bdelve\b/gi, "explore"],
+  [/\btestament\s+to\b/gi, "evidence of"],
+  [/\btestament\b/gi, "evidence"],
+  [/\bfoster(?:ing|ed|s)?\b/gi, "build"],
+  [/\bshowcase(?:ing|ed|s)?\b/gi, "highlight"],
+  [/\btapestry\b/gi, "combination"],
+  [/\bmultifaceted\b/gi, "varied"],
+  [/\bleverage(?:ing|ed|s)?\b/gi, "use"],
+  [/\bbeacon\b/gi, "example"],
+  [/\bsynergy\b/gi, "alignment"],
+  [/\bholistic(?:ally)?\b/gi, "complete"],
+  [/\bbaseline\b/gi, "foundation"],
+  [/\brobust(?:ly)?\b/gi, "strong"],
+  [/\boptimize(?:ing|ed|s)?\b/gi, "refine"],
+  [/\belevate(?:ing|ed|s)?\b/gi, "strengthen"],
+  [/\bpassion\s+for\b/gi, "interest in"],
+  [/\bdedicated\s+to\b/gi, "focused on"],
+];
+
+const CONVERSATIONAL_FILLERS = [
+  /^(?:great\s+start|keep\s+it\s+up|let'?s\s+dive\s+in|i\s+noticed)[\s,.:;!-]*/i,
+  /\b(?:great\s+start|keep\s+it\s+up|let'?s\s+dive\s+in|i\s+noticed)\b/gi,
+];
+
+/**
+ * Deterministic text sanitizer enforcing style constraints:
+ * - Zero em-dashes (—) and en-dashes (–)
+ * - Zero semicolons (;)
+ * - Zero exclamation marks (!)
+ * - Word ban replacements
+ * - Strips conversational fillers
+ * - Clamps sentences to <= 22 words
+ */
+export function sanitizeReviewText(raw: string): string {
+  if (!raw || typeof raw !== "string") return "";
+
+  let text = raw
+    .replace(/[—–]/g, " - ")
+    .replace(/;/g, ".")
+    .replace(/!+/g, ".");
+
+  for (const filler of CONVERSATIONAL_FILLERS) {
+    text = text.replace(filler, "");
+  }
+
+  for (const [pattern, replacement] of BANNED_WORD_REPLACEMENTS) {
+    text = text.replace(pattern, replacement);
+  }
+
+  // Normalize duplicate spaces and clean periods
+  text = text.replace(/\s+/g, " ").replace(/\s*\.\s*\./g, ".").trim();
+
+  // Enforce sentence word limit: max 22 words per sentence
+  const sentences = text
+    .split(/(?<=[.?!])\s+/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+
+  const constrainedSentences = sentences.map((sentence) => {
+    const cleanSentence = sentence.replace(/[.?!]$/, "");
+    const words = cleanSentence.split(/\s+/).filter(Boolean);
+    if (words.length > 22) {
+      return words.slice(0, 22).join(" ") + ".";
+    }
+    return cleanSentence ? `${cleanSentence}.` : "";
+  });
+
+  return constrainedSentences.filter(Boolean).join(" ");
 }
 
-function normaliseText(value: unknown, maxChars: number, fallback = ""): string {
-  const text = typeof value === "string" ? sanitizeAiPromptInput(value, maxChars) : "";
-  return text || fallback;
+/**
+ * Validates whether a profile is a troll, nonsensical, or joke submission.
+ * Checks for minimal substantive content (<15 chars) or repetitive characters.
+ */
+export function isTrollSubmission(profile: StudentProfileData): boolean {
+  const bio = (profile.bio || "").trim();
+  const interests = Array.isArray(profile.academic_interests)
+    ? profile.academic_interests.join(" ")
+    : typeof profile.academic_interests === "string"
+    ? profile.academic_interests
+    : "";
+  const extras = Array.isArray(profile.extracurriculars)
+    ? profile.extracurriculars.join(" ")
+    : typeof profile.extracurriculars === "string"
+    ? profile.extracurriculars
+    : "";
+  const coursework = Array.isArray(profile.coursework)
+    ? profile.coursework.join(" ")
+    : typeof profile.coursework === "string"
+    ? profile.coursework
+    : "";
+  const skills = Array.isArray(profile.skills_and_tools)
+    ? profile.skills_and_tools.join(" ")
+    : typeof profile.skills_and_tools === "string"
+    ? profile.skills_and_tools
+    : "";
+
+  const combined = `${bio} ${interests} ${extras} ${coursework} ${skills}`.toLowerCase().replace(/\s+/g, "");
+
+  // Empty or less than 15 total characters across all content fields
+  if (combined.length < 15) return true;
+
+  // Known troll tokens or repeated single character strings
+  const trollStrings = ["asdf", "qwerty", "lol", "lmao", "fake", "none", "test", "idk", "nothing", "haha"];
+  if (trollStrings.includes(combined)) return true;
+
+  // Check character repetition (e.g. "aaaaaaaaaaaaaaa" or "11111111111")
+  const uniqueChars = new Set(combined.split(""));
+  if (uniqueChars.size <= 2 && combined.length > 8) return true;
+
+  return false;
 }
 
-function normaliseStringList(value: unknown, maxItems: number, maxItemChars: number): string[] {
+function normaliseScore(value: unknown, fallback = 50): number {
+  const numeric = typeof value === "number" || typeof value === "string" ? Number(value) : NaN;
+  return Number.isFinite(numeric) ? Math.round(Math.max(0, Math.min(100, numeric))) : fallback;
+}
+
+function normaliseStringList(value: unknown, maxItems: number, maxItemWords = 22): string[] {
   if (!Array.isArray(value)) return [];
   return value
     .filter((item): item is string => typeof item === "string")
-    .map((item) => sanitizeAiPromptInput(item, maxItemChars))
+    .map((item) => sanitizeReviewText(item))
     .filter(Boolean)
     .slice(0, maxItems);
 }
 
-function normaliseProfileReviewResult(raw: Record<string, unknown>): ProfileReviewResult {
-  const improvements = Array.isArray(raw.improvements)
-    ? raw.improvements.slice(0, 6).flatMap((item) => {
-        if (!item || typeof item !== "object") return [];
-        const improvement = item as Record<string, unknown>;
-        return [{
-          field: normaliseText(improvement.field, 100, "Profile"),
-          issue: normaliseText(improvement.issue, 240, "Needs more detail"),
-          suggestion: normaliseText(improvement.suggestion, 400, "Add a specific detail that strengthens this section."),
-        }];
-      })
-    : [];
+function normaliseSummary(summary: unknown): string {
+  if (typeof summary !== "string") {
+    return "Your profile is registered with basic details. Add specific coursework and technical project highlights to prepare for faculty outreach.";
+  }
+  const cleaned = sanitizeReviewText(summary);
+  const sentences = cleaned.split(/(?<=[.?!])\s+/).map((s) => s.trim()).filter(Boolean);
+  if (sentences.length >= 2) {
+    return `${sentences[0]} ${sentences[1]}`;
+  }
+  if (sentences.length === 1) {
+    return `${sentences[0]} Expand your profile with coursework and lab projects to attract faculty mentors.`;
+  }
+  return "Your profile is registered with basic details. Add specific coursework and technical project highlights to prepare for faculty outreach.";
+}
 
-  const readiness = raw.outreachReadiness === "ready" ||
-    raw.outreachReadiness === "needs_work" ||
-    raw.outreachReadiness === "incomplete"
-    ? raw.outreachReadiness
-    : "needs_work";
+function normaliseProfileReviewOutput(raw: Record<string, unknown>): ProfileReviewOutput {
+  const rawPillars = (raw.pillar_scores && typeof raw.pillar_scores === "object" ? raw.pillar_scores : {}) as Record<string, unknown>;
+
+  const pillarScores: PillarScores = {
+    academic_rigor: normaliseScore(rawPillars.academic_rigor ?? raw.academicRigor ?? raw.clarityScore, 65),
+    domain_alignment: normaliseScore(rawPillars.domain_alignment ?? raw.domainAlignment ?? raw.alignmentScore, 65),
+    leadership_initiative: normaliseScore(rawPillars.leadership_initiative ?? raw.leadershipInitiative ?? raw.academicToneScore, 60),
+    completeness: normaliseScore(rawPillars.completeness ?? raw.completenessScore, 50),
+  };
+
+  const avg = Math.round(
+    (pillarScores.academic_rigor +
+      pillarScores.domain_alignment +
+      pillarScores.leadership_initiative +
+      pillarScores.completeness) /
+      4
+  );
+
+  const isReady =
+    pillarScores.academic_rigor >= 75 &&
+    pillarScores.domain_alignment >= 75 &&
+    pillarScores.leadership_initiative >= 75 &&
+    pillarScores.completeness >= 75 &&
+    avg >= 80;
+
+  const status = isReady ? "Ready for Outreach" : "Needs Edits";
+
+  const strengths = normaliseStringList(raw.strengths, 3);
+  const flags = normaliseStringList(raw.flags ?? raw.improvements, 3);
+  const nextSteps = normaliseStringList(raw.next_steps ?? raw.suggestions, 3);
+  const recommendedTopics = normaliseStringList(raw.recommended_topics ?? raw.suggestedInterests, 4);
 
   return {
-    overallScore: normaliseScore(raw.overallScore),
-    clarityScore: normaliseScore(raw.clarityScore),
-    academicToneScore: normaliseScore(raw.academicToneScore),
-    alignmentScore: normaliseScore(raw.alignmentScore),
-    completenessScore: normaliseScore(raw.completenessScore),
-    summary: normaliseText(raw.summary, 600, "Your profile has been reviewed. Add more specific academic detail to strengthen it."),
-    strengths: normaliseStringList(raw.strengths, 5, 240),
-    improvements,
-    suggestedInterests: normaliseStringList(raw.suggestedInterests, 6, 120),
-    outreachReadiness: readiness,
+    status,
+    summary: normaliseSummary(raw.summary),
+    pillar_scores: pillarScores,
+    strengths: strengths.length > 0 ? strengths : ["Registered academic institution and basic standing."],
+    flags: flags.length > 0 ? flags : ["Provide tangible metrics and specific tools for current projects."],
+    next_steps: nextSteps.length > 0 ? nextSteps : ["Add relevant advanced coursework and software tools."],
+    recommended_topics: recommendedTopics.length > 0 ? recommendedTopics : ["Computer Science", "Biology", "Mathematics", "Physics"],
   };
 }
 
 /**
- * Reviews a student profile using Gemini AI with prompt injection defense & rate limit fallback.
+ * Reviews a student profile using Gemini AI with Harvard 1-6 curve distribution,
+ * strict negative constraints, troll detection, and deterministic fallback.
  */
 export async function reviewStudentProfile(
   profile: StudentProfileData
-): Promise<ProfileReviewResult> {
+): Promise<ProfileReviewOutput> {
+  // 1. Immediate deterministic troll protection
+  if (isTrollSubmission(profile)) {
+    return generateTrollReviewOutput();
+  }
+
   const interestsList = Array.isArray(profile.academic_interests)
     ? profile.academic_interests.join(", ")
     : typeof profile.academic_interests === "string"
@@ -101,57 +241,76 @@ export async function reviewStudentProfile(
     ? profile.extracurriculars
     : "";
 
-  const sanitizedBio = sanitizeAiPromptInput(profile.bio, 350);
-  const sanitizedInst = sanitizeAiPromptInput(profile.institution, 100);
-  const sanitizedLevel = sanitizeAiPromptInput(profile.education_level, 50);
-  const sanitizedInterests = sanitizeAiPromptInput(interestsList, 300);
-  const sanitizedExtras = sanitizeAiPromptInput(extrasList, 600);
+  const courseworkList = Array.isArray(profile.coursework)
+    ? profile.coursework.join(", ")
+    : typeof profile.coursework === "string"
+    ? profile.coursework
+    : "";
 
-  // FIX: Include sanitizedExtras in profileKey so modifying extracurriculars invalidates stale cache
-  const profileKey = `${profile.id || profile.email || "anon"}_${sanitizedBio}_${sanitizedInterests}_${sanitizedExtras}_${sanitizedLevel}_${sanitizedInst}`;
-  const cacheKey = `profile_review_v6_hybrid_${profileKey}`;
-  const cached = getCachedAiResult<ProfileReviewResult>(cacheKey);
+  const skillsList = Array.isArray(profile.skills_and_tools)
+    ? profile.skills_and_tools.join(", ")
+    : typeof profile.skills_and_tools === "string"
+    ? profile.skills_and_tools
+    : "";
+
+  const sanitizedBio = sanitizeAiPromptInput(profile.bio, 400);
+  const sanitizedInst = sanitizeAiPromptInput(profile.institution, 100);
+  const sanitizedLevel = sanitizeAiPromptInput(profile.education_level, 60);
+  const sanitizedInterests = sanitizeAiPromptInput(interestsList, 300);
+  const sanitizedExtras = sanitizeAiPromptInput(extrasList, 800);
+  const sanitizedCoursework = sanitizeAiPromptInput(courseworkList, 400);
+  const sanitizedSkills = sanitizeAiPromptInput(skillsList, 300);
+
+  const profileKey = `${profile.id || profile.email || "anon"}_${sanitizedBio}_${sanitizedInterests}_${sanitizedExtras}_${sanitizedCoursework}_${sanitizedLevel}_${sanitizedInst}`;
+  const cacheKey = `profile_review_v7_curved_${profileKey}`;
+  const cached = getCachedAiResult<ProfileReviewOutput>(cacheKey);
   if (cached) {
     return cached;
   }
 
-  const prompt = `You are a friendly academic advisor helping a student strengthen their profile for professor outreach on Schollective.
+  const systemPrompt = `You are a senior undergraduate researcher and graduate lab mentor evaluating a student cold-email pitch on Schollective.
+Be direct, grounded, honest, and encouraging without false cheerleading.
 
-Who you're talking to: high school students (grades 9-12) looking for research mentors, plus some college undergrads looking for labs.
+CALIBRATION CURVE & SCORE BENCHMARKS (Harvard admissions 1-6 scale):
+- 92-100 (Exceptional / Rare Top Tier): National/international olympiads (USAMO, USACO Platinum, ISEF finalist), first-author peer-reviewed paper, or rare state/national distinction with rigorous coursework.
+- 78-91 (Strong / Ready for Lab Outreach): Rigorous AP/IB/Dual enrollment coursework, focused domain alignment, multi-year leadership or sustained technical craft.
+- 65-77 (Developing / Baseline): Typical starting student profile with solid fundamentals but vague project descriptions, missing metrics, or scattered interests.
+- 40-64 (Thin / Underdeveloped): Sparse coursework, generic club participation, or lack of project highlights.
+- 0-35 (Troll / Bad-Faith Submissions): One-word inputs, nonsensical text, joke profiles. Do NOT protect fake entries with an artificial score floor.
 
-Evaluate their profile and score it. Recognize strong achievements (ISEF, USAMO, USACO, PRIMES, RSI, published research = elite; state competitions, robotics, science fairs, club leadership = strong; school clubs, honor roll = solid start).
+STRICT WRITING STYLE CONSTRAINTS:
+1. Zero em-dashes (—) and zero en-dashes (–). Use standard hyphens or commas only.
+2. Zero semicolons (;). Use periods or separate sentences.
+3. Zero exclamation marks (!). Use periods.
+4. Sentence length cap: maximum 22 words per sentence.
+5. No conversational filler like "Great start", "Keep it up", "Let's dive in", or "I noticed".
+6. FORBIDDEN WORDS: Do not use delve, testament, foster, showcase, tapestry, multifaceted, leverage, beacon, synergy, holistic, baseline, robust, optimize, elevate, "passion for", or "dedicated to".
+7. Mandatory concrete rewrites: every critique must specify the exact section and suggest precise tools, datasets, or metrics.
+8. The summary must be EXACTLY 2 sentences, with at most 22 words in each sentence.
 
-IMPORTANT WRITING STYLE RULES:
-- Write like a helpful older peer, not a corporate AI. Be direct and specific.
-- Keep strengths and suggestions SHORT — one line each, no filler words.
-- Don't use phrases like "I recommend", "It is advisable", "Consider leveraging", "This demonstrates", or "Your profile showcases". Just say what's good or what to fix.
-- Suggestions should be things the student can do TODAY, not vague advice.
-
-STUDENT PROFILE:
+STUDENT PROFILE DATA:
 - Institution: "${sanitizedInst || "Not specified"}"
 - Education Level: "${sanitizedLevel || "Not specified"}"
 - Short Bio: "${sanitizedBio || "Empty"}"
 - Academic Interests: "${sanitizedInterests || "Empty"}"
-- Extracurriculars: "${sanitizedExtras || "Empty"}"
+- Extracurriculars & Honors: "${sanitizedExtras || "Empty"}"
+- Coursework: "${sanitizedCoursework || "Empty"}"
+- Technical Skills & Tools: "${sanitizedSkills || "Empty"}"
 
-Return ONLY valid JSON:
+Return ONLY valid JSON matching this schema:
 {
-  "overallScore": number (0-100),
-  "clarityScore": number (0-100),
-  "academicToneScore": number (0-100),
-  "alignmentScore": number (0-100),
-  "completenessScore": number (0-100),
-  "summary": "1-2 short sentences, conversational",
-  "strengths": ["2-3 short, specific strengths — no filler"],
-  "improvements": [
-    {
-      "field": "Short Bio | Academic Interests | Extracurriculars | Institution | Education Level",
-      "issue": "What's missing or weak",
-      "suggestion": "One concrete thing to do about it"
-    }
-  ],
-  "suggestedInterests": ["3-4 broad research fields the student might like, based on their interests — use everyday names like 'Robotics', 'Neuroscience', 'Climate Science', NOT niche subfields like 'Computational Epistemic Graph Theory'"],
-  "outreachReadiness": "ready" | "needs_work" | "incomplete"
+  "status": "Ready for Outreach" | "Needs Edits",
+  "summary": "Exactly 2 sentences. Max 22 words each.",
+  "pillar_scores": {
+    "academic_rigor": number (0-100),
+    "domain_alignment": number (0-100),
+    "leadership_initiative": number (0-100),
+    "completeness": number (0-100)
+  },
+  "strengths": ["2-3 genuine concrete hooks"],
+  "flags": ["2-3 specific issues like vagueness or lack of metrics"],
+  "next_steps": ["2-3 actionable rewrites naming specific tools or datasets"],
+  "recommended_topics": ["3-4 clickable technical sub-field tags"]
 }`;
 
   const callModel = async (modelName: string) => {
@@ -160,10 +319,10 @@ Return ONLY valid JSON:
       const response = await executeWithGeminiFailover(async (gemini) => {
         return await gemini.models.generateContent({
           model: modelName,
-          contents: prompt,
+          contents: systemPrompt,
           config: {
             responseMimeType: "application/json",
-            maxOutputTokens: 600,
+            maxOutputTokens: 800,
             temperature: 0.1,
           },
         });
@@ -173,7 +332,12 @@ Return ONLY valid JSON:
       const text = response.text;
       if (!text) throw new Error(`Empty response from ${modelName}`);
 
-      void ai.trackAiMessage({ content: text, sessionId: "schollective", model: modelName, provider: "google", latencyMs,
+      void ai.trackAiMessage({
+        content: text,
+        sessionId: "schollective",
+        model: modelName,
+        provider: "google",
+        latencyMs,
         inputTokens: response.usageMetadata?.promptTokenCount,
         outputTokens: response.usageMetadata?.candidatesTokenCount,
         totalTokens: response.usageMetadata?.totalTokenCount,
@@ -184,12 +348,17 @@ Return ONLY valid JSON:
       if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
         throw new Error("Gemini returned an invalid profile review payload");
       }
-      const normalised = normaliseProfileReviewResult(parsed as Record<string, unknown>);
+      const normalised = normaliseProfileReviewOutput(parsed as Record<string, unknown>);
 
       setCachedAiResult(cacheKey, normalised, 15 * 60 * 1000);
       return normalised;
     } catch (err: any) {
-      void ai.trackAiMessage({ content: "", sessionId: "schollective", model: modelName, provider: "google", latencyMs: performance.now() - startTime,
+      void ai.trackAiMessage({
+        content: "",
+        sessionId: "schollective",
+        model: modelName,
+        provider: "google",
+        latencyMs: performance.now() - startTime,
         isError: true,
         errorMessage: err?.message || "Unknown LLM error",
       });
@@ -201,159 +370,200 @@ Return ONLY valid JSON:
     async () => callModel("gemini-3.6-flash"),
     async () => callModel("gemini-3.5-flash-lite"),
     () => {
-      const fallbackResult = generateRuleBasedProfileReview(profile, sanitizedInterests, sanitizedExtras);
+      const fallbackResult = generateRuleBasedProfileReview(
+        profile,
+        sanitizedInterests,
+        sanitizedExtras,
+        sanitizedCoursework
+      );
       setCachedAiResult(cacheKey, fallbackResult, 15 * 60 * 1000);
       return fallbackResult;
     }
   );
 }
 
+function generateTrollReviewOutput(): ProfileReviewOutput {
+  return {
+    status: "Needs Edits",
+    summary: "Profile lacks verifiable academic context and coursework. Add genuine courses and project details to prepare for faculty review.",
+    pillar_scores: {
+      academic_rigor: 15,
+      domain_alignment: 10,
+      leadership_initiative: 10,
+      completeness: 15,
+    },
+    strengths: ["Profile account was created."],
+    flags: [
+      "No authentic coursework or academic accomplishments provided.",
+      "Entries are too brief to present to research faculty.",
+    ],
+    next_steps: [
+      "Add your current math and science coursework under Academic Identity.",
+      "Detail at least one technical project or laboratory experience under Activities.",
+    ],
+    recommended_topics: ["Computer Science", "Biology", "Mathematics", "Physics"],
+  };
+}
+
 /**
- * High-precision deterministic fallback scoring algorithm with Extracurricular Achievement Tiering.
+ * Calibrated deterministic fallback scoring engine adhering to the Harvard 1-6 rubric.
  */
-function generateRuleBasedProfileReview(
+export function generateRuleBasedProfileReview(
   profile: StudentProfileData,
   interestsStr: string,
-  extrasStr: string
-): ProfileReviewResult {
+  extrasStr: string,
+  courseworkStr: string
+): ProfileReviewOutput {
+  if (isTrollSubmission(profile)) {
+    return generateTrollReviewOutput();
+  }
+
   const bio = (profile.bio || "").trim();
   const inst = (profile.institution || "").trim();
-  const level = (profile.education_level || "undergraduate").trim();
+  const level = (profile.education_level || "high-school-senior").trim().toLowerCase();
 
   const interests = interestsStr ? interestsStr.split(",").map((s) => s.trim()).filter(Boolean) : [];
   const extras = extrasStr ? extrasStr.split(",").map((s) => s.trim()).filter(Boolean) : [];
+  const coursework = courseworkStr ? courseworkStr.split(",").map((s) => s.trim()).filter(Boolean) : [];
+  const skills = Array.isArray(profile.skills_and_tools)
+    ? profile.skills_and_tools
+    : typeof profile.skills_and_tools === "string"
+    ? profile.skills_and_tools.split(",").map((s) => s.trim()).filter(Boolean)
+    : [];
+
+  // --- 1. Academic Rigor Scoring (0-100 Curved) ---
+  const extrasLower = extrasStr.toLowerCase();
+  const courseworkLower = courseworkStr.toLowerCase();
+  const bioLower = bio.toLowerCase();
+  const combinedText = `${extrasLower} ${courseworkLower} ${bioLower}`;
+
+  const tier1Keywords = ["isef", "usamo", "usaco platinum", "usaco gold", "primes", "rsi", "first author", "peer reviewed", "chopin"];
+  const tier2Keywords = ["usaco silver", "amc 10", "amc 12", "aime", "uil", "frc", "robotics lead", "science olympiad state", "co-author"];
+  const apIbKeywords = ["ap ", "advanced placement", "ib ", "international baccalaureate", "multivariable", "linear algebra", "organic chemistry", "dual enrollment"];
+
+  const hasTier1 = tier1Keywords.some((kw) => combinedText.includes(kw));
+  const hasTier2 = tier2Keywords.some((kw) => combinedText.includes(kw));
+  const apCount = apIbKeywords.filter((kw) => courseworkLower.includes(kw)).length + (coursework.length >= 3 ? 2 : 0);
+
+  let academicRigor = 65; // Baseline starting score
+  if (hasTier1) academicRigor = 94;
+  else if (hasTier2) academicRigor = 84;
+  else if (apCount >= 4) academicRigor = 80;
+  else if (apCount >= 2) academicRigor = 74;
+  else if (coursework.length === 0) academicRigor = 48;
+
+  // --- 2. Domain Alignment (0-100 Curved) ---
+  let domainAlignment = 62;
+  const commonTech = ["python", "pytorch", "r", "c++", "cad", "crispr", "matlab", "java", "sql", "git"];
+  const matchedTech = commonTech.filter((t) => skills.some((s) => s.toLowerCase().includes(t)) || combinedText.includes(t));
+
+  if (interests.length >= 2 && matchedTech.length >= 2) {
+    domainAlignment = 82;
+  } else if (interests.length >= 1 && (matchedTech.length >= 1 || bio.length >= 60)) {
+    domainAlignment = 72;
+  } else if (interests.length === 0) {
+    domainAlignment = 42;
+  }
+
+  // --- 3. Leadership & Initiative (0-100 Curved) ---
+  let leadershipInitiative = 60;
+  const leadershipKeywords = ["founder", "president", "captain", "lead", "organized", "creator", "developed", "published", "tutored"];
+  const leadershipMatches = leadershipKeywords.filter((kw) => extrasLower.includes(kw) || bioLower.includes(kw));
+
+  if (hasTier1 || leadershipMatches.length >= 2) {
+    leadershipInitiative = 85;
+  } else if (hasTier2 || leadershipMatches.length >= 1) {
+    leadershipInitiative = 76;
+  } else if (extras.length >= 2) {
+    leadershipInitiative = 68;
+  } else if (extras.length === 0) {
+    leadershipInitiative = 35;
+  }
+
+  // --- 4. Completeness (0-100 Checklist) ---
+  let completeness = 0;
+  if (inst) completeness += 20;
+  if (level) completeness += 20;
+  if (bio.length >= 40) completeness += 20;
+  if (interests.length >= 2) completeness += 20;
+  if (extras.length >= 1 || coursework.length >= 1) completeness += 20;
+
+  const pillarScores: PillarScores = {
+    academic_rigor: Math.max(0, Math.min(100, academicRigor)),
+    domain_alignment: Math.max(0, Math.min(100, domainAlignment)),
+    leadership_initiative: Math.max(0, Math.min(100, leadershipInitiative)),
+    completeness: Math.max(0, Math.min(100, completeness)),
+  };
+
+  const avg = Math.round(
+    (pillarScores.academic_rigor +
+      pillarScores.domain_alignment +
+      pillarScores.leadership_initiative +
+      pillarScores.completeness) /
+      4
+  );
+
+  const isReady =
+    pillarScores.academic_rigor >= 75 &&
+    pillarScores.domain_alignment >= 75 &&
+    pillarScores.leadership_initiative >= 75 &&
+    pillarScores.completeness >= 75 &&
+    avg >= 80;
+
+  const status = isReady ? "Ready for Outreach" : "Needs Edits";
 
   const strengths: string[] = [];
-  const improvements: ProfileReviewResult["improvements"] = [];
-
-  let completeness = 0;
-  if (inst) {
-    completeness += 20;
-    strengths.push(`Affiliated with ${inst}.`);
-  } else {
-    improvements.push({
-      field: "Institution",
-      issue: "Institution missing",
-      suggestion: "Type your current high school, college, or university name.",
-    });
+  if (hasTier1) {
+    strengths.push("Distinguished competition distinction signals strong lab readiness.");
+  } else if (hasTier2) {
+    strengths.push("Regional competition experience demonstrates sustained discipline.");
+  } else if (apCount >= 2) {
+    strengths.push("Rigorous coursework provides adequate quantitative background.");
+  } else if (inst) {
+    strengths.push(`Clear institutional affiliation with ${inst}.`);
   }
 
-  if (level) {
-    completeness += 20;
-  } else {
-    improvements.push({
-      field: "Education Level",
-      issue: "Education level not selected",
-      suggestion: "Select your current standing (e.g. Undergraduate, High School, Graduate).",
-    });
+  if (matchedTech.length > 0) {
+    strengths.push(`Technical proficiency in ${matchedTech.slice(0, 2).join(" and ")} directly supports lab workflows.`);
+  } else if (interests.length >= 2) {
+    strengths.push(`Focused academic interests in ${interests.slice(0, 2).join(" and ")}.`);
   }
 
-  if (bio.length >= 30) {
-    completeness += 20;
-    if (bio.length >= 80) strengths.push("Well-articulated short bio.");
-  } else {
-    improvements.push({
-      field: "Short Bio",
-      issue: "Short bio is brief or empty",
-      suggestion: "Write 1-2 sentences about your research goals and academic curiosity.",
-    });
+  const flags: string[] = [];
+  if (coursework.length === 0) {
+    flags.push("Coursework section is empty. Faculty look for advanced math and science rigor.");
+  }
+  if (bio.length < 50) {
+    flags.push("Research pitch is brief. Explain specific hypotheses and academic curiosity.");
+  }
+  if (matchedTech.length === 0) {
+    flags.push("Missing concrete technical tools. List specific software packages or laboratory techniques.");
   }
 
-  if (interests.length >= 2) {
-    completeness += 20;
-    strengths.push(`${interests.length} focused academic research interests.`);
-  } else {
-    improvements.push({
-      field: "Academic Interests",
-      issue: "Few or no academic interests listed",
-      suggestion: "Enter comma-separated topics (e.g. Machine Learning, Neuroscience).",
-    });
+  const nextSteps: string[] = [];
+  if (coursework.length === 0) {
+    nextSteps.push("Add AP or upper division math and science courses under Academic Identity.");
   }
-
-  // --- Extracurricular Tiering Analysis ---
-  const extrasTextLower = extrasStr.toLowerCase();
-  
-  // Tier 1 keywords: National/International Olympiads, ISEF, PRIMES, World Championships
-  const tier1Keywords = ["isef", "usamo", "usaco", "primes", "world", "worlds", "chopin", "international", "national finalist", "1st place world"];
-  // Tier 2 keywords: State/Regional UIL, AMC, Robotics, Unity game dev, Research, Club President
-  const tier2Keywords = ["uil", "amc", "frc", "robotics", "unity", "flappy", "research", "president", "captain", "founder", "regional", "state"];
-
-  const matchedTier1 = tier1Keywords.filter((kw) => extrasTextLower.includes(kw));
-  const matchedTier2 = tier2Keywords.filter((kw) => extrasTextLower.includes(kw));
-
-  let extraBonusScore = 0;
-
-  if (matchedTier1.length > 0) {
-    completeness += 20;
-    extraBonusScore += 30;
-    strengths.push(`Distinguished Tier-1 national/international accomplishments (${matchedTier1.join(", ").toUpperCase()}).`);
-  } else if (matchedTier2.length > 0) {
-    completeness += 20;
-    extraBonusScore += 18;
-    strengths.push(`Strong technical initiative and regional extracurricular involvement (${matchedTier2.join(", ")}).`);
-  } else if (extras.length >= 1) {
-    completeness += 15;
-    extraBonusScore += 8;
-    strengths.push("Active participation in extracurricular activities.");
-  } else {
-    improvements.push({
-      field: "Extracurriculars",
-      issue: "Extracurriculars empty",
-      suggestion: "Add clubs, competitions, software projects, or research programs.",
-    });
+  if (matchedTech.length === 0) {
+    nextSteps.push("Specify data tools like Python, R, or PyTorch in your skills list.");
   }
+  nextSteps.push("Quantify project outcomes with hours per week, lines of code, or data points analyzed.");
 
-  const courseworkStr = Array.isArray(profile.coursework) ? profile.coursework.join(", ") : profile.coursework || "";
-  const skillsStr = Array.isArray(profile.skills_and_tools) ? profile.skills_and_tools.join(", ") : profile.skills_and_tools || "";
-  
-  if (courseworkStr.length > 5) completeness += 10;
-  if (skillsStr.length > 5) completeness += 10;
+  const fallbackTopics = interests.length >= 2
+    ? [interests[0], interests[1], "Computational Biology", "Applied Machine Learning"].filter((v, i, a) => a.indexOf(v) === i).slice(0, 4)
+    : ["Computer Science", "Neuroscience", "Applied Mathematics", "Biomedical Engineering"];
 
-  let clarity = 65;
-  if (bio.length > 60) clarity += 15;
-  if (interests.length >= 3) clarity += 10;
-  if (extras.length >= 3) clarity += 10;
-  clarity = Math.min(100, clarity);
-
-  let academicTone = 65;
-  const keywords = ["research", "study", "analysis", "science", "data", "engineering", "lab", "project", "algorithm", "biology", "computing", "math", "physics", "primes", "usaco", "usamo", "isef", "ap", "ib", "pytorch", "python", "c++"];
-  const textCombined = `${bio} ${interestsStr} ${extrasStr} ${courseworkStr} ${skillsStr}`.toLowerCase();
-  const matchedKw = keywords.filter((kw) => textCombined.includes(kw));
-  if (matchedKw.length > 0) {
-    academicTone += Math.min(35, matchedKw.length * 7);
-  }
-  academicTone = Math.min(100, academicTone + (matchedTier1.length > 0 ? 15 : 0));
-
-  let alignment = interests.length >= 2 ? 85 : 60;
-  if (matchedTier1.length > 0 || matchedTier2.length > 0) alignment = Math.min(100, alignment + 15);
-
-  const rawOverall = Math.round((completeness * 0.35) + (clarity * 0.2) + (academicTone * 0.25) + (alignment * 0.2)) + extraBonusScore;
-  const overall = Math.max(0, Math.min(100, rawOverall));
-
-  let readiness: ProfileReviewResult["outreachReadiness"] = "needs_work";
-  if (overall >= 75 && completeness >= 65) readiness = "ready";
-  else if (overall < 50) readiness = "incomplete";
-
-  const summary = matchedTier1.length > 0
-    ? "Exceptional candidate profile with world-class extracurricular & competition achievements. Strongly aligned for high-impact research mentorship."
-    : readiness === "ready"
-    ? "Your profile is well-crafted and ready for professor outreach. Your academic interests and extracurricular initiatives provide clear context for faculty."
-    : "Your profile gives a solid baseline. Elaborating on your bio and academic research goals will further elevate your outreach response rate.";
-
-  const suggestedInterests = interests.length >= 2
-    ? [interests[0], interests[1], "Computer Science", "Biology"].filter((v, i, a) => a.indexOf(v) === i).slice(0, 4)
-    : ["Computer Science", "Biology", "Engineering", "Mathematics"];
+  const summary = isReady
+    ? "Your profile demonstrates strong academic preparation and clear research focus. It presents sufficient context for initial faculty outreach."
+    : "Your profile provides a solid foundation with clear potential. Adding specific quantitative coursework and project metrics will strengthen your outreach.";
 
   return {
-    overallScore: overall,
-    clarityScore: Math.min(100, clarity),
-    academicToneScore: Math.min(100, academicTone),
-    alignmentScore: Math.min(100, alignment),
-    completenessScore: Math.min(100, completeness),
-    summary,
-    strengths: strengths.length > 0 ? strengths : ["Basic account details configured."],
-    improvements: improvements.slice(0, 4),
-    suggestedInterests,
-    outreachReadiness: readiness,
+    status,
+    summary: sanitizeReviewText(summary),
+    pillar_scores: pillarScores,
+    strengths: strengths.map(sanitizeReviewText).slice(0, 3),
+    flags: flags.map(sanitizeReviewText).slice(0, 3),
+    next_steps: nextSteps.map(sanitizeReviewText).slice(0, 3),
+    recommended_topics: fallbackTopics.map(sanitizeReviewText).slice(0, 4),
   };
 }

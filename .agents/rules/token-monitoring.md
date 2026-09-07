@@ -1,9 +1,3 @@
-<!-- BEGIN:nextjs-agent-rules -->
-# This is NOT the Next.js you know
-
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
-<!-- END:nextjs-agent-rules -->
-
 # TOKEN MONITORING & AUDIT RULE
 
 At the very end of every generation, include a lightweight, non-intrusive Token Estimate footer formatted exactly as follows:
@@ -22,4 +16,3 @@ Estimation Standard:
 - Code snippets, file payloads, and tool outputs: ~3.2 characters per token.
 - Session Target Ceiling: 25,000 tokens (practical threshold before per-turn 5-hour limit burn increases substantially).
 - Account for all attached file contents, tool outputs, and turn history in the active conversation when estimating Current Chat Load.
-
