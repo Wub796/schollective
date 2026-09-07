@@ -217,6 +217,13 @@ function SignupContent() {
     const preferredName = fd.get("preferred_name") as string;
     const educationLevel = fd.get("education_level") as string;
     const password = fd.get("password") as string;
+    const expertiseRaw = fd.get("expertise") as string;
+    const expertiseFields = expertiseRaw
+      ? expertiseRaw
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean)
+      : [];
 
     try {
       const res = await authClient.signUp.email({
@@ -242,6 +249,7 @@ function SignupContent() {
           last_name: lastName,
           education_level: educationLevel,
           institution: institution || (fd.get("institution") as string),
+          expertise_fields: expertiseFields,
         }),
       });
       if (!profileResponse.ok) {

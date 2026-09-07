@@ -356,10 +356,11 @@ async function bootstrap(): Promise<void> {
     found.set("profiles", new Set());
   }
 
-  for (const [table, statement] of Object.entries(APP_TABLES)) {
+  for (const table of new Set([...Object.keys(APP_TABLES), ...Object.keys(APP_REQUIRED_COLUMNS)])) {
     const columns = found.get(table);
     if (!columns) {
-      await exec(run, statement);
+      const statement = APP_TABLES[table];
+      if (statement) await exec(run, statement);
       found.set(table, new Set(APP_REQUIRED_COLUMNS[table]?.map((column) => column.name) || []));
       continue;
     }
