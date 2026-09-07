@@ -31,8 +31,17 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 3. Extract Multipart Form Data
-    const formData = await req.formData();
+    // 3. Extract Multipart Form Data (a non-multipart body is a client error,
+    //    not a server fault)
+    let formData: FormData;
+    try {
+      formData = await req.formData();
+    } catch {
+      return NextResponse.json(
+        { error: 'Expected multipart/form-data with a "file" field.' },
+        { status: 400 }
+      );
+    }
     const file = formData.get("file");
 
     if (!file || !(file instanceof Blob)) {
