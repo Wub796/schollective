@@ -2,7 +2,7 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "schollective",
   "main": ".open-next/worker.js",
-  "compatibility_date": "2024-12-30",
+  "compatibility_date": "2026-08-28",
   "compatibility_flags": [
     "nodejs_compat",
     "no_handle_cross_request_promise_resolution"
