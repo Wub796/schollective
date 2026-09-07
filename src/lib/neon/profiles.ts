@@ -3,6 +3,55 @@ import { ensureAuthSchema } from "./schema";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
+export interface AcademicStats {
+  unweighted_gpa?: number | null;
+  weighted_gpa?: number | null;
+  class_rank?: number | null;
+  class_size?: number | null;
+  does_not_rank?: boolean;
+  school_does_not_rank?: boolean;
+  standardized_test_type?: string | null;
+  standardized_test_score?: string | null;
+  testing?: {
+    test: "SAT" | "ACT" | "PSAT" | "None" | string;
+    score?: string | number | null;
+  } | null;
+  advanced_coursework?: string[] | null;
+}
+
+export interface ActivityItem {
+  id: string;
+  title: string;
+  organization: string;
+  category: "Research" | "Software / Engineering Project" | "Software/Engineering Project" | "Competition Team" | "School Club / Leadership" | "School Club/Leadership" | "Fine Arts / Athletics" | "Fine Arts/Athletics" | "Work / Volunteer" | "Work/Volunteer" | string;
+  date_range?: string;
+  dateRange?: string;
+  description?: string;
+}
+
+export interface HonorAwardItem {
+  id: string;
+  title: string;
+  issuer?: string;
+  issuer_or_level?: string;
+  year: string;
+}
+
+export interface LanguageItem {
+  id?: string;
+  language: string;
+  proficiency: "Native / Bilingual" | "Professional Working" | "Limited Working" | "Elementary" | "Fluent" | "Conversational" | "Basic/Reading" | string;
+}
+
+export interface SocialLinks {
+  github?: string | null;
+  github_url?: string | null;
+  linkedin?: string | null;
+  linkedin_url?: string | null;
+  portfolio?: string | null;
+  portfolio_url?: string | null;
+}
+
 export interface ProfileRecord {
   id: string;
   email: string;
@@ -35,6 +84,11 @@ export interface ProfileRecord {
   ai_score?: number | null;
   ai_level?: string | null;
   ai_flags?: any | null;
+  academic_stats?: AcademicStats | null;
+  activities?: ActivityItem[] | null;
+  honors_awards?: HonorAwardItem[] | null;
+  languages?: LanguageItem[] | null;
+  social_links?: SocialLinks | null;
   created_at?: string;
   updated_at?: string;
 }
@@ -118,13 +172,32 @@ export async function getProfileByEmail(email: string): Promise<ProfileRecord | 
 
 export async function upsertProfile(profile: Partial<ProfileRecord> & { id: string; email: string }) {
   await ensureAuthSchema();
-  const interests = JSON.stringify(profile.academic_interests || []);
-  const extras = JSON.stringify(profile.extracurriculars || []);
-  const expertise = JSON.stringify(profile.expertise_fields || []);
-  const coursework = JSON.stringify(profile.coursework || []);
-  const skills = JSON.stringify(profile.skills_and_tools || []);
-  const publications = JSON.stringify(profile.publications || []);
-  const studentTypes = JSON.stringify(profile.accepting_student_types || []);
+
+  let derivedExtras = profile.extracurriculars;
+  if (!derivedExtras && profile.activities) {
+    derivedExtras = profile.activities.map(a => a.organization ? `${a.title} (${a.organization})` : a.title);
+  }
+
+  let derivedCoursework = profile.coursework;
+  if (!derivedCoursework && profile.academic_stats?.advanced_coursework) {
+    derivedCoursework = profile.academic_stats.advanced_coursework;
+  }
+
+  const portfolioUrl = profile.portfolio_url || profile.social_links?.portfolio_url || null;
+
+  const interests = profile.academic_interests !== undefined ? JSON.stringify(profile.academic_interests) : null;
+  const extras = derivedExtras !== undefined ? JSON.stringify(derivedExtras) : null;
+  const expertise = profile.expertise_fields !== undefined ? JSON.stringify(profile.expertise_fields) : null;
+  const courseworkStr = derivedCoursework !== undefined ? JSON.stringify(derivedCoursework) : null;
+  const skills = profile.skills_and_tools !== undefined ? JSON.stringify(profile.skills_and_tools) : null;
+  const publications = profile.publications !== undefined ? JSON.stringify(profile.publications) : null;
+  const studentTypes = profile.accepting_student_types !== undefined ? JSON.stringify(profile.accepting_student_types) : null;
+
+  const academicStats = profile.academic_stats !== undefined ? JSON.stringify(profile.academic_stats) : null;
+  const activities = profile.activities !== undefined ? JSON.stringify(profile.activities) : null;
+  const honorsAwards = profile.honors_awards !== undefined ? JSON.stringify(profile.honors_awards) : null;
+  const languages = profile.languages !== undefined ? JSON.stringify(profile.languages) : null;
+  const socialLinks = profile.social_links !== undefined ? JSON.stringify(profile.social_links) : null;
 
   const rows = await sql`
     INSERT INTO profiles (
@@ -134,6 +207,7 @@ export async function upsertProfile(profile: Partial<ProfileRecord> & { id: stri
       expertise_fields, coursework, skills_and_tools, publications,
       accepting_student_types, lab_website, portfolio_url, office_hours,
       seeking_mentorship_type, is_accepting_requests, profile_complete,
+      academic_stats, activities, honors_awards, languages, social_links,
       updated_at
     ) VALUES (
       ${profile.id}, ${profile.email}, ${profile.role || 'student'}, ${profile.status || 'active'},
@@ -141,10 +215,12 @@ export async function upsertProfile(profile: Partial<ProfileRecord> & { id: stri
       ${profile.avatar_url || null}, ${profile.institution || null}, ${profile.education_level || null},
       ${profile.department || null}, ${profile.academic_title || null}, ${profile.major || null},
       ${profile.graduation_year || null}, ${profile.bio || null}, ${interests}, ${extras},
-      ${expertise}, ${coursework}, ${skills}, ${publications}, ${studentTypes},
-      ${profile.lab_website || null}, ${profile.portfolio_url || null}, ${profile.office_hours || null},
+      ${expertise}, ${courseworkStr}, ${skills}, ${publications}, ${studentTypes},
+      ${profile.lab_website || null}, ${portfolioUrl}, ${profile.office_hours || null},
       ${profile.seeking_mentorship_type || null}, ${profile.is_accepting_requests ?? true},
-      ${profile.profile_complete ?? false}, now()
+      ${profile.profile_complete ?? false},
+      ${academicStats}, ${activities}, ${honorsAwards}, ${languages}, ${socialLinks},
+      now()
     )
     ON CONFLICT (id) DO UPDATE SET
       role = COALESCE(EXCLUDED.role, profiles.role),
@@ -173,6 +249,11 @@ export async function upsertProfile(profile: Partial<ProfileRecord> & { id: stri
       seeking_mentorship_type = COALESCE(EXCLUDED.seeking_mentorship_type, profiles.seeking_mentorship_type),
       is_accepting_requests = COALESCE(EXCLUDED.is_accepting_requests, profiles.is_accepting_requests),
       profile_complete = COALESCE(EXCLUDED.profile_complete, profiles.profile_complete),
+      academic_stats = COALESCE(EXCLUDED.academic_stats, profiles.academic_stats),
+      activities = COALESCE(EXCLUDED.activities, profiles.activities),
+      honors_awards = COALESCE(EXCLUDED.honors_awards, profiles.honors_awards),
+      languages = COALESCE(EXCLUDED.languages, profiles.languages),
+      social_links = COALESCE(EXCLUDED.social_links, profiles.social_links),
       updated_at = now()
     RETURNING *;
   `;

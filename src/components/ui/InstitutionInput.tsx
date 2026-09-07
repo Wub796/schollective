@@ -9,6 +9,7 @@ interface InstitutionInputProps {
   className?: string;
   id?: string;
   name?: string;
+  inputStyle?: React.CSSProperties;
 }
 
 /**
@@ -21,6 +22,7 @@ export function InstitutionInput({
   placeholder = "e.g. Massachusetts Institute of Technology",
   id,
   name,
+  inputStyle,
 }: InstitutionInputProps) {
   const [open, setOpen] = useState(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
@@ -126,6 +128,7 @@ export function InstitutionInput({
           fontFamily: "var(--font-sans)",
           transition: "all 0.3s cubic-bezier(0.22, 1, 0.36, 1)",
           boxShadow: focused ? "0 0 0 3px rgba(79, 70, 229, 0.1)" : "none",
+          ...inputStyle,
         }}
         onBlur={() => {
           setFocused(false);
