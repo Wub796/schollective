@@ -3,6 +3,8 @@
 A mentorship marketplace connecting students with verified university faculty.
 Students build an academic profile, browse approved professors, and send a
 mentorship request; faculty review requests and continue in a private thread.
+Students can add classmates as friends and bring them onto a request as
+collaborators, so a group works with a professor in one shared thread.
 An admin surface verifies faculty credentials and moderates activity.
 
 ## Stack
@@ -63,7 +65,8 @@ psql "$DATABASE_URL" -f db/migrations/0006_rls_scope_profiles_and_grants.sql
 ```
 
 Apply them as a role that owns the tables (`neondb_owner`), not as the role the
-app connects with.
+app connects with. `0008` (friends and group threads) must be applied **before**
+deploying the code that reads its tables — see [`db/README.md`](db/README.md).
 
 Row-level security is **enforcing**: `0004` transfers table ownership to the
 non-`BYPASSRLS` role `schollective_app` and expresses the app's authorization
@@ -123,6 +126,9 @@ Three modules are worth reading before changing behaviour:
 - [`src/lib/route-access.ts`](src/lib/route-access.ts) — which paths the
   middleware gates, checked against the real route tree by
   `tests/middleware-routes.test.mjs`.
+- [`src/lib/collaboration.ts`](src/lib/collaboration.ts) — who may invite,
+  remove, leave and close on a group thread. The database enforces the same
+  membership transitions; read this before changing either side.
 
 ## Known gaps
 
