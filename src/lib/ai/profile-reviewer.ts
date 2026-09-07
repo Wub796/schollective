@@ -1,4 +1,4 @@
-import { getGeminiClient } from "./client";
+import { executeWithGeminiFailover } from "./client";
 import { ProfileReviewResult } from "./types";
 import { ai } from "@/lib/amplitude";
 import {
@@ -155,19 +155,18 @@ Return ONLY valid JSON:
 }`;
 
   const callModel = async (modelName: string) => {
-    const gemini = getGeminiClient();
-    if (!gemini) throw new Error("GEMINI_API_KEY missing");
-
     const startTime = performance.now();
     try {
-      const response = await gemini.models.generateContent({
-        model: modelName,
-        contents: prompt,
-        config: {
-          responseMimeType: "application/json",
-          maxOutputTokens: 600,
-          temperature: 0.1,
-        },
+      const response = await executeWithGeminiFailover(async (gemini) => {
+        return await gemini.models.generateContent({
+          model: modelName,
+          contents: prompt,
+          config: {
+            responseMimeType: "application/json",
+            maxOutputTokens: 600,
+            temperature: 0.1,
+          },
+        });
       });
 
       const latencyMs = performance.now() - startTime;

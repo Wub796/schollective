@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
@@ -11,15 +11,20 @@ import {
   Camera,
   User,
   HelpCircle,
+  Sparkles,
+  CheckCircle2,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { AiProfileReviewerCard } from "@/components/features/AiProfileReviewerCard";
+import { ResumeDropzone } from "@/components/features/ResumeDropzone";
 import { AcademicIdentityCard } from "@/components/profile/AcademicIdentityCard";
 import { ResearchPitchCard } from "@/components/profile/ResearchPitchCard";
 import { ActivitiesListBuilder } from "@/components/profile/ActivitiesListBuilder";
 import { HonorsAwardsBuilder } from "@/components/profile/HonorsAwardsBuilder";
 import { SkillsAndLinksCard } from "@/components/profile/SkillsAndLinksCard";
 import { FacultyPreviewCard } from "@/components/profile/FacultyPreviewCard";
+import type { ParsedResumeProfile } from "@/lib/ai/resume-parser";
 import type {
   AcademicStats,
   ActivityItem,
@@ -186,8 +191,165 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
   });
 
   const [mentorshipType, setMentorshipType] = useState(profile?.seeking_mentorship_type || "");
+  const [pendingParsedResume, setPendingParsedResume] = useState<ParsedResumeProfile | null>(null);
+  const [showMergeModal, setShowMergeModal] = useState(false);
+
+  useEffect(() => {
+    if (!showMergeModal) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setShowMergeModal(false);
+        setPendingParsedResume(null);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [showMergeModal]);
 
   const levelConfig = getEducationLevelConfig(educationLevel);
+
+  const hasSignificantData = Boolean(
+    inst.trim() ||
+    bio.trim() ||
+    activities.length > 0 ||
+    honors.length > 0 ||
+    skills.length > 0 ||
+    (academicStats?.advanced_coursework?.length || 0) > 0 ||
+    major.trim()
+  );
+
+  const applyResumeData = (data: ParsedResumeProfile, overwrite: boolean = false) => {
+    if (overwrite) {
+      if (data.first_name) setFirstName(data.first_name);
+      if (data.last_name) setLastName(data.last_name);
+      if (data.preferred_name) setPreferredName(data.preferred_name);
+      if (data.institution) setInst(data.institution);
+      if (data.education_level) setEducationLevel(data.education_level);
+      if (data.major) setMajor(data.major);
+      if (data.graduation_year) setGradYear(data.graduation_year);
+      if (data.bio) setBio(data.bio);
+      if (data.academic_stats) {
+        setAcademicStats({
+          unweighted_gpa: data.academic_stats.unweighted_gpa || undefined,
+          weighted_gpa: data.academic_stats.weighted_gpa || undefined,
+          advanced_coursework: data.academic_stats.advanced_coursework || [],
+        });
+      }
+      if (data.activities && data.activities.length > 0) {
+        setActivities(data.activities);
+      }
+      if (data.honors_awards && data.honors_awards.length > 0) {
+        setHonors(data.honors_awards);
+      }
+      if (data.skills_and_tools && data.skills_and_tools.length > 0) {
+        setSkills(data.skills_and_tools);
+      }
+      if (data.academic_interests && data.academic_interests.length > 0) {
+        setInterests(data.academic_interests);
+      }
+      if (data.languages && data.languages.length > 0) {
+        setLanguages(data.languages);
+      }
+      if (data.social_links) {
+        setSocialLinks(data.social_links);
+      }
+      toast.success("Profile replaced with resume details.");
+    } else {
+      // Safe non-destructive merge
+      if (!firstName.trim() && data.first_name) setFirstName(data.first_name);
+      if (!lastName.trim() && data.last_name) setLastName(data.last_name);
+      if (!preferredName.trim() && data.preferred_name) setPreferredName(data.preferred_name);
+      if (!inst.trim() && data.institution) setInst(data.institution);
+      if (!major.trim() && data.major) setMajor(data.major);
+      if (!gradYear.trim() && data.graduation_year) setGradYear(data.graduation_year);
+      if (!bio.trim() && data.bio) setBio(data.bio);
+      if ((!educationLevel || educationLevel === "high-school-senior") && data.education_level && !profile?.education_level) {
+        setEducationLevel(data.education_level);
+      }
+
+      setAcademicStats((prev) => {
+        const existingCourses = prev?.advanced_coursework || [];
+        const existingSet = new Set(existingCourses.map((c) => c.toLowerCase().trim()));
+        const incoming = (data.academic_stats?.advanced_coursework || []).filter(
+          (c) => c.trim() && !existingSet.has(c.toLowerCase().trim())
+        );
+        return {
+          unweighted_gpa: prev?.unweighted_gpa || data.academic_stats?.unweighted_gpa,
+          weighted_gpa: prev?.weighted_gpa || data.academic_stats?.weighted_gpa,
+          advanced_coursework: [...existingCourses, ...incoming],
+        };
+      });
+
+      if (data.activities && data.activities.length > 0) {
+        setActivities((prev) => {
+          const existingTitles = new Set(prev.map((a) => (a.title || "").toLowerCase().trim()).filter(Boolean));
+          const incoming = (data.activities || []).filter(
+            (a) => a.title && !existingTitles.has((a.title || "").toLowerCase().trim())
+          );
+          return [...prev, ...incoming];
+        });
+      }
+
+      if (data.honors_awards && data.honors_awards.length > 0) {
+        setHonors((prev) => {
+          const existingTitles = new Set(prev.map((h) => (h.title || "").toLowerCase().trim()).filter(Boolean));
+          const incoming = (data.honors_awards || []).filter(
+            (h) => h.title && !existingTitles.has((h.title || "").toLowerCase().trim())
+          );
+          return [...prev, ...incoming];
+        });
+      }
+
+      if (data.skills_and_tools && data.skills_and_tools.length > 0) {
+        setSkills((prev) => {
+          const existingSet = new Set(prev.map((s) => s.toLowerCase().trim()).filter(Boolean));
+          const incoming = (data.skills_and_tools || []).filter(
+            (s) => s.trim() && !existingSet.has(s.toLowerCase().trim())
+          );
+          return [...prev, ...incoming];
+        });
+      }
+
+      if (data.academic_interests && data.academic_interests.length > 0) {
+        setInterests((prev) => {
+          const existingSet = new Set(prev.map((i) => i.toLowerCase().trim()).filter(Boolean));
+          const incoming = (data.academic_interests || []).filter(
+            (i) => i.trim() && !existingSet.has(i.toLowerCase().trim())
+          );
+          return [...prev, ...incoming];
+        });
+      }
+
+      if (data.languages && data.languages.length > 0) {
+        setLanguages((prev) => {
+          const existingSet = new Set(prev.map((l) => (l.language || "").toLowerCase().trim()).filter(Boolean));
+          const incoming = (data.languages || []).filter(
+            (l) => l.language && !existingSet.has((l.language || "").toLowerCase().trim())
+          );
+          return [...prev, ...incoming];
+        });
+      }
+
+      if (data.social_links) {
+        setSocialLinks((prev) => ({
+          portfolio_url: prev?.portfolio_url || data.social_links?.portfolio_url,
+          github_url: prev?.github_url || data.social_links?.github_url,
+          linkedin_url: prev?.linkedin_url || data.social_links?.linkedin_url,
+        }));
+      }
+
+      toast.success("Resume data merged into empty fields & lists!");
+    }
+  };
+
+  const handleResumeParsed = (parsedData: ParsedResumeProfile) => {
+    if (hasSignificantData) {
+      setPendingParsedResume(parsedData);
+      setShowMergeModal(true);
+    } else {
+      applyResumeData(parsedData, false);
+    }
+  };
 
   const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -495,6 +657,9 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
 
       {activeTab === "edit" ? (
         <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
+          {/* Top-anchored Resume Dropzone */}
+          <ResumeDropzone onParsed={handleResumeParsed} disabled={loading} />
+
           {/* Card: Personal Details */}
           <div
             style={{
@@ -690,6 +855,208 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
           languages={languages}
           socialLinks={socialLinks}
         />
+      )}
+
+      {/* Resume Merge Strategy Modal */}
+      {showMergeModal && pendingParsedResume && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="merge-modal-title"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowMergeModal(false);
+              setPendingParsedResume(null);
+            }
+          }}
+          style={{
+            position: "fixed",
+            inset: 0,
+            backgroundColor: "rgba(15, 23, 42, 0.65)",
+            backdropFilter: "blur(6px)",
+            zIndex: 9999,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "1.25rem",
+          }}
+        >
+          <div
+            style={{
+              background: "#ffffff",
+              borderRadius: "20px",
+              maxWidth: "540px",
+              width: "100%",
+              padding: "2rem",
+              boxShadow: "0 25px 50px -12px rgba(15, 23, 42, 0.25)",
+              border: "1px solid rgba(99, 102, 241, 0.2)",
+              display: "flex",
+              flexDirection: "column",
+              gap: "1.5rem",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "1rem" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                <div
+                  style={{
+                    width: "2.75rem",
+                    height: "2.75rem",
+                    borderRadius: "12px",
+                    background: "rgba(99, 102, 241, 0.12)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "#4f46e5",
+                    flexShrink: 0,
+                  }}
+                >
+                  <Sparkles size={22} />
+                </div>
+                <div>
+                  <h3 id="merge-modal-title" style={{ margin: 0, fontSize: "1.15rem", fontWeight: 800, color: "#0f172a" }}>
+                    Resume Parsed Successfully
+                  </h3>
+                  <p style={{ margin: "0.25rem 0 0 0", fontSize: "0.82rem", color: "#64748b" }}>
+                    Choose how to apply extracted information to your existing profile
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowMergeModal(false);
+                  setPendingParsedResume(null);
+                }}
+                style={{
+                  background: "none",
+                  border: "none",
+                  color: "#94a3b8",
+                  cursor: "pointer",
+                  padding: "0.25rem",
+                  borderRadius: "6px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+                aria-label="Close modal"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.85rem" }}>
+              {/* Option 1: Safe Merge (Default) */}
+              <button
+                type="button"
+                onClick={() => {
+                  applyResumeData(pendingParsedResume, false);
+                  setShowMergeModal(false);
+                  setPendingParsedResume(null);
+                }}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "0.35rem",
+                  padding: "1.15rem 1.25rem",
+                  borderRadius: "14px",
+                  border: "2px solid #4f46e5",
+                  background: "rgba(99, 102, 241, 0.04)",
+                  cursor: "pointer",
+                  textAlign: "left",
+                  transition: "all 0.15s ease",
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  <span style={{ fontWeight: 800, fontSize: "0.95rem", color: "#4f46e5", display: "flex", alignItems: "center", gap: "0.45rem" }}>
+                    <CheckCircle2 size={16} color="#4f46e5" /> Merge & Fill Empty Fields
+                  </span>
+                  <span
+                    style={{
+                      fontSize: "0.68rem",
+                      fontWeight: 700,
+                      padding: "0.15rem 0.5rem",
+                      borderRadius: "100px",
+                      background: "#4f46e5",
+                      color: "#ffffff",
+                      letterSpacing: "0.03em",
+                    }}
+                  >
+                    Safe & Recommended
+                  </span>
+                </div>
+                <p style={{ margin: 0, fontSize: "0.78rem", color: "#475569", lineHeight: 1.4 }}>
+                  Preserves your existing personal details and bio. Appends newly discovered activities, honors, coursework, and skills without duplicating.
+                </p>
+              </button>
+
+              {/* Option 2: Replace All */}
+              <button
+                type="button"
+                onClick={() => {
+                  applyResumeData(pendingParsedResume, true);
+                  setShowMergeModal(false);
+                  setPendingParsedResume(null);
+                }}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "0.35rem",
+                  padding: "1.15rem 1.25rem",
+                  borderRadius: "14px",
+                  border: "1px solid rgba(226, 232, 240, 0.9)",
+                  background: "#ffffff",
+                  cursor: "pointer",
+                  textAlign: "left",
+                  transition: "all 0.15s ease",
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  <span style={{ fontWeight: 700, fontSize: "0.92rem", color: "#0f172a" }}>
+                    Replace All with Resume
+                  </span>
+                  <span
+                    style={{
+                      fontSize: "0.68rem",
+                      fontWeight: 600,
+                      padding: "0.15rem 0.5rem",
+                      borderRadius: "100px",
+                      background: "rgba(239, 68, 68, 0.1)",
+                      color: "#dc2626",
+                      letterSpacing: "0.03em",
+                    }}
+                  >
+                    Overwrite
+                  </span>
+                </div>
+                <p style={{ margin: 0, fontSize: "0.78rem", color: "#64748b", lineHeight: 1.4 }}>
+                  Completely resets your profile fields, activities, honors, and coursework to match the contents extracted from this resume.
+                </p>
+              </button>
+            </div>
+
+            <div style={{ display: "flex", justifyContent: "flex-end", paddingTop: "0.5rem" }}>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowMergeModal(false);
+                  setPendingParsedResume(null);
+                }}
+                style={{
+                  background: "none",
+                  border: "none",
+                  color: "#64748b",
+                  fontSize: "0.82rem",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  padding: "0.5rem 0.9rem",
+                  borderRadius: "8px",
+                }}
+              >
+                Cancel & Keep Unchanged
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
