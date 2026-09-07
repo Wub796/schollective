@@ -15,9 +15,183 @@ import {
   User,
   Loader2,
   Sparkles,
+  AlertTriangle,
+  Ban,
+  Clock,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { nameParts } from "@/lib/people";
+import {
+  DEACTIVATION_GRACE_DAYS,
+  DELETE_CONFIRMATION_PHRASE,
+  DISABLE_CONFIRMATION_PHRASE,
+  confirmationMatches,
+} from "@/lib/account-deletion";
+
+/** Which of the two exits the confirmation dialog is standing in front of. */
+type LeaveAction = "disable" | "delete";
+
+/**
+ * The confirmation step for an irreversible-ish action.
+ *
+ * A dialog rather than a bare button because both actions sign the user out,
+ * revoke every device and change what other people can see, and a native
+ * `confirm()` cannot list consequences, let alone require a typed phrase. The
+ * phrase is checked again server side — this is friction, not the control.
+ */
+function ConfirmLeaveDialog({
+  action,
+  phrase,
+  onPhraseChange,
+  phraseOk,
+  busy,
+  error,
+  onCancel,
+  onConfirm,
+}: {
+  action: LeaveAction;
+  phrase: string;
+  onPhraseChange: (value: string) => void;
+  phraseOk: boolean;
+  busy: boolean;
+  error: string | null;
+  onCancel: () => void;
+  onConfirm: () => void;
+}) {
+  const isDelete = action === "delete";
+  const expected = isDelete ? DELETE_CONFIRMATION_PHRASE : DISABLE_CONFIRMATION_PHRASE;
+
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="leave-account-heading"
+      style={{
+        position: "fixed", inset: 0, zIndex: 60,
+        display: "flex", alignItems: "center", justifyContent: "center",
+        padding: "1.5rem", background: "rgba(15, 23, 42, 0.42)",
+        backdropFilter: "blur(3px)",
+      }}
+    >
+      <div style={{
+        width: "100%", maxWidth: "32rem", background: "#ffffff",
+        borderRadius: "18px", padding: "1.85rem",
+        border: "1px solid rgba(15, 23, 42, 0.08)",
+        boxShadow: "0 24px 60px rgba(15, 23, 42, 0.22)",
+        display: "flex", flexDirection: "column", gap: "1.15rem",
+      }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.7rem" }}>
+          <AlertTriangle size={20} color={isDelete ? "#dc2626" : "#4f46e5"} />
+          <h3 id="leave-account-heading" style={{ fontSize: "1.05rem", fontWeight: 800, color: "var(--text-primary)", margin: 0 }}>
+            {isDelete ? "Delete this account permanently?" : "Disable this account?"}
+          </h3>
+        </div>
+
+        <div style={{ fontSize: "0.83rem", lineHeight: 1.65, color: "var(--text-secondary)", display: "flex", flexDirection: "column", gap: "0.7rem" }}>
+          {isDelete ? (
+            <>
+              <p style={{ margin: 0 }}>
+                Your profile, mentorship threads and messages are deleted straight away. There is no
+                grace period, no copy kept, and no way back to this account.
+              </p>
+              <p style={{ margin: 0 }}>
+                <strong>Other people lose the thread too.</strong> A mentorship thread is one set of
+                messages, not one copy per reader: every professor and co-student you talked to loses
+                the whole conversation, not just your side of it.
+              </p>
+              <p style={{ margin: 0 }}>
+                Your friendships, group memberships, notifications and faculty listing go with it.
+              </p>
+            </>
+          ) : (
+            <>
+              <p style={{ margin: 0 }}>
+                Your profile is hidden, every device is signed out, and threads that could still
+                receive messages are closed. Nothing is deleted.
+              </p>
+              <p style={{ margin: 0 }}>
+                We email you instructions for bringing it back. You can restore it any time in the next{" "}
+                <strong>{DEACTIVATION_GRACE_DAYS} days</strong> by signing in. After that the account
+                and its data are permanently deleted.
+              </p>
+              <p style={{ margin: 0 }}>
+                Restoring returns your profile, role and faculty listing as they were. Threads closed
+                today stay closed — reopening a conversation the other person has moved on from is
+                their decision, not yours.
+              </p>
+            </>
+          )}
+        </div>
+
+        {error && (
+          <div style={{
+            background: "rgba(239, 68, 68, 0.08)",
+            border: "1px solid rgba(239, 68, 68, 0.25)",
+            color: "#dc2626",
+            borderRadius: "10px",
+            padding: "0.7rem 0.9rem",
+            fontSize: "0.8rem",
+            fontWeight: 600,
+          }}>
+            {error}
+          </div>
+        )}
+
+        <div>
+          <label htmlFor="leave-confirmation" style={{ fontSize: "0.62rem", fontWeight: 800, color: "var(--text-secondary)", textTransform: "uppercase", display: "block", marginBottom: "0.45rem", letterSpacing: "0.15em" }}>
+            Type {expected} to confirm
+          </label>
+          <input
+            id="leave-confirmation"
+            type="text"
+            value={phrase}
+            autoComplete="off"
+            autoCapitalize="characters"
+            onChange={(e) => onPhraseChange(e.target.value)}
+            placeholder={expected}
+            style={{
+              width: "100%",
+              padding: "0.75rem 1rem",
+              borderRadius: "100px",
+              border: `1.5px solid ${phraseOk ? "rgba(220, 38, 38, 0.5)" : "rgba(99, 102, 241, 0.35)"}`,
+              background: "rgba(255, 255, 255, 0.95)",
+              fontSize: "0.85rem",
+              letterSpacing: "0.08em",
+              color: "var(--text-primary)",
+              outline: "none",
+              fontFamily: "var(--font-sans)",
+            }}
+          />
+        </div>
+
+        <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.6rem", flexWrap: "wrap" }}>
+          <Button type="button" variant="outline" size="sm" onClick={onCancel} disabled={busy}>
+            Keep my account
+          </Button>
+          <button
+            type="button"
+            disabled={!phraseOk || busy}
+            onClick={onConfirm}
+            style={{
+              display: "inline-flex", alignItems: "center", gap: "0.4rem",
+              padding: "0.6rem 1.5rem", borderRadius: "100px",
+              border: "1px solid rgba(220, 38, 38, 0.3)",
+              background: isDelete ? "rgb(220, 38, 38)" : "rgba(220, 38, 38, 0.08)",
+              color: isDelete ? "#ffffff" : "#b91c1c",
+              fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.1em",
+              textTransform: "uppercase", fontFamily: "var(--font-sans)",
+              cursor: !phraseOk || busy ? "not-allowed" : "pointer",
+              opacity: !phraseOk || busy ? 0.5 : 1,
+            }}
+          >
+            {busy ? <Loader2 size={12} className="animate-spin" /> : <Ban size={12} />}
+            {busy ? "Working…" : isDelete ? "Delete permanently" : "Disable account"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 interface AccountSecuritySettingsProps {
   profile: any;
@@ -107,6 +281,68 @@ export function AccountSecuritySettings({ profile }: AccountSecuritySettingsProp
       toast.error("Failed to sign out.");
     }
   };
+
+  // ── Leaving the platform ──
+  // Two separate actions, not one with an escalation: disabling is reversible
+  // and deleting is not, so they get their own buttons, their own consequences
+  // and their own confirmation word.
+  const [leaveAction, setLeaveAction] = useState<LeaveAction | null>(null);
+  const [leavePhrase, setLeavePhrase] = useState("");
+  const [leaving, setLeaving] = useState(false);
+  const [leaveError, setLeaveError] = useState<string | null>(null);
+
+  const expectedPhrase =
+    leaveAction === "delete" ? DELETE_CONFIRMATION_PHRASE : DISABLE_CONFIRMATION_PHRASE;
+  const phraseOk = confirmationMatches(leavePhrase, expectedPhrase);
+
+  function openLeaveDialog(action: LeaveAction) {
+    setLeavePhrase("");
+    setLeaveError(null);
+    setLeaveAction(action);
+  }
+
+  async function handleLeave() {
+    if (!leaveAction || !phraseOk) return;
+    setLeaving(true);
+    setLeaveError(null);
+    try {
+      const res = await fetch(`/api/auth/account/${leaveAction}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ confirmation: leavePhrase }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        const message = data?.error || "Something went wrong. Please try again.";
+        setLeaveError(message);
+        toast.error(message);
+        return;
+      }
+
+      if (leaveAction === "delete") {
+        toast.success("Your account and its data have been deleted.");
+        window.location.assign("/");
+        return;
+      }
+
+      // If the mail could not be sent the account is still disabled, and the
+      // restore page is reachable by signing in — so say that rather than
+      // claiming an email the user will never receive.
+      toast.success(
+        data?.emailSent === false
+          ? "Account disabled. We could not email you, but signing in will still offer to restore it."
+          : "Account disabled. Check your email for how to bring it back.",
+      );
+      // Every session was revoked, so leave the SPA state behind entirely.
+      window.location.assign("/login");
+    } catch {
+      const message = "We could not reach the server. Please try again.";
+      setLeaveError(message);
+      toast.error(message);
+    } finally {
+      setLeaving(false);
+    }
+  }
 
   const shownName = nameParts(profile);
   const displayName = shownName.given || "User";
@@ -402,6 +638,89 @@ export function AccountSecuritySettings({ profile }: AccountSecuritySettingsProp
           <strong>Session Protection Active:</strong> Your account is secured with 1-year persistent token authentication and automatic background token rotation.
         </div>
       </div>
+
+      {/* ── 5. Danger Zone — the two ways out ── */}
+      <div style={{
+        background: "rgba(255, 255, 255, 0.9)",
+        borderRadius: "16px",
+        padding: "2rem",
+        border: "1px solid rgba(220, 38, 38, 0.2)",
+        boxShadow: "0 4px 20px rgba(220, 38, 38, 0.04)",
+      }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", marginBottom: "0.3rem" }}>
+          <AlertTriangle size={20} color="#dc2626" />
+          <h3 style={{ fontSize: "1.1rem", fontWeight: 800, color: "var(--text-primary)", margin: 0 }}>
+            Danger Zone
+          </h3>
+        </div>
+        <p style={{ fontSize: "0.82rem", color: "var(--text-tertiary)", margin: "0 0 1.5rem 0", lineHeight: 1.5 }}>
+          Both actions change your whole account, not just this page. Disabling is reversible; deleting is not.
+        </p>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+          {/* Disable — reversible, inside a grace window */}
+          <div style={{
+            display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1.25rem",
+            flexWrap: "wrap", padding: "1.25rem 1.5rem", borderRadius: "14px",
+            background: "rgba(99, 102, 241, 0.04)", border: "1px solid rgba(99, 102, 241, 0.15)",
+          }}>
+            <div style={{ minWidth: "15rem", flex: 1 }}>
+              <div style={{ fontSize: "0.9rem", fontWeight: 800, color: "var(--text-primary)", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                <Clock size={15} color="#4f46e5" /> Disable my account
+              </div>
+              <div style={{ fontSize: "0.78rem", color: "var(--text-tertiary)", marginTop: "0.25rem", lineHeight: 1.5 }}>
+                Hide your profile, sign out every device and close your open threads. We email you a link that
+                brings it all back, and you have {DEACTIVATION_GRACE_DAYS} days before anything is deleted.
+              </div>
+            </div>
+            <Button onClick={() => openLeaveDialog("disable")} variant="outline" size="sm" icon={<Clock size={14} />}>
+              Disable account
+            </Button>
+          </div>
+
+          {/* Delete — immediate and permanent */}
+          <div style={{
+            display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1.25rem",
+            flexWrap: "wrap", padding: "1.25rem 1.5rem", borderRadius: "14px",
+            background: "rgba(220, 38, 38, 0.03)", border: "1px solid rgba(220, 38, 38, 0.18)",
+          }}>
+            <div style={{ minWidth: "15rem", flex: 1 }}>
+              <div style={{ fontSize: "0.9rem", fontWeight: 800, color: "var(--text-primary)", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                <Ban size={15} color="#dc2626" /> Delete my account
+              </div>
+              <div style={{ fontSize: "0.78rem", color: "var(--text-tertiary)", marginTop: "0.25rem", lineHeight: 1.5 }}>
+                Permanently delete your profile, threads and messages right now. Nothing is kept, and anyone you
+                were mentoring loses the conversation too.
+              </div>
+            </div>
+            <Button
+              onClick={() => openLeaveDialog("delete")}
+              variant="outline"
+              size="sm"
+              icon={<Ban size={14} />}
+              className="text-red-600 border-red-200 hover:bg-red-600 hover:border-red-600 hover:text-white"
+            >
+              Delete account
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {leaveAction && (
+        <ConfirmLeaveDialog
+          action={leaveAction}
+          phrase={leavePhrase}
+          onPhraseChange={setLeavePhrase}
+          phraseOk={phraseOk}
+          busy={leaving}
+          error={leaveError}
+          onCancel={() => {
+            if (leaving) return;
+            setLeaveAction(null);
+          }}
+          onConfirm={handleLeave}
+        />
+      )}
 
     </div>
   );
