@@ -147,6 +147,15 @@ function LoginContent() {
         role: profile?.role,
       });
 
+      // An account its owner disabled is signed in but has no product access.
+      // Its only destination is the restore offer, which is exactly what the
+      // email the user received points at.
+      if (profile?.status === "deactivated") {
+        router.refresh();
+        router.push("/deactivated");
+        return;
+      }
+
       // No profile row, or incomplete profile (non-admin) → send to onboarding
       if (!profile || !profile.role || (!profile.profile_complete && profile.role !== "admin")) {
         router.refresh();
