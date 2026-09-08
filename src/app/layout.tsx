@@ -25,7 +25,7 @@ const arima = Arima({
 const siteUrl = "https://schollective.com";
 const siteTitle = "Schollective | Academic Mentorship for High School Students";
 const siteDescription =
-  "Schollective helps high school students find verified research mentors, understand faculty research, and send thoughtful outreach requests to professors.";
+  "Schollective helps high schoolers find active faculty and write cold emails that do not get deleted.";
 
 export const metadata: Metadata = {
   title: {
