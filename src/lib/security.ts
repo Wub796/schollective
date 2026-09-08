@@ -137,6 +137,12 @@ export const LIMITS = {
   institution: 200,
   department: 200,
   academicTitle: 200,
+  // A form of address, not a sentence: "Dr.", "Prof.", "Mx." or a short title
+  // of the account's own choosing. Long enough for "Assoc. Prof.", far too
+  // short to smuggle a line of text in front of somebody's name.
+  honorific: 24,
+  // A slug from GENDER_CHOICES, so this only has to be long enough to hold one.
+  gender: 32,
   bio: 2000,
   expertiseField: 100,
   publication: 500,
