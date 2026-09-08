@@ -135,6 +135,11 @@ export async function setUserSuspended(targetUserId: string, suspend: boolean) {
     SET status = ${newStatus}, updated_at = now()
     WHERE id = ${targetUserId};
   `;
+  await sql`
+    UPDATE "user"
+    SET "status" = ${newStatus}, "updatedAt" = now()
+    WHERE "id" = ${targetUserId};
+  `;
 
   revalidatePath("/admin/dashboard");
   revalidatePath("/admin/users");
@@ -154,6 +159,11 @@ export async function revokeVerification(professorId: string) {
     UPDATE profiles
     SET status = 'pending', updated_at = now()
     WHERE id = ${professorId} AND role = 'professor';
+  `;
+  await sql`
+    UPDATE "user"
+    SET "status" = 'pending', "updatedAt" = now()
+    WHERE "id" = ${professorId};
   `;
 
   revalidatePath("/admin/dashboard");
@@ -182,6 +192,11 @@ export async function changeUserRole(
     UPDATE profiles
     SET role = ${newRole}, status = ${defaultStatus}, updated_at = now()
     WHERE id = ${targetUserId};
+  `;
+  await sql`
+    UPDATE "user"
+    SET "role" = ${newRole}, "status" = ${defaultStatus}, "updatedAt" = now()
+    WHERE "id" = ${targetUserId};
   `;
 
   revalidatePath("/admin/dashboard");
@@ -236,6 +251,11 @@ export async function suspendUser(userId: string, reason: string) {
     SET status = 'suspended', updated_at = now()
     WHERE id = ${userId};
   `;
+  await sql`
+    UPDATE "user"
+    SET "status" = 'suspended', "updatedAt" = now()
+    WHERE "id" = ${userId};
+  `;
 
   revalidatePath("/admin/dashboard");
   revalidatePath("/admin/users");
@@ -259,6 +279,11 @@ export async function unsuspendUser(userId: string) {
     UPDATE profiles
     SET status = ${newStatus}, updated_at = now()
     WHERE id = ${userId};
+  `;
+  await sql`
+    UPDATE "user"
+    SET "status" = ${newStatus}, "updatedAt" = now()
+    WHERE "id" = ${userId};
   `;
 
   revalidatePath("/admin/dashboard");

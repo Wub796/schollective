@@ -13,6 +13,8 @@ import {
   Target,
   Compass,
   FileCheck,
+  Clock,
+  Check,
 } from "lucide-react";
 import { ProfileReviewOutput } from "@/lib/ai/types";
 import type { StudentProfileData } from "@/lib/ai/profile-reviewer";
@@ -20,7 +22,7 @@ import { toast } from "sonner";
 
 interface Props {
   profileData?: StudentProfileData | Record<string, unknown> | null;
-  onAddAcademicInterest?: (tag: string) => void;
+  onAddAcademicInterest?: (tag: string) => boolean;
 }
 
 type ReviewJobStatus = "pending" | "processing" | "completed" | "error";
@@ -67,6 +69,21 @@ export const AiProfileReviewerCard = React.memo(function AiProfileReviewerCard({
   const [review, setReview] = useState<ProfileReviewOutput | null>(null);
   const [jobId, setJobId] = useState<string | null>(null);
   const pollAbortRef = useRef<AbortController | null>(null);
+
+  // Rate limiting: track recent clicks and cooldown
+  const clickTimestampsRef = useRef<number[]>([]);
+  const [cooldownSeconds, setCooldownSeconds] = useState(0);
+  const cooldownIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Track which recommended topics have been added (so they stay visible with a checkmark)
+  const [addedTopics, setAddedTopics] = useState<Set<string>>(new Set());
+
+  const existingInterests = React.useMemo(() => {
+    const raw = (profileData as any)?.academic_interests;
+    if (Array.isArray(raw)) return new Set(raw.map((s: string) => String(s).toLowerCase().trim()));
+    if (typeof raw === "string") return new Set(raw.split(",").map((s: string) => s.toLowerCase().trim()));
+    return new Set<string>();
+  }, [profileData]);
 
   const applyJob = (job: ReviewJob) => {
     setJobId(job.id);
@@ -161,7 +178,49 @@ export const AiProfileReviewerCard = React.memo(function AiProfileReviewerCard({
     };
   }, []);
 
+  const startCooldown = (seconds: number) => {
+    setCooldownSeconds(seconds);
+    if (cooldownIntervalRef.current) clearInterval(cooldownIntervalRef.current);
+    cooldownIntervalRef.current = setInterval(() => {
+      setCooldownSeconds((prev) => {
+        if (prev <= 1) {
+          if (cooldownIntervalRef.current) clearInterval(cooldownIntervalRef.current);
+          cooldownIntervalRef.current = null;
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
+  // Cleanup cooldown interval on unmount
+  useEffect(() => {
+    return () => {
+      if (cooldownIntervalRef.current) clearInterval(cooldownIntervalRef.current);
+    };
+  }, []);
+
   const handleReview = async () => {
+    // Client-side rate limiting: 3 clicks per 60 seconds
+    const now = Date.now();
+    clickTimestampsRef.current = clickTimestampsRef.current.filter((t) => now - t < 60_000);
+    clickTimestampsRef.current.push(now);
+
+    if (clickTimestampsRef.current.length > 3) {
+      startCooldown(30);
+      toast.error("Slow down — you can analyze your profile up to 3 times per minute.", {
+        id: "ai-rate-limit",
+      });
+      return;
+    }
+
+    if (cooldownSeconds > 0) {
+      toast.error(`Please wait ${cooldownSeconds}s before analyzing again.`, {
+        id: "ai-rate-limit",
+      });
+      return;
+    }
+
     pollAbortRef.current?.abort();
     const controller = new AbortController();
     pollAbortRef.current = controller;
@@ -193,6 +252,13 @@ export const AiProfileReviewerCard = React.memo(function AiProfileReviewerCard({
       const contentType = res.headers.get("content-type") || "";
       const data = contentType.includes("application/json") ? await res.json() : null;
       if (!res.ok || !data?.success || !data.job) {
+        if (res.status === 429) {
+          const retryAfter = Number(res.headers.get("retry-after")) || 30;
+          startCooldown(retryAfter);
+          toast.error(data?.error || `Rate limit reached. Please wait ${retryAfter}s before trying again.`, { id: "ai-rate-limit" });
+          setLoading(false);
+          return;
+        }
         throw new Error(data?.error || `Review failed (${res.status})`);
       }
 
@@ -213,34 +279,40 @@ export const AiProfileReviewerCard = React.memo(function AiProfileReviewerCard({
   };
 
   const addInterestTag = (tag: string) => {
+    // Already added — do nothing
+    if (addedTopics.has(tag) || existingInterests.has(tag.toLowerCase().trim())) return;
+
+    let added = false;
+
     // 1. Direct React state callback (cleanest & preferred)
     if (onAddAcademicInterest) {
-      onAddAcademicInterest(tag);
+      added = onAddAcademicInterest(tag);
     } else {
       // 2. DOM backward-compatible fallback
       const interestsEl = document.getElementById("academic_interests") as HTMLInputElement;
       if (interestsEl) {
         const current = interestsEl.value.trim();
         const existing = current ? current.split(",").map((s) => s.trim()) : [];
+        if (existing.length >= 5) {
+          toast.error("You can select up to 5 academic interests.", { id: "interests-limit" });
+          return;
+        }
         if (!existing.includes(tag)) {
           const newInterests = current ? `${current}, ${tag}` : tag;
           interestsEl.value = newInterests;
           interestsEl.dispatchEvent(new Event("input", { bubbles: true }));
           interestsEl.dispatchEvent(new Event("change", { bubbles: true }));
+          added = true;
         }
       }
     }
 
+    if (!added) return;
+
     toast.success(`Added "${tag}" to Academic Interests!`, { id: `tag-${tag}` });
 
-    // Update local state to remove the selected topic pill gracefully
-    setReview((prev) => {
-      if (!prev || !prev.recommended_topics) return prev;
-      return {
-        ...prev,
-        recommended_topics: prev.recommended_topics.filter((t) => t !== tag),
-      };
-    });
+    // Mark as added — pill stays visible with a checkmark instead of disappearing
+    setAddedTopics((prev) => new Set(prev).add(tag));
   };
 
   return (
@@ -273,14 +345,22 @@ export const AiProfileReviewerCard = React.memo(function AiProfileReviewerCard({
         <button
           type="button"
           onClick={handleReview}
-          disabled={loading}
+          disabled={loading || cooldownSeconds > 0}
           style={{
-            background: "linear-gradient(135deg, #4f46e5 0%, #6366f1 100%)",
-            boxShadow: "0 4px 14px rgba(79, 70, 229, 0.25)",
+            background: cooldownSeconds > 0
+              ? "linear-gradient(135deg, #d97706 0%, #f59e0b 100%)"
+              : "linear-gradient(135deg, #4f46e5 0%, #6366f1 100%)",
+            boxShadow: cooldownSeconds > 0
+              ? "0 4px 14px rgba(217, 119, 6, 0.25)"
+              : "0 4px 14px rgba(79, 70, 229, 0.25)",
           }}
           className="w-full sm:w-auto text-white rounded-full px-5 py-2.5 text-xs font-extrabold tracking-wide cursor-pointer flex items-center justify-center gap-2 transition-all hover:opacity-95 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {loading ? (
+          {cooldownSeconds > 0 ? (
+            <>
+              <Clock size={14} /> Wait {cooldownSeconds}s
+            </>
+          ) : loading ? (
             <>
               <RefreshCw size={14} className="animate-spin" /> Analyzing Rubric...
             </>
@@ -495,17 +575,29 @@ export const AiProfileReviewerCard = React.memo(function AiProfileReviewerCard({
                   </div>
 
                   <div className="flex flex-wrap gap-2">
-                    {review.recommended_topics.map((topic, i) => (
-                      <button
-                        key={topic || i}
-                        type="button"
-                        onClick={() => addInterestTag(topic)}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-indigo-50/80 text-indigo-700 border border-indigo-200 hover:bg-indigo-100 hover:border-indigo-300 transition-all cursor-pointer shadow-sm active:scale-95"
-                      >
-                        <Plus size={12} className="text-indigo-600" />
-                        {topic}
-                      </button>
-                    ))}
+                    {review.recommended_topics.map((topic, i) => {
+                      const isAdded = addedTopics.has(topic) || existingInterests.has(topic.toLowerCase().trim());
+                      return (
+                        <button
+                          key={topic || i}
+                          type="button"
+                          onClick={() => addInterestTag(topic)}
+                          disabled={isAdded}
+                          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all shadow-sm ${
+                            isAdded
+                              ? "bg-emerald-50 text-emerald-700 border border-emerald-200 cursor-default opacity-80"
+                              : "bg-indigo-50/80 text-indigo-700 border border-indigo-200 hover:bg-indigo-100 hover:border-indigo-300 cursor-pointer active:scale-95"
+                          }`}
+                        >
+                          {isAdded ? (
+                            <Check size={12} className="text-emerald-600" />
+                          ) : (
+                            <Plus size={12} className="text-indigo-600" />
+                          )}
+                          {topic}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               )}

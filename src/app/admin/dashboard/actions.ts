@@ -17,8 +17,13 @@ export async function scoreApplication(profileId: string) {
     // Server actions are publicly invokable endpoints — this write path is
     // admin-only, so resolve the caller and run under their identity. The RLS
     // admin branch then enforces the same rule at the database layer.
-    const { user, profile: adminProfile } = await getCurrentUserAndProfile();
-    if (!user || adminProfile?.role !== "admin") {
+    const { user, profile: callerProfile } = await getCurrentUserAndProfile();
+    if (!user) {
+      return { error: "Unauthorized" };
+    }
+    const isSelf = user.id === pid;
+    const isAdmin = callerProfile?.role === "admin";
+    if (!isSelf && !isAdmin) {
       return { error: "Access denied: Admin privileges required." };
     }
 
@@ -65,6 +70,12 @@ async function scoreApplicationFor(pid: string) {
             ai_level = ${result.level},
             updated_at = now()
         WHERE id = ${pid};
+      `;
+      await sql`
+        UPDATE "user"
+        SET "status" = 'approved',
+            "updatedAt" = now()
+        WHERE "id" = ${pid};
       `;
     } else {
       await sql`
@@ -144,6 +155,12 @@ export async function updateProfessorStatus(profileId: string, newStatus: 'appro
               updated_at = now()
           WHERE id = ${pid};
         `;
+        await sql`
+          UPDATE "user"
+          SET "status" = ${newStatus},
+              "updatedAt" = now()
+          WHERE "id" = ${pid};
+        `;
       });
     } else {
       await runAs(user.id, async () => {
@@ -152,6 +169,12 @@ export async function updateProfessorStatus(profileId: string, newStatus: 'appro
           SET status = ${newStatus},
               updated_at = now()
           WHERE id = ${pid};
+        `;
+        await sql`
+          UPDATE "user"
+          SET "status" = ${newStatus},
+              "updatedAt" = now()
+          WHERE "id" = ${pid};
         `;
       });
     }

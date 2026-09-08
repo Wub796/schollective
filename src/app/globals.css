@@ -18,7 +18,7 @@
   --z-sidebar: 20;
   --z-backdrop: 25;
   --z-modal: 30;
-  --z-toast: 40;
+  --z-toast: 9999;
   --z-cursor: 50;
 
   /* ── Cream / Off-white base palette ────── */
@@ -58,7 +58,14 @@
 
 /* ═══════════════════════════════════════════════════════════════
    BASE RESET
-   ═══════════════════════════════════════════════════════════════
+   ═══════════════════════════════════════════════════════════════ */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
    NOTE: this must stay inside `@layer base`. Tailwind v4 puts every
    utility in `@layer utilities`, and unlayered rules always beat
    layered ones in the cascade — an unlayered `margin: 0; padding: 0`

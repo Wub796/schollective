@@ -60,7 +60,6 @@ export async function markRequestViewed(requestId: string) {
       `;
     });
 
-    revalidatePath("/prof/dashboard");
     return { success: true };
   } catch (err: any) {
     return { error: err.message || "Failed to mark request as viewed." };
