@@ -26,6 +26,8 @@ import {
   sanitiseProfileFormData,
 } from "../src/lib/profile-input.ts";
 
+import { LIMITS } from "../src/lib/security.ts";
+
 const student = { first_name: "Ada", education_level: "high-school-senior" };
 const professor = { first_name: "Jiwoo", last_name: "Kim", institution: "MIT", expertise_fields: ["Genomics"] };
 
@@ -141,6 +143,45 @@ test("typed input that sanitises to nothing is refused with the field named", ()
   const form = new FormData();
   form.set("lab_website", "javascript:alert(1)");
   assert.equal(rejectedProfileField(form, sanitiseProfileFormData(form))?.field, "lab_website");
+});
+
+test("a chosen title is stored canonically, and a cleared one falls back to the default", () => {
+  assert.equal(sanitiseProfileBody({ honorific: "prof" }).honorific, "Prof.");
+  assert.equal(sanitiseProfileBody({ honorific: "doctor" }).honorific, "Dr.");
+  assert.equal(sanitiseProfileBody({ honorific: "  Mx. " }).honorific, "Mx.");
+  assert.equal(sanitiseProfileBody({ honorific: "Assoc. Prof." }).honorific, "Assoc. Prof.", "a title of their own is kept");
+  assert.equal(
+    sanitiseProfileBody({ honorific: "none" }).honorific,
+    "none",
+    "asking to be shown without a title is a value, not a clear",
+  );
+  assert.equal(sanitiseProfileBody({ honorific: "" }).honorific, "", "a field sent empty is a clear");
+  assert.equal(sanitiseProfileBody({}).honorific, undefined, "a field not sent is untouched");
+});
+
+test("a title cannot smuggle markup, and cannot run long", () => {
+  assert.equal(sanitiseProfileBody({ honorific: "<img src=x onerror=alert(1)>Dr." }).honorific, "Dr.");
+  assert.equal(sanitiseProfileBody({ honorific: "x".repeat(80) }).honorific.length, LIMITS.honorific);
+  const markupOnly = { honorific: "<b></b>" };
+  assert.equal(rejectedProfileField(markupOnly, sanitiseProfileBody(markupOnly))?.field, "honorific");
+});
+
+test("a gender is stored only if it is one we offer", () => {
+  assert.equal(sanitiseProfileBody({ gender: "woman" }).gender, "woman");
+  assert.equal(sanitiseProfileBody({ gender: "Non-binary" }).gender, "nonbinary", "stored as the slug");
+  assert.equal(sanitiseProfileBody({ gender: "prefer-not-to-say" }).gender, "prefer-not-to-say");
+  assert.equal(sanitiseProfileBody({ gender: "" }).gender, "", "a field sent empty is a clear");
+  assert.equal(sanitiseProfileBody({}).gender, undefined, "a field not sent is untouched");
+});
+
+test("a gender we do not offer is refused rather than stored", () => {
+  const body = { gender: "pirate <b>king</b>" };
+  const clean = sanitiseProfileBody(body);
+  assert.equal(clean.gender, "", "nothing unrecognised reaches the column");
+  assert.deepEqual(rejectedProfileField(body, clean), {
+    field: "gender",
+    message: "Gender could not be saved as entered.",
+  });
 });
 
 test("a saved profile cannot blank a field its role requires", () => {
