@@ -691,7 +691,7 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
       {activeTab === "edit" ? (
         <form ref={formRef} onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
           {/* Top-anchored Resume Dropzone */}
-          <div id="section-resume">
+          <div id="section-resume" style={{ scrollMarginTop: "135px" }}>
             <ResumeDropzone onParsed={handleResumeParsed} disabled={loading} />
           </div>
 
@@ -699,6 +699,7 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
           <div
             id="section-personal"
             style={{
+              scrollMarginTop: "135px",
               background: "rgba(255, 255, 255, 0.9)",
               borderRadius: "16px",
               padding: "1.75rem",
@@ -804,7 +805,7 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
           </div>
 
           {/* Section 1: Academic Identity */}
-          <div id="section-academic">
+          <div id="section-academic" style={{ scrollMarginTop: "135px" }}>
             <AcademicIdentityCard
               institution={inst}
               onInstitutionChange={setInst}
@@ -820,7 +821,7 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
           </div>
 
           {/* Section 2: Research Pitch & Interests */}
-          <div id="section-pitch">
+          <div id="section-pitch" style={{ scrollMarginTop: "135px" }}>
             <ResearchPitchCard
               bio={bio}
               onBioChange={setBio}
@@ -830,7 +831,7 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
           </div>
 
           {/* Section 3: Activities & Experience */}
-          <div id="section-activities">
+          <div id="section-activities" style={{ scrollMarginTop: "135px" }}>
             <ActivitiesListBuilder
               activities={activities}
               onActivitiesChange={setActivities}
@@ -838,7 +839,7 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
           </div>
 
           {/* Section 4: Honors & Awards */}
-          <div id="section-honors">
+          <div id="section-honors" style={{ scrollMarginTop: "135px" }}>
             <HonorsAwardsBuilder
               honors={honors}
               onHonorsChange={setHonors}
@@ -846,7 +847,7 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
           </div>
 
           {/* Section 5: Skills, Spoken Languages & Links */}
-          <div id="section-skills">
+          <div id="section-skills" style={{ scrollMarginTop: "135px" }}>
             <SkillsAndLinksCard
               skills={skills}
               onSkillsChange={setSkills}

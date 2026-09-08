@@ -20,11 +20,13 @@ export function AppShell({ children, role = "student" }: AppShellProps) {
   useEffect(() => { setSidebarOpen(false); }, [pathname]);
 
   useEffect(() => {
-    const main = document.querySelector(".app-main");
-    if (!main) return;
-    const handleScroll = () => setScrolled(main.scrollTop > 12);
-    main.addEventListener("scroll", handleScroll, { passive: true });
-    return () => main.removeEventListener("scroll", handleScroll);
+    const handleScroll = () => {
+      const scrollY = window.scrollY || document.documentElement.scrollTop || 0;
+      setScrolled(scrollY > 12);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   useEffect(() => {
@@ -148,9 +150,9 @@ export function AppShell({ children, role = "student" }: AppShellProps) {
         <main className="app-main" style={{ background: "var(--bg-base)" }}>
           <motion.div
             key={pathname}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.28, ease: "easeOut" }}
             className="content-container py-10 sm:py-14"
           >
             {children}

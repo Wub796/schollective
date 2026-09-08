@@ -10,6 +10,7 @@ import {
   Save,
   Sparkles,
   Upload,
+  Loader2,
 } from "lucide-react";
 
 interface SectionDef {
@@ -19,13 +20,13 @@ interface SectionDef {
 }
 
 const SECTIONS: SectionDef[] = [
-  { id: "section-resume",    label: "Resume",     icon: <Upload size={13} /> },
-  { id: "section-personal",  label: "Personal",   icon: <User size={13} /> },
-  { id: "section-academic",  label: "Academic",   icon: <GraduationCap size={13} /> },
-  { id: "section-pitch",     label: "Pitch",      icon: <FileText size={13} /> },
+  { id: "section-resume",     label: "Resume",     icon: <Upload size={13} /> },
+  { id: "section-personal",   label: "Personal",   icon: <User size={13} /> },
+  { id: "section-academic",   label: "Academic",   icon: <GraduationCap size={13} /> },
+  { id: "section-pitch",      label: "Pitch",      icon: <FileText size={13} /> },
   { id: "section-activities", label: "Activities", icon: <Sparkles size={13} /> },
-  { id: "section-honors",    label: "Honors",     icon: <Trophy size={13} /> },
-  { id: "section-skills",    label: "Skills",     icon: <Wrench size={13} /> },
+  { id: "section-honors",     label: "Honors",     icon: <Trophy size={13} /> },
+  { id: "section-skills",     label: "Skills",     icon: <Wrench size={13} /> },
 ];
 
 interface Props {
@@ -34,73 +35,98 @@ interface Props {
 }
 
 export function ProfileSectionNav({ onSaveClick, loading }: Props) {
-  const [activeSection, setActiveSection] = useState<string>("");
+  const [activeSection, setActiveSection] = useState<string>("section-resume");
+  const [isStuck, setIsStuck] = useState(false);
   const navRef = useRef<HTMLDivElement>(null);
   const pillRefs = useRef<Record<string, HTMLButtonElement | null>>({});
 
-  // Track which section is in view using IntersectionObserver
+  // Scroll listener: update active section & sticky state
   useEffect(() => {
-    const observers: IntersectionObserver[] = [];
-    const visibleSections = new Map<string, number>();
+    let ticking = false;
 
-    SECTIONS.forEach((section) => {
-      const el = document.getElementById(section.id);
-      if (!el) return;
+    const onScroll = () => {
+      // 1. Detect if nav strip is currently pinned/stuck under the header
+      if (navRef.current) {
+        const navRect = navRef.current.getBoundingClientRect();
+        // Header height is 56px, nav sticks at 56 + 12 = 68px
+        setIsStuck(navRect.top <= 72);
+      }
 
-      const observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              visibleSections.set(section.id, entry.intersectionRatio);
-            } else {
-              visibleSections.delete(section.id);
-            }
+      // 2. Detect which section is active
+      const headerThreshold = 140; // distance from top of viewport
+      let currentSectionId = SECTIONS[0].id;
 
-            // Find the most visible section
-            let maxRatio = 0;
-            let maxId = "";
-            visibleSections.forEach((ratio, id) => {
-              if (ratio > maxRatio) {
-                maxRatio = ratio;
-                maxId = id;
-              }
-            });
-            if (maxId) setActiveSection(maxId);
-          });
-        },
-        {
-          root: document.querySelector(".app-main"),
-          rootMargin: "-80px 0px -40% 0px",
-          threshold: [0, 0.25, 0.5, 0.75, 1],
+      for (const section of SECTIONS) {
+        const el = document.getElementById(section.id);
+        if (!el) continue;
+        const rect = el.getBoundingClientRect();
+        if (rect.top <= headerThreshold) {
+          currentSectionId = section.id;
+        } else {
+          break;
         }
-      );
+      }
 
-      observer.observe(el);
-      observers.push(observer);
-    });
+      setActiveSection(currentSectionId);
+      ticking = false;
+    };
 
-    return () => observers.forEach((o) => o.disconnect());
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(onScroll);
+        ticking = true;
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    // Also listen to any scroll on .app-main if applicable
+    const main = document.querySelector(".app-main");
+    if (main) main.addEventListener("scroll", handleScroll, { passive: true });
+
+    onScroll();
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (main) main.removeEventListener("scroll", handleScroll);
+    };
   }, []);
 
-  // Auto-scroll the nav strip to keep the active pill visible
+  // Auto-scroll the horizontal strip to keep the active section pill in view
   useEffect(() => {
-    if (!activeSection || !navRef.current) return;
+    if (!activeSection) return;
     const pill = pillRefs.current[activeSection];
     if (pill) {
       pill.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
     }
   }, [activeSection]);
 
+  // Smooth scroll to target section with offset for header + nav strip
   const scrollToSection = useCallback((sectionId: string) => {
     const el = document.getElementById(sectionId);
     if (!el) return;
 
+    setActiveSection(sectionId);
+
+    // Total clearance = header (56px) + padding (12px) + nav height (~44px) + breathing space (16px) = ~128px
+    const headerOffset = 128;
+
+    const elRect = el.getBoundingClientRect();
+    const currentScrollY = window.scrollY ?? document.documentElement.scrollTop ?? 0;
+    const targetY = currentScrollY + elRect.top - headerOffset;
+
+    window.scrollTo({
+      top: Math.max(0, targetY),
+      behavior: "smooth",
+    });
+
     const main = document.querySelector(".app-main");
-    if (main) {
-      const top = el.getBoundingClientRect().top + main.scrollTop - 120;
-      main.scrollTo({ top, behavior: "smooth" });
-    } else {
-      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (main && main.scrollHeight > main.clientHeight) {
+      const mainRect = main.getBoundingClientRect();
+      const targetMainY = main.scrollTop + (elRect.top - mainRect.top) - headerOffset;
+      main.scrollTo({
+        top: Math.max(0, targetMainY),
+        behavior: "smooth",
+      });
     }
   }, []);
 
@@ -109,20 +135,28 @@ export function ProfileSectionNav({ onSaveClick, loading }: Props) {
       ref={navRef}
       style={{
         position: "sticky",
-        top: "3.5rem",
-        zIndex: 15,
-        background: "rgba(255, 255, 255, 0.75)",
-        backdropFilter: "blur(16px) saturate(180%)",
-        WebkitBackdropFilter: "blur(16px) saturate(180%)",
+        top: "calc(var(--nav-height, 56px) + 12px)",
+        zIndex: 25,
+        background: isStuck
+          ? "rgba(255, 255, 255, 0.92)"
+          : "rgba(255, 255, 255, 0.78)",
+        backdropFilter: "blur(20px) saturate(190%)",
+        WebkitBackdropFilter: "blur(20px) saturate(190%)",
         borderRadius: "14px",
-        border: "1px solid rgba(99, 102, 241, 0.12)",
+        border: isStuck
+          ? "1px solid rgba(99, 102, 241, 0.22)"
+          : "1px solid rgba(99, 102, 241, 0.12)",
         padding: "0.45rem",
-        boxShadow: "0 4px 20px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.7)",
+        boxShadow: isStuck
+          ? "0 12px 36px -4px rgba(79, 70, 229, 0.12), 0 4px 16px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.9)"
+          : "0 4px 20px rgba(0, 0, 0, 0.03), inset 0 1px 0 rgba(255, 255, 255, 0.7)",
+        transition: "background 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease",
       }}
     >
       <div
         style={{
           display: "flex",
+          alignItems: "center",
           gap: "0.3rem",
           overflowX: "auto",
           scrollbarWidth: "none",
@@ -145,16 +179,18 @@ export function ProfileSectionNav({ onSaveClick, loading }: Props) {
                 gap: "0.35rem",
                 padding: "0.45rem 0.75rem",
                 borderRadius: "10px",
-                border: "none",
+                border: isActive
+                  ? "1px solid rgba(99, 102, 241, 0.25)"
+                  : "1px solid transparent",
                 background: isActive
                   ? "rgba(99, 102, 241, 0.12)"
                   : "transparent",
                 color: isActive ? "#4f46e5" : "#64748b",
-                fontSize: "0.72rem",
+                fontSize: "0.74rem",
                 fontWeight: isActive ? 700 : 500,
                 fontFamily: "var(--font-sans)",
                 cursor: "pointer",
-                transition: "all 0.2s cubic-bezier(0.22, 1, 0.36, 1)",
+                transition: "all 0.18s cubic-bezier(0.22, 1, 0.36, 1)",
                 whiteSpace: "nowrap",
                 flexShrink: 0,
                 scrollSnapAlign: "center",
@@ -162,7 +198,7 @@ export function ProfileSectionNav({ onSaveClick, loading }: Props) {
               onMouseEnter={(e) => {
                 if (!isActive) {
                   (e.currentTarget as HTMLElement).style.background = "rgba(99, 102, 241, 0.06)";
-                  (e.currentTarget as HTMLElement).style.color = "#475569";
+                  (e.currentTarget as HTMLElement).style.color = "#334155";
                 }
               }}
               onMouseLeave={(e) => {
@@ -178,10 +214,10 @@ export function ProfileSectionNav({ onSaveClick, loading }: Props) {
           );
         })}
 
-        {/* Spacer */}
+        {/* Flexible spacer */}
         <div style={{ flex: 1, minWidth: "0.5rem" }} />
 
-        {/* Save pill */}
+        {/* Quick Save button in sticky bar */}
         {onSaveClick && (
           <button
             type="button"
@@ -191,24 +227,30 @@ export function ProfileSectionNav({ onSaveClick, loading }: Props) {
               display: "flex",
               alignItems: "center",
               gap: "0.35rem",
-              padding: "0.45rem 0.85rem",
+              padding: "0.45rem 0.95rem",
               borderRadius: "10px",
               border: "none",
               background: "linear-gradient(135deg, #4f46e5 0%, #6366f1 100%)",
               color: "#ffffff",
-              fontSize: "0.72rem",
+              fontSize: "0.74rem",
               fontWeight: 700,
               fontFamily: "var(--font-sans)",
               cursor: loading ? "not-allowed" : "pointer",
-              opacity: loading ? 0.6 : 1,
-              transition: "all 0.2s",
+              opacity: loading ? 0.65 : 1,
+              transition: "opacity 0.2s, transform 0.1s",
               whiteSpace: "nowrap",
               flexShrink: 0,
-              boxShadow: "0 2px 8px rgba(79, 70, 229, 0.25)",
+              boxShadow: "0 2px 8px rgba(79, 70, 229, 0.28)",
+            }}
+            onMouseDown={(e) => {
+              if (!loading) (e.currentTarget as HTMLElement).style.transform = "scale(0.96)";
+            }}
+            onMouseUp={(e) => {
+              (e.currentTarget as HTMLElement).style.transform = "none";
             }}
           >
-            <Save size={12} />
-            Save
+            {loading ? <Loader2 size={12} className="animate-spin" /> : <Save size={12} />}
+            {loading ? "Saving…" : "Save"}
           </button>
         )}
       </div>
