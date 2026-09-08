@@ -202,6 +202,66 @@ function build(get: Source): SanitisedProfileInput {
   return out;
 }
 
+function hasText(value: unknown): boolean {
+  return typeof value === "string" && value.trim().length > 0;
+}
+
+/** The fields a profile needs before it counts as set up, by role. */
+export function meetsProfileRequirements(
+  role: string | null | undefined,
+  profile: {
+    first_name?: unknown;
+    last_name?: unknown;
+    institution?: unknown;
+    education_level?: unknown;
+    expertise_fields?: unknown;
+  },
+): boolean {
+  if (role === "student") {
+    return hasText(profile.first_name) && hasText(profile.education_level);
+  }
+  if (role === "professor") {
+    return (
+      hasText(profile.first_name) &&
+      hasText(profile.last_name) &&
+      hasText(profile.institution) &&
+      Array.isArray(profile.expertise_fields) &&
+      profile.expertise_fields.some(hasText)
+    );
+  }
+  return false;
+}
+
+export interface ProfileCompletionInput {
+  /** The role the profile holds after this update. */
+  role: string | null | undefined;
+  /** The role it held before. */
+  previousRole: string | null | undefined;
+  alreadyComplete: boolean;
+  /** The caller asked to finish setup — onboarding and the profile forms send this. */
+  requested: boolean;
+  /** The stored profile with this update's fields applied. */
+  merged: Parameters<typeof meetsProfileRequirements>[1];
+}
+
+/**
+ * Whether a profile is complete after an update.
+ *
+ * `profile_complete` is privileged (see PRIVILEGED_PROFILE_FIELDS) because a
+ * client able to set it could skip onboarding with an empty profile. But
+ * something still has to set it: once the field became privileged nothing did,
+ * and every account created afterwards was sent from /dashboard back to
+ * /onboarding indefinitely. So the client may ASK to complete setup, and the
+ * server grants it only when the role's required fields are really present.
+ * An edit never revokes completion — unless the role itself changes, in which
+ * case the new role's requirements apply.
+ */
+export function resolveProfileCompletion(input: ProfileCompletionInput): boolean {
+  const roleChanged = Boolean(input.previousRole) && input.role !== input.previousRole;
+  if (input.alreadyComplete && !roleChanged) return true;
+  return input.requested && meetsProfileRequirements(input.role, input.merged);
+}
+
 /** Sanitises a faculty/student form submission. */
 export function sanitiseProfileFormData(formData: FormData): SanitisedProfileInput {
   return build((key) => (formData.has(key) ? formData.get(key) : undefined));
