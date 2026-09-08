@@ -1,5 +1,5 @@
 import { MetadataRoute } from "next";
-import { sql } from "@/lib/neon/db";
+import { getServerlessDbUrl, sql } from "@/lib/neon/db";
 
 export const revalidate = 3600;
 
@@ -26,11 +26,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // professor entries is worth far more than a failed deploy.
   let professors: Record<string, any>[] = [];
   try {
-    professors = await sql`
-      SELECT id, updated_at
-      FROM profiles
-      WHERE role = 'professor' AND status = 'approved' AND profile_complete = true;
-    `;
+    const dbUrl = getServerlessDbUrl();
+    if (dbUrl) {
+      const timeoutPromise = new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error("Database query timed out in sitemap")), 3000)
+      );
+      professors = await Promise.race([
+        sql`
+          SELECT id, updated_at
+          FROM profiles
+          WHERE role = 'professor' AND status = 'approved' AND profile_complete = true;
+        `,
+        timeoutPromise,
+      ]);
+    }
   } catch (error) {
     console.error("[sitemap] Could not list professor profiles:", error);
   }
