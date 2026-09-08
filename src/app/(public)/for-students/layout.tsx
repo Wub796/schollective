@@ -3,16 +3,16 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "For Students",
   description:
-    "Find verified professors, understand their research, and send structured mentorship requests — free for high school and college students on Schollective.",
+    "Find active university researchers, understand their recent publications, and send concise inquiries that respect faculty time.",
   openGraph: {
     title: "For Students | Schollective",
     description:
-      "Find verified professors, understand their research, and send structured mentorship requests — free for high school and college students.",
+      "Find active university researchers, understand their recent publications, and send concise inquiries that respect faculty time.",
   },
   twitter: {
     title: "For Students | Schollective",
     description:
-      "Find verified professors and send structured mentorship requests — free for high school and college students.",
+      "Find active university researchers, understand their recent publications, and send concise inquiries that respect faculty time.",
   },
 };
 
