@@ -27,10 +27,11 @@ const VALUES = [
 ];
 
 const TEAM = [
-  { initials: "AR", name: "Aiden Raj", role: "Co-Founder", desc: "Leads product development and faculty outreach across regional universities." },
-  { initials: "AS", name: "Ayaan Siddiqui", role: "Co-Founder", desc: "Manages student community growth and school partnership onboarding." },
-  { initials: "BW", name: "Benjamin Wu", role: "Core Developer", desc: "Builds frontend interfaces and student onboarding flows." },
-  { initials: "JH", name: "Joseph Hu", role: "Core Developer", desc: "Builds full-stack application architecture, AI review services, and data integrations." },
+  { initials: "AR", name: "Aiden Raj", desc: "Leads product development and faculty outreach across regional universities." },
+  { initials: "AS", name: "Ayaan Siddiqui", desc: "Manages student community growth and school partnership onboarding." },
+  { initials: "BW", name: "Benjamin Wu", desc: "Builds frontend interfaces and student onboarding flows." },
+  { initials: "JH", name: "Joseph Hu", desc: "Builds full-stack application architecture, AI review services, and data integrations." },
+  { initials: "MT", name: "Michelle Truong", desc: "Directs student research resources, academic workshops, and school partner collaborations." },
 ];
 
 export default function AboutPage() {
@@ -111,21 +112,20 @@ export default function AboutPage() {
 
       {/* ── TEAM ─────────────────────────────────────────── */}
       <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-indigo-300/40" style={{ paddingTop: "9rem", paddingBottom: "9rem" }}>
-        <div className="w-full max-w-[920px] mx-auto">
+        <div className="w-full max-w-[1040px] mx-auto">
           <FadeIn>
             <h2 className="font-display text-[clamp(2.2rem,3.5vw,3rem)] font-black tracking-[-0.04em] leading-[1.05] mb-14 text-slate-900">
               Built by students who<br /><em className="italic font-light text-indigo-600">lived the problem.</em>
             </h2>
           </FadeIn>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
+          <div className="flex flex-wrap justify-center gap-6 w-full">
             {TEAM.map((m, i) => (
-              <FadeIn key={m.name} delay={i * 0.07}>
-                <div className="p-8 border border-indigo-300/40 rounded-2xl bg-white h-full flex flex-col text-left transition-all duration-300 hover:shadow-md hover:border-indigo-600">
+              <FadeIn key={m.name} delay={i * 0.07} className="w-full sm:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] max-w-[340px] flex">
+                <div className="p-8 border border-indigo-300/40 rounded-2xl bg-white w-full flex flex-col text-left transition-all duration-300 hover:shadow-md hover:border-indigo-600">
                   <div className="w-12 h-12 rounded-xl bg-indigo-600 flex items-center justify-center mb-6 shadow-sm">
                     <span className="font-display font-black text-lg text-white">{m.initials}</span>
                   </div>
-                  <div className="font-display font-bold text-[1.15rem] text-slate-900 tracking-[-0.02em] mb-1">{m.name}</div>
-                  <div className="inline-block text-[0.55rem] font-bold tracking-[0.22em] uppercase text-slate-900 bg-indigo-500 px-2 py-0.5 rounded-full w-fit mb-4">{m.role}</div>
+                  <div className="font-display font-bold text-[1.15rem] text-slate-900 tracking-[-0.02em] mb-2">{m.name}</div>
                   <p className="text-[0.88rem] text-slate-600/80 leading-relaxed font-sans mt-auto">{m.desc}</p>
                 </div>
               </FadeIn>
