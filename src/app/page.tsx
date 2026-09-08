@@ -3,8 +3,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { SchollectiveLogo } from "@/components/ui/SchollectiveLogo";
 import { motion, useInView, useReducedMotion, AnimatePresence } from "framer-motion";
 import { PublicNav } from "@/components/ui/PublicNav";
 import { Button } from "@/components/ui/Button";
@@ -108,8 +106,34 @@ function MockupChrome({ url, children, className = "" }: { url: string; children
 ══════════════════════════════════════════════════════════════════════════ */
 const LOADER_KEY = "schollective_loader_shown";
 
+const PROBLEM_REASONS = [
+  "They read like automated ChatGPT templates that faculty spot immediately.",
+  "They copy-paste generic flattery that could have been sent to literally anyone.",
+  "They quote complex paper titles without showing any actual understanding of the work.",
+];
+
+const COMPARISON_ROWS = [
+  {
+    bad: "Hallucinates faculty emails and cites retracted or fake papers.",
+    good: "Verified faculty directory with actively publishing research labs.",
+  },
+  {
+    bad: "Generates generic templates that faculty spot and delete immediately.",
+    good: "Email editor that guides you to write genuine outreach in your own words.",
+  },
+  {
+    bad: "Requires an hour of prompt tinkering across search engines and chatbots.",
+    good: "Verified professors, plain-English paper breakdowns, and email guidance in one place.",
+  },
+];
+
+const MOCKUP_PROFESSORS = [
+  { name: "Dr. Emily Nakamura", uni: "Harvard Medical School", tag1: "Memory", tag2: "fMRI" },
+  { name: "Prof. James Miller", uni: "MIT Brain & Cognitive", tag1: "Neural Circuits", tag2: "AI" },
+  { name: "Dr. Aisha Patel", uni: "Stanford Neuroscience", tag1: "BCI", tag2: "Computation" },
+];
+
 export default function LandingPage() {
-  const router = useRouter();
   const [phase, setPhase] = useState<"ssr" | "loading" | "done">("ssr");
   const reduceMotion = useReducedMotion();
 
@@ -171,16 +195,16 @@ export default function LandingPage() {
               className="font-display font-bold text-slate-900 tracking-tighter leading-[1.08] text-center w-full mx-auto"
               style={{ fontSize: "clamp(3rem, 6.5vw, 5.2rem)" }}
             >
-              Find the mentor<br />
-              <span className="italic font-light text-indigo-600">who changes your life.</span>
+              Find professors<br />
+              <span className="italic font-light text-indigo-600">doing research you actually care about.</span>
             </h1>
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.7, ease: EASE, delay: 0.15 }}
-              className="font-sans text-slate-500 text-lg leading-relaxed mt-8 mb-12 max-w-md mx-auto text-center"
+              className="font-sans text-slate-500 text-lg leading-relaxed mt-8 mb-12 max-w-lg mx-auto text-center"
             >
-              Schollective helps high school students connect with professors and research mentors through structured academic outreach.
+              Schollective helps high schoolers find active faculty and write cold emails that do not get deleted.
             </motion.p>
             <motion.div
               initial={{ opacity: 0, y: 15 }}
@@ -206,11 +230,7 @@ export default function LandingPage() {
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5 w-full mt-6 mb-12 mx-auto">
-              {[
-                "Professors can spot AI-written emails instantly.",
-                "Generic requests that could go to anyone get ignored.",
-                "Citing papers without understanding them backfires.",
-              ].map((reason, i) => (
+              {PROBLEM_REASONS.map((reason, i) => (
                 <div key={i} className="flex flex-col items-center justify-center text-center p-10 md:p-12 rounded-2xl border border-slate-200/50 bg-[#fdfdfd] mx-auto w-full">
                   <span className="w-8 h-8 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500 text-xs font-bold font-sans mb-6 select-none mx-auto">✕</span>
                   <p className="text-slate-600 text-sm leading-loose tracking-wide text-center mx-auto">{reason}</p>
@@ -223,7 +243,7 @@ export default function LandingPage() {
               className="group inline-flex items-center justify-center gap-1.5 font-sans text-xs uppercase tracking-[0.22em] text-indigo-600 border-b border-indigo-600/20 pb-2 hover:border-indigo-600 transition-colors font-bold mx-auto text-center mt-4"
               style={{ textDecoration: "none" }}
             >
-              Send one that gets read <span className="transition-transform group-hover:translate-x-1">→</span>
+              Send an email that shows you did your homework <span className="transition-transform group-hover:translate-x-1">→</span>
             </Link>
           </div>
         </section>
@@ -250,11 +270,7 @@ export default function LandingPage() {
               </div>
 
               <div className="flex flex-col gap-8 md:gap-0 w-full mx-auto">
-                {[
-                  { bad: "Hallucinates professors and fake papers.", good: "Every profile is manually verified and active." },
-                  { bad: "Writes your message for you — professors delete those instantly.", good: "Guides you to craft a structured, contextual request in your own voice." },
-                  { bad: "Requires 20 back-and-forth prompts to find and understand professors.", good: "One search surfaces professors, research summaries, and a request builder together." },
-                ].map((row, i) => (
+                {COMPARISON_ROWS.map((row, i) => (
                   <div key={i} className="grid grid-cols-1 md:grid-cols-2 md:py-8 md:border-b md:border-slate-100 md:last:border-none md:last:pb-0 w-full mx-auto">
                     <div className="flex flex-col items-center justify-center text-center pb-8 md:pb-0 border-b border-slate-100 md:border-none gap-4 pr-0 md:pr-10 w-full mx-auto">
                       <span className="w-7 h-7 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500 text-xs font-bold select-none mx-auto">✕</span>
@@ -275,10 +291,10 @@ export default function LandingPage() {
         <section className="js-fade relative flex flex-col items-center justify-center py-36 md:py-44 px-6" style={{ background: "#fdfdfd" }}>
           <div className="w-full max-w-6xl mx-auto flex flex-col items-center text-center mb-16">
             <h2 className="font-display font-bold text-slate-900 tracking-tighter leading-[1.1] mb-4" style={{ fontSize: "clamp(2rem, 3.5vw, 3rem)" }}>
-              From sign-up to insight, in <em className="italic font-light text-indigo-600">three steps.</em>
+              How it works, in <em className="italic font-light text-indigo-600">three steps.</em>
             </h2>
             <p className="font-sans text-slate-500 text-base max-w-md mx-auto">
-              How Schollective transforms academic cold-outreach into structured collaboration.
+              A straightforward way to discover active faculty and send outreach that gets answered.
             </p>
           </div>
 
@@ -298,10 +314,10 @@ export default function LandingPage() {
                 <div className="md:order-1 flex flex-col items-center text-center max-w-md mx-auto">
                   <span className="font-mono text-xs uppercase tracking-widest text-indigo-600 font-bold block mb-4">Step 01</span>
                   <h3 className="font-display font-bold text-slate-900 tracking-tight text-2xl lg:text-3xl mb-4">
-                    Search any research interest.
+                    Search by specific topic.
                   </h3>
                   <p className="text-slate-500 text-sm md:text-base leading-relaxed">
-                    Type what you care about: quantum computing, cognitive neuroscience, or climate policy. We surface top professors publishing in that exact space, ranked by impact.
+                    Search subfields like memory consolidation or computational linguistics to find faculty actively publishing in those areas.
                   </p>
                 </div>
                 <div className="md:order-2 w-full">
@@ -311,11 +327,7 @@ export default function LandingPage() {
                       <span className="px-4 py-2 rounded-lg text-xs text-slate-400">Harvard</span>
                     </div>
                     <div className="flex flex-col gap-3">
-                      {[
-                        { name: "Dr. Emily Nakamura", uni: "Harvard Medical School", tag1: "Memory", tag2: "fMRI" },
-                        { name: "Prof. James Miller", uni: "MIT Brain & Cognitive", tag1: "Neural Circuits", tag2: "AI" },
-                        { name: "Dr. Aisha Patel", uni: "Stanford Neuroscience", tag1: "BCI", tag2: "Computation" },
-                      ].map((prof, i) => (
+                      {MOCKUP_PROFESSORS.map((prof, i) => (
                         <div key={i} className="flex flex-col items-center p-4 rounded-xl border border-slate-100 bg-slate-50/30">
                           <div className="flex items-center justify-between w-full mb-2">
                             <span className="font-display font-bold text-xs text-slate-800">{prof.name}</span>
@@ -342,10 +354,10 @@ export default function LandingPage() {
                 <div className="md:order-2 flex flex-col items-center text-center max-w-md mx-auto">
                   <span className="font-mono text-xs uppercase tracking-widest text-indigo-600 font-bold block mb-4">Step 02</span>
                   <h3 className="font-display font-bold text-slate-900 tracking-tight text-2xl lg:text-3xl mb-4">
-                    Understand their research.
+                    Read summaries you can actually understand.
                   </h3>
                   <p className="text-slate-500 text-sm md:text-base leading-relaxed">
-                    Every professor profile has an AI-synthesized summary of their key findings, written so a student can understand it and reference it with precision.
+                    We break down recent lab papers into the core question, method, and key findings so you know what the lab does before you reach out.
                   </p>
                 </div>
                 <div className="md:order-1 w-full">
@@ -379,10 +391,10 @@ export default function LandingPage() {
                 <div className="md:order-1 flex flex-col items-center text-center max-w-md mx-auto">
                   <span className="font-mono text-xs uppercase tracking-widest text-indigo-600 font-bold block mb-4">Step 03</span>
                   <h3 className="font-display font-bold text-slate-900 tracking-tight text-2xl lg:text-3xl mb-4">
-                    Draft structured requests.
+                    Draft an email professors will actually read.
                   </h3>
                   <p className="text-slate-500 text-sm md:text-base leading-relaxed">
-                    Our structured request model, co-designed with research faculty, guides you through describing your understanding, interests, and availability clearly.
+                    The editor walks you through connecting your background to a specific paper, proposing a clear question, and stating your availability.
                   </p>
                 </div>
                 <div className="md:order-2 w-full">
@@ -429,11 +441,11 @@ export default function LandingPage() {
               className="font-display font-bold text-slate-900 tracking-tighter leading-[1.1] text-center w-full mx-auto"
               style={{ fontSize: "clamp(2.5rem, 5.5vw, 4.2rem)" }}
             >
-              Your research mentor is<br />
-              <span className="italic font-light text-indigo-600">one structured request away.</span>
+              Stop sending generic templates<br />
+              <span className="italic font-light text-indigo-600">to busy research faculty.</span>
             </h2>
             <p className="font-sans text-slate-500 text-base md:text-lg text-center mx-auto w-full max-w-lg leading-relaxed">
-              Free to use. No credit card required.
+              Schollective is free for students. No credit card required.
             </p>
             <div className="flex items-center justify-center w-full mx-auto">
               <Button href="/signup" variant="primary" size="lg" className="px-10 py-5 text-base shadow-lg">
