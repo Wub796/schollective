@@ -113,6 +113,32 @@ Deleting an account is irreversible by design and keeps no backup: the
 confirmation promises the data is gone. See `002` below for the other half —
 removing accounts that were disabled and never restored.
 
+### 0011 — professor display title
+
+`0011_profile_honorific.sql` adds `profiles.honorific`: the form of address an
+account chose (`Dr.`, `Prof.`, `Mr.`, `Ms.`, `Mx.`, `Mrs.`, a short title of its
+own, or the literal `'none'` for no title at all). A `NULL` means "never
+chosen", which the naming helpers in `src/lib/people.ts` read as `Dr.` — so an
+account that predates the column keeps exactly the title it always showed, and
+nothing is backfilled. There is no CHECK constraint and no index: the list of
+titles people legitimately use is longer than one we would write, and nothing
+filters or orders on the column. The runtime bootstrap adds the column through
+`APP_REQUIRED_COLUMNS`, so this migration is only needed by a database whose
+owner is not applying the app's own bootstrap.
+
+### 0012 — profile gender
+
+`0012_profile_gender.sql` adds `profiles.gender`. It is optional and nullable,
+and it has two ways of showing nothing: `NULL` means nobody answered, and the
+stored sentinel `'prefer-not-to-say'` means the account answered that it wants
+this kept off their profile. The vocabulary lives in `GENDER_CHOICES`
+(`src/lib/people.ts`) and the write path refuses anything else, which is why
+there is no CHECK constraint and no migration to run when the list grows. It
+renders on the public faculty profile and on a student's profile page to viewers
+who may see that profile; it is deliberately not part of `app_student_cards`, so
+it is not shown to students who are not connected to its owner. The runtime
+bootstrap adds the column through `APP_REQUIRED_COLUMNS` as well.
+
 ### 002 — purging disabled accounts (maintenance)
 
 `db/maintenance/002_purge_deactivated_accounts.sql` deletes accounts that are
