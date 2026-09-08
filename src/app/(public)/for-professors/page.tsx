@@ -21,13 +21,6 @@ function FadeIn({ children, delay = 0, className = "" }: { children: React.React
   );
 }
 
-function Eyebrow({ children }: { children: string }) {
-  return (
-    <div className="inline-flex items-center justify-center rounded-full bg-indigo-600/5 border border-indigo-600/10 py-1.5 px-4 mb-6 select-none">
-      <span className="text-[0.62rem] font-extrabold tracking-[0.22em] uppercase text-indigo-600 font-sans">{children}</span>
-    </div>
-  );
-}
 
 const BENEFITS = [
   { n: "01", title: "Students Come Prepared", body: "Every request on Schollective is structured — students provide clear context, specific questions, and their academic background before you ever read a word. No more vague 'can I pick your brain?' emails." },
@@ -61,7 +54,6 @@ export default function ForProfessorsPage() {
       <section className="relative z-10 px-8 min-h-[75vh] flex flex-col items-center justify-center pt-36 md:pt-44 pb-20">
         <div className="w-full max-w-[760px] mx-auto flex flex-col items-center text-center">
           <FadeIn className="w-full flex flex-col items-center">
-            <Eyebrow>For Professors</Eyebrow>
             <h1 className="font-display text-[clamp(2.8rem,6.5vw,5rem)] font-black tracking-[-0.04em] leading-[1.05] mb-8 text-slate-900 text-center">
               Your expertise.<br />
               <em className="italic font-light text-indigo-600">Their breakthrough.</em>
