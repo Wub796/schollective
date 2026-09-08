@@ -77,7 +77,7 @@ export default function ForStudentsPage() {
         <div className="w-full max-w-[920px] mx-auto">
           <FadeIn>
             <h2 className="font-display text-[clamp(2.2rem,4vw,3.5rem)] font-black tracking-[-0.04em] leading-[1.05] mb-14 text-slate-900">
-              From sign-up to<br /><em className="italic font-light text-indigo-600">insight, in four steps.</em>
+              How it works,<br /><em className="italic font-light text-indigo-600">in four steps.</em>
             </h2>
           </FadeIn>
           <div className="w-full">

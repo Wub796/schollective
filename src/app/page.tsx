@@ -119,7 +119,7 @@ const COMPARISON_ROWS = [
   },
   {
     bad: "Generates generic templates that faculty spot and delete immediately.",
-    good: "Email editor that guides you to write genuine outreach in your own words.",
+    good: "Email editor that forces you to write in your own words.",
   },
   {
     bad: "Requires an hour of prompt tinkering across search engines and chatbots.",
@@ -354,7 +354,7 @@ export default function LandingPage() {
                 <div className="md:order-2 flex flex-col items-center text-center max-w-md mx-auto">
                   <span className="font-mono text-xs uppercase tracking-widest text-indigo-600 font-bold block mb-4">Step 02</span>
                   <h3 className="font-display font-bold text-slate-900 tracking-tight text-2xl lg:text-3xl mb-4">
-                    Read summaries you can actually understand.
+                    Read paper summaries you can actually understand.
                   </h3>
                   <p className="text-slate-500 text-sm md:text-base leading-relaxed">
                     We break down recent lab papers into the core question, method, and key findings so you know what the lab does before you reach out.
@@ -391,7 +391,7 @@ export default function LandingPage() {
                 <div className="md:order-1 flex flex-col items-center text-center max-w-md mx-auto">
                   <span className="font-mono text-xs uppercase tracking-widest text-indigo-600 font-bold block mb-4">Step 03</span>
                   <h3 className="font-display font-bold text-slate-900 tracking-tight text-2xl lg:text-3xl mb-4">
-                    Draft an email professors will actually read.
+                    Draft an email that answers the three things professors care about.
                   </h3>
                   <p className="text-slate-500 text-sm md:text-base leading-relaxed">
                     The editor walks you through connecting your background to a specific paper, proposing a clear question, and stating your availability.
@@ -442,10 +442,10 @@ export default function LandingPage() {
               style={{ fontSize: "clamp(2.5rem, 5.5vw, 4.2rem)" }}
             >
               Stop sending generic templates<br />
-              <span className="italic font-light text-indigo-600">to busy research faculty.</span>
+              <span className="italic font-light text-indigo-600">to faculty.</span>
             </h2>
             <p className="font-sans text-slate-500 text-base md:text-lg text-center mx-auto w-full max-w-lg leading-relaxed">
-              Schollective is free for students. No credit card required.
+              Schollective is free for students.
             </p>
             <div className="flex items-center justify-center w-full mx-auto">
               <Button href="/signup" variant="primary" size="lg" className="px-10 py-5 text-base shadow-lg">
