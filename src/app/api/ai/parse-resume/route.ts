@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { checkUserAiRateLimit } from "@/lib/ai/guardrails";
 import { parseResumePdf } from "@/lib/ai/resume-parser";
+import { isGeminiTransientError } from "@/lib/ai/client";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
@@ -86,7 +87,17 @@ export async function POST(req: NextRequest) {
     });
   } catch (error: any) {
     console.error("[parse-resume] Error processing resume PDF:", error);
-    const message = error?.message || "Failed to parse resume PDF. Please try again.";
+    let message = "Failed to parse resume PDF. Please try again.";
+    if (
+      isGeminiTransientError(error) ||
+      error?.message?.includes("503") ||
+      error?.message?.includes("high demand") ||
+      error?.message?.includes("UNAVAILABLE")
+    ) {
+      message = "The AI service is currently experiencing temporary high demand. Please try again in a few moments.";
+    } else if (typeof error?.message === "string" && !error.message.startsWith("{")) {
+      message = error.message;
+    }
     return NextResponse.json(
       { error: message },
       { status: 500 }

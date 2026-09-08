@@ -73,9 +73,35 @@ export function isGeminiQuotaError(err: unknown): boolean {
 }
 
 /**
+ * Checks if an error is a transient Gemini capacity or availability issue
+ * (429 quota, 503 unavailable, high demand spikes, model temporary overload).
+ */
+export function isGeminiTransientError(err: unknown): boolean {
+  if (!err || typeof err !== "object") return false;
+  if (isGeminiQuotaError(err)) return true;
+
+  const anyErr = err as Record<string, any>;
+  if (anyErr.status === 503 || anyErr.code === 503 || anyErr.statusCode === 503) {
+    return true;
+  }
+  if (anyErr.error?.code === 503 || anyErr.error?.status === "UNAVAILABLE") {
+    return true;
+  }
+
+  const msg = (anyErr.message || anyErr.toString?.() || "").toLowerCase();
+  return (
+    msg.includes("503") ||
+    msg.includes("unavailable") ||
+    msg.includes("high demand") ||
+    msg.includes("temporarily overloaded") ||
+    msg.includes("spikes in demand")
+  );
+}
+
+/**
  * Executes an AI operation with automatic failover across all configured API keys.
- * If Key #1 hits rate limits or quota exhaustion (429), it automatically re-runs
- * the operation with Key #2, etc.
+ * If Key #1 hits rate limits, quota exhaustion (429), or transient spikes (503),
+ * it automatically re-runs the operation with Key #2, etc., with exponential backoff on the final key.
  */
 export async function executeWithGeminiFailover<T>(
   operation: (client: GoogleGenAI, apiKeyIndex: number) => Promise<T>
@@ -92,15 +118,24 @@ export async function executeWithGeminiFailover<T>(
       return await operation(client, i);
     } catch (err: any) {
       lastError = err;
-      const isQuota = isGeminiQuotaError(err);
-      if (isQuota && i < keys.length - 1) {
-        console.warn(
-          `[GeminiFailover] Key #${i + 1} rate-limited or quota exceeded (429). Retrying with backup key #${i + 2}...`
-        );
-        continue;
+      const isRetriable = isGeminiTransientError(err);
+      if (isRetriable) {
+        if (i < keys.length - 1) {
+          console.warn(
+            `[GeminiFailover] Key #${i + 1} hit quota or transient spike (${err?.status || err?.code || "503/429"}). Retrying with backup key #${i + 2}...`
+          );
+          continue;
+        } else {
+          // On the final key, if it's a transient 503/high-demand spike, attempt a brief backoff retry
+          try {
+            await new Promise((resolve) => setTimeout(resolve, 1200));
+            return await operation(client, i);
+          } catch (retryErr: any) {
+            lastError = retryErr;
+          }
+        }
       }
-      // If not a quota error or no more keys, rethrow
-      throw err;
+      throw lastError;
     }
   }
 
