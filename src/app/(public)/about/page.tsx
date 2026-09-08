@@ -21,17 +21,16 @@ function FadeIn({ children, delay = 0, className = "" }: { children: React.React
 
 
 const VALUES = [
-  { n: "01", title: "Open Access", body: "We believe great academic guidance shouldn't be locked behind zip codes, tuition fees, or alumni networks. Schollective is and will remain free for every student." },
-  { n: "02", title: "Institutional Trust", body: "Every professor on our platform has been verified against real university records. No fake credentials, no impersonation — genuine academic expertise only." },
-  { n: "03", title: "Focused Dialogue", body: "We replace cold-email anxiety with structured mentorship threads. Every conversation has context, purpose, and professional tone built in." },
-  { n: "04", title: "Student Dignity", body: "Students shouldn't have to beg for help. Our platform gives every learner a professional, respected voice in front of the experts who can accelerate their journey." },
+  { n: "01", title: "Free for students", body: "No subscriptions, paywalls, or paid tiers." },
+  { n: "02", title: "Verified faculty", body: "Every profile is matched against current university faculty rosters and recent lab publications." },
+  { n: "03", title: "Specific pitches only", body: "We replace blind outreach with structured messages that highlight your actual coursework, technical skills, and familiarity with the lab's papers." },
 ];
 
 const TEAM = [
-  { initials: "AR", name: "Aiden Raj", role: "Founder", desc: "Passionate about using technology to break barriers in education and expand access to meaningful mentorship." },
-  { initials: "AS", name: "Ayaan Siddiqui", role: "Founder", desc: "Driven by the belief that every student deserves a mentor, regardless of background or institution." },
-  { initials: "BW", name: "Benjamin Wu", role: "Builder", desc: "Built Schollective to democratize the academic connections that shaped his own path." },
-  { initials: "JH", name: "Joseph Hu", role: "Builder", desc: "Dedicated to engineering systems that connect students with the guidance they need to grow academically and professionally." },
+  { initials: "AR", name: "Aiden Raj", role: "Co-Founder", desc: "Leads product development and faculty outreach across regional universities." },
+  { initials: "AS", name: "Ayaan Siddiqui", role: "Co-Founder", desc: "Manages student community growth and school partnership onboarding." },
+  { initials: "BW", name: "Benjamin Wu", role: "Core Developer", desc: "Builds frontend interfaces and student onboarding flows." },
+  { initials: "JH", name: "Joseph Hu", role: "Core Developer", desc: "Builds full-stack application architecture, AI review services, and data integrations." },
 ];
 
 export default function AboutPage() {
@@ -42,18 +41,16 @@ export default function AboutPage() {
 
       {/* ── HERO ──────────────────────────────────────────── */}
       <section className="relative z-10 px-8 min-h-[75vh] flex flex-col items-center justify-center pt-36 md:pt-44 pb-20">
-        <div className="w-full max-w-[760px] mx-auto flex flex-col items-center text-center">
+        <div className="w-full max-w-[820px] mx-auto flex flex-col items-center text-center">
           <FadeIn className="w-full flex flex-col items-center">
-            <h1 className="font-display text-[clamp(2.8rem,6.5vw,5rem)] font-black tracking-[-0.04em] leading-[1.05] mb-8 text-slate-900 text-center">
-              Democratizing<br />
-              <em className="italic font-light text-indigo-600">academic mentorship.</em>
+            <h1 className="font-display text-[clamp(2.4rem,5.5vw,4.5rem)] font-black tracking-[-0.04em] leading-[1.1] mb-8 text-slate-900 text-center">
+              High school research should not<br />
+              <em className="italic font-light text-indigo-600">depend on who your parents know.</em>
             </h1>
           </FadeIn>
           <FadeIn delay={0.15} className="w-full flex flex-col items-center">
-            <p style={{ textAlign: "center" }} className="text-[clamp(1.05rem,1.4vw,1.25rem)] text-slate-600 leading-relaxed max-w-[620px]">
-              Schollective was built on a simple belief: students should be able to reach the academics
-              who can change their trajectory — without needing to know the right people, attend the right school,
-              or send hundreds of cold emails into the void.
+            <p style={{ textAlign: "center" }} className="text-[clamp(1.05rem,1.35vw,1.2rem)] text-slate-600 leading-relaxed max-w-[680px]">
+              Most students do not have family ties to university labs or attend schools with dedicated research pipelines. Schollective gives anyone with genuine curiosity a direct way to find active professors, understand their publications, and send professional inquiries.
             </p>
           </FadeIn>
         </div>
@@ -63,21 +60,24 @@ export default function AboutPage() {
       <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-indigo-300/40" style={{ paddingTop: "9rem", paddingBottom: "9rem" }}>
         <div className="w-full max-w-[920px] mx-auto">
           <FadeIn>
+            <h2 className="font-display text-[clamp(2rem,3.5vw,2.8rem)] font-black tracking-[-0.03em] text-slate-900 mb-12 text-center">
+              Why cold emailing is broken <em className="italic font-light text-indigo-600">for both sides:</em>
+            </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 text-left">
               <div className="p-8 md:p-10 border border-indigo-300/40 rounded-2xl bg-white/80 shadow-xs flex flex-col gap-4">
-                <h2 className="font-display font-bold text-[clamp(1.6rem,2.5vw,2.2rem)] tracking-[-0.03em] leading-snug text-slate-900">
-                  Mentorship is gated by proximity.
-                </h2>
+                <h3 className="font-display font-bold text-[clamp(1.4rem,2vw,1.8rem)] tracking-[-0.02em] leading-snug text-slate-900">
+                  For students
+                </h3>
                 <p className="text-[0.95rem] text-slate-600/80 leading-relaxed font-sans">
-                  Students at underfunded schools or outside major research hubs rarely connect with the professors whose work matches their interests. Geography, institutional prestige, and sheer luck create invisible walls that have nothing to do with talent.
+                  Finding professors who actually take high schoolers takes weeks of digging through outdated faculty directories. Most emails go unanswered because students do not know how to pitch their background.
                 </p>
               </div>
               <div className="p-8 md:p-10 border border-indigo-300/40 rounded-2xl bg-white/80 shadow-xs flex flex-col gap-4">
-                <h2 className="font-display font-bold text-[clamp(1.6rem,2.5vw,2.2rem)] tracking-[-0.03em] leading-snug text-slate-900">
-                  Cold emails don&apos;t scale.
-                </h2>
+                <h3 className="font-display font-bold text-[clamp(1.4rem,2vw,1.8rem)] tracking-[-0.02em] leading-snug text-slate-900">
+                  For professors
+                </h3>
                 <p className="text-[0.95rem] text-slate-600/80 leading-relaxed font-sans">
-                  Professors receive hundreds of unfocused requests. Students spend days crafting emails that go unread. Both sides lose. Schollective replaces that broken system with structured, purposeful academic dialogue.
+                  Labs receive dozens of generic, copy-pasted templates every week. Faculty do not have time to read through vague pitches to figure out if a student has relevant skills.
                 </p>
               </div>
             </div>
@@ -90,7 +90,7 @@ export default function AboutPage() {
         <div className="w-full max-w-[920px] mx-auto">
           <FadeIn>
             <h2 className="font-display text-[clamp(2.2rem,4vw,3.5rem)] font-black tracking-[-0.04em] leading-[1.05] mb-14 text-slate-900">
-              Four principles.<br /><em className="italic font-light text-indigo-600">One direction.</em>
+              How we run <em className="italic font-light text-indigo-600">Schollective.</em>
             </h2>
           </FadeIn>
           <div className="w-full">
@@ -114,7 +114,7 @@ export default function AboutPage() {
         <div className="w-full max-w-[920px] mx-auto">
           <FadeIn>
             <h2 className="font-display text-[clamp(2.2rem,3.5vw,3rem)] font-black tracking-[-0.04em] leading-[1.05] mb-14 text-slate-900">
-              Built by someone who<br /><em className="italic font-light text-indigo-600">lived the problem.</em>
+              Built by students who<br /><em className="italic font-light text-indigo-600">lived the problem.</em>
             </h2>
           </FadeIn>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
@@ -138,18 +138,13 @@ export default function AboutPage() {
       <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-indigo-300/40" style={{ paddingTop: "9rem", paddingBottom: "9rem" }}>
         <div className="w-full max-w-[920px] mx-auto">
           <FadeIn>
-            <div className="border border-indigo-300/50 rounded-3xl bg-indigo-300/10 flex flex-col items-center gap-12 text-center w-full px-8 md:px-16" style={{ paddingTop: "6.5rem", paddingBottom: "6.5rem" }}>
-              <div className="flex flex-col gap-5">
-                <h2 className="font-display font-black text-[clamp(2rem,3vw,2.8rem)] tracking-[-0.04em] text-slate-900 leading-tight">
-                  Ready to connect?
-                </h2>
-                <p className="text-[1rem] text-slate-600/80 leading-relaxed max-w-[480px] mx-auto font-sans text-center">
-                  Join the platform where serious students meet verified professors.
-                </p>
-              </div>
+            <div className="border border-indigo-300/50 rounded-3xl bg-indigo-300/10 flex flex-col items-center gap-8 text-center w-full px-8 md:px-16" style={{ paddingTop: "6.5rem", paddingBottom: "6.5rem" }}>
+              <h2 className="font-display font-black text-[clamp(2rem,3.5vw,3rem)] tracking-[-0.04em] text-slate-900 leading-tight max-w-[640px] mx-auto">
+                Start reaching out to labs doing work you care about.
+              </h2>
               <div className="flex gap-4 flex-wrap justify-center">
                 <Button href="/signup" variant="primary" size="lg">
-                  Create Account →
+                  Create an Account →
                 </Button>
                 <Button href="/" variant="ghost" size="lg">
                   Back to Home

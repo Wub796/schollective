@@ -32,9 +32,9 @@ export function PublicFooter() {
           ))}
         </div>
 
-        {/* Quote Copy */}
+        {/* Footer Tagline */}
         <div className="lp-footer-copy">
-          Every question deserves a real answer.
+          Structured academic outreach.
         </div>
       </div>
     </footer>
