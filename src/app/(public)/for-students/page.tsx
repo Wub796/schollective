@@ -6,7 +6,7 @@ import { ScrollProgress } from "@/components/ui/ScrollProgress";
 import { PublicNav } from "@/components/ui/PublicNav";
 import { PublicFooter } from "@/components/ui/PublicFooter";
 import { Button } from "@/components/ui/Button";
-import { FileText, GraduationCap, Microscope, BookOpen, Users, PenTool } from "lucide-react";
+import { FileText, Microscope, BookOpen, Users } from "lucide-react";
 
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
@@ -20,21 +20,18 @@ function FadeIn({ children, delay = 0, className = "" }: { children: React.React
   );
 }
 
-
 const HOW_IT_WORKS = [
-  { n: "01", title: "Create Your Profile", body: "Sign up in under two minutes. Tell us your grade level, school, and what areas of research excite you. No essays, no applications." },
-  { n: "02", title: "Browse Verified Professors", body: "Search our database of institutionally verified academics by field, research interest, or university. Every profile is real and reviewed." },
-  { n: "03", title: "Send a Focused Request", body: "Use our structured request template to explain your question clearly. Professors get context upfront — which means faster, better responses." },
-  { n: "04", title: "Grow Through Dialogue", body: "Continue the conversation in a dedicated thread. Build a relationship with your mentor over time, entirely within Schollective." },
+  { n: "01", title: "Build your academic snapshot", body: "Add your coursework, technical skills, and current projects so faculty can see your background in 15 seconds." },
+  { n: "02", title: "Search by publication topic", body: "Find faculty actively publishing in specific subfields rather than digging through outdated department directories." },
+  { n: "03", title: "Read plain-English paper breakdowns", body: "Review summaries of recent lab findings so you can speak directly to what the researcher actually investigates." },
+  { n: "04", title: "Draft a structured email", body: "Use an editor designed around faculty expectations to ask specific technical questions or inquire about mentorship." },
 ];
 
 const USE_CASES = [
-  { icon: <FileText className="w-6 h-6 text-indigo-600" />, title: "Research Paper Guidance", body: "Get feedback on your thesis, methodology, or literature review from a professor in exactly that field." },
-  { icon: <GraduationCap className="w-6 h-6 text-indigo-600" />, title: "Graduate School Planning", body: "Ask professors about their programs, what they look for in applicants, and how to strengthen your profile." },
-  { icon: <Microscope className="w-6 h-6 text-indigo-600" />, title: "Science Fair & Research Projects", body: "High schoolers: get expert perspective on your project before competition season." },
-  { icon: <BookOpen className="w-6 h-6 text-indigo-600" />, title: "Understanding Complex Topics", body: "Sometimes textbooks aren't enough. Get a nuanced explanation from someone who has spent a career studying it." },
-  { icon: <Users className="w-6 h-6 text-indigo-600" />, title: "Finding Research Opportunities", body: "Learn about lab openings, summer programs, and internships directly from professors actively seeking students." },
-  { icon: <PenTool className="w-6 h-6 text-indigo-600" />, title: "Academic Writing Improvement", body: "Get your writing reviewed by academics who publish regularly and know exactly what clarity looks like." },
+  { icon: <Microscope className="w-6 h-6 text-indigo-600" />, title: "Independent and competition projects", body: "Ask authors targeted questions about datasets, experimental protocols, or limitations mentioned in their papers." },
+  { icon: <Users className="w-6 h-6 text-indigo-600" />, title: "Summer research and shadowing", body: "Inquire whether a professor accepts high school or early undergraduate volunteers for remote computational work or lab shadowing." },
+  { icon: <FileText className="w-6 h-6 text-indigo-600" />, title: "Methodology feedback", body: "Get input on whether your proposed science fair or independent study approach is sound before spending months running trials." },
+  { icon: <BookOpen className="w-6 h-6 text-indigo-600" />, title: "Narrowing academic interests", body: "Discover niche subfields within broad majors to decide what to study in college." },
 ];
 
 export default function ForStudentsPage() {
@@ -48,15 +45,13 @@ export default function ForStudentsPage() {
         <div className="w-full max-w-[760px] mx-auto flex flex-col items-center text-center">
           <FadeIn className="w-full flex flex-col items-center">
             <h1 className="font-display text-[clamp(2.8rem,6.5vw,5rem)] font-black tracking-[-0.04em] leading-[1.05] mb-8 text-slate-900 text-center">
-              Your questions<br />
-              <em className="italic font-light text-indigo-600">deserve real answers.</em>
+              Reach out to the people<br />
+              <em className="italic font-light text-indigo-600">behind the research you read.</em>
             </h1>
           </FadeIn>
           <FadeIn delay={0.15} className="w-full flex flex-col items-center">
             <p style={{ textAlign: "center" }} className="text-[clamp(1.05rem,1.4vw,1.25rem)] text-slate-600 leading-relaxed max-w-[620px] mb-10">
-              Whether you&apos;re a high schooler working on a science fair project or an undergrad navigating grad school
-              applications, Schollective connects you directly with verified professors who can actually help —
-              for free, with no cold-email anxiety.
+              Schollective helps students find active university researchers, understand their recent publications, and send concise, professional inquiries that respect faculty time.
             </p>
           </FadeIn>
           <FadeIn delay={0.2} className="w-full flex justify-center">
@@ -101,10 +96,10 @@ export default function ForStudentsPage() {
         <div className="w-full max-w-[920px] mx-auto">
           <FadeIn>
             <h2 className="font-display text-[clamp(2.2rem,4vw,3.5rem)] font-black tracking-[-0.04em] leading-[1.05] mb-14 text-slate-900">
-              Every serious question<br /><em className="italic font-light text-indigo-600">has a home here.</em>
+              What students use<br /><em className="italic font-light text-indigo-600">Schollective for.</em>
             </h2>
           </FadeIn>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-[840px] mx-auto">
             {USE_CASES.map((uc, i) => (
               <FadeIn key={uc.title} delay={i * 0.05}>
                 <div className="p-8 border border-indigo-300/40 rounded-2xl bg-white h-full transition-all duration-300 hover:shadow-md hover:border-indigo-600 text-left flex flex-col">
@@ -122,14 +117,11 @@ export default function ForStudentsPage() {
       <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-indigo-300/40" style={{ paddingTop: "9rem", paddingBottom: "9rem" }}>
         <div className="w-full max-w-[920px] mx-auto">
           <FadeIn>
-            <div className="border border-indigo-300/50 rounded-3xl bg-indigo-300/10 flex flex-col items-center gap-12 text-center w-full px-8 md:px-16" style={{ paddingTop: "6.5rem", paddingBottom: "6.5rem" }}>
-              <div className="flex flex-col gap-5">
+            <div className="border border-indigo-300/50 rounded-3xl bg-indigo-300/10 flex flex-col items-center gap-10 text-center w-full px-8 md:px-16" style={{ paddingTop: "6.5rem", paddingBottom: "6.5rem" }}>
+              <div className="flex flex-col gap-4">
                 <h2 className="font-display font-black text-[clamp(2rem,3vw,2.8rem)] tracking-[-0.04em] text-slate-900 leading-tight">
-                  Start for free, today.
+                  Start reaching out to researchers in your field.
                 </h2>
-                <p className="text-[1rem] text-slate-600/80 leading-relaxed max-w-[480px] mx-auto font-sans text-center">
-                  Join thousands of students getting real guidance from verified professors.
-                </p>
               </div>
               <div className="flex justify-center">
                 <Button href="/signup" variant="primary" size="lg">
