@@ -24,6 +24,7 @@ import { ActivitiesListBuilder } from "@/components/profile/ActivitiesListBuilde
 import { HonorsAwardsBuilder } from "@/components/profile/HonorsAwardsBuilder";
 import { SkillsAndLinksCard } from "@/components/profile/SkillsAndLinksCard";
 import { FacultyPreviewCard } from "@/components/profile/FacultyPreviewCard";
+import { ProfileSectionNav } from "@/components/profile/ProfileSectionNav";
 import type { ParsedResumeProfile } from "@/lib/ai/resume-parser";
 import {
   ProfileRecord,
@@ -105,6 +106,7 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
   const [avatarUploading, setAvatarUploading] = useState(false);
   const [activeTab, setActiveTab] = useState<"edit" | "preview">("edit");
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
   const router = useRouter();
 
   // Personal Information
@@ -222,17 +224,20 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
     major.trim()
   );
 
-  const handleAddAcademicInterest = useCallback((tag: string) => {
+  const handleAddAcademicInterest = useCallback((tag: string): boolean => {
     const trimmed = tag.trim();
-    if (!trimmed) return;
+    if (!trimmed) return false;
+    let added = false;
     setInterests((prev) => {
       if (prev.includes(trimmed)) return prev;
       if (prev.length >= 5) {
-        toast.error("You can select up to 5 academic interests.");
+        toast.error("You can select up to 5 academic interests.", { id: "interests-limit" });
         return prev;
       }
+      added = true;
       return [...prev, trimmed];
     });
+    return added;
   }, []);
 
   const reviewerProfileData = useMemo(() => ({
@@ -675,13 +680,24 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
         />
       </div>
 
+      {/* Section Jump-Nav Strip — only visible in edit mode */}
+      {activeTab === "edit" && (
+        <ProfileSectionNav
+          onSaveClick={() => formRef.current?.requestSubmit()}
+          loading={loading}
+        />
+      )}
+
       {activeTab === "edit" ? (
-        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
+        <form ref={formRef} onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
           {/* Top-anchored Resume Dropzone */}
-          <ResumeDropzone onParsed={handleResumeParsed} disabled={loading} />
+          <div id="section-resume">
+            <ResumeDropzone onParsed={handleResumeParsed} disabled={loading} />
+          </div>
 
           {/* Card: Personal Details */}
           <div
+            id="section-personal"
             style={{
               background: "rgba(255, 255, 255, 0.9)",
               borderRadius: "16px",
@@ -788,48 +804,58 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
           </div>
 
           {/* Section 1: Academic Identity */}
-          <AcademicIdentityCard
-            institution={inst}
-            onInstitutionChange={setInst}
-            educationLevel={educationLevel}
-            onEducationLevelChange={setEducationLevel}
-            major={major}
-            onMajorChange={setMajor}
-            graduationYear={gradYear}
-            onGraduationYearChange={setGradYear}
-            academicStats={academicStats}
-            onAcademicStatsChange={setAcademicStats}
-          />
+          <div id="section-academic">
+            <AcademicIdentityCard
+              institution={inst}
+              onInstitutionChange={setInst}
+              educationLevel={educationLevel}
+              onEducationLevelChange={setEducationLevel}
+              major={major}
+              onMajorChange={setMajor}
+              graduationYear={gradYear}
+              onGraduationYearChange={setGradYear}
+              academicStats={academicStats}
+              onAcademicStatsChange={setAcademicStats}
+            />
+          </div>
 
           {/* Section 2: Research Pitch & Interests */}
-          <ResearchPitchCard
-            bio={bio}
-            onBioChange={setBio}
-            interests={interests}
-            onInterestsChange={setInterests}
-          />
+          <div id="section-pitch">
+            <ResearchPitchCard
+              bio={bio}
+              onBioChange={setBio}
+              interests={interests}
+              onInterestsChange={setInterests}
+            />
+          </div>
 
           {/* Section 3: Activities & Experience */}
-          <ActivitiesListBuilder
-            activities={activities}
-            onActivitiesChange={setActivities}
-          />
+          <div id="section-activities">
+            <ActivitiesListBuilder
+              activities={activities}
+              onActivitiesChange={setActivities}
+            />
+          </div>
 
           {/* Section 4: Honors & Awards */}
-          <HonorsAwardsBuilder
-            honors={honors}
-            onHonorsChange={setHonors}
-          />
+          <div id="section-honors">
+            <HonorsAwardsBuilder
+              honors={honors}
+              onHonorsChange={setHonors}
+            />
+          </div>
 
           {/* Section 5: Skills, Spoken Languages & Links */}
-          <SkillsAndLinksCard
-            skills={skills}
-            onSkillsChange={setSkills}
-            languages={languages}
-            onLanguagesChange={setLanguages}
-            socialLinks={socialLinks}
-            onSocialLinksChange={setSocialLinks}
-          />
+          <div id="section-skills">
+            <SkillsAndLinksCard
+              skills={skills}
+              onSkillsChange={setSkills}
+              languages={languages}
+              onLanguagesChange={setLanguages}
+              socialLinks={socialLinks}
+              onSocialLinksChange={setSocialLinks}
+            />
+          </div>
 
           {/* Save Action Bar */}
           <div
