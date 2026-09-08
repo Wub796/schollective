@@ -73,6 +73,16 @@ export function NotificationBell() {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
+  // Close on Escape key
+  useEffect(() => {
+    if (!open) return;
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [open]);
+
   const handleOpen = () => {
     setOpen((o) => !o);
     if (!open && unreadCount > 0) {
@@ -101,103 +111,177 @@ export function NotificationBell() {
         type="button"
         onClick={handleOpen}
         title="Notifications"
-        className="btn-icon"
+        aria-label="View notifications"
+        aria-expanded={open}
         style={{
           position: "relative",
           width: "2.2rem",
           height: "2.2rem",
           borderRadius: "50%",
-          border: "1px solid rgba(15, 23, 42, 0.1)",
-          background: open ? "rgba(15, 23, 42, 0.06)" : "transparent",
+          border: open
+            ? "1px solid rgba(99, 102, 241, 0.4)"
+            : "1px solid rgba(15, 23, 42, 0.12)",
+          background: open ? "rgba(99, 102, 241, 0.08)" : "transparent",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           cursor: "pointer",
+          transition: "all 0.2s cubic-bezier(0.22, 1, 0.36, 1)",
+        }}
+        onMouseEnter={(e) => {
+          if (!open) {
+            (e.currentTarget as HTMLElement).style.background = "rgba(15, 23, 42, 0.05)";
+          }
+        }}
+        onMouseLeave={(e) => {
+          if (!open) {
+            (e.currentTarget as HTMLElement).style.background = "transparent";
+          }
         }}
       >
-        <Bell size={14} color="rgba(15, 23, 42, 0.45)" />
+        <Bell size={15} color={open ? "#4f46e5" : "#475569"} />
         {unreadCount > 0 && (
           <span style={{
             position: "absolute",
             top: "-2px",
             right: "-2px",
-            width: "14px",
-            height: "14px",
-            borderRadius: "50%",
-            background: "rgba(255,120,80,0.9)",
-            border: "2px solid #080c14",
-            fontSize: "0.45rem",
-            fontWeight: 700,
-            color: "var(--text-primary)",
+            minWidth: "16px",
+            height: "16px",
+            padding: "0 3px",
+            borderRadius: "100px",
+            background: "#f97316",
+            border: "2px solid #ffffff",
+            fontSize: "0.5rem",
+            fontWeight: 800,
+            color: "#ffffff",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             fontFamily: "var(--font-sans)",
+            boxShadow: "0 2px 6px rgba(249, 115, 22, 0.4)",
           }}>
             {unreadCount > 9 ? "9+" : unreadCount}
           </span>
         )}
       </button>
 
-      {/* Dropdown */}
+      {/* Dropdown — anchored to the right side of the screen so it never gets cropped out of frame */}
       {open && (
-        <div style={{
-          position: "absolute",
-          top: "calc(100% + 8px)",
-          right: 0,
-          width: "320px",
-          background: "#0d1221",
-          border: "1px solid rgba(15, 23, 42, 0.08)",
-          borderRadius: "14px",
-          overflow: "hidden",
-          boxShadow: "0 16px 48px rgba(0,0,0,0.6)",
-          zIndex: 100,
-        }}>
+        <div
+          role="dialog"
+          aria-label="Notifications list"
+          style={{
+            position: "fixed",
+            top: "calc(var(--nav-height, 56px) + 8px)",
+            right: "max(1rem, env(safe-area-inset-right, 16px))",
+            width: "min(360px, calc(100vw - 2rem))",
+            maxWidth: "calc(100vw - 2rem)",
+            background: "rgba(255, 255, 255, 0.98)",
+            backdropFilter: "blur(20px) saturate(190%)",
+            WebkitBackdropFilter: "blur(20px) saturate(190%)",
+            border: "1px solid rgba(99, 102, 241, 0.18)",
+            borderRadius: "16px",
+            overflow: "hidden",
+            boxShadow: "0 20px 48px -10px rgba(15, 23, 42, 0.16), 0 8px 24px -4px rgba(79, 70, 229, 0.08)",
+            zIndex: 100,
+          }}
+        >
           {/* Header */}
-          <div style={{ padding: "1rem 1.25rem", borderBottom: "1px solid rgba(15, 23, 42, 0.06)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <span style={{ fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.4)", fontFamily: "var(--font-sans)" }}>
+          <div
+            style={{
+              padding: "0.85rem 1.15rem",
+              background: "rgba(248, 250, 252, 0.85)",
+              borderBottom: "1px solid rgba(99, 102, 241, 0.1)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <span
+              style={{
+                fontSize: "0.68rem",
+                fontWeight: 800,
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+                color: "#0f172a",
+                fontFamily: "var(--font-sans)",
+              }}
+            >
               Notifications
             </span>
-            {unreadCount > 0 && (
-              <span style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", color: "rgba(255,120,80,0.8)", fontFamily: "var(--font-sans)" }}>
+            {unreadCount > 0 ? (
+              <span
+                style={{
+                  fontSize: "0.62rem",
+                  fontWeight: 700,
+                  padding: "0.15rem 0.55rem",
+                  borderRadius: "100px",
+                  background: "rgba(249, 115, 22, 0.12)",
+                  color: "#ea580c",
+                  fontFamily: "var(--font-sans)",
+                }}
+              >
                 {unreadCount} new
+              </span>
+            ) : (
+              <span
+                style={{
+                  fontSize: "0.62rem",
+                  color: "#94a3b8",
+                  fontFamily: "var(--font-sans)",
+                }}
+              >
+                All caught up
               </span>
             )}
           </div>
 
           {/* List */}
-          <div style={{ maxHeight: "360px", overflowY: "auto" }}>
+          <div style={{ maxHeight: "360px", overflowY: "auto" }} className="hide-scrollbar">
             {notifications.length === 0 ? (
               <div style={{ padding: "2.5rem 1.25rem", textAlign: "center" }}>
-                <Bell size={20} color="rgba(15, 23, 42, 0.1)" style={{ margin: "0 auto 0.75rem" }} />
-                <p style={{ fontSize: "0.72rem", color: "rgba(15, 23, 42, 0.25)", fontFamily: "var(--font-sans)" }}>No notifications yet</p>
+                <Bell size={22} color="rgba(99, 102, 241, 0.3)" style={{ margin: "0 auto 0.75rem" }} />
+                <p style={{ fontSize: "0.78rem", color: "#64748b", margin: 0, fontFamily: "var(--font-sans)", fontWeight: 500 }}>
+                  No notifications yet
+                </p>
               </div>
             ) : (
               notifications.map((n, i) => (
-                <Link key={n.id} href={getHref()} onClick={() => setOpen(false)} style={{
-                  textDecoration: "none",
-                  padding: "0.9rem 1.25rem",
-                  borderBottom: i < notifications.length - 1 ? "1px solid rgba(15, 23, 42, 0.04)" : "none",
-                  background: n.is_read ? "transparent" : "rgba(15, 23, 42, 0.02)",
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "0.3rem",
-                  transition: "background 0.2s"
-                }}>
+                <Link
+                  key={n.id}
+                  href={getHref()}
+                  onClick={() => setOpen(false)}
+                  style={{
+                    textDecoration: "none",
+                    padding: "0.9rem 1.15rem",
+                    borderBottom: i < notifications.length - 1 ? "1px solid rgba(15, 23, 42, 0.05)" : "none",
+                    background: n.is_read ? "transparent" : "rgba(99, 102, 241, 0.04)",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "0.25rem",
+                    transition: "background 0.18s",
+                  }}
+                  onMouseEnter={(e) => {
+                    (e.currentTarget as HTMLElement).style.background = "rgba(99, 102, 241, 0.08)";
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.currentTarget as HTMLElement).style.background = n.is_read ? "transparent" : "rgba(99, 102, 241, 0.04)";
+                  }}
+                >
                   <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "0.75rem" }}>
-                    <span style={{ fontSize: "0.78rem", fontWeight: 600, color: n.is_read ? "rgba(15, 23, 42, 0.5)" : "rgba(15, 23, 42, 0.85)", fontFamily: "var(--font-sans)", lineHeight: 1.4 }}>
+                    <span style={{ fontSize: "0.82rem", fontWeight: n.is_read ? 600 : 700, color: "#0f172a", fontFamily: "var(--font-sans)", lineHeight: 1.4 }}>
                       {n.title}
                     </span>
                     {!n.is_read && (
-                      <span style={{ width: "5px", height: "5px", borderRadius: "50%", background: "rgba(255,120,80,0.8)", flexShrink: 0, marginTop: "4px" }} />
+                      <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#ea580c", flexShrink: 0, marginTop: "6px" }} />
                     )}
                   </div>
                   {n.body && (
-                    <span style={{ fontSize: "0.68rem", color: "rgba(15, 23, 42, 0.3)", fontFamily: "var(--font-sans)", lineHeight: 1.5 }}>
+                    <span style={{ fontSize: "0.72rem", color: "#475569", fontFamily: "var(--font-sans)", lineHeight: 1.5 }}>
                       {n.body}
                     </span>
                   )}
-                  <span style={{ fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.15em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.18)", fontFamily: "var(--font-sans, monospace)", marginTop: "0.1rem" }}>
+                  <span style={{ fontSize: "0.62rem", fontWeight: 600, color: "#94a3b8", fontFamily: "var(--font-sans)", marginTop: "0.15rem" }}>
                     {formatTime(n.created_at)}
                   </span>
                 </Link>

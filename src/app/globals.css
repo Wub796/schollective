@@ -58,14 +58,7 @@
 
 /* ═══════════════════════════════════════════════════════════════
    BASE RESET
-   ═══════════════════════════════════════════════════════════════ */
-.hide-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-.hide-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
+   ═══════════════════════════════════════════════════════════════
    NOTE: this must stay inside `@layer base`. Tailwind v4 puts every
    utility in `@layer utilities`, and unlayered rules always beat
    layered ones in the cascade — an unlayered `margin: 0; padding: 0`
@@ -80,6 +73,14 @@
   }
 }
 
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 html {
   scroll-behavior: smooth;
   scrollbar-gutter: stable;
@@ -91,7 +92,7 @@ body {
   color: var(--text-primary);
   font-family: var(--font-sans);
   line-height: 1.75;
-  overflow-x: hidden;
+  overflow-x: clip;
   isolation: isolate;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -305,7 +306,7 @@ body::after {
   grid-column: 2;
   grid-row: 1;
   min-width: 0;
-  overflow-y: auto;
+  position: relative;
   z-index: var(--z-base);
 }
 
