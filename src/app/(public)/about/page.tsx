@@ -43,9 +43,9 @@ export default function AboutPage() {
       <section className="relative z-10 px-8 min-h-[75vh] flex flex-col items-center justify-center pt-36 md:pt-44 pb-20">
         <div className="w-full max-w-[820px] mx-auto flex flex-col items-center text-center">
           <FadeIn className="w-full flex flex-col items-center">
-            <h1 className="font-display text-[clamp(2.4rem,5.5vw,4.5rem)] font-black tracking-[-0.04em] leading-[1.1] mb-8 text-slate-900 text-center">
-              High school research should not<br />
-              <em className="italic font-light text-indigo-600">depend on who your parents know.</em>
+            <h1 className="font-display text-[clamp(2.4rem,5vw,4.25rem)] font-black tracking-[-0.04em] leading-[1.1] mb-8 text-slate-900 text-center">
+              Research shouldn&apos;t depend on<br />
+              <em className="italic font-light text-indigo-600">who you know.</em>
             </h1>
           </FadeIn>
           <FadeIn delay={0.15} className="w-full flex flex-col items-center">
