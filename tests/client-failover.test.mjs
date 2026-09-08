@@ -83,6 +83,72 @@ test("isGeminiQuotaError identifies 429 and RESOURCE_EXHAUSTED errors", async ()
   assert.equal(isGeminiQuotaError(null), false);
 });
 
+test("isGeminiAuthError identifies invalid/revoked keys (400 API key not valid, 401, 403)", async () => {
+  const { isGeminiAuthError } = await loadClient();
+
+  assert.equal(isGeminiAuthError(new Error("API key not valid. Please pass a valid API key.")), true);
+  assert.equal(isGeminiAuthError({ status: 401 }), true);
+  assert.equal(isGeminiAuthError({ code: 403 }), true);
+  assert.equal(isGeminiAuthError({ error: { status: "UNAUTHENTICATED" } }), true);
+  assert.equal(isGeminiAuthError({ error: { status: "PERMISSION_DENIED" } }), true);
+
+  assert.equal(isGeminiAuthError({ status: 429 }), false);
+  assert.equal(isGeminiAuthError(new Error("Network timeout")), false);
+  assert.equal(isGeminiAuthError(null), false);
+});
+
+test("executeWithGeminiFailover fails over when Key #1 is invalid/revoked", async () => {
+  const oldPrimary = process.env.GEMINI_API_KEY;
+  const oldBackup = process.env.GEMINI_API_KEY_BACKUP;
+
+  try {
+    process.env.GEMINI_API_KEY = "revoked-key";
+    process.env.GEMINI_API_KEY_BACKUP = "working-backup-key";
+
+    const { executeWithGeminiFailover } = await loadClient();
+
+    const attemptedKeys = [];
+    const result = await executeWithGeminiFailover(async (client, keyIndex) => {
+      attemptedKeys.push(client.apiKey);
+      if (client.apiKey === "revoked-key") {
+        throw new Error("API key not valid. Please pass a valid API key.");
+      }
+      return `success-with-${client.apiKey}`;
+    });
+
+    assert.equal(result, "success-with-working-backup-key");
+    assert.deepEqual(attemptedKeys, ["revoked-key", "working-backup-key"]);
+  } finally {
+    if (oldPrimary === undefined) delete process.env.GEMINI_API_KEY; else process.env.GEMINI_API_KEY = oldPrimary;
+    if (oldBackup === undefined) delete process.env.GEMINI_API_KEY_BACKUP; else process.env.GEMINI_API_KEY_BACKUP = oldBackup;
+  }
+});
+
+test("executeWithGeminiFailover does NOT fail over on transient server errors (503 overloaded)", async () => {
+  const oldPrimary = process.env.GEMINI_API_KEY;
+  const oldBackup = process.env.GEMINI_API_KEY_BACKUP;
+
+  try {
+    process.env.GEMINI_API_KEY = "overloaded-key";
+    process.env.GEMINI_API_KEY_BACKUP = "working-backup-key";
+
+    const { executeWithGeminiFailover } = await loadClient();
+
+    await assert.rejects(
+      () =>
+        executeWithGeminiFailover(async (client) => {
+          const err = new Error("The service is currently overloaded. Please try again later.");
+          err.status = 503;
+          throw err;
+        }),
+      /overloaded/
+    );
+  } finally {
+    if (oldPrimary === undefined) delete process.env.GEMINI_API_KEY; else process.env.GEMINI_API_KEY = oldPrimary;
+    if (oldBackup === undefined) delete process.env.GEMINI_API_KEY_BACKUP; else process.env.GEMINI_API_KEY_BACKUP = oldBackup;
+  }
+});
+
 test("executeWithGeminiFailover automatically fails over when Key #1 hits 429", async () => {
   const oldPrimary = process.env.GEMINI_API_KEY;
   const oldBackup = process.env.GEMINI_API_KEY_BACKUP;
