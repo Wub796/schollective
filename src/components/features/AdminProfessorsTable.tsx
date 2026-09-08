@@ -26,11 +26,12 @@ type StatusFilter = "all" | "approved" | "pending" | "rejected" | "suspended";
 type SortKey = "name" | "status" | "score" | "joined";
 
 const STATUS_COLOUR: Record<string, string> = {
-  approved:  "rgba(74,222,128,0.8)",
-  active:    "rgba(74,222,128,0.8)",
-  pending:   "rgba(250,204,21,0.8)",
-  rejected:  "rgba(248,113,113,0.8)",
-  suspended: "rgba(239,68,68,0.8)",
+  approved:    "rgba(74,222,128,0.8)",
+  active:      "rgba(74,222,128,0.8)",
+  pending:     "rgba(250,204,21,0.8)",
+  rejected:    "rgba(248,113,113,0.8)",
+  suspended:   "rgba(239,68,68,0.8)",
+  deactivated: "rgba(129,140,248,0.8)",
 };
 
 function formatDate(iso: string) {
@@ -42,6 +43,10 @@ function effectiveStatus(p: ProfessorRecord): string {
   if (p.status === "approved") return "approved";
   if (p.status === "rejected") return "rejected";
   if (p.status === "suspended") return "suspended";
+  // Disabled by its own owner, not waiting on a reviewer: without this branch
+  // it lands in the pending queue, and the queue is what says who needs
+  // attention.
+  if (p.status === "deactivated") return "deactivated";
   return "pending";
 }
 

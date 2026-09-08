@@ -51,11 +51,12 @@ const ROLE_COLOUR: Record<string, string> = {
 };
 
 const STATUS_COLOUR: Record<string, string> = {
-  active:    "rgba(100, 220, 120, 0.8)",
-  approved:  "rgba(100, 220, 120, 0.8)",
-  pending:   "rgba(255, 200, 60, 0.8)",
-  suspended: "rgba(255, 80, 80, 0.8)",
-  rejected:  "rgba(180, 80, 80, 0.8)",
+  active:      "rgba(100, 220, 120, 0.8)",
+  approved:    "rgba(100, 220, 120, 0.8)",
+  pending:     "rgba(255, 200, 60, 0.8)",
+  suspended:   "rgba(255, 80, 80, 0.8)",
+  rejected:    "rgba(180, 80, 80, 0.8)",
+  deactivated: "rgba(129, 140, 248, 0.8)",
 };
 
 function effectiveStatus(u: UserRecord): string {
@@ -63,6 +64,10 @@ function effectiveStatus(u: UserRecord): string {
     if (u.status === "approved") return "approved";
     if (u.status === "rejected") return "rejected";
     if (u.status === "suspended") return "suspended";
+    // Disabled by its owner, and deliberately not folded into 'pending', which
+    // is the review queue. The account is still here during its grace window and
+    // admins should be able to see that rather than guess.
+    if (u.status === "deactivated") return "deactivated";
     return "pending";
   }
   if (u.status === "suspended") return "suspended";

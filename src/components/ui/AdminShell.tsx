@@ -39,7 +39,7 @@ const itemVariant = {
 function NavLink({
   href, icon: Icon, label, sub, active, onClick,
 }: {
-  href: string; icon: React.ElementType; label: string; sub: string; active: boolean; onClick?: () => void;
+  href: string; icon: React.ElementType; label: string; sub?: string; active: boolean; onClick?: () => void;
 }) {
   return (
     <Link
@@ -98,19 +98,21 @@ function NavLink({
         }}>
           {label}
         </span>
-        <span style={{
-          display: "block",
-          fontSize: "0.5rem",
-          fontWeight: 700,
-          letterSpacing: "0.1em",
-          textTransform: "uppercase",
-          color: active ? "rgba(79, 70, 229, 0.6)" : "var(--text-tertiary)",
-          fontFamily: "var(--font-sans, monospace)",
-          lineHeight: 1,
-          marginTop: "0.2rem",
-        }}>
-          {sub}
-        </span>
+        {sub && (
+          <span style={{
+            display: "block",
+            fontSize: "0.5rem",
+            fontWeight: 700,
+            letterSpacing: "0.1em",
+            textTransform: "uppercase",
+            color: active ? "rgba(79, 70, 229, 0.6)" : "var(--text-tertiary)",
+            fontFamily: "var(--font-sans, monospace)",
+            lineHeight: 1,
+            marginTop: "0.2rem",
+          }}>
+            {sub}
+          </span>
+        )}
       </div>
 
       {active && (
@@ -214,11 +216,13 @@ function AdminSidebarContent({ onClose }: { onClose?: () => void }) {
           style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "0.25rem" }}
         >
           {[
-            { href: "/profile",   icon: Settings,  label: "Settings",      sub: "Account"     },
-          ].map(({ href, icon, label, sub }) => (
+            // No subscript: all this page holds is the account's own settings,
+            // so a second line naming the section said nothing.
+            { href: "/profile",   icon: Settings,  label: "Settings"   },
+          ].map(({ href, icon, label }) => (
             <motion.li key={href} variants={itemVariant}>
               <NavLink
-                href={href} icon={icon} label={label} sub={sub}
+                href={href} icon={icon} label={label}
                 active={false} onClick={onClose}
               />
             </motion.li>
