@@ -125,6 +125,26 @@ const APP_REQUIRED_COLUMNS: Record<string, ColumnSpec[]> = {
     // The gender on the profile, if the account chose to list one at all.
     { name: "gender", ddl: "gender text" },
   ],
+  // The beta feedback queue. The columns are added here so a database that has
+  // never run db/migrations/0013 can still store a report; the RLS policies and
+  // the FORCE flag that make one report private to its author cannot be patched
+  // this way and stay in that migration, so a report written by a bootstrapped
+  // database is protected only by the explicit `user_id = ...` in the queries
+  // (src/lib/neon/feedback.ts).
+  feedback_reports: [
+    { name: "id", ddl: `id text primary key` },
+    { name: "user_id", ddl: `user_id text not null references profiles (id) on delete cascade` },
+    { name: "role", ddl: `role text` },
+    { name: "category", ddl: `category text not null` },
+    { name: "subject", ddl: `subject text` },
+    { name: "message", ddl: `message text not null` },
+    { name: "page_path", ddl: `page_path text` },
+    { name: "user_agent", ddl: `user_agent text` },
+    { name: "status", ddl: `status text not null default 'new'` },
+    { name: "admin_note", ddl: `admin_note text` },
+    { name: "created_at", ddl: `created_at timestamptz not null default now()` },
+    { name: "updated_at", ddl: `updated_at timestamptz not null default now()` },
+  ],
   ai_profile_review_jobs: [
     { name: "id", ddl: `id text primary key` },
     { name: "user_id", ddl: `user_id text not null` },
@@ -141,6 +161,27 @@ const APP_REQUIRED_COLUMNS: Record<string, ColumnSpec[]> = {
 };
 
 const APP_TABLES: Record<string, string> = {
+  // Mirrors db/migrations/0013 (table body only; the policies live there). Its
+  // foreign key needs `profiles` to exist, which the bootstrap creates above.
+  feedback_reports: `
+    CREATE TABLE IF NOT EXISTS feedback_reports (
+      id text PRIMARY KEY,
+      user_id text NOT NULL REFERENCES profiles (id) ON DELETE CASCADE,
+      role text,
+      category text NOT NULL,
+      subject text,
+      message text NOT NULL,
+      page_path text,
+      user_agent text,
+      status text NOT NULL DEFAULT 'new',
+      admin_note text,
+      created_at timestamptz NOT NULL DEFAULT now(),
+      updated_at timestamptz NOT NULL DEFAULT now(),
+      CONSTRAINT feedback_reports_category_check CHECK (category IN ('bug', 'idea', 'other')),
+      CONSTRAINT feedback_reports_status_check   CHECK (status   IN ('new', 'reviewed', 'closed')),
+      CONSTRAINT feedback_reports_message_check  CHECK (char_length(message) BETWEEN 10 AND 2000)
+    )
+  `,
   ai_profile_review_jobs: `
     CREATE TABLE IF NOT EXISTS ai_profile_review_jobs (
       id text PRIMARY KEY,
@@ -174,6 +215,10 @@ const APP_INDEXES: Record<string, string[]> = {
   ],
   notifications: [
     `CREATE INDEX IF NOT EXISTS "notifications_user_id_created_at_idx" ON notifications (user_id, created_at DESC)`,
+  ],
+  feedback_reports: [
+    `CREATE INDEX IF NOT EXISTS "feedback_reports_user_created_at_idx" ON feedback_reports (user_id, created_at DESC)`,
+    `CREATE INDEX IF NOT EXISTS "feedback_reports_status_created_at_idx" ON feedback_reports (status, created_at DESC)`,
   ],
   ai_profile_review_jobs: [
     `CREATE UNIQUE INDEX IF NOT EXISTS "ai_profile_review_jobs_active_user_uidx" ON ai_profile_review_jobs (user_id) WHERE status IN ('pending', 'processing')`,
