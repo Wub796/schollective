@@ -1,6 +1,7 @@
 import React from "react";
 import { redirect } from "next/navigation";
 import { sql } from "@/lib/neon/db";
+import { runAs } from "@/lib/neon/user-context";
 import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { AdminShell } from "@/components/ui/AdminShell";
 import { AdminThreadsTable } from "@/components/features/AdminThreadsTable";
@@ -8,14 +9,16 @@ import { AdminThreadsTable } from "@/components/features/AdminThreadsTable";
 export const dynamic = "force-dynamic";
 
 export default async function AdminThreadsPage() {
-  const { session, profile } = await getCurrentUserAndProfile();
+  const { session, user, profile } = await getCurrentUserAndProfile();
   if (!session) redirect("/login");
 
   if (!profile || profile.role !== "admin") {
     redirect(profile?.role === "professor" ? "/prof/dashboard" : "/dashboard");
   }
 
-  const threads = await sql`
+  // The admin branch of the RLS policy still requires the admin's database
+  // identity to be set — a bare query sees no rows at all.
+  const threads = await runAs(user.id, async () => sql`
     SELECT 
       r.id,
       r.status,
@@ -28,11 +31,11 @@ export default async function AdminThreadsPage() {
     LEFT JOIN profiles s ON r.student_id = s.id
     LEFT JOIN profiles p ON r.professor_id = p.id
     ORDER BY r.created_at DESC;
-  `;
+  `);
 
-  const active = threads?.filter((t) => t.status === "active").length ?? 0;
-  const closed = threads?.filter((t) => t.status === "closed").length ?? 0;
-  const pending = threads?.filter((t) => t.status === "pending").length ?? 0;
+  const active = threads?.filter((t: any) => t.status === "active").length ?? 0;
+  const closed = threads?.filter((t: any) => t.status === "closed").length ?? 0;
+  const pending = threads?.filter((t: any) => t.status === "pending").length ?? 0;
 
   return (
     <AdminShell>

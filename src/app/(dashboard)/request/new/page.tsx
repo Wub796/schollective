@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { runAs } from "@/lib/neon/user-context";
 import { sql } from "@/lib/neon/db";
 import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { RequestForm } from "./RequestForm";
@@ -34,13 +35,15 @@ export default async function RequestNewPage({ searchParams }: RequestNewPagePro
     redirect("/professors");
   }
 
-  // Fetch requests count in last 24h
+  // Fetch requests count in last 24h. RLS scopes requests to their
+  // participants: without the student's database identity this count is
+  // always 0 and the daily limit never displays.
   const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-  const countResult = await sql`
+  const countResult = await runAs(user.id, async () => sql`
     SELECT COUNT(*)::int as count
     FROM requests
     WHERE student_id = ${user.id} AND created_at > ${twentyFourHoursAgo};
-  `;
+  `);
 
   const requestsToday = countResult[0]?.count || 0;
 

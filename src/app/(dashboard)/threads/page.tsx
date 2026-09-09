@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { sql } from "@/lib/neon/db";
+import { runAs } from "@/lib/neon/user-context";
 import { parseJsonbArray } from "@/lib/utils";
 import { ThreadCard } from "@/components/features/ThreadCard";
 import { BookOpen, Search } from "lucide-react";
@@ -28,7 +29,9 @@ export default async function ThreadsPage() {
 
   if (!isAdminPreviewing && profile.role !== "student") redirect("/prof/dashboard");
 
-  const requests = await sql`
+  // RLS scopes requests to their participants: the query must run under the
+  // signed-in user's database identity or every row is filtered out.
+  const requests = await runAs(user.id, async () => sql`
     SELECT 
       r.id, r.status, r.topic, r.updated_at,
       json_build_object(
@@ -45,7 +48,7 @@ export default async function ThreadsPage() {
     LEFT JOIN profiles p ON r.professor_id = p.id
     WHERE r.student_id = ${user.id}
     ORDER BY r.updated_at DESC;
-  `;
+  `);
 
   const processed = (requests || []).map((req: any) => {
     const prof = Array.isArray(req.professor) ? req.professor[0] : req.professor;

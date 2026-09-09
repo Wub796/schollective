@@ -1,5 +1,6 @@
 import React from "react";
 import { redirect } from "next/navigation";
+import { runAs } from "@/lib/neon/user-context";
 import { sql } from "@/lib/neon/db";
 import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { AdminShell } from "@/components/ui/AdminShell";
@@ -52,7 +53,7 @@ function StatCard({
 }
 
 export default async function AdminDashboard() {
-  const { session, profile } = await getCurrentUserAndProfile();
+  const { session, user, profile } = await getCurrentUserAndProfile();
   if (!session) redirect("/login");
 
   if (!profile || profile.role !== "admin") {
@@ -73,7 +74,9 @@ export default async function AdminDashboard() {
     `,
     sql`SELECT COUNT(*)::int as count FROM profiles WHERE role = 'student';`,
     sql`SELECT COUNT(*)::int as count FROM profiles WHERE role = 'student' AND (status = 'active' OR status IS NULL);`,
-    sql`SELECT COUNT(*)::int as count FROM requests WHERE status = 'active';`,
+    // The RLS policy on requests needs the admin's database identity even for
+    // a platform-wide count — a bare query sees no rows at all.
+    runAs(user.id, async () => sql`SELECT COUNT(*)::int as count FROM requests WHERE status = 'active';`),
   ]);
 
   const studentCount = studentCountRes[0]?.count || 0;

@@ -2,6 +2,7 @@ import React from "react";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { sql } from "@/lib/neon/db";
+import { runAs } from "@/lib/neon/user-context";
 import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { RequestQueueCard } from "@/components/features/RequestQueueCard";
 import { AcceptingToggle } from "@/components/features/AcceptingToggle";
@@ -77,7 +78,9 @@ export default async function ProfessorDashboard() {
   const isAccepting = profile.is_accepting_requests !== false; // default true
   const displayName = profile.preferred_name || profile.first_name || "Professor";
 
-  const allRequests = await sql`
+  // RLS scopes requests to their participants: the query must run under the
+  // signed-in user's database identity or every row is filtered out.
+  const allRequests = await runAs(user.id, async () => sql`
     SELECT 
       r.id, r.status, r.topic, r.created_at, r.updated_at,
       json_build_object(
@@ -101,10 +104,10 @@ export default async function ProfessorDashboard() {
     LEFT JOIN profiles s ON r.student_id = s.id
     WHERE r.professor_id = ${user.id}
     ORDER BY r.created_at DESC;
-  `;
+  `);
 
   const pendingRequests = (allRequests || [])
-    .filter((r) => r.status === "pending" || r.status === "viewed")
+    .filter((r: any) => r.status === "pending" || r.status === "viewed")
     .map((req: any) => {
       const student = Array.isArray(req.student) ? req.student[0] : req.student;
       return {
@@ -206,7 +209,7 @@ export default async function ProfessorDashboard() {
           </div>
         ) : (
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: "1.5rem" }}>
-            {pendingRequests.map((req) => (
+            {pendingRequests.map((req: any) => (
               <RequestQueueCard key={req.id} request={req as any} />
             ))}
           </div>

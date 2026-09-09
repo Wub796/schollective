@@ -7,6 +7,7 @@ import { revalidatePath } from "next/cache";
 import { sanitiseText, isValidUuid, LIMITS } from "@/lib/security";
 import { isSuspended } from "@/lib/authz";
 import { captureServerEvent } from "@/lib/posthog-server";
+import { createNotification } from "@/lib/notifications";
 
 export async function submitMentorshipRequest(formData: FormData) {
   const { session, user, profile } = await getCurrentUserAndProfile();
@@ -82,6 +83,16 @@ export async function submitMentorshipRequest(formData: FormData) {
     INSERT INTO messages (request_id, sender_id, content)
     VALUES (${requestId}, ${user.id}, ${initialMessageContent});
   `;
+
+  // Let the professor know a request is waiting in their queue.
+  await createNotification({
+    actorId: user.id,
+    userId: profId,
+    type: "new_request",
+    title: "New mentorship request",
+    body: topic,
+    requestId,
+  });
 
   await captureServerEvent(user.id, "mentorship_request_submitted", { professor_id: profId, request_id: requestId });
   revalidatePath("/dashboard");

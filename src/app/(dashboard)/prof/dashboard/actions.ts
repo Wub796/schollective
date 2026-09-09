@@ -2,6 +2,7 @@
 
 import { sql } from "@/lib/neon/db";
 import { runAs } from "@/lib/neon/user-context";
+import { createNotification } from "@/lib/notifications";
 import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { revalidatePath } from "next/cache";
 import { checkRateLimit, sanitiseText, isValidUuid, LIMITS } from "@/lib/security";
@@ -26,13 +27,30 @@ export async function updateRequestStatus(requestId: string, status: "active" | 
       return { error: `Please slow down. Try again in ${rate.retryAfterSeconds}s.` };
     }
 
-    await runAs(user.id, async () => {
+    const updatedRows = await runAs(user.id, async () =>
       await sql`
         UPDATE requests
         SET status = ${status}, updated_at = now()
-        WHERE id = ${reqId} AND professor_id = ${user.id};
-      `;
-    });
+        WHERE id = ${reqId} AND professor_id = ${user.id}
+        RETURNING student_id;
+      `
+    );
+
+    const studentId = (updatedRows as Array<{ student_id: string }> | undefined)?.[0]?.student_id;
+    if (studentId) {
+      // The student is waiting on this answer — without it the bell never
+      // rings and they only find out by re-checking the directory.
+      await createNotification({
+        actorId: user.id,
+        userId: studentId,
+        type: status === "active" ? "request_accepted" : "request_declined",
+        title: status === "active" ? "Your mentorship request was accepted!" : "Your mentorship request was declined",
+        body: status === "active"
+          ? "Head to your thread to continue the conversation."
+          : undefined,
+        requestId: reqId,
+      });
+    }
 
     await captureServerEvent(user.id, "professor_request_status_updated", { request_id: reqId, status });
     revalidatePath("/prof/dashboard");
@@ -90,40 +108,6 @@ export async function toggleAvailability(isAccepting: boolean) {
     return { success: true };
   } catch (err: any) {
     return { error: err.message || "Failed to toggle availability." };
-  }
-}
-
-export async function createNotification({
-  userId, type, title, body, requestId,
-}: {
-  userId: string;
-  type: "request_accepted" | "request_declined" | "new_request" | "message";
-  title: string;
-  body?: string;
-  requestId?: string;
-}) {
-  const safeType = type;
-  const safeTitle = sanitiseText(title, LIMITS.topic);
-  const safeBody = body ? sanitiseText(body, LIMITS.messageContent) : null;
-  const safeRequestId = requestId && isValidUuid(requestId) ? requestId : null;
-
-  if (!safeTitle) return;
-
-  try {
-    // Notifications are written on behalf of the recipient (a professor
-    // accepting a request notifies the student), so the insert policy only
-    // requires an authenticated writer. Apply the acting professor's identity
-    // explicitly — server actions run outside the ambient context guarantee.
-    const { user } = await getCurrentUserAndProfile();
-    if (!user) return;
-    await runAs(user.id, async () => {
-      await sql`
-        INSERT INTO notifications (user_id, type, title, message, link)
-        VALUES (${userId}, ${safeType}, ${safeTitle}, ${safeBody || safeTitle}, ${safeRequestId ? '/messages/' + safeRequestId : null});
-      `;
-    });
-  } catch (err: any) {
-    console.error("[notification] insert error:", err.message);
   }
 }
 

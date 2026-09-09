@@ -56,6 +56,12 @@ export async function POST(req: Request) {
     }
 
     // Standard Safety Content Scan
+    // The scan costs a paid Gemini call, so it must not be invokable by
+    // anonymous visitors — only authenticated users may scan content.
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     if (!content || typeof content !== "string") {
       return NextResponse.json({ error: "Content string is required" }, { status: 400 });
     }

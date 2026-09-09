@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { sql } from "@/lib/neon/db";
+import { runAs } from "@/lib/neon/user-context";
 import { Users } from "lucide-react";
 import Link from "next/link";
 import { StudentRow } from "@/components/features/StudentRow";
@@ -22,7 +23,9 @@ export default async function ProfStudentsPage() {
 
   const displayName = profile.preferred_name || profile.first_name || "Professor";
 
-  const allRequests = await sql`
+  // RLS scopes requests to their participants: the query must run under the
+  // signed-in user's database identity or every row is filtered out.
+  const allRequests = await runAs(user.id, async () => sql`
     SELECT 
       r.id, r.status, r.topic, r.updated_at, r.created_at,
       json_build_object(
@@ -41,7 +44,7 @@ export default async function ProfStudentsPage() {
     WHERE r.professor_id = ${user.id}
       AND r.status IN ('active', 'closed')
     ORDER BY r.updated_at DESC;
-  `;
+  `);
 
   const process = (req: any) => {
     const student = Array.isArray(req.student) ? req.student[0] : req.student;
@@ -55,8 +58,8 @@ export default async function ProfStudentsPage() {
     return { ...req, student, latest };
   };
 
-  const activeStudents = (allRequests || []).filter((r) => r.status === "active").map(process);
-  const pastStudents   = (allRequests || []).filter((r) => r.status === "closed").map(process);
+  const activeStudents = (allRequests || []).filter((r: any) => r.status === "active").map(process);
+  const pastStudents   = (allRequests || []).filter((r: any) => r.status === "closed").map(process);
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "3.5rem" }}>

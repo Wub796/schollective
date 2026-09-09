@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { sql } from "@/lib/neon/db";
+import { runAs } from "@/lib/neon/user-context";
 import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { ArrowLeft, GraduationCap, Building2, BookOpen, Mail, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/Button";
@@ -376,12 +377,15 @@ export default async function PublicProfessorProfilePage({ params }: PageProps) 
   let existingRequestId: string | undefined;
 
   if (user) {
-    const existingRequests = await sql`
+    // RLS scopes requests to their participants: without the student's
+    // database identity this lookup sees no rows and the "request pending"
+    // state never displays.
+    const existingRequests = await runAs(user.id, async () => sql`
       SELECT id, status
       FROM requests
       WHERE student_id = ${user.id} AND professor_id = ${id} AND status IN ('pending', 'active')
       LIMIT 1;
-    `;
+    `);
     const existingRequest = existingRequests[0];
 
     if (existingRequest) {
