@@ -1,18 +1,18 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "For Professors",
+  title: "For Faculty",
   description:
-    "Join Schollective to mentor motivated students. Get discovered by high school researchers, manage mentorship requests, and guide the next generation of academics.",
+    "Fewer generic cold emails. Schollective replaces unvetted email blasts with structured academic inquiries with verified coursework and research questions.",
   openGraph: {
-    title: "For Professors | Schollective",
+    title: "For Faculty | Schollective",
     description:
-      "Join Schollective to mentor motivated students. Get discovered, manage requests, and guide the next generation of researchers.",
+      "Fewer generic cold emails. Schollective replaces unvetted email blasts with structured academic inquiries with verified coursework and research questions.",
   },
   twitter: {
-    title: "For Professors | Schollective",
+    title: "For Faculty | Schollective",
     description:
-      "Join Schollective to mentor motivated students and guide the next generation of researchers.",
+      "Fewer generic cold emails. Schollective replaces unvetted email blasts with structured academic inquiries with verified coursework and research questions.",
   },
 };
 

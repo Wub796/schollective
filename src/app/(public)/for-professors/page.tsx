@@ -21,11 +21,10 @@ function FadeIn({ children, delay = 0, className = "" }: { children: React.React
 
 
 const BENEFITS = [
-  { n: "01", title: "Students Come Prepared", body: "Every request on Schollective is structured — students provide clear context, specific questions, and their academic background before you ever read a word. No more vague 'can I pick your brain?' emails." },
-  { n: "02", title: "Total Control Over Your Time", body: "You choose which requests to accept, at what pace, and when. There are no obligations, no minimums, and no institutional pressure. Your expertise, your schedule." },
-  { n: "03", title: "Focused, One-on-One Threads", body: "Every mentorship happens in a dedicated thread tied to a specific topic. No inbox clutter, no chain replies — just clean, purposeful academic dialogue." },
-  { n: "04", title: "Verified Identity for Both Sides", body: "Students know they're talking to a real professor. You know students are serious learners, not spam accounts. Every profile is reviewed." },
-  { n: "05", title: "Pay Expertise Forward", body: "Many of the students reaching out to you today are exactly where you were before your mentor changed your trajectory. Schollective makes that moment replicable at scale." },
+  { n: "01", title: "Verified academic background upfront", body: "Before a student can message you, they must list their completed coursework, technical skills, and current projects so you can gauge their preparation in seconds." },
+  { n: "02", title: "Zero response obligations", body: "You choose whether to respond. Decline or archive inquiries with a single click without cluttering your institutional inbox." },
+  { n: "03", title: "Isolated from your university email", body: "Keep student questions contained in an external dashboard rather than wading through lengthy email threads." },
+  { n: "04", title: "No copy-pasted templates", body: "The outreach editor rejects generic mass messages, requiring students to cite specific papers or methods relevant to your group." },
 ];
 
 const FIELDS = [
@@ -35,11 +34,10 @@ const FIELDS = [
 ];
 
 const FAQ = [
-  { q: "How long does verification take?", a: "Typically 24–72 hours after you submit your institutional email and professional profile. Our team manually reviews every professor application." },
-  { q: "How much time does this require?", a: "As much or as little as you want. Some professors respond to one or two requests a month. Others are more active. There is no minimum commitment." },
-  { q: "Are there any fees?", a: "Schollective is completely free for professors. We are funded to keep academic mentorship accessible, not monetized." },
-  { q: "Can I end a mentorship thread?", a: "Yes — you can close any thread at any time. Students can also close threads once their question has been answered." },
-  { q: "What if a student is inappropriate?", a: "We have a strict conduct policy. Any thread can be reported and reviewed. Accounts that violate our academic integrity standards are permanently removed." },
+  { q: "How much time does this take?", a: "Only what you choose. Most participating faculty spend five to ten minutes a month answering an occasional inquiry about literature or experimental methodology." },
+  { q: "Does this commit me to hosting a student in my group?", a: "No. The platform supports discrete academic questions. If a standout student contacts you and you happen to have an open position, you may choose to discuss it, but there is no expectation to take on advisees." },
+  { q: "Can I close a thread?", a: "Yes. You can archive an inquiry or close an active thread whenever a question has been addressed." },
+  { q: "Is there any cost?", a: "Schollective is free for faculty and students." },
 ];
 
 export default function ForProfessorsPage() {
@@ -50,23 +48,23 @@ export default function ForProfessorsPage() {
 
       {/* ── HERO ──────────────────────────────────────────── */}
       <section className="relative z-10 px-8 min-h-[75vh] flex flex-col items-center justify-center pt-36 md:pt-44 pb-20">
-        <div className="w-full max-w-[760px] mx-auto flex flex-col items-center text-center">
+        <div className="w-full max-w-[820px] mx-auto flex flex-col items-center text-center">
           <FadeIn className="w-full flex flex-col items-center">
-            <h1 className="font-display text-[clamp(2.8rem,6.5vw,5rem)] font-black tracking-[-0.04em] leading-[1.05] mb-8 text-slate-900 text-center">
-              Your expertise.<br />
-              <em className="italic font-light text-indigo-600">Their breakthrough.</em>
+            <h1 className="font-display text-[clamp(2.4rem,4.8vw,3.8rem)] font-black tracking-[-0.04em] leading-[1.1] mb-8 text-slate-900 text-center">
+              Fewer generic cold emails.<br />
+              <em className="italic font-light text-indigo-600">Better questions from students who actually read your work.</em>
             </h1>
           </FadeIn>
           <FadeIn delay={0.15} className="w-full flex flex-col items-center">
-            <p style={{ textAlign: "center" }} className="text-[clamp(1.05rem,1.4vw,1.25rem)] text-slate-600 leading-relaxed max-w-[620px] mb-10">
-              Schollective gives professors a structured, low-friction way to mentor motivated students from anywhere
-              in the world — without the noise of unsolicited cold emails, on a schedule that respects your time.
+            <p style={{ textAlign: "center" }} className="text-[clamp(1.05rem,1.4vw,1.25rem)] text-slate-600 leading-relaxed max-w-[640px] mb-10">
+              Schollective replaces unvetted email blasts with structured academic inquiries that include verified coursework,
+              technical background, and direct questions about your research.
             </p>
           </FadeIn>
           <FadeIn delay={0.2} className="w-full flex justify-center">
             <div className="flex justify-center gap-4 flex-wrap">
               <Button href="/signup?role=professor" variant="primary" size="lg">
-                Apply to Join →
+                Join as Faculty →
               </Button>
               <Button href="/about" variant="ghost" size="lg">
                 Learn About Us
@@ -81,7 +79,7 @@ export default function ForProfessorsPage() {
         <div className="w-full max-w-[920px] mx-auto">
           <FadeIn>
             <h2 className="font-display text-[clamp(2.2rem,4vw,3.5rem)] font-black tracking-[-0.04em] leading-[1.05] mb-14 text-slate-900">
-              Mentorship on<br /><em className="italic font-light text-indigo-600">your terms.</em>
+              Why faculty use Schollective<br /><em className="italic font-light text-indigo-600">instead of an open inbox.</em>
             </h2>
           </FadeIn>
           <div className="w-full">
@@ -124,20 +122,19 @@ export default function ForProfessorsPage() {
           <FadeIn>
             <div className="border border-indigo-300/50 rounded-3xl bg-white/90 shadow-sm w-full px-8 md:px-16" style={{ paddingTop: "6.5rem", paddingBottom: "6.5rem" }}>
               <h2 className="font-display font-black text-[clamp(1.8rem,2.8vw,2.4rem)] tracking-[-0.03em] text-slate-900 mb-6">
-                Rigorous by design.
+                Faculty Verification
               </h2>
               <div className="w-full flex flex-col items-center justify-center text-center">
-                <p className="text-center text-[1rem] text-slate-600/80 leading-relaxed max-w-[560px] mb-12 font-sans">
-                  To protect students and maintain the integrity of the platform, every professor application is manually
-                  reviewed. We cross-reference university directories, faculty pages, and institutional email addresses
-                  before approving any account.
+                <p className="text-center text-[1rem] text-slate-600/80 leading-relaxed max-w-[620px] mb-12 font-sans">
+                  To prevent impersonation, faculty registration requires an active .edu or accredited institutional email address
+                  and a link to your official department profile. Our team confirms institutional affiliation within 24 to 48 hours.
                 </p>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
                 {[
-                  { step: "1", label: "Submit Application", desc: "Complete your professor profile with your institutional email and faculty page URL." },
-                  { step: "2", label: "Manual Review", desc: "Our team verifies your identity against university records. Takes 24–72 hours." },
-                  { step: "3", label: "Approval & Access", desc: "Once approved, you can browse incoming requests and start accepting mentorships." },
+                  { step: "1", label: "Institutional Profile", desc: "Register with your active .edu or accredited institutional email and official department URL." },
+                  { step: "2", label: "Affiliation Check", desc: "Our team confirms your institutional profile and department standing within 24 to 48 hours." },
+                  { step: "3", label: "Direct Inquiries", desc: "Once verified, receive structured student questions directly in your dashboard on your terms." },
                 ].map(({ step, label, desc }) => (
                   <div key={step} className="p-7 bg-[#faf9f7] rounded-xl border border-indigo-300/40 flex flex-col gap-2">
                     <div className="text-[0.6rem] font-bold tracking-[0.25em] uppercase text-indigo-600 font-sans">Step {step}</div>
@@ -176,17 +173,14 @@ export default function ForProfessorsPage() {
       <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-indigo-300/40" style={{ paddingTop: "9rem", paddingBottom: "9rem" }}>
         <div className="w-full max-w-[920px] mx-auto">
           <FadeIn>
-            <div className="border border-indigo-300/50 rounded-3xl bg-indigo-300/10 flex flex-col items-center gap-12 text-center w-full px-8 md:px-16" style={{ paddingTop: "6.5rem", paddingBottom: "6.5rem" }}>
-              <div className="flex flex-col gap-5">
+            <div className="border border-indigo-300/50 rounded-3xl bg-indigo-300/10 flex flex-col items-center gap-10 text-center w-full px-8 md:px-16" style={{ paddingTop: "6.5rem", paddingBottom: "6.5rem" }}>
+              <div className="flex flex-col gap-4">
                 <h2 className="font-display font-black text-[clamp(2rem,3vw,2.8rem)] tracking-[-0.04em] text-slate-900 leading-tight">
-                  Ready to make an impact?
+                  Engage with students who actually read your work.
                 </h2>
-                <p className="text-[1rem] text-slate-600/80 leading-relaxed max-w-[480px] mx-auto font-sans text-center">
-                  Apply today. Manual verification means the students you meet have already been filtered for seriousness of purpose.
-                </p>
               </div>
               <Button href="/signup?role=professor" variant="primary" size="lg">
-                Apply as Professor →
+                Join Schollective as Faculty →
               </Button>
             </div>
           </FadeIn>
