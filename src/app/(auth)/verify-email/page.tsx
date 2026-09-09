@@ -103,7 +103,7 @@ export default function VerifyEmailPage() {
         {/* Headline */}
         <motion.h1 variants={fadeUp} className="font-display" style={{ fontSize: "clamp(2.4rem, 5vw, 3.5rem)", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.035em", lineHeight: 0.95 }}>
           Check your<br />
-          <em style={{ fontStyle: "italic", color: "rgba(15, 23, 42, 0.35)" }}>inbox.</em>
+          <em style={{ fontStyle: "italic", color: "#4f46e5", fontWeight: 300 }}>inbox.</em>
         </motion.h1>
 
         {/* Body */}

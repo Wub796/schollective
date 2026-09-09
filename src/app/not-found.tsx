@@ -26,7 +26,7 @@ export default function NotFound() {
         <div style={{ marginTop: "-3rem" }}>
           <h1 className="font-display" style={{ fontSize: "clamp(1.8rem, 4vw, 2.8rem)", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.035em", lineHeight: 1.1, marginBottom: "1rem" }}>
             Page not<br />
-            <em style={{ fontStyle: "italic", color: "rgba(15, 23, 42, 0.35)" }}>found.</em>
+            <em style={{ fontStyle: "italic", color: "#4f46e5", fontWeight: 300 }}>found.</em>
           </h1>
           <p style={{ fontSize: "0.88rem", color: "rgba(15, 23, 42, 0.38)", lineHeight: 1.8, fontFamily: "var(--font-sans)", maxWidth: 400 }}>
             The page you&apos;re looking for doesn&apos;t exist or has been moved.
