@@ -23,9 +23,10 @@ export interface TourStep {
 interface InteractiveOnboardingTourProps {
   role: "student" | "professor";
   steps: TourStep[];
+  suppressAutoLaunch?: boolean;
 }
 
-export function InteractiveOnboardingTour({ role, steps }: InteractiveOnboardingTourProps) {
+export function InteractiveOnboardingTour({ role, steps, suppressAutoLaunch = false }: InteractiveOnboardingTourProps) {
   const tourKey = `schollective-tour-${role}-v2`;
   const [isOpen, setIsOpen] = useState(false);
   const [currentStepIndex, setCurrentStepIndex] = useState(-1); // -1 = welcome, steps.length = complete
@@ -66,7 +67,7 @@ export function InteractiveOnboardingTour({ role, steps }: InteractiveOnboarding
         urlParams.get("tour") === "open";
       const completed = localStorage.getItem(tourKey) === "completed";
 
-      if (forceTour || !completed) {
+      if (forceTour || (!completed && !suppressAutoLaunch)) {
         window.dispatchEvent(
           new CustomEvent("schollective:tour-status", {
             detail: { active: true, role },
@@ -90,7 +91,7 @@ export function InteractiveOnboardingTour({ role, steps }: InteractiveOnboarding
         return () => clearTimeout(timer);
       }
     }
-  }, [tourKey, role]);
+  }, [tourKey, role, suppressAutoLaunch]);
 
   // Listen for on-demand tour launch events (e.g. from Admin preview banner or sidebar)
   useEffect(() => {

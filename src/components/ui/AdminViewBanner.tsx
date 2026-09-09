@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { setAdminViewAs } from "@/app/admin/dashboard/admin-actions";
-import { Eye, ArrowLeft, ArrowRightLeft, Loader2 } from "lucide-react";
+import { Eye, ArrowLeft, ArrowRightLeft, Loader2, Sparkles } from "lucide-react";
 
 interface AdminViewBannerProps {
   role: "student" | "professor";
@@ -88,6 +88,44 @@ export function AdminViewBanner({ role }: AdminViewBannerProps) {
 
       {/* ── Actions cluster ── */}
       <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", flexWrap: "wrap" }}>
+        {/* Launch Tour button */}
+        <button
+          type="button"
+          onClick={() => {
+            if (typeof window !== "undefined") {
+              window.dispatchEvent(new CustomEvent("schollective:launch-tour"));
+            }
+          }}
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "0.35rem",
+            padding: "0.35rem 0.85rem",
+            borderRadius: "100px",
+            border: "1px solid rgba(79, 70, 229, 0.25)",
+            background: "rgba(79, 70, 229, 0.08)",
+            color: "#4f46e5",
+            fontSize: "0.62rem",
+            fontWeight: 700,
+            letterSpacing: "0.08em",
+            textTransform: "uppercase",
+            cursor: "pointer",
+            fontFamily: "var(--font-sans)",
+            transition: "all 0.2s",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = "rgba(79, 70, 229, 0.16)";
+            e.currentTarget.style.borderColor = "rgba(79, 70, 229, 0.45)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = "rgba(79, 70, 229, 0.08)";
+            e.currentTarget.style.borderColor = "rgba(79, 70, 229, 0.25)";
+          }}
+        >
+          <Sparkles size={11} />
+          Launch Tour
+        </button>
+
         {/* Switch Role button */}
         <button
           type="button"

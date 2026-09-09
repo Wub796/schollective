@@ -109,7 +109,7 @@ function ProfessorDetail({
 
           <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
             <h1 className="font-display" style={{ fontSize: "clamp(2.4rem, 4vw, 3.2rem)", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.035em", lineHeight: 1.05 }}>
-              Dr. {displayName} <em style={{ fontStyle: "italic", color: "rgba(15, 23, 42, 0.35)" }}>{professor.last_name}</em>
+              Dr. {displayName} <em style={{ fontStyle: "italic", color: "#4f46e5", fontWeight: 300 }}>{professor.last_name}</em>
             </h1>
             <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap" }}>
               {/* Verified badge */}

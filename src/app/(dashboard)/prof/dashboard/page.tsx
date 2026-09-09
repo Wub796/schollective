@@ -124,7 +124,7 @@ export default async function ProfessorDashboard() {
     <div style={{ display: "flex", flexDirection: "column", gap: "3.5rem", maxWidth: "950px", paddingBottom: "6rem" }}>
 
       {/* Interactive Onboarding Tour for Faculty */}
-      <InteractiveOnboardingTour role="professor" steps={PROF_TOUR_STEPS} />
+      <InteractiveOnboardingTour role="professor" steps={PROF_TOUR_STEPS} suppressAutoLaunch={isAdminPreviewing} />
 
       {/* ── Header ──────────────────────────────────────────────── */}
       <header data-tour="tour-prof-header" style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
@@ -133,7 +133,7 @@ export default async function ProfessorDashboard() {
             fontSize: "clamp(2.6rem, 5vw, 4rem)", fontWeight: 900,
             color: "var(--text-primary)", letterSpacing: "-0.035em", lineHeight: 1.05,
           }}>
-            Dr. <em style={{ fontStyle: "italic", color: "rgba(15, 23, 42, 0.35)" }}>{displayName}</em>
+            Dr. <em style={{ fontStyle: "italic", color: "#4f46e5", fontWeight: 300 }}>{displayName}</em>
           </h1>
 
           {/* DB-backed availability toggle */}

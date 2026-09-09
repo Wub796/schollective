@@ -409,7 +409,7 @@ function OnboardingContent() {
           letterSpacing: "-0.035em", lineHeight: 0.95, marginBottom: "2rem",
         }}>
           Set up your<br />
-          <em style={{ fontStyle: "italic", color: "rgba(15, 23, 42, 0.35)" }}>academic profile.</em>
+          <em style={{ fontStyle: "italic", color: "#4f46e5", fontWeight: 300 }}>academic profile.</em>
         </motion.h1>
 
         <motion.p variants={fadeUp} style={{
