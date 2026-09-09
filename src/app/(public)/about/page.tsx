@@ -7,6 +7,8 @@ import { PublicNav } from "@/components/ui/PublicNav";
 import { PublicFooter } from "@/components/ui/PublicFooter";
 import { Button } from "@/components/ui/Button";
 
+import Image from "next/image";
+
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
 function FadeIn({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
@@ -27,11 +29,11 @@ const VALUES = [
 ];
 
 const TEAM = [
-  { initials: "AR", name: "Aiden Raj", desc: "Leads product development and faculty outreach across regional universities." },
-  { initials: "AS", name: "Ayaan Siddiqui", desc: "Manages student community growth and school partnership onboarding." },
-  { initials: "BW", name: "Benjamin Wu", desc: "Builds frontend interfaces and student onboarding flows." },
-  { initials: "JH", name: "Joseph Hu", desc: "Builds full-stack application architecture, AI review services, and data integrations." },
-  { initials: "MT", name: "Michelle Truong", desc: "Directs student research resources, academic workshops, and school partner collaborations." },
+  { initials: "AR", name: "Aiden Raj", desc: "Leads product development and faculty outreach across regional universities.", image: "/team/aiden.jpg" },
+  { initials: "AS", name: "Ayaan Siddiqui", desc: "Manages student community growth and school partnership onboarding.", image: "/team/ayaan.jpg" },
+  { initials: "BW", name: "Benjamin Wu", desc: "Builds frontend interfaces and student onboarding flows.", image: "/team/ben.jpg" },
+  { initials: "JH", name: "Joseph Hu", desc: "Builds full-stack application architecture, AI review services, and data integrations.", image: "/team/joseph.jpg" },
+  { initials: "MT", name: "Michelle Truong", desc: "Directs student research resources, academic workshops, and school partner collaborations.", image: "/team/michelle.jpg" },
 ];
 
 export default function AboutPage() {
@@ -122,8 +124,20 @@ export default function AboutPage() {
             {TEAM.map((m, i) => (
               <FadeIn key={m.name} delay={i * 0.07} className="w-full sm:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] max-w-[340px] flex">
                 <div className="p-8 border border-indigo-300/40 rounded-2xl bg-white w-full flex flex-col text-left transition-all duration-300 hover:shadow-md hover:border-indigo-600">
-                  <div className="w-12 h-12 rounded-xl bg-indigo-600 flex items-center justify-center mb-6 shadow-sm">
-                    <span className="font-display font-black text-lg text-white">{m.initials}</span>
+                  <div className="w-14 h-14 rounded-2xl overflow-hidden mb-6 shadow-sm border border-indigo-200/60 bg-indigo-50 flex-shrink-0">
+                    {m.image ? (
+                      <Image
+                        src={m.image}
+                        alt={m.name}
+                        width={56}
+                        height={56}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-indigo-600 flex items-center justify-center">
+                        <span className="font-display font-black text-lg text-white">{m.initials}</span>
+                      </div>
+                    )}
                   </div>
                   <div className="font-display font-bold text-[1.15rem] text-slate-900 tracking-[-0.02em] mb-2">{m.name}</div>
                   <p className="text-[0.88rem] text-slate-600/80 leading-relaxed font-sans mt-auto">{m.desc}</p>
