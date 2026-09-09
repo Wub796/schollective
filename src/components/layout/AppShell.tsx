@@ -15,9 +15,19 @@ interface AppShellProps {
 export function AppShell({ children, role = "student" }: AppShellProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [scrolled, setScrolled]       = useState(false);
+  const [isTourActive, setIsTourActive] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => { setSidebarOpen(false); }, [pathname]);
+
+  useEffect(() => {
+    const handleTourStatus = (e: Event) => {
+      const ce = e as CustomEvent<{ active: boolean }>;
+      setIsTourActive(Boolean(ce.detail?.active));
+    };
+    window.addEventListener("schollective:tour-status", handleTourStatus);
+    return () => window.removeEventListener("schollective:tour-status", handleTourStatus);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -53,15 +63,20 @@ export function AppShell({ children, role = "student" }: AppShellProps) {
       <header
         className="app-nav"
         style={{
-          background: scrolled ? "rgba(255, 255, 255, 0.65)" : "rgba(255, 255, 255, 0.45)",
+          background: isTourActive
+            ? "rgba(255, 255, 255, 0.95)"
+            : scrolled
+            ? "rgba(255, 255, 255, 0.65)"
+            : "rgba(255, 255, 255, 0.45)",
           backdropFilter: "blur(24px) saturate(190%)",
           WebkitBackdropFilter: "blur(24px) saturate(190%)",
-          borderBottom: scrolled
+          borderBottom: isTourActive || scrolled
             ? "1px solid rgba(15, 23, 42, 0.08)"
             : "1px solid rgba(15, 23, 42, 0.05)",
-          boxShadow: scrolled
+          boxShadow: isTourActive || scrolled
             ? "0 4px 30px -10px rgba(15, 23, 42, 0.08), inset 0 1px 0 0 rgba(255, 255, 255, 0.8)"
             : "none",
+          zIndex: isTourActive ? 10001 : undefined,
           transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
         }}
       >
