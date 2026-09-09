@@ -37,7 +37,7 @@ interface ThreadRow {
   topic: string;
   updated_at: string | Date;
   is_lead: boolean;
-  professor: { first_name: string | null; last_name: string | null; preferred_name: string | null; expertise_fields: unknown } | null;
+  professor: { first_name: string | null; last_name: string | null; preferred_name: string | null; honorific: string | null; expertise_fields: unknown } | null;
   lead: PersonSummary | null;
   collaborators: PersonSummary[];
   latest_content: string | null;
@@ -80,6 +80,7 @@ export default async function ThreadsPage() {
           'first_name', p.first_name,
           'last_name', p.last_name,
           'preferred_name', p.preferred_name,
+          'honorific', p.honorific,
           'expertise_fields', p.expertise_fields
         ) AS professor,
         json_build_object(
@@ -137,6 +138,7 @@ export default async function ThreadsPage() {
           'first_name', p.first_name,
           'last_name', p.last_name,
           'preferred_name', p.preferred_name,
+          'honorific', p.honorific,
           'institution', p.institution
         ) AS professor,
         json_build_object(
@@ -180,6 +182,7 @@ export default async function ThreadsPage() {
         first_name: row.professor?.first_name ?? "Unknown",
         last_name: row.professor?.last_name ?? null,
         preferred_name: row.professor?.preferred_name ?? null,
+        honorific: row.professor?.honorific ?? null,
         detail: parseJsonbArray(row.professor?.expertise_fields).join(", ") || "Professor",
       },
       latest_message: row.latest_content
