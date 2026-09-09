@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
-import { checkUserAiRateLimit } from "@/lib/ai/guardrails";
+import { checkDurableRateLimit } from "@/lib/rate-limit";
 import { parseResumePdf } from "@/lib/ai/resume-parser";
 import { isGeminiTransientError } from "@/lib/ai/client";
 
@@ -17,8 +17,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // 2. Sliding Window Rate-Limiting per User ID (5 uploads per 10 minutes)
-    const rateLimit = checkUserAiRateLimit(user.id, 5, 10 * 60 * 1000);
+    // 2. Sliding window per user (5 uploads per 10 minutes) — durable (DB)
+    // window shared across isolates, with the in-memory limiter as automatic
+    // fallback when the DB check cannot run.
+    const rateLimit = await checkDurableRateLimit("ai_parse_resume", user.id, 5, 10 * 60 * 1000);
     if (!rateLimit.allowed) {
       return NextResponse.json(
         {

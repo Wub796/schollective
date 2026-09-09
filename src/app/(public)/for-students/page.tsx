@@ -22,7 +22,7 @@ function FadeIn({ children, delay = 0, className = "" }: { children: React.React
 
 const HOW_IT_WORKS = [
   { n: "01", title: "Build your academic snapshot", body: "Add your coursework, technical skills, and current projects so faculty can see your background in 15 seconds." },
-  { n: "02", title: "Search by publication topic", body: "Find faculty actively publishing in specific subfields rather than digging through outdated department directories." },
+  { n: "02", title: "Search by research focus", body: "Find faculty by the subfields they actually publish in — with AI-matched recommendations based on your interests — instead of digging through outdated department directories." },
   { n: "03", title: "Read plain-English paper breakdowns", body: "Review summaries of recent lab findings so you can speak directly to what the researcher actually investigates." },
   { n: "04", title: "Draft a structured email", body: "Use an editor designed around faculty expectations to ask specific technical questions or inquire about mentorship." },
 ];

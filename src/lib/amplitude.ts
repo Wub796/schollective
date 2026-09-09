@@ -5,7 +5,7 @@ type AiMessageOptions = Parameters<AmplitudeAI["trackAiMessage"]>[0];
 const AMPLITUDE_AI_KEY =
   process.env.AMPLITUDE_AI_API_KEY ||
   process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY ||
-  "42fa9dfa0e18070bf773091bf6d7db9c";
+  "";
 
 // `AmplitudeAI` pulls in `@amplitude/analytics-node`, which cannot be resolved
 // inside the Cloudflare Worker bundle and makes the constructor throw at module
@@ -15,6 +15,10 @@ let client: AmplitudeAI | null | undefined;
 
 function getAiClient(): AmplitudeAI | null {
   if (client !== undefined) return client;
+  if (!AMPLITUDE_AI_KEY) {
+    client = null;
+    return client;
+  }
   try {
     client = new AmplitudeAI({
       apiKey: AMPLITUDE_AI_KEY,

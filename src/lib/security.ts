@@ -93,15 +93,20 @@ export function checkRateLimit(
 }
 
 /**
- * Extracts a client IP from NextRequest headers, with fallbacks for proxies.
+ * Extracts a client IP from request headers, with fallbacks for proxies.
+ *
+ * `cf-connecting-ip` is set by Cloudflare from the TCP peer and cannot be
+ * spoofed by the client; `x-forwarded-for` is a client-writable header, so
+ * trusting its first entry would let an attacker rotate fake IPs and bypass
+ * every per-IP rate limit. Only fall back to it behind proxies that strip the
+ * client's own value.
  */
 export function getClientIp(request: Request): string {
-  // Vercel / Cloudflare / standard proxy headers
   const headers = request.headers;
   return (
-    headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-    headers.get("x-real-ip") ??
     headers.get("cf-connecting-ip") ??
+    headers.get("x-real-ip") ??
+    headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
     "unknown"
   );
 }

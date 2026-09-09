@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { sql } from "@/lib/neon/db";
 import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { recommendProfessors } from "@/lib/ai/recommender";
-import { checkUserAiRateLimit } from "@/lib/ai/guardrails";
+import { checkDurableRateLimit } from "@/lib/rate-limit";
 import { checkRateLimit, getClientIp } from "@/lib/security";
 import type { ProfessorCandidate } from "@/lib/ai/recommender";
 
@@ -32,8 +32,9 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401, headers: PRIVATE_JSON_HEADERS });
     }
 
-    // User-specific AI rate limit
-    const rateCheck = checkUserAiRateLimit(user.id, 10, 10 * 60 * 1000);
+    // Durable (DB) window shared across isolates, with the in-memory limiter
+    // as automatic fallback when the DB check cannot run.
+    const rateCheck = await checkDurableRateLimit("ai_recommendations", user.id, 10, 10 * 60 * 1000);
     if (!rateCheck.allowed) {
       return NextResponse.json(
         { error: `AI recommendation limit reached. Please wait ${rateCheck.retryAfterSeconds} seconds.` },

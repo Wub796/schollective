@@ -2,11 +2,13 @@ import React from "react";
 import Link from "next/link";
 import { redirect, notFound } from "next/navigation";
 import { sql } from "@/lib/neon/db";
+import { runAs } from "@/lib/neon/user-context";
 import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { ChatThread } from "@/components/features/ChatThread";
 import { CloseThreadButton } from "@/components/features/CloseThreadButton";
 import { ArrowLeft, ShieldCheck } from "lucide-react";
 import { getThreadAccess, isSuspended } from "@/lib/authz";
+import type { ChatThreadProps } from "@/components/features/ChatThread";
 import { parseJsonbArray } from "@/lib/utils";
 import { markRead } from "./actions";
 
@@ -14,6 +16,24 @@ export const dynamic = "force-dynamic";
 
 interface MessagePageProps {
   params: Promise<{ id: string }>;
+}
+
+interface ParticipantRow {
+  id: string;
+  first_name: string | null;
+  last_name: string | null;
+  preferred_name: string | null;
+  role: string;
+  expertise_fields?: unknown;
+}
+
+interface MessageRow {
+  id: string;
+  request_id: string;
+  sender_id: string;
+  content: string;
+  read_at: string | null;
+  created_at: string;
 }
 
 export default async function MessagePage({ params }: MessagePageProps) {
@@ -32,29 +52,37 @@ export default async function MessagePage({ params }: MessagePageProps) {
   await markRead(requestId);
 
   const [studentRows, professorRows] = await Promise.all([
-    sql`SELECT id, first_name, last_name, preferred_name, role FROM profiles WHERE id = ${request.student_id} LIMIT 1;`,
-    sql`SELECT id, first_name, last_name, preferred_name, role, expertise_fields FROM profiles WHERE id = ${request.professor_id} LIMIT 1;`,
-  ]);
+    // Profiles are publicly readable, but run inside the viewer's context
+    // anyway so the whole page is consistently RLS-scoped.
+    runAs(user.id, async () => sql`SELECT id, first_name, last_name, preferred_name, role FROM profiles WHERE id = ${request.student_id} LIMIT 1;`),
+    runAs(user.id, async () => sql`SELECT id, first_name, last_name, preferred_name, role, expertise_fields FROM profiles WHERE id = ${request.professor_id} LIMIT 1;`),
+  ]) as [ParticipantRow[], ParticipantRow[]];
 
   const studentProfile = studentRows[0];
   const professorProfile = professorRows[0];
 
   const isProfessor = user.id === request.professor_id;
-  const student = (studentProfile ?? {}) as any;
-  const professor = (professorProfile ?? {}) as any;
-  const participant = (isProfessor ? student : professor) as any;
+  const participant: ParticipantRow = (isProfessor ? studentProfile : professorProfile) ?? {
+    id: "",
+    first_name: null,
+    last_name: null,
+    preferred_name: null,
+    role: isProfessor ? "student" : "professor",
+  };
   const participantName = participant.preferred_name || participant.first_name || "Unknown";
   const participantTitle =
     participant.role === "professor"
       ? `Dr. ${participantName} ${participant.last_name ?? ""}`
       : `${participantName} ${participant.last_name ?? ""}`;
 
-  const messages = await sql`
+  // RLS scopes messages to thread participants: the query must run under the
+  // signed-in user's database identity or every row is filtered out.
+  const messages = (await runAs(user.id, async () => sql`
     SELECT *
     FROM messages
     WHERE request_id = ${requestId}
     ORDER BY created_at ASC;
-  `;
+  `)) as MessageRow[];
 
 
 
@@ -103,7 +131,7 @@ export default async function MessagePage({ params }: MessagePageProps) {
                 {participant.role === "professor" && <ShieldCheck size={12} style={{ color: "#4f46e5", flexShrink: 0 }} />}
               </div>
               <div style={{ fontSize: "0.58rem", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: "#4f46e5", fontFamily: "var(--font-sans, monospace)" }}>
-                {participant.role === "professor" ? (parseJsonbArray((participant as any).expertise_fields)[0] || "Faculty") : "Student"}
+                {participant.role === "professor" ? (parseJsonbArray(participant.expertise_fields)[0] || "Faculty") : "Student"}
               </div>
             </div>
           </div>
@@ -135,9 +163,9 @@ export default async function MessagePage({ params }: MessagePageProps) {
       <main style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column" }}>
         <ChatThread
           requestId={requestId}
-          initialMessages={messages as any[]}
+          initialMessages={messages}
           currentUserId={session.user.id}
-          status={request.status as any}
+          status={request.status as ChatThreadProps["status"]}
         />
       </main>
     </div>
