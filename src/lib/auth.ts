@@ -90,6 +90,11 @@ export const auth = betterAuth({
     updateAge: 60 * 60 * 24,
   },
   advanced: {
+    // Secure cookies must key off the runtime environment, not the baseURL
+    // protocol: .env.local carries the production https baseURL, and Better
+    // Auth would otherwise emit `__Secure-…; Secure` cookies in `next dev`,
+    // which http://localhost browsers silently drop (sessions never stick).
+    useSecureCookies: process.env.NODE_ENV === "production",
     defaultCookieAttributes: {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -102,6 +107,7 @@ export const auth = betterAuth({
     "https://www.schollective.com",
     "https://schollective.schollective.workers.dev",
     "http://localhost:3000",
+    "http://localhost:3100",
     "http://localhost:8787",
     ...(process.env.BETTER_AUTH_URL ? [process.env.BETTER_AUTH_URL] : []),
     ...(process.env.NEXT_PUBLIC_APP_URL ? [process.env.NEXT_PUBLIC_APP_URL.replace(/\/$/, "")] : []),

@@ -231,7 +231,7 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
     setInterests((prev) => {
       if (prev.includes(trimmed)) return prev;
       if (prev.length >= 5) {
-        toast.error("You can select up to 5 academic interests.", { id: "interests-limit" });
+        toast.error("You can select up to 5 academic interests.");
         return prev;
       }
       added = true;
