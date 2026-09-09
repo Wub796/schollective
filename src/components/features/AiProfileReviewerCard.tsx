@@ -315,6 +315,10 @@ export const AiProfileReviewerCard = React.memo(function AiProfileReviewerCard({
     setAddedTopics((prev) => new Set(prev).add(tag));
   };
 
+  const addAllInterestTags = () => {
+    review?.recommended_topics?.forEach((topic) => addInterestTag(topic));
+  };
+
   return (
     <div className="mb-10 space-y-6">
       {/* Top Action Header Bar */}
@@ -565,10 +569,14 @@ export const AiProfileReviewerCard = React.memo(function AiProfileReviewerCard({
               {review.recommended_topics && review.recommended_topics.length > 0 && (
                 <div className="pt-3 border-t border-slate-100">
                   <div className="flex items-center justify-between mb-2.5">
-                    <span className="text-xs font-bold text-slate-600 flex items-center gap-1.5">
+                    <button
+                      type="button"
+                      onClick={addAllInterestTags}
+                      className="text-xs font-bold text-slate-600 flex items-center gap-1.5 cursor-pointer hover:text-indigo-700 transition-colors"
+                    >
                       <Sparkles size={13} className="text-indigo-600" />
                       Recommended Technical Sub-Fields (Click to append to interests)
-                    </span>
+                    </button>
                     <span className="text-[0.65rem] text-slate-400 font-medium">
                       Adds directly to active pitch
                     </span>

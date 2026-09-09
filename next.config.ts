@@ -24,8 +24,20 @@ const securityHeaders = [
   },
 ];
 
+// Pin the deployment id to the commit SHA. A Cloudflare Workers deploy rotates
+// server action ids, so a tab opened before a deploy keeps stale client bundles
+// and its next server action throws UnrecognizedActionError. A stable id is sent
+// as the x-deployment-id header, so Next.js can detect the client/server skew.
+const deploymentId =
+  process.env.WORKERS_CI_COMMIT_SHA ||
+  process.env.CF_PAGES_COMMIT_SHA ||
+  process.env.GITHUB_SHA ||
+  process.env.NEXT_DEPLOYMENT_ID ||
+  undefined;
+
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  deploymentId,
   eslint: {
     ignoreDuringBuilds: true,
   },
