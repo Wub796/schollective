@@ -241,7 +241,7 @@ export async function inviteCollaborators(requestId: string, studentIds: string[
       }
 
       const [professor] = await sql`
-        SELECT first_name, last_name, preferred_name FROM profiles
+        SELECT first_name, last_name, preferred_name, honorific FROM profiles
         WHERE id = ${access.request.professor_id} LIMIT 1;
       `;
       for (const studentId of fresh) {
