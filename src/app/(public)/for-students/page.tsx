@@ -44,7 +44,7 @@ export default function ForStudentsPage() {
       <section className="relative z-10 px-8 min-h-[75vh] flex flex-col items-center justify-center pt-36 md:pt-44 pb-20">
         <div className="w-full max-w-[760px] mx-auto flex flex-col items-center text-center">
           <FadeIn className="w-full flex flex-col items-center">
-            <h1 className="font-display text-[clamp(2.8rem,6.5vw,5rem)] font-black tracking-[-0.04em] leading-[1.05] mb-8 text-slate-900 text-center">
+            <h1 className="font-display text-[clamp(2.65rem,5.7vw,4.65rem)] font-black tracking-[-0.04em] leading-[1.08] mb-8 text-slate-900 text-center">
               Reach out to the people<br />
               <em className="italic font-light text-indigo-600">behind the research you read.</em>
             </h1>
