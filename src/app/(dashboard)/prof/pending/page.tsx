@@ -55,7 +55,7 @@ export default async function ProfessorPendingPage() {
               letterSpacing: "-0.03em", lineHeight: 1.1, marginBottom: "1rem",
             }}>
               Application Under{" "}
-              <em style={{ fontStyle: "italic", color: "var(--accent)", fontWeight: 300 }}>Review</em>
+              <em style={{ color: "var(--accent)" }}>Review</em>
             </h1>
             <p style={{
               fontSize: "0.9rem", color: "var(--text-secondary)", opacity: 0.75,

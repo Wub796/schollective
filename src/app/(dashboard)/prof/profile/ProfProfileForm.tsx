@@ -348,7 +348,7 @@ export function ProfProfileForm({ profile: initialProfile }: Props) {
                 transition: "all 0.2s ease",
               }}
             >
-              {isAccepting ? "✓ Accepting Requests" : "Not Accepting"}
+              {isAccepting ? "Accepting Requests" : "Not Accepting"}
             </button>
           </div>
 

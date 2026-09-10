@@ -8,7 +8,7 @@ import { RequestQueueCard } from "@/components/features/RequestQueueCard";
 import { AcceptingToggle } from "@/components/features/AcceptingToggle";
 import { ProfProfileForm } from "@/app/(dashboard)/prof/profile/ProfProfileForm";
 import { InteractiveOnboardingTour, TourStep } from "@/components/features/InteractiveOnboardingTour";
-import { Inbox } from "lucide-react";
+import { Inbox, Landmark, CircleDot, FileText, PencilLine, Eye, Save } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { givenName, honorificOf } from "@/lib/people";
 
@@ -19,43 +19,43 @@ const PROF_TOUR_STEPS: TourStep[] = [
     targetId: "tour-prof-header",
     title: "Your Faculty Dashboard",
     description: "Welcome to your command center. From here you can manage availability, review student requests, and fine-tune your research profile — all in one place.",
-    emoji: "🏛️",
+    icon: Landmark,
   },
   {
     targetId: "tour-availability-toggle",
     title: "Mentorship Availability",
     description: "Toggle whether your lab is currently accepting mentorship requests. When off, students won't be able to submit new requests — existing conversations remain open.",
-    emoji: "🟢",
+    icon: CircleDot,
   },
   {
     targetId: "tour-request-queue",
     title: "Incoming Request Queue",
     description: "This is where student outreach cards appear. Review their credentials, read their research statement, and accept or decline mentorship requests directly from here.",
-    emoji: "📬",
+    icon: Inbox,
   },
   {
     targetId: "tour-prof-profile-section",
     title: "Faculty Profile & Preferences",
     description: "This section header leads into your full editable faculty profile below — academic position, department, research focus, publications, office hours, and more.",
-    emoji: "📝",
+    icon: FileText,
   },
   {
     targetId: "tour-prof-profile-editor",
     title: "Edit Profile Details",
     description: "Update your academic credentials, research interests, accepted mentee levels, lab website, and featured publications. Students see this info when browsing mentors.",
-    emoji: "✏️",
+    icon: PencilLine,
   },
   {
     targetId: "tour-prof-tab-switcher",
     title: "Student View Preview",
     description: "Switch to 'Student View Preview' to see exactly how your profile card appears to prospective mentees. Perfect for testing your presentation before going live.",
-    emoji: "👁️",
+    icon: Eye,
   },
   {
     targetId: "tour-prof-save-button",
     title: "Save Faculty Profile",
     description: "After making changes, click 'Save Faculty Profile' to update your listing. Changes are immediately visible to students browsing the mentor directory.",
-    emoji: "💾",
+    icon: Save,
   },
 ];
 
@@ -152,7 +152,7 @@ export default async function ProfessorDashboard() {
             fontSize: "clamp(2.6rem, 5vw, 4rem)", fontWeight: 900,
             color: "var(--text-primary)", letterSpacing: "-0.035em", lineHeight: 1.05,
           }}>
-            {honorific ? `${honorific} ` : null}<em style={{ fontStyle: "italic", color: "var(--accent)", fontWeight: 300 }}>{displayName}</em>
+            {honorific ? `${honorific} ` : null}<em style={{ color: "var(--accent)" }}>{displayName}</em>
           </h1>
 
           {/* DB-backed availability toggle */}
