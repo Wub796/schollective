@@ -80,7 +80,7 @@ export default function FeaturesPage() {
         <div className="w-full max-w-[760px] mx-auto flex flex-col items-center text-center">
           <FadeIn className="w-full flex flex-col items-center">
             <Eyebrow>Core Capabilities</Eyebrow>
-            <h1 className="font-display text-[clamp(2.8rem,6.5vw,5rem)] font-black tracking-[-0.04em] leading-[1.05] mb-8 text-slate-900 text-center">
+            <h1 className="font-display text-[clamp(2.65rem,5.7vw,4.65rem)] font-black tracking-[-0.04em] leading-[1.08] mb-8 text-slate-900 text-center">
               Engineered for<br />
               <em className="italic font-light text-indigo-600">academic excellence.</em>
             </h1>

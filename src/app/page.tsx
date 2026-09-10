@@ -191,10 +191,7 @@ export default function LandingPage() {
         <section className="relative min-h-screen flex flex-col items-center justify-center text-center pt-36 md:pt-44 pb-20 px-6" style={{ background: "#fdfdfd" }}>
           <AnimatedBackground />
           <div className="relative z-10 w-full max-w-3xl mx-auto flex flex-col items-center text-center">
-            <h1
-              className="font-display font-bold text-slate-900 tracking-tighter leading-[1.08] text-center w-full mx-auto"
-              style={{ fontSize: "clamp(3rem, 6.5vw, 5.2rem)" }}
-            >
+            <h1 className="font-display text-[clamp(2.65rem,5.7vw,4.65rem)] font-black tracking-[-0.04em] leading-[1.08] text-slate-900 text-center w-full mx-auto">
               Find professors<br />
               <span className="italic font-light text-indigo-600">doing research you actually care about.</span>
             </h1>
