@@ -13,6 +13,7 @@ import { PreferredNameHint } from "@/components/profile/PreferredNameHint";
 import { DEFAULT_FACULTY_HONORIFIC } from "@/lib/people";
 import { validateEmail, type EmailValidationResult } from "@/lib/validators-client";
 import posthog from "posthog-js";
+import { X, AlertTriangle, Check } from "lucide-react";
 
 
 export const dynamic = "force-dynamic";
@@ -350,7 +351,7 @@ function SignupContent() {
               fontFamily: "var(--font-sans)",
               whiteSpace: "nowrap",
             }}>
-              Sign In →
+              Log In
             </span>
           </Link>
         </div>
@@ -371,7 +372,7 @@ function SignupContent() {
           {/* Headline */}
           <motion.h1 variants={fadeUp} className="font-display" style={{ fontSize: "clamp(2.6rem, 6vw, 3.8rem)", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.035em", lineHeight: 0.95, marginBottom: "3.5rem" }}>
             Create your<br />
-            <em style={{ fontStyle: "italic", color: "var(--accent)", fontWeight: 300 }}>account.</em>
+            <em style={{ color: "var(--accent)" }}>account.</em>
           </motion.h1>
 
           {/* Role selector — pill tabs */}
@@ -486,10 +487,14 @@ function SignupContent() {
                             }`,
                         }}
                       >
-                        <span style={{ fontSize: "0.7rem" }}>
-                          {emailVal.state === "error" ? "✕"
-                            : emailVal.state === "warn" ? "⚠"
-                              : "✓"}
+                        <span style={{ display: "inline-flex", alignItems: "center", flexShrink: 0 }}>
+                          {emailVal.state === "error" ? (
+                            <X size={12} strokeWidth={3} aria-hidden="true" />
+                          ) : emailVal.state === "warn" ? (
+                            <AlertTriangle size={12} strokeWidth={2.6} aria-hidden="true" />
+                          ) : (
+                            <Check size={12} strokeWidth={3} aria-hidden="true" />
+                          )}
                         </span>
                         {emailVal.message}
                       </motion.div>
