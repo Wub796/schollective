@@ -66,8 +66,11 @@ psql "$DATABASE_URL" -f db/migrations/0006_rls_scope_profiles_and_grants.sql
 
 Apply them as a role that owns the tables (`neondb_owner`), not as the role the
 app connects with. `0008` (friends and group threads), `0009` (live schema
-drift) and `0010` (self-service account deletion) must be applied **before**
-deploying the code that depends on them — see [`db/README.md`](db/README.md).
+drift), `0010` (self-service account deletion) and `0013` (beta feedback) must
+be applied **before** deploying the code that depends on them — see
+[`db/README.md`](db/README.md). The runtime bootstrap can create `0013`'s table,
+but not the policies that keep one person's report private to them, so a
+database that skips it stores feedback every caller can read.
 Deleting a disabled account past its grace window is a maintenance script rather
 than anything scheduled, because the Worker declares no cron triggers.
 
