@@ -8,7 +8,8 @@ import {
   type ProfileReviewJob,
 } from "@/lib/ai/profile-review-jobs";
 import type { StudentProfileData } from "@/lib/ai/profile-reviewer";
-import { checkUserAiRateLimit, sanitizeAiPromptInput } from "@/lib/ai/guardrails";
+import { sanitizeAiPromptInput } from "@/lib/ai/guardrails";
+import { checkDurableRateLimit } from "@/lib/rate-limit";
 import { checkRateLimit, getClientIp } from "@/lib/security";
 import { runAs } from "@/lib/neon/user-context";
 
@@ -187,7 +188,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401, headers: PRIVATE_JSON_HEADERS });
     }
 
-    const rateCheck = checkUserAiRateLimit(user.id, 10, 10 * 60 * 1000);
+    // Durable (DB) window shared across isolates, with the in-memory limiter
+    // as automatic fallback when the DB check cannot run.
+    const rateCheck = await checkDurableRateLimit("ai_review", user.id, 10, 10 * 60 * 1000);
     if (!rateCheck.allowed) {
       return NextResponse.json(
         { error: `AI request limit reached. Please wait ${rateCheck.retryAfterSeconds} seconds.` },

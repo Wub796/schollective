@@ -13,7 +13,7 @@ interface Message {
   created_at: string;
 }
 
-interface ChatThreadProps {
+export interface ChatThreadProps {
   requestId: string;
   initialMessages: Message[];
   currentUserId: string;
@@ -51,6 +51,9 @@ export function ChatThread({
   const [inputValue, setInputValue] = useState("");
   const [sending, setSending] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  // While a send is in flight its optimistic bubble exists only on the client;
+  // polling must not replace the list and make it blink out mid-flight.
+  const sendingRef = useRef(false);
 
   const scrollToBottom = () => {
     if (scrollRef.current) {
@@ -66,12 +69,21 @@ export function ChatThread({
     let mounted = true;
 
     const fetchLatestMessages = async () => {
+      if (sendingRef.current) return;
       try {
         const res = await fetch(`/api/messages/${requestId}`);
         if (!res.ok) return;
         const data = await res.json();
         if (data.messages && mounted) {
-          setMessages(data.messages);
+          setMessages((prev) => {
+            // The poll is authoritative for real messages, but an optimistic
+            // send from this client may not have reached the server yet —
+            // merge it back instead of letting it blink out of the thread.
+            const pending = prev.filter(
+              (m) => m.id.startsWith("optimistic-") && !data.messages.some((rm: Message) => rm.content === m.content && rm.sender_id === m.sender_id)
+            );
+            return [...data.messages, ...pending];
+          });
         }
       } catch (err) {
         console.error("Messages poll error:", err);
@@ -90,6 +102,7 @@ export function ChatThread({
     if (!inputValue.trim() || sending || status !== "active") return;
 
     setSending(true);
+    sendingRef.current = true;
     const content = inputValue.trim();
     setInputValue("");
 
@@ -110,15 +123,14 @@ export function ChatThread({
         toast.error(result.error);
         setInputValue(content);
       }
-      // On success: realtime will replace the optimistic msg with the real one
-      // The dedup check (prev.find m.id === newMessage.id) won't match the temp id,
-      // so the real message appends and we clean up the optimistic one
+      // On success the next poll picks the stored message up.
     } catch {
       setMessages((prev) => prev.filter((m) => m.id !== optimisticMsg.id));
       toast.error("Failed to send message.");
       setInputValue(content);
     } finally {
       setSending(false);
+      sendingRef.current = false;
     }
   };
 

@@ -11,8 +11,10 @@
 
 export const CONSENT_COOKIE = "schollective-cookie-consent";
 const MAX_AGE = 60 * 60 * 24 * 365;
-const AMPLITUDE_API_KEY =
-  process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY || "42fa9dfa0e18070bf773091bf6d7db9c";
+// Configured per environment (NEXT_PUBLIC_AMPLITUDE_API_KEY). No literal
+// fallback: analytics keys belong in env config, and baking one into the
+// bundle means rotating it requires a deploy even for a client-side value.
+const AMPLITUDE_API_KEY = process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY || "";
 
 export type ConsentValue = "accepted" | "declined";
 
