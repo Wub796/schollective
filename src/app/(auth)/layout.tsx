@@ -2,7 +2,7 @@
  * (auth) layout — centered auth pages (login, signup).
  * No AppShell. The pages handle their own min-h-screen centering.
  */
-import { AnimatedBackground } from "@/components/ui/AnimatedBackground";
+import { PageBackground } from "@/components/ui/PageBackground";
 
 export default function AuthLayout({
   children,
@@ -11,7 +11,7 @@ export default function AuthLayout({
 }) {
   return (
     <>
-      <AnimatedBackground />
+      <PageBackground />
       {children}
     </>
   );
