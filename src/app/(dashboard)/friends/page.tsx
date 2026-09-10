@@ -72,7 +72,7 @@ export default async function FriendsPage() {
       <header style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
         <h1 className="font-display" style={{ fontSize: "clamp(2.4rem, 4.5vw, 3.6rem)", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.035em", lineHeight: 1.1 }}>
           {givenName(profile, "Scholar")}&apos;s{" "}
-          <em style={{ fontStyle: "italic", color: "var(--accent)", fontWeight: 300 }}>network</em>
+          <em style={{ color: "var(--accent)" }}>network</em>
         </h1>
         <p style={{ fontSize: "0.95rem", color: "var(--text-secondary)", opacity: 0.75, fontWeight: 400, maxWidth: "42rem", lineHeight: 1.8, fontFamily: "var(--font-sans)", marginTop: "0.25rem" }}>
           Find classmates and keep track of friend requests. Friends can be added as collaborators

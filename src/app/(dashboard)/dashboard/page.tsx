@@ -5,6 +5,7 @@ import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { StudentProfileForm } from "@/app/(dashboard)/profile/StudentProfileForm";
 import { InteractiveOnboardingTour, TourStep } from "@/components/features/InteractiveOnboardingTour";
 import { givenName } from "@/lib/people";
+import { Home, Camera, Eye, Lightbulb, Bot, PencilLine, Save } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -13,43 +14,43 @@ const STUDENT_TOUR_STEPS: TourStep[] = [
     targetId: "tour-dashboard-header",
     title: "Your Dashboard Hub",
     description: "This is your personalized research dashboard. Everything you need to manage your Schollective profile, track your progress, and connect with mentors lives here.",
-    emoji: "🏠",
+    icon: Home,
   },
   {
     targetId: "tour-profile-avatar",
     title: "Profile Photo & Identity",
     description: "Upload a professional profile picture and see your name, major, and institution at a glance. Professors form first impressions from this — make it count!",
-    emoji: "📷",
+    icon: Camera,
   },
   {
     targetId: "tour-tab-switcher",
     title: "Edit vs Faculty View Preview",
     description: "Switch between editing your profile and seeing exactly how professors view your candidate card. Use this to test and perfect your presentation before reaching out.",
-    emoji: "👁️",
+    icon: Eye,
   },
   {
     targetId: "tour-education-guidance",
     title: "Dynamic Education Guidance",
     description: "This smart banner updates with tailored advice based on your education level — high school, undergrad, or graduate. Follow its tips to strengthen your profile.",
-    emoji: "💡",
+    icon: Lightbulb,
   },
   {
     targetId: "tour-ai-reviewer",
     title: "AI-Powered Profile Review",
     description: "Get instant AI feedback on your profile strength. It analyzes your bio, interests, and experience to give you a score and actionable improvement suggestions.",
-    emoji: "🤖",
+    icon: Bot,
   },
   {
     targetId: "tour-profile-editor",
     title: "Profile Form Sections",
     description: "Edit all your academic details here: personal info, education standing, research interests, coursework, technical skills, portfolio links, and mentorship preferences.",
-    emoji: "✏️",
+    icon: PencilLine,
   },
   {
     targetId: "tour-save-button",
     title: "Save Your Changes",
     description: "Don't forget to save! After editing any field, click 'Save Student Profile' to persist your updates. Your profile will be immediately visible to professors.",
-    emoji: "💾",
+    icon: Save,
   },
 ];
 
@@ -85,7 +86,7 @@ export default async function StudentDashboard() {
             color: "var(--text-primary)", letterSpacing: "-0.035em", lineHeight: 1.1,
           }}>
             Welcome back,{" "}
-            <em style={{ fontStyle: "italic", color: "var(--accent)", fontWeight: 300 }}>{displayName}</em>
+            <em style={{ color: "var(--accent)" }}>{displayName}</em>
           </h1>
         </div>
         <p style={{
