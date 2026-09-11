@@ -56,7 +56,7 @@ export default function TermsPage() {
       <div style={{ maxWidth: "800px", margin: "0 auto", padding: "9rem 2rem 6rem", display: "flex", flexDirection: "column", gap: "4.5rem" }}>
         <div>
           <h1 className="font-display" style={{ fontSize: "clamp(2.4rem, 5vw, 3.8rem)", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.04em", lineHeight: 1.05, marginBottom: "0.75rem" }}>
-            Terms of <em style={{ fontStyle: "italic", color: "var(--accent)", fontWeight: 300 }}>Service</em>
+            Terms of Service
           </h1>
           <p style={{ fontSize: "0.88rem", color: "var(--text-secondary)", opacity: 0.75, fontFamily: "var(--font-sans)" }}>
             Last updated: May 2025
