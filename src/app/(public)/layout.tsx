@@ -2,7 +2,7 @@
  * (public) layout — marketing / informational pages (features, etc.).
  * No AppShell. Pages manage their own nav and layout.
  */
-import { AnimatedBackground } from "@/components/ui/AnimatedBackground";
+import { PageBackground } from "@/components/ui/PageBackground";
 
 export default function PublicLayout({
   children,
@@ -11,7 +11,7 @@ export default function PublicLayout({
 }) {
   return (
     <>
-      <AnimatedBackground />
+      <PageBackground />
       {children}
     </>
   );
