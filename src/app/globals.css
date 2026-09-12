@@ -4,8 +4,13 @@
    THEME — Tailwind v4 tokens
    ═══════════════════════════════════════════════════════════════ */
 @theme {
-  --font-sans: "Berthold", "Berthold Akzidenz-Grotesk", var(--font-sans), system-ui, sans-serif;
-  --font-display: "Recoleta", "Recoletta", var(--font-display), Georgia, serif;
+  /* The two real faces, assigned by next/font in `layout.tsx` (Mulish and
+     Arima) under the property names below. These must stay `var()` references:
+     a literal family name here would win the cascade over the value next/font
+     puts on <html>, and the typeface the site declares would stop being the
+     typeface it renders. */
+  --font-sans: var(--font-mulish), system-ui, sans-serif;
+  --font-display: var(--font-arima), Georgia, serif;
 
   /* App shell dimensions */
   --sidebar-width: 220px;
@@ -17,43 +22,56 @@
   --z-base: 10;
   --z-sidebar: 20;
   --z-backdrop: 25;
-  --z-modal: 30;
   --z-toast: 9999;
-  --z-cursor: 50;
 
-  /* ── Cream / Off-white base palette ────── */
-  --bg-base:      #faf9f7;  /* warm cream off-white            */
-  --bg-surface-1: #ffffff;  /* lifted card surface             */
-  --bg-surface-2: #f5f3ff;  /* indigo-tinted surface           */
-  --bg-surface-3: #ede9fe;  /* indigo-100                      */
+  /* ── Palette — the single source of truth ───────────────────────
+     Literal values live here and nowhere else. Every other colour token
+     below is an alias onto one of these, and these are also the names
+     Tailwind turns into utilities, so templates can write `bg-paper`,
+     `text-ink-soft`, `border-line` instead of a literal hex or an
+     off-token Tailwind colour like `slate-500`. */
+  --color-paper:       #faf9f7;  /* warm cream page ground          */
+  --color-surface:     #ffffff;  /* lifted surface                  */
+  --color-surface-alt: #f5f3ff;  /* indigo-tinted surface           */
+  --color-accent:      #4f46e5;  /* the one accent hue              */
+  --color-accent-alt:  #6366f1;
+  --color-ink:         #0f172a;  /* primary text                    */
+  --color-ink-soft:    #475569;
+  --color-ink-mute:    #64748b;
+  --color-line:        #e2e8f0;
+  --color-line-strong: #cbd5e1;
+  --color-line-focus:  #a5b4fc;
 
-  /* Accent section */
-  --bg-accent-section: #eef2ff;  /* indigo-50                  */
+  /* ── Semantic aliases ──────────────────────────────────────────
+     The names the rest of the codebase and this file already speak. */
+  --bg-base:      var(--color-paper);
+  --bg-surface-1: var(--color-surface);
+  --bg-surface-2: var(--color-surface-alt);
+  --bg-surface-3: #ede9fe;
 
-  --text-primary:   #0f172a;  /* slate 900                     */
-  --text-secondary: #475569;  /* slate 600                     */
-  --text-tertiary:  #64748b;  /* slate 500                     */
+  --text-primary:   var(--color-ink);
+  --text-secondary: var(--color-ink-soft);
+  --text-tertiary:  var(--color-ink-mute);
 
-  /* Vibrant Indigo primary accent — #4f46e5 */
-  --accent:       #4f46e5;
+  --accent:       var(--color-accent);
   --accent-dim:   rgba(79, 70, 229, 0.08);
   --accent-glow:  rgba(79, 70, 229, 0.15);
 
-  /* Indigo mid-tone */
-  --accent-blue:     #6366f1;
-  --accent-blue-dim: rgba(99, 102, 241, 0.12);
+  --accent-blue:     var(--color-accent-alt);
 
-  --border:       #e2e8f0;
-  --border-hover: #cbd5e1;
-  --border-focus: #a5b4fc;  /* indigo-300                      */
+  --border:       var(--color-line);
+  --border-hover: var(--color-line-strong);
+  --border-focus: var(--color-line-focus);
 
-  --glass-bg:     rgba(255, 255, 255, 0.85);
-  --glass-border: rgba(226, 232, 240, 0.8);
-  --glass-blur:   24px;
-  --glass-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-
-  --card-padding: 2rem;
-  --card-radius:  0.75rem;
+  /* ── Radius grammar ─────────────────────────────────────────────
+     Radius is assigned by the ROLE of the element, not per-component taste.
+     Pick the token that matches the role; do not write a new number.
+       --radius-control   buttons, inputs, pills, nav items (fully round)
+       --radius-surface    cards, panels, tables, mockup windows
+       --radius-inset      nested elements inside a surface */
+  --radius-control: 999px;
+  --radius-surface: 14px;
+  --radius-inset:    10px;
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -87,8 +105,7 @@ html {
 }
 
 body {
-  background: linear-gradient(160deg, #faf9f7 0%, #f5f3ff 40%, #faf9f7 70%, #fefce8 100%);
-  background-attachment: fixed;
+  background: var(--bg-base);
   color: var(--text-primary);
   font-family: var(--font-sans);
   line-height: 1.75;
@@ -135,73 +152,21 @@ body {
   }
 }
 
-/* ─── Tracking tight display font ──────────────────────────── */
-.tracking-tighter-extreme {
-  letter-spacing: -0.05em;
+/* ═══════════════════════════════════════════════════════════════
+   PAGE WASH — the whole ambient backdrop, and it is static
+   ═══════════════════════════════════════════════════════════════ */
+.page-wash {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-noise);
+  pointer-events: none;
+  background: radial-gradient(70% 55% at 50% 0%, var(--accent-dim) 0%, transparent 68%);
 }
 
 /* ── Display font utility ────────────────────────────────────── */
 .font-display {
   font-family: var(--font-display);
   font-feature-settings: "kern" 1, "liga" 1, "calt" 1, "swsh" 1;
-}
-
-/* ── Public page centering — all public pages are centered ──── */
-.public-page-centered {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-}
-
-/* Force centered within max-width public wrappers */
-.public-page-centered > * {
-  width: 100%;
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   NOISE OVERLAY — removed for clean solid look
-   ═══════════════════════════════════════════════════════════════ */
-.noise-overlay {
-  display: none;
-}
-
-@keyframes noise-drift {
-  0%   { transform: translate(0,      0);      }
-  10%  { transform: translate(-5%,  -10%);    }
-  20%  { transform: translate(-15%, -5%);     }
-  30%  { transform: translate(7%,   -12%);    }
-  40%  { transform: translate(-3%,   8%);     }
-  50%  { transform: translate(-12%,  5%);     }
-  60%  { transform: translate(10%,   4%);     }
-  70%  { transform: translate(3%,    -8%);    }
-  80%  { transform: translate(-8%,   11%);    }
-  90%  { transform: translate(6%,    4%);     }
-  100% { transform: translate(0,      0);      }
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   IGLOO-STYLE SECTION MARKER
-   ═══════════════════════════════════════════════════════════════ */
-.section-marker {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  font-family: var(--font-sans);
-  font-weight: 600;
-  font-size: 0.65rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--text-tertiary);
-}
-
-.section-marker::before {
-  content: '';
-  display: block;
-  width: 2rem;
-  height: 1px;
-  background: var(--border);
-  flex-shrink: 0;
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -228,53 +193,6 @@ body {
 .link-underline:hover::after {
   transform: scaleX(1);
 }
-
-/* ═══════════════════════════════════════════════════════════════
-   PERSPECTIVE GRID — CSS 3D hero plane (zero JS cost)
-   ═══════════════════════════════════════════════════════════════ */
-.perspective-grid-wrap {
-  perspective: 800px;
-  perspective-origin: 50% 38%;
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.perspective-grid-plane {
-  position: absolute;
-  inset: -20% -50%;
-  transform: rotateX(72deg);
-  transform-origin: 50% 0%;
-  background-image:
-    linear-gradient(rgba(129, 140, 248, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(129, 140, 248, 0.05) 1px, transparent 1px);
-  background-size: 56px 56px;
-  animation: grid-scroll 14s linear infinite;
-  /* Fade out toward camera */
-  mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 30%, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 100%);
-  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 30%, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 100%);
-}
-
-@keyframes grid-scroll {
-  from { background-position: 0 0; }
-  to   { background-position: 0 56px; }
-}
-
-@keyframes marquee {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
-}
-
-@keyframes ping {
-  75%, 100% { transform: scale(2); opacity: 0; }
-}
-
-/* ─── Global grain overlay — removed for light theme ─────────────────── */
-body::after {
-  display: none;
-}
-
 
 /* ═══════════════════════════════════════════════════════════════
    APP SHELL — CSS Grid layout
@@ -379,171 +297,6 @@ body::after {
   }
 }
 
-.page-section {
-  padding-block: 5rem;
-}
-
-/* Dashboard-specific container with tighter max-width */
-.dashboard-container {
-  width: 100%;
-  max-width: 72rem;
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 1.25rem;
-  padding-right: 1.25rem;
-}
-
-@media (min-width: 640px) {
-  .dashboard-container {
-    padding-left: 2rem;
-    padding-right: 2rem;
-  }
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   GLASS SYSTEM — light mode surfaces
-   ═══════════════════════════════════════════════════════════════ */
-.glass {
-  background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-  border: 1px solid var(--glass-border);
-  border-radius: var(--card-radius);
-  box-shadow: var(--glass-shadow);
-}
-
-.glass-card {
-  background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-  border: 1px solid var(--glass-border);
-  border-radius: var(--card-radius);
-  box-shadow: var(--glass-shadow);
-  padding: var(--card-padding);
-}
-
-.glass-card-interactive {
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-  cursor: pointer;
-}
-
-.glass-card-interactive:hover {
-  border-color: var(--border-hover);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
-}
-
-.glass-elevated {
-  background: rgba(255, 255, 255, 0.98);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid var(--border);
-  border-radius: var(--card-radius);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
-}
-
-/* Light surface card — primary card primitive */
-.surface-card {
-  background: var(--bg-surface-1);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.surface-card:hover {
-  border-color: var(--border-hover);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   ADVANCED GLASSMORPHISM (Refractive)
-   ═══════════════════════════════════════════════════════════════ */
-.glass-advanced {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(48px) saturate(180%);
-  -webkit-backdrop-filter: blur(48px) saturate(180%);
-  border: 1px solid var(--border);
-  box-shadow: 
-    0 4px 24px -4px rgba(0, 0, 0, 0.05),
-    inset 0 1px 1px rgba(255, 255, 255, 0.5);
-  border-radius: 24px;
-}
-
-.glass-refraction {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.7) 100%);
-  backdrop-filter: blur(64px) saturate(200%);
-  -webkit-backdrop-filter: blur(64px) saturate(200%);
-  border: 1px solid var(--border);
-  box-shadow: 
-    0 8px 32px 0 rgba(0, 0, 0, 0.06),
-    inset 0 1px 2px rgba(255, 255, 255, 0.8);
-  border-radius: 32px;
-  position: relative;
-  overflow: hidden;
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   GRID UTILITIES
-   ═══════════════════════════════════════════════════════════════ */
-.grid-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1rem;
-}
-
-.grid-stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 0.75rem;
-}
-
-.grid-2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-}
-
-.grid-3 {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-}
-
-@media (max-width: 639px) {
-  .grid-2,
-  .grid-3 {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   DECONSTRUCTED GALLERY GRID
-   ═══════════════════════════════════════════════════════════════ */
-.gallery-grid {
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  gap: 2rem;
-  width: 100%;
-}
-
-.gallery-item {
-  position: relative;
-  overflow: hidden;
-}
-
-.gallery-item-full { grid-column: span 12; }
-.gallery-item-half { grid-column: span 6; }
-.gallery-item-third { grid-column: span 4; }
-.gallery-item-two-thirds { grid-column: span 8; }
-.gallery-item-offset-left { grid-column: 2 / span 10; }
-.gallery-item-offset-right { grid-column: 3 / span 10; }
-
-@media (max-width: 1024px) {
-  .gallery-item-half, .gallery-item-third, .gallery-item-two-thirds, .gallery-item-offset-left, .gallery-item-offset-right {
-    grid-column: span 12;
-  }
-}
-
 /* ═══════════════════════════════════════════════════════════════
    NAV — fixed top bar (monochromatic)
    ═══════════════════════════════════════════════════════════════ */
@@ -595,10 +348,6 @@ body::after {
 @media (max-width: 1023px) {
   .nav-hamburger {
     display: flex;
-  }
-
-  .app-nav-links {
-    display: none;
   }
 }
 
@@ -735,24 +484,9 @@ body::after {
 /* ═══════════════════════════════════════════════════════════════
    ANIMATIONS
    ═══════════════════════════════════════════════════════════════ */
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50%       { transform: translateY(-8px); }
-}
-
-@keyframes fade-up {
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
 @keyframes fade-in {
   from { opacity: 0; }
   to   { opacity: 1; }
-}
-
-@keyframes shimmer {
-  from { background-position: -200% center; }
-  to   { background-position: 200% center; }
 }
 
 @keyframes beta-ticker-scroll {
@@ -762,17 +496,7 @@ body::after {
   to   { transform: translateX(-25%); }
 }
 
-.animate-float    { animation: float 9s ease-in-out infinite; }
-.animate-fade-up  { animation: fade-up 0.55s cubic-bezier(0.22, 1, 0.36, 1) both; }
 .animate-fade-in  { animation: fade-in 0.35s ease both; }
-
-/* Stagger utilities */
-.delay-75  { animation-delay: 75ms; }
-.delay-100 { animation-delay: 100ms; }
-.delay-150 { animation-delay: 150ms; }
-.delay-200 { animation-delay: 200ms; }
-.delay-300 { animation-delay: 300ms; }
-.delay-400 { animation-delay: 400ms; }
 
 /* ═══════════════════════════════════════════════════════════════
    TYPOGRAPHY UTILITIES
@@ -785,32 +509,29 @@ body::after {
   color: var(--text-tertiary);
 }
 
-.eyebrow-accent {
-  font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--text-secondary);
-}
-
-.tracking-tighter-extreme {
-  letter-spacing: -0.06em;
-}
-
-.hover-cinematic {
-  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease;
-  display: inline-block;
-}
-.hover-cinematic:hover {
-  transform: translateX(12px);
-  opacity: 0.6;
-}
-
 /* ═══════════════════════════════════════════════════════════════
-   HAIRLINE DIVIDERS
+   SKIP LINK — keyboard users land here first, then jump the nav
    ═══════════════════════════════════════════════════════════════ */
-.hairline {
-  border-color: var(--border);
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: var(--z-toast);
+  padding: 0.6rem 1rem;
+  border-radius: var(--radius-inset);
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-decoration: none;
+  transform: translateY(-200%);
+  transition: transform 0.2s ease;
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+  outline: 2px solid var(--text-primary);
+  outline-offset: 2px;
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -854,7 +575,7 @@ a, button, [role="button"] {
 
 select {
   border: 1px solid rgba(99, 102, 241, 0.2);
-  border-radius: 100px;
+  border-radius: var(--radius-control);
   outline: none;
 }
 
@@ -872,87 +593,14 @@ a:not([class]):hover {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   FLUID AURORA BACKGROUND (Removed for solid theme)
-   ═══════════════════════════════════════════════════════════════ */
-.aurora-bg {
-  display: none;
-}
-.aurora-blob-1, .aurora-blob-2 {
-  display: none;
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   MICRO-INTERACTIONS
-   ═══════════════════════════════════════════════════════════════ */
-.hover-lift {
-  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s ease;
-}
-.hover-lift:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.5);
-}
-
-/* Professor card hover border */
-.professor-card-hover:hover {
-  border-color: var(--border-hover) !important;
-}
-
-/* Admin Nav Links */
-.admin-nav-link div {
-  transition: color 0.2s ease;
-}
-.admin-nav-link:hover div {
-  color: var(--accent) !important;
-}
-
-.admin-nav-button div {
-  transition: all 0.2s ease;
-}
-.admin-nav-button:hover div {
-  color: var(--accent) !important;
-  border-color: var(--border-focus) !important;
-}
-
-/* Quick Action Cards */
-.quick-action-card {
-  transition: background 0.2s, border-color 0.2s;
-}
-.quick-action-card:hover {
-  background: var(--bg-surface-2) !important;
-  border-color: var(--border-hover) !important;
-}
-
-/* ═══════════════════════════════════════════════════════════════
    RESPONSIVE DASHBOARD HELPERS
    ═══════════════════════════════════════════════════════════════ */
-
-/* Two-col layout used in student dashboard body */
-.dash-two-col {
-  display: grid;
-  grid-template-columns: 1fr 2fr;
-  gap: 3rem;
-  align-items: start;
-}
 
 /* Stat card grid — auto-fills for both 3-col (student) and 4-col (admin) */
 .dash-stat-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
   gap: 1.75rem;
-}
-
-/* About / terms / privacy two-col split */
-.prose-two-col {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 3rem;
-}
-
-/* Auth pages: two-col split (form | brand) */
-.auth-two-col {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  min-height: 100vh;
 }
 
 /* Generic equal two-col grid (forms, info pairs) */
@@ -963,19 +611,9 @@ a:not([class]):hover {
 }
 
 @media (max-width: 767px) {
-  .dash-two-col {
-    grid-template-columns: 1fr;
-    gap: 2rem;
-  }
-
   .dash-stat-grid {
     grid-template-columns: 1fr 1fr;
     gap: 0.75rem;
-  }
-
-  .prose-two-col {
-    grid-template-columns: 1fr;
-    gap: 2rem;
   }
 
   .grid-2 {
@@ -990,23 +628,6 @@ a:not([class]):hover {
   }
 }
 
-/* Auth split collapses at 640px — keeps brand visible on tablet */
-@media (max-width: 640px) {
-  .auth-two-col {
-    grid-template-columns: 1fr;
-  }
-  .auth-two-col > .auth-brand-panel {
-    display: none;
-  }
-  .auth-two-col:not(.signup-layout) > :last-child {
-    display: none;
-  }
-  .auth-two-col.signup-layout > :first-child {
-    display: none;
-  }
-}
-
-
 @media (max-width: 479px) {
   /* 3-col stats → single col on very small phones */
   .dash-stat-grid {
@@ -1014,171 +635,24 @@ a:not([class]):hover {
   }
 }
 
-/* Pulse animation used for accepting-requests badge */
-@keyframes pulse {
+/* Two pulses, deliberately not named `pulse`: Tailwind ships its own `pulse`
+   keyframes for `animate-pulse`, and an unlayered `@keyframes pulse` here
+   shadows them document-wide. The single definition this replaces also carried
+   a scale, so every skeleton placeholder grew 15% while it blinked. */
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 1;    }
+  50%      { opacity: 0.55; }
+}
+
+/* Live-status dot — opacity and scale together, for the accepting badge */
+@keyframes dot-pulse {
   0%, 100% { opacity: 1;   transform: scale(1);    }
-  50%       { opacity: 0.5; transform: scale(1.15); }
+  50%      { opacity: 0.5; transform: scale(1.15); }
 }
 
-/* Spin animation for loading spinners */
-@keyframes spin {
+/* Loading spinner — renamed off Tailwind's reserved `spin` */
+@keyframes app-spin {
   to { transform: rotate(360deg); }
-}
-
-/* Tour spotlight pulse for interactive onboarding */
-@keyframes tourSpotlightPulse {
-  0%, 100% { box-shadow: 0 0 0 9999px rgba(15, 23, 42, 0.68), inset 0 0 0 2px rgba(99, 102, 241, 0.6), 0 0 30px rgba(99, 102, 241, 0.15); }
-  50%      { box-shadow: 0 0 0 9999px rgba(15, 23, 42, 0.68), inset 0 0 0 2px rgba(99, 102, 241, 0.8), 0 0 50px rgba(99, 102, 241, 0.3); }
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   UNSEEN STUDIO ANIMATION PATTERNS
-   ═══════════════════════════════════════════════════════════════ */
-
-/* Body fade-in on load */
-body {
-  transition: opacity 0.2s ease-in;
-}
-
-/* Unseen btn dual-content wipe */
-.group:hover .btn-layer-1 {
-  transform: translateY(-105%) !important;
-}
-.group:hover .btn-layer-2 {
-  transform: translateY(0%) !important;
-}
-
-/* About two-col grid */
-.about-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 4rem;
-  align-items: start;
-}
-@media (max-width: 768px) {
-  .about-grid { grid-template-columns: 1fr; gap: 2rem; }
-}
-
-/* Process card hover hairline */
-.process-card { position: relative; }
-.process-card::after {
-  content: "";
-  position: absolute;
-  bottom: 0; left: 0;
-  height: 1px; width: 0;
-  background: #818cf8;
-  opacity: 0.4;
-  transition: width 0.7s cubic-bezier(0.19, 1, 0.22, 1);
-}
-.process-card:hover::after { width: 100%; }
-
-/* Scroll hint */
-@keyframes scrollHint {
-  0%, 100% { opacity: 0.28; }
-  50%       { opacity: 0.6; }
-}
-.scroll-hint { animation: scrollHint 2.5s ease-in-out infinite; }
-
-/* Marquee */
-@keyframes marquee {
-  0%   { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-
-/* Ping for live status dot */
-@keyframes ping {
-  75%, 100% { transform: scale(2); opacity: 0; }
-}
-
-/* ─── UNSEEN STUDIO BUTTON TRANSITIONS (Bypassing Tailwind JIT) ──────────── */
-.unseen-btn-text-1 {
-  transform: translateY(0%);
-  transition: transform 0.45s cubic-bezier(0.19, 1, 0.22, 1);
-}
-.group:hover .unseen-btn-text-1 {
-  transform: translateY(-150%);
-}
-
-.unseen-btn-text-2 {
-  transform: translateY(150%);
-  transition: transform 0.45s cubic-bezier(0.19, 1, 0.22, 1);
-}
-.group:hover .unseen-btn-text-2 {
-  transform: translateY(0%);
-}
-
-.unseen-btn-border {
-  position: absolute;
-  inset: 0;
-  border-radius: 9999px;
-  border: 1px solid #818cf8;
-  opacity: 0;
-  transform: scale(0.5);
-  transition: all 0.45s cubic-bezier(0.19, 1, 0.22, 1);
-  pointer-events: none;
-}
-.group:hover .unseen-btn-border {
-  opacity: 1;
-  transform: scale(1);
-}
-
-.unseen-btn-border-white {
-  position: absolute;
-  inset: 0;
-  border-radius: 9999px;
-  border: 1px solid #fafaf9;
-  opacity: 0;
-  transform: scale(0.5);
-  transition: all 0.45s cubic-bezier(0.19, 1, 0.22, 1);
-  pointer-events: none;
-}
-.group:hover .unseen-btn-border-white {
-  opacity: 1;
-  transform: scale(1);
-}
-
-/* Character-by-character waterfall transitions for Buttons */
-.char-layer-1-btn {
-  transform: translateY(0);
-  transition-property: transform, opacity;
-  transition-duration: 0.45s, 0.25s;
-  transition-timing-function: cubic-bezier(0.19, 1, 0.22, 1), ease;
-}
-.group:hover .char-layer-1-btn {
-  transform: translateY(-2.5rem);
-  opacity: 0;
-}
-
-.char-layer-2-btn {
-  transform: translateY(2.5rem);
-  transition-property: transform;
-  transition-duration: 0.45s;
-  transition-timing-function: cubic-bezier(0.19, 1, 0.22, 1);
-}
-.group:hover .char-layer-2-btn {
-  transform: translateY(0);
-}
-
-/* Character-by-character waterfall transitions for Fullscreen Menu */
-.char-layer-1-nav {
-  transform: translateY(0%);
-  transition-property: transform, opacity;
-  transition-duration: 0.45s, 0.25s;
-  transition-timing-function: cubic-bezier(0.19, 1, 0.22, 1), ease;
-}
-.group:hover .char-layer-1-nav {
-  transform: translateY(-110%);
-  opacity: 0;
-}
-
-.char-layer-2-nav {
-  transform: translateY(110%);
-  transition-property: transform;
-  transition-duration: 0.45s;
-  transition-timing-function: cubic-bezier(0.19, 1, 0.22, 1);
-}
-.group:hover .char-layer-2-nav {
-  transform: translateY(0%);
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -1295,41 +769,6 @@ body {
   transform: scale(0.97);
 }
 
-/* ── Primary Submit Button (auth forms) — adds active scale ─── */
-.btn-submit {
-  transition:
-    opacity 0.2s ease,
-    transform var(--btn-duration) var(--btn-ease),
-    box-shadow var(--btn-duration) var(--btn-ease);
-}
-.btn-submit:hover:not(:disabled) {
-  box-shadow: 0 8px 24px -6px rgba(129, 140, 248, 0.45);
-  transform: translateY(-1px);
-}
-.btn-submit:active:not(:disabled) {
-  transform: scale(0.97) translateY(0);
-  box-shadow: none;
-}
-
-/* ── Professor page full-width request button ──────────────── */
-.btn-request {
-  transition:
-    opacity 0.2s ease,
-    transform var(--btn-duration) var(--btn-ease),
-    box-shadow var(--btn-duration) var(--btn-ease);
-}
-.btn-request:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 8px 28px -6px rgba(0, 0, 0, 0.4);
-}
-.btn-request:active:not(:disabled) {
-  transform: scale(0.97) translateY(0);
-  box-shadow: none;
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   LP FOOTER STYLING
-   ═══════════════════════════════════════════════════════════════ */
 /* ═══════════════════════════════════════════════════════════════
    LP FOOTER STYLING — Saturated & single-line fit
    ═══════════════════════════════════════════════════════════════ */
