@@ -72,7 +72,7 @@ export function AdminSafetyQueue({ initialFlaggedAccounts = [] }: Props) {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "1.5rem", flexWrap: "wrap", gap: "1rem" }}>
         <div>
           <h3 className="font-display" style={{ fontSize: "1.35rem", fontWeight: 800, color: "var(--text-primary)", margin: 0, letterSpacing: "-0.025em" }}>
-            Safety & <em style={{ fontStyle: "italic", color: "#ef4444", fontWeight: 300 }}>Bot Moderation</em> Queue
+            Safety & <em style={{ color: "#ef4444" }}>Bot Moderation</em> Queue
           </h3>
         </div>
 
