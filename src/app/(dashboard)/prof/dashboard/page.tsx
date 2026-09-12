@@ -136,7 +136,7 @@ export default async function ProfessorDashboard() {
             fontSize: "clamp(2.6rem, 5vw, 4rem)", fontWeight: 900,
             color: "var(--text-primary)", letterSpacing: "-0.035em", lineHeight: 1.05,
           }}>
-            Dr. <em style={{ fontStyle: "italic", color: "#4f46e5", fontWeight: 300 }}>{displayName}</em>
+            Dr. <em style={{ fontStyle: "italic", color: "var(--accent)", fontWeight: 300 }}>{displayName}</em>
           </h1>
 
           {/* DB-backed availability toggle */}
@@ -221,7 +221,7 @@ export default async function ProfessorDashboard() {
 
       {/* ── Faculty Profile Manager ─────────────────────────────── */}
       <div data-tour="tour-prof-profile-section" style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-        <h2 className="font-display" style={{ fontSize: "1.3rem", fontWeight: 800, color: "#0f172a", letterSpacing: "-0.025em" }}>
+        <h2 className="font-display" style={{ fontSize: "1.3rem", fontWeight: 800, color: "var(--text-primary)", letterSpacing: "-0.025em" }}>
           Faculty Profile & Preferences
         </h2>
         <ProfProfileForm profile={profile} />

@@ -2,20 +2,31 @@
 
 import { sql } from "@/lib/neon/db";
 import { runAs } from "@/lib/neon/user-context";
-import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import {
   sanitiseText,
-  isValidUuid,
+  isValidId,
   LIMITS,
 } from "@/lib/security";
+import { ADMIN_VIEW_AS_COOKIE, requireAdmin } from "@/lib/authz";
+import { createNotification } from "@/lib/notifications";
+import { defaultStatusForRole, isUserRole } from "@/lib/status";
 
-const VIEW_AS_COOKIE = "x-admin-view-as";
+const VIEW_AS_COOKIE = ADMIN_VIEW_AS_COOKIE;
+
+/**
+ * Guard against an admin locking themselves out.
+ *
+ * `changeUserRole` already refused self-targeting; `suspendUser` and
+ * `setUserSuspended` did not, so an admin could suspend their own account and
+ * lose product access with no screen left that could undo it.
+ */
+const SELF_TARGET_ERROR = "You cannot apply this to your own account.";
 
 export async function clearAdminNonAdminData(adminUserId: string): Promise<void> {
-  if (!isValidUuid(adminUserId)) return;
+  if (!isValidId(adminUserId)) return;
 
   return runAs(adminUserId, async () => {
 
@@ -91,8 +102,13 @@ export async function clearAdminNonAdminData(adminUserId: string): Promise<void>
 }
 
 export async function setAdminViewAs(role: "student" | "professor" | null, launchTour?: boolean) {
-  const { user, profile } = await getCurrentUserAndProfile();
-  if (!user || profile?.role !== "admin") return;
+  const auth = await requireAdmin();
+  if (!auth.ok) return;
+  const { user } = auth;
+
+  // Only these two may be previewed; "admin" would be a no-op that still sets
+  // the cookie every downstream page branches on.
+  if (role !== null && role !== "student" && role !== "professor") return;
 
   const cookieStore = await cookies();
   if (role) {
@@ -115,10 +131,13 @@ export async function setAdminViewAs(role: "student" | "professor" | null, launc
 }
 
 export async function setUserSuspended(targetUserId: string, suspend: boolean) {
-  if (!isValidUuid(targetUserId)) return { error: "Invalid user ID." };
+  if (!isValidId(targetUserId)) return { error: "Invalid user ID." };
 
-  const { user, profile: admin } = await getCurrentUserAndProfile();
-  if (!user || admin?.role !== "admin") return { error: "Access denied" };
+  const auth = await requireAdmin();
+  if (!auth.ok) return { error: auth.error };
+  const { user } = auth;
+
+  if (targetUserId === user.id) return { error: SELF_TARGET_ERROR };
 
   return runAs(user.id, async () => {
   let newStatus: string;
@@ -149,10 +168,13 @@ export async function setUserSuspended(targetUserId: string, suspend: boolean) {
 }
 
 export async function revokeVerification(professorId: string) {
-  if (!isValidUuid(professorId)) return { error: "Invalid professor ID." };
+  if (!isValidId(professorId)) return { error: "Invalid professor ID." };
 
-  const { user, profile: admin } = await getCurrentUserAndProfile();
-  if (!user || admin?.role !== "admin") return { error: "Access denied" };
+  const auth = await requireAdmin();
+  if (!auth.ok) return { error: auth.error };
+  const { user } = auth;
+
+  if (professorId === user.id) return { error: SELF_TARGET_ERROR };
 
   return runAs(user.id, async () => {
   await sql`
@@ -176,16 +198,17 @@ export async function changeUserRole(
   targetUserId: string,
   newRole: "student" | "professor" | "admin"
 ) {
-  if (!isValidUuid(targetUserId)) return { error: "Invalid user ID." };
-  if (!["student", "professor", "admin"].includes(newRole)) {
+  if (!isValidId(targetUserId)) return { error: "Invalid user ID." };
+  if (!isUserRole(newRole)) {
     return { error: "Invalid role." };
   }
 
-  const { user, profile: admin } = await getCurrentUserAndProfile();
-  if (!user || admin?.role !== "admin") return { error: "Access denied" };
+  const auth = await requireAdmin();
+  if (!auth.ok) return { error: auth.error };
+  const { user } = auth;
   if (targetUserId === user.id) return { error: "Cannot change your own role" };
 
-  const defaultStatus = newRole === "professor" ? "pending" : "active";
+  const defaultStatus = defaultStatusForRole(newRole);
 
   return runAs(user.id, async () => {
   await sql`
@@ -207,43 +230,45 @@ export async function changeUserRole(
 }
 
 export async function warnUser(userId: string, warningMessage: string) {
-  if (!isValidUuid(userId)) return { error: "Invalid user ID." };
+  if (!isValidId(userId)) return { error: "Invalid user ID." };
 
   const safeMsg = sanitiseText(warningMessage, LIMITS.warningMessage);
   if (!safeMsg) return { error: "Warning message cannot be empty." };
 
-  const { user, profile: admin } = await getCurrentUserAndProfile();
-  if (!user || admin?.role !== "admin") return { error: "Access denied" };
+  const auth = await requireAdmin();
+  if (!auth.ok) return { error: auth.error };
+  const { user } = auth;
 
-  return runAs(user.id, async () => {
-  const requests = await sql`
-    SELECT id
-    FROM requests
-    WHERE student_id = ${userId} OR professor_id = ${userId}
-    ORDER BY updated_at DESC
-    LIMIT 1;
-  `;
-  const request = requests[0];
+  if (userId === user.id) return { error: SELF_TARGET_ERROR };
 
-  if (!request) {
-    return { error: "No active threads found for this user to deliver the warning." };
-  }
-
-  await sql`
-    INSERT INTO messages (request_id, sender_id, content)
-    VALUES (${request.id}, ${user.id}, ${'[SYSTEM WARNING]: ' + safeMsg});
-  `;
-
-  revalidatePath(`/messages/${request.id}`);
-  return { success: true };
+  // Delivered as a private notification to the user.
+  //
+  // This used to insert `[SYSTEM WARNING]: …` as a message into the target's
+  // most recent thread, which had two bad consequences: the other participant
+  // in that thread — an uninvolved student or professor — read the moderation
+  // notice too, and a user with no threads at all could not be warned, so the
+  // action returned "No active threads found" and the moderator was stuck.
+  await createNotification({
+    actorId: user.id,
+    userId,
+    type: "admin_warning",
+    title: "A message from the Schollective team",
+    body: safeMsg,
   });
+
+  revalidatePath("/admin/users");
+  revalidatePath("/admin/threads");
+  return { success: true };
 }
 
 export async function suspendUser(userId: string, reason: string) {
-  if (!isValidUuid(userId)) return { error: "Invalid user ID." };
+  if (!isValidId(userId)) return { error: "Invalid user ID." };
 
-  const { user, profile: admin } = await getCurrentUserAndProfile();
-  if (!user || admin?.role !== "admin") return { error: "Access denied" };
+  const auth = await requireAdmin();
+  if (!auth.ok) return { error: auth.error };
+  const { user } = auth;
+
+  if (userId === user.id) return { error: SELF_TARGET_ERROR };
 
   return runAs(user.id, async () => {
   await sql`
@@ -265,10 +290,11 @@ export async function suspendUser(userId: string, reason: string) {
 }
 
 export async function unsuspendUser(userId: string) {
-  if (!isValidUuid(userId)) return { error: "Invalid user ID." };
+  if (!isValidId(userId)) return { error: "Invalid user ID." };
 
-  const { user, profile: admin } = await getCurrentUserAndProfile();
-  if (!user || admin?.role !== "admin") return { error: "Access denied" };
+  const auth = await requireAdmin();
+  if (!auth.ok) return { error: auth.error };
+  const { user } = auth;
 
   return runAs(user.id, async () => {
   const targets = await sql`SELECT role FROM profiles WHERE id = ${userId} LIMIT 1;`;
@@ -294,10 +320,11 @@ export async function unsuspendUser(userId: string) {
 }
 
 export async function softDeleteThread(requestId: string) {
-  if (!isValidUuid(requestId)) return { error: "Invalid request ID." };
+  if (!isValidId(requestId)) return { error: "Invalid request ID." };
 
-  const { user, profile: admin } = await getCurrentUserAndProfile();
-  if (!user || admin?.role !== "admin") return { error: "Access denied" };
+  const auth = await requireAdmin();
+  if (!auth.ok) return { error: auth.error };
+  const { user } = auth;
 
   return runAs(user.id, async () => {
   await sql`
@@ -308,6 +335,11 @@ export async function softDeleteThread(requestId: string) {
 
   revalidatePath("/admin/dashboard");
   revalidatePath("/admin/threads");
+  // 'deleted' now genuinely hides the thread from both participants, so their
+  // lists have to be rebuilt or they keep rendering it from cache.
+  revalidatePath("/threads");
+  revalidatePath("/prof/students");
+  revalidatePath(`/messages/${requestId}`);
   return { success: true };
   });
 }

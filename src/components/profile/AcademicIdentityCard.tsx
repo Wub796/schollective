@@ -114,16 +114,16 @@ export function AcademicIdentityCard({
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              color: "#4f46e5",
+              color: "var(--accent)",
             }}
           >
             <GraduationCap size={20} />
           </div>
           <div>
-            <h3 style={{ fontSize: "1.05rem", fontWeight: 800, color: "#0f172a", margin: 0 }}>
+            <h3 style={{ fontSize: "1.05rem", fontWeight: 800, color: "var(--text-primary)", margin: 0 }}>
               Academic Identity
             </h3>
-            <p style={{ fontSize: "0.76rem", color: "#64748b", margin: 0 }}>
+            <p style={{ fontSize: "0.76rem", color: "var(--text-tertiary)", margin: 0 }}>
               School, standing, and optional academic metrics
             </p>
           </div>
@@ -136,7 +136,7 @@ export function AcademicIdentityCard({
         <div>
           <label
             htmlFor="institution"
-            style={{ fontSize: "0.68rem", fontWeight: 800, color: "#475569", textTransform: "uppercase", display: "block", marginBottom: "0.4rem", letterSpacing: "0.04em" }}
+            style={{ fontSize: "0.68rem", fontWeight: 800, color: "var(--text-secondary)", textTransform: "uppercase", display: "block", marginBottom: "0.4rem", letterSpacing: "0.04em" }}
           >
             Institution / School Name
           </label>
@@ -158,7 +158,7 @@ export function AcademicIdentityCard({
         <div>
           <label
             htmlFor="education_level"
-            style={{ fontSize: "0.68rem", fontWeight: 800, color: "#475569", textTransform: "uppercase", display: "block", marginBottom: "0.4rem", letterSpacing: "0.04em" }}
+            style={{ fontSize: "0.68rem", fontWeight: 800, color: "var(--text-secondary)", textTransform: "uppercase", display: "block", marginBottom: "0.4rem", letterSpacing: "0.04em" }}
           >
             Education Standing
           </label>
@@ -183,7 +183,7 @@ export function AcademicIdentityCard({
         <div>
           <label
             htmlFor="major"
-            style={{ fontSize: "0.68rem", fontWeight: 800, color: "#475569", textTransform: "uppercase", display: "block", marginBottom: "0.4rem", letterSpacing: "0.04em" }}
+            style={{ fontSize: "0.68rem", fontWeight: 800, color: "var(--text-secondary)", textTransform: "uppercase", display: "block", marginBottom: "0.4rem", letterSpacing: "0.04em" }}
           >
             Intended Major / Research Focus
           </label>
@@ -201,7 +201,7 @@ export function AcademicIdentityCard({
         <div>
           <label
             htmlFor="graduation_year"
-            style={{ fontSize: "0.68rem", fontWeight: 800, color: "#475569", textTransform: "uppercase", display: "block", marginBottom: "0.4rem", letterSpacing: "0.04em" }}
+            style={{ fontSize: "0.68rem", fontWeight: 800, color: "var(--text-secondary)", textTransform: "uppercase", display: "block", marginBottom: "0.4rem", letterSpacing: "0.04em" }}
           >
             Expected Graduation Year
           </label>
@@ -236,7 +236,7 @@ export function AcademicIdentityCard({
             display: "inline-flex",
             alignItems: "center",
             gap: "0.5rem",
-            color: "#4f46e5",
+            color: "var(--accent)",
             fontSize: "0.82rem",
             fontWeight: 700,
             cursor: "pointer",
@@ -254,7 +254,7 @@ export function AcademicIdentityCard({
               background: "rgba(248, 250, 252, 0.8)",
               borderRadius: "12px",
               padding: "1.25rem",
-              border: "1px solid #e2e8f0",
+              border: "1px solid var(--border)",
               display: "flex",
               flexDirection: "column",
               gap: "1.25rem",
@@ -264,7 +264,7 @@ export function AcademicIdentityCard({
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "1rem" }}>
               {/* Unweighted GPA */}
               <div>
-                <label style={{ fontSize: "0.65rem", fontWeight: 700, color: "#475569", textTransform: "uppercase", display: "block", marginBottom: "0.35rem" }}>
+                <label style={{ fontSize: "0.65rem", fontWeight: 700, color: "var(--text-secondary)", textTransform: "uppercase", display: "block", marginBottom: "0.35rem" }}>
                   Unweighted GPA (4.0 Scale)
                 </label>
                 <input
@@ -275,13 +275,13 @@ export function AcademicIdentityCard({
                   value={academicStats.unweighted_gpa ?? ""}
                   onChange={(e) => handleStatChange("unweighted_gpa", e.target.value ? parseFloat(e.target.value) : null)}
                   placeholder="e.g. 3.92"
-                  style={{ width: "100%", padding: "0.65rem 0.85rem", borderRadius: "8px", border: "1px solid #cbd5e1", outline: "none", fontSize: "0.85rem", background: "#ffffff" }}
+                  style={{ width: "100%", padding: "0.65rem 0.85rem", borderRadius: "8px", border: "1px solid var(--border-hover)", outline: "none", fontSize: "0.85rem", background: "#ffffff" }}
                 />
               </div>
 
               {/* Weighted GPA */}
               <div>
-                <label style={{ fontSize: "0.65rem", fontWeight: 700, color: "#475569", textTransform: "uppercase", display: "block", marginBottom: "0.35rem" }}>
+                <label style={{ fontSize: "0.65rem", fontWeight: 700, color: "var(--text-secondary)", textTransform: "uppercase", display: "block", marginBottom: "0.35rem" }}>
                   Weighted GPA
                 </label>
                 <input
@@ -292,17 +292,17 @@ export function AcademicIdentityCard({
                   value={academicStats.weighted_gpa ?? ""}
                   onChange={(e) => handleStatChange("weighted_gpa", e.target.value ? parseFloat(e.target.value) : null)}
                   placeholder="e.g. 4.38"
-                  style={{ width: "100%", padding: "0.65rem 0.85rem", borderRadius: "8px", border: "1px solid #cbd5e1", outline: "none", fontSize: "0.85rem", background: "#ffffff" }}
+                  style={{ width: "100%", padding: "0.65rem 0.85rem", borderRadius: "8px", border: "1px solid var(--border-hover)", outline: "none", fontSize: "0.85rem", background: "#ffffff" }}
                 />
               </div>
 
               {/* Class Rank & Size */}
               <div>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.35rem" }}>
-                  <label style={{ fontSize: "0.65rem", fontWeight: 700, color: "#475569", textTransform: "uppercase" }}>
+                  <label style={{ fontSize: "0.65rem", fontWeight: 700, color: "var(--text-secondary)", textTransform: "uppercase" }}>
                     Class Rank
                   </label>
-                  <label style={{ display: "inline-flex", alignItems: "center", gap: "0.35rem", fontSize: "0.68rem", color: "#64748b", cursor: "pointer" }}>
+                  <label style={{ display: "inline-flex", alignItems: "center", gap: "0.35rem", fontSize: "0.68rem", color: "var(--text-tertiary)", cursor: "pointer" }}>
                     <input
                       type="checkbox"
                       checked={Boolean(academicStats.school_does_not_rank)}
@@ -315,7 +315,7 @@ export function AcademicIdentityCard({
                           class_size: checked ? null : academicStats.class_size,
                         });
                       }}
-                      style={{ accentColor: "#4f46e5" }}
+                      style={{ accentColor: "var(--accent)" }}
                     />
                     Does not rank
                   </label>
@@ -331,7 +331,7 @@ export function AcademicIdentityCard({
                       width: "50%",
                       padding: "0.65rem 0.85rem",
                       borderRadius: "8px",
-                      border: "1px solid #cbd5e1",
+                      border: "1px solid var(--border-hover)",
                       outline: "none",
                       fontSize: "0.85rem",
                       background: academicStats.school_does_not_rank ? "#f1f5f9" : "#ffffff",
@@ -348,7 +348,7 @@ export function AcademicIdentityCard({
                       width: "50%",
                       padding: "0.65rem 0.85rem",
                       borderRadius: "8px",
-                      border: "1px solid #cbd5e1",
+                      border: "1px solid var(--border-hover)",
                       outline: "none",
                       fontSize: "0.85rem",
                       background: academicStats.school_does_not_rank ? "#f1f5f9" : "#ffffff",
@@ -361,13 +361,13 @@ export function AcademicIdentityCard({
             {/* Row 2: Standardized Testing */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem" }}>
               <div>
-                <label style={{ fontSize: "0.65rem", fontWeight: 700, color: "#475569", textTransform: "uppercase", display: "block", marginBottom: "0.35rem" }}>
+                <label style={{ fontSize: "0.65rem", fontWeight: 700, color: "var(--text-secondary)", textTransform: "uppercase", display: "block", marginBottom: "0.35rem" }}>
                   Standardized Test
                 </label>
                 <Select
                   value={academicStats.standardized_test_type || ""}
                   onChange={(e) => handleStatChange("standardized_test_type", e.target.value || null)}
-                  style={{ width: "100%", padding: "0.65rem 0.85rem", borderRadius: "8px", border: "1px solid #cbd5e1", outline: "none", fontSize: "0.85rem", background: "#ffffff" }}
+                  style={{ width: "100%", padding: "0.65rem 0.85rem", borderRadius: "8px", border: "1px solid var(--border-hover)", outline: "none", fontSize: "0.85rem", background: "#ffffff" }}
                 >
                   <option value="">None / Test-Optional</option>
                   <option value="SAT">SAT</option>
@@ -378,7 +378,7 @@ export function AcademicIdentityCard({
 
               {academicStats.standardized_test_type && (
                 <div>
-                  <label style={{ fontSize: "0.65rem", fontWeight: 700, color: "#475569", textTransform: "uppercase", display: "block", marginBottom: "0.35rem" }}>
+                  <label style={{ fontSize: "0.65rem", fontWeight: 700, color: "var(--text-secondary)", textTransform: "uppercase", display: "block", marginBottom: "0.35rem" }}>
                     {academicStats.standardized_test_type} Score
                   </label>
                   <input
@@ -386,7 +386,7 @@ export function AcademicIdentityCard({
                     value={academicStats.standardized_test_score || ""}
                     onChange={(e) => handleStatChange("standardized_test_score", e.target.value || null)}
                     placeholder={academicStats.standardized_test_type === "ACT" ? "e.g. 35" : "e.g. 1540"}
-                    style={{ width: "100%", padding: "0.65rem 0.85rem", borderRadius: "8px", border: "1px solid #cbd5e1", outline: "none", fontSize: "0.85rem", background: "#ffffff" }}
+                    style={{ width: "100%", padding: "0.65rem 0.85rem", borderRadius: "8px", border: "1px solid var(--border-hover)", outline: "none", fontSize: "0.85rem", background: "#ffffff" }}
                   />
                 </div>
               )}
@@ -394,7 +394,7 @@ export function AcademicIdentityCard({
 
             {/* Row 3: Advanced Coursework Chips */}
             <div>
-              <label style={{ fontSize: "0.65rem", fontWeight: 700, color: "#475569", textTransform: "uppercase", display: "block", marginBottom: "0.35rem" }}>
+              <label style={{ fontSize: "0.65rem", fontWeight: 700, color: "var(--text-secondary)", textTransform: "uppercase", display: "block", marginBottom: "0.35rem" }}>
                 Advanced Coursework (AP / IB / Dual Enrollment / Honors)
               </label>
 
@@ -406,13 +406,13 @@ export function AcademicIdentityCard({
                   onChange={(e) => setCourseInput(e.target.value)}
                   onKeyDown={handleCourseKeyDown}
                   placeholder="Type course name and press Enter (e.g. AP Calculus BC)"
-                  style={{ flex: 1, padding: "0.65rem 0.85rem", borderRadius: "8px", border: "1px solid #cbd5e1", outline: "none", fontSize: "0.85rem", background: "#ffffff" }}
+                  style={{ flex: 1, padding: "0.65rem 0.85rem", borderRadius: "8px", border: "1px solid var(--border-hover)", outline: "none", fontSize: "0.85rem", background: "#ffffff" }}
                 />
                 <button
                   type="button"
                   onClick={() => handleAddCourse(courseInput)}
                   style={{
-                    background: "#4f46e5",
+                    background: "var(--accent)",
                     color: "#ffffff",
                     border: "none",
                     borderRadius: "8px",
@@ -443,7 +443,7 @@ export function AcademicIdentityCard({
                         borderRadius: "100px",
                         background: "rgba(99, 102, 241, 0.1)",
                         border: "1px solid rgba(99, 102, 241, 0.25)",
-                        color: "#4f46e5",
+                        color: "var(--accent)",
                         fontSize: "0.78rem",
                         fontWeight: 600,
                       }}
@@ -452,7 +452,7 @@ export function AcademicIdentityCard({
                       <button
                         type="button"
                         onClick={() => handleRemoveCourse(idx)}
-                        style={{ background: "none", border: "none", padding: 0, color: "#4f46e5", cursor: "pointer", display: "flex", alignItems: "center" }}
+                        style={{ background: "none", border: "none", padding: 0, color: "var(--accent)", cursor: "pointer", display: "flex", alignItems: "center" }}
                       >
                         <X size={12} />
                       </button>
@@ -471,11 +471,11 @@ export function AcademicIdentityCard({
                     onClick={() => handleAddCourse(s)}
                     style={{
                       background: "#ffffff",
-                      border: "1px solid #e2e8f0",
+                      border: "1px solid var(--border)",
                       borderRadius: "100px",
                       padding: "0.2rem 0.55rem",
                       fontSize: "0.68rem",
-                      color: "#64748b",
+                      color: "var(--text-tertiary)",
                       cursor: "pointer",
                       transition: "all 0.15s ease",
                     }}

@@ -97,7 +97,7 @@ function FilterPill({
           ? "1px solid rgba(79, 70, 229, 0.35)"
           : "1px solid rgba(99, 102, 241, 0.15)",
         background: active ? "rgba(79, 70, 229, 0.1)" : "rgba(255, 255, 255, 0.6)",
-        color: active ? "#4f46e5" : "rgba(15, 23, 42, 0.55)",
+        color: active ? "var(--accent)" : "rgba(15, 23, 42, 0.55)",
         fontSize: "0.6rem",
         fontWeight: 700,
         letterSpacing: "0.18em",

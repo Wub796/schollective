@@ -8,7 +8,7 @@ on:
 jobs:
   checks:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -16,9 +16,33 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+
+      # The binaries are invoked directly rather than through `npx`.
+      #
+      # `npx tsc` resolves the local binary only when typescript happens to be
+      # installed; when it is not, npx silently DOWNLOADS the unrelated 2016
+      # package named `tsc`, prints a banner, and exits 0 — a typecheck step that
+      # passes without typechecking anything. Since next.config.ts sets
+      # `typescript.ignoreBuildErrors` and `eslint.ignoreDuringBuilds` and names
+      # this workflow as the gate, that gate must not be able to pass vacuously.
       - name: Typecheck
-        run: npx tsc --noEmit
+        run: ./node_modules/.bin/tsc --noEmit
+
       - name: Lint
-        run: npx eslint .
+        run: ./node_modules/.bin/eslint .
+
       - name: Tests
         run: npm test
+
+      # The production build ignores type and lint errors, so this is the only
+      # place a build-only failure — an invalid route export, a server/client
+      # boundary violation, a bad metadata shape — can be caught before deploy.
+      - name: Build
+        run: ./node_modules/.bin/next build
+        env:
+          # Build-time placeholders. The real values are Worker secrets; these
+          # only have to be present and well-formed enough for module init.
+          DATABASE_URL: postgres://user:pass@localhost:5432/placeholder
+          BETTER_AUTH_SECRET: ci-placeholder-secret-not-used-at-runtime
+          BETTER_AUTH_URL: http://localhost:3000
+          NEXT_PUBLIC_APP_URL: http://localhost:3000

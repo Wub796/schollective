@@ -36,7 +36,7 @@ export function AdminPreviewControls() {
             style={{
               fontSize: "1rem",
               fontWeight: 800,
-              color: "#0f172a",
+              color: "var(--text-primary)",
               margin: 0,
               letterSpacing: "-0.02em",
             }}
@@ -50,7 +50,7 @@ export function AdminPreviewControls() {
             fontWeight: 800,
             letterSpacing: "0.15em",
             textTransform: "uppercase",
-            color: "#4f46e5",
+            color: "var(--accent)",
             background: "rgba(99, 102, 241, 0.1)",
             padding: "0.2rem 0.65rem",
             borderRadius: "100px",
@@ -65,7 +65,7 @@ export function AdminPreviewControls() {
       <p
         style={{
           fontSize: "0.82rem",
-          color: "#475569",
+          color: "var(--text-secondary)",
           lineHeight: 1.6,
           margin: 0,
           fontFamily: "var(--font-sans)",
@@ -109,8 +109,8 @@ export function AdminPreviewControls() {
               <Users size={15} color="#4f46e5" />
             </div>
             <div>
-              <div style={{ fontSize: "0.85rem", fontWeight: 800, color: "#0f172a" }}>Student Scholar Portal</div>
-              <div style={{ fontSize: "0.7rem", color: "#64748b" }}>Profile management, AI reviewer, mentor browsing</div>
+              <div style={{ fontSize: "0.85rem", fontWeight: 800, color: "var(--text-primary)" }}>Student Scholar Portal</div>
+              <div style={{ fontSize: "0.7rem", color: "var(--text-tertiary)" }}>Profile management, AI reviewer, mentor browsing</div>
             </div>
           </div>
 
@@ -170,7 +170,7 @@ export function AdminPreviewControls() {
                 padding: "0.55rem 0.85rem",
                 borderRadius: "8px",
                 border: "none",
-                background: "#4f46e5",
+                background: "var(--accent)",
                 color: "#ffffff",
                 fontSize: "0.72rem",
                 fontWeight: 700,
@@ -224,8 +224,8 @@ export function AdminPreviewControls() {
               <GraduationCap size={15} color="#4f46e5" />
             </div>
             <div>
-              <div style={{ fontSize: "0.85rem", fontWeight: 800, color: "#0f172a" }}>Faculty Professor Portal</div>
-              <div style={{ fontSize: "0.7rem", color: "#64748b" }}>Availability toggle, request queue, faculty profile</div>
+              <div style={{ fontSize: "0.85rem", fontWeight: 800, color: "var(--text-primary)" }}>Faculty Professor Portal</div>
+              <div style={{ fontSize: "0.7rem", color: "var(--text-tertiary)" }}>Availability toggle, request queue, faculty profile</div>
             </div>
           </div>
 
@@ -285,7 +285,7 @@ export function AdminPreviewControls() {
                 padding: "0.55rem 0.85rem",
                 borderRadius: "8px",
                 border: "none",
-                background: "#4f46e5",
+                background: "var(--accent)",
                 color: "#ffffff",
                 fontSize: "0.72rem",
                 fontWeight: 700,

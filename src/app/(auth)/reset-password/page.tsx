@@ -146,7 +146,7 @@ function ResetPasswordContent() {
 
         {/* Headline */}
         <motion.h1 variants={fadeUp} className="font-display" style={{ fontSize: "clamp(2.4rem, 5vw, 3.5rem)", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.035em", lineHeight: 0.95 }}>
-          {step === "request" ? <>Recover your<br /><em style={{ fontStyle: "italic", color: "#4f46e5", fontWeight: 300 }}>access.</em></> : <>Set a new<br /><em style={{ fontStyle: "italic", color: "#4f46e5", fontWeight: 300 }}>password.</em></>}
+          {step === "request" ? <>Recover your<br /><em style={{ fontStyle: "italic", color: "var(--accent)", fontWeight: 300 }}>access.</em></> : <>Set a new<br /><em style={{ fontStyle: "italic", color: "var(--accent)", fontWeight: 300 }}>password.</em></>}
         </motion.h1>
 
         <AnimatePresence mode="wait">

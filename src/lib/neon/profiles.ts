@@ -144,16 +144,47 @@ export async function getCurrentUserAndProfile(customHeaders?: Headers): Promise
       `;
       profile = newRows[0] as ProfileRecord;
     } else if (profile.id !== userId) {
-      // Link migrated profile ID to current auth user ID
+      // Adopt a pre-Neon profile row that carries this address, re-keying it to
+      // the signed-in auth user.
+      //
+      // The row's DATA is adopted. Its PRIVILEGES are not.
+      //
+      // This lookup matches on email, and the row was written before any auth
+      // user existed for it, so whoever registers that address first inherits
+      // whatever role it holds. There is at least one orphaned `admin` profile in
+      // production with no auth row, which made "sign up with that email" a
+      // complete path to platform admin — and the mirror trigger in migration
+      // 0007 would then copy the role into the auth table too.
+      //
+      // So an elevated role is never inherited here: admin is dropped to student,
+      // and a professor re-enters credential review rather than arriving
+      // pre-approved. Both are earned through onboarding or granted by an admin,
+      // never by holding an address.
+      const claimedRole = profile.role;
+      const safeRole = claimedRole === "admin" ? "student" : claimedRole;
+      const safeStatus =
+        claimedRole === "admin" ? "active" : claimedRole === "professor" ? "pending" : profile.status;
+
+      if (claimedRole === "admin" || claimedRole === "professor") {
+        console.warn(
+          `[auth] profile ${profile.id} claimed by ${userId} via email match carried role "${claimedRole}"; ` +
+            `granting "${safeRole}" (status "${safeStatus}") instead.`,
+        );
+      }
+
       try {
         const updatedRows = await sql`
-          UPDATE profiles SET id = ${userId} WHERE email = ${userEmail} RETURNING *;
+          UPDATE profiles
+          SET id = ${userId}, role = ${safeRole}, status = ${safeStatus}
+          WHERE email = ${userEmail}
+          RETURNING *;
         `;
         if (updatedRows && updatedRows[0]) {
           profile = updatedRows[0] as ProfileRecord;
         }
-      } catch {
+      } catch (error) {
         // Keep existing profile if update fails
+        console.error("[auth] Could not re-key claimed profile:", error);
       }
     }
 

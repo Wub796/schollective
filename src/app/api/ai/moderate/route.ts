@@ -3,7 +3,8 @@ import { sql } from "@/lib/neon/db";
 import { runAs } from "@/lib/neon/user-context";
 import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { scanContentForSafety } from "@/lib/ai/safety-scanner";
-import { checkRateLimit, getClientIp, sanitiseText, isValidUuid, LIMITS } from "@/lib/security";
+import { checkRateLimit, getClientIp, sanitiseText, isValidId, LIMITS } from "@/lib/security";
+import { internalError } from "@/lib/utils";
 
 export async function POST(req: Request) {
   try {
@@ -38,7 +39,7 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: "Access denied: Admin privileges required." }, { status: 403 });
       }
 
-      if (!isValidUuid(targetUserId)) {
+      if (!isValidId(targetUserId)) {
         return NextResponse.json({ error: "targetUserId must be a valid UUID" }, { status: 400 });
       }
 
@@ -72,7 +73,7 @@ export async function POST(req: Request) {
     }
 
     // Validate recipientId if provided
-    const validatedRecipientId = recipientId && typeof recipientId === "string" && isValidUuid(recipientId)
+    const validatedRecipientId = recipientId && typeof recipientId === "string" && isValidId(recipientId)
       ? recipientId
       : undefined;
 
@@ -85,7 +86,7 @@ export async function POST(req: Request) {
   } catch (err: any) {
     console.error("[POST /api/ai/moderate] Error:", err);
     return NextResponse.json(
-      { error: err.message || "Failed to analyze content safety" },
+      { error: internalError("ai/moderate", err, "Failed to analyze content safety.") },
       { status: 500 }
     );
   }

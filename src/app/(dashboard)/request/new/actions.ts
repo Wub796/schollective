@@ -2,25 +2,27 @@
 
 import { sql } from "@/lib/neon/db";
 import { runAs } from "@/lib/neon/user-context";
-import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { revalidatePath } from "next/cache";
-import { sanitiseText, isValidUuid, LIMITS } from "@/lib/security";
-import { isSuspended } from "@/lib/authz";
+import { sanitiseText, isValidId, LIMITS } from "@/lib/security";
+import { requireRole } from "@/lib/authz";
+import { PROFESSOR_LIVE_STATUS, PARTICIPANT_ONGOING, asSqlArray } from "@/lib/status";
 import { captureServerEvent } from "@/lib/posthog-server";
 import { createNotification } from "@/lib/notifications";
 import { checkGenericOutreach } from "@/lib/mentorship-quality";
 
 export async function submitMentorshipRequest(formData: FormData) {
-  const { session, user, profile } = await getCurrentUserAndProfile();
-  if (!session || !user) return { error: "Unauthorized" };
-  if (isSuspended(profile)) return { error: "Your account is suspended." };
+  // Students send requests. requireRole also rejects suspended accounts, which
+  // the previous explicit isSuspended check did by hand.
+  const auth = await requireRole("student");
+  if (!auth.ok) return { error: auth.error };
+  const { user } = auth;
 
   const profId = sanitiseText(formData.get("prof_id"), 100);
   const topic = sanitiseText(formData.get("topic"), LIMITS.topic);
   const background = sanitiseText(formData.get("background"), LIMITS.background);
   const goals = sanitiseText(formData.get("goals"), LIMITS.goal);
 
-  if (!profId || !isValidUuid(profId)) {
+  if (!profId || !isValidId(profId)) {
     return { error: "Invalid professor ID." };
   }
   if (!topic) {
@@ -58,14 +60,36 @@ export async function submitMentorshipRequest(formData: FormData) {
   }
 
   // The professor id arrives from the client, so confirm it really is an
-  // approved professor before creating a thread against it.
+  // approved professor who is open to requests before creating a thread.
+  //
+  // `is_accepting_requests` used to be checked on every surface that DISPLAYS a
+  // professor but on none that writes, so the toggle only hid them from the
+  // directory — anyone holding a /request/new?prof=<id> URL, or a stale tab,
+  // could still deliver a request. The error string already claimed otherwise.
+  // `IS NOT FALSE` because the column is nullable and null means "default on".
   const professors = await sql`
     SELECT id FROM profiles
-    WHERE id = ${profId} AND role = 'professor' AND status = 'approved'
+    WHERE id = ${profId}
+      AND role = 'professor'
+      AND status = ${PROFESSOR_LIVE_STATUS}
+      AND is_accepting_requests IS NOT FALSE
     LIMIT 1;
   `;
   if (!professors[0]) {
-    return { error: "That professor is not accepting requests." };
+    return { error: "That professor is not currently accepting new requests." };
+  }
+
+  // One open request per pair: re-sending while a decision is pending creates a
+  // duplicate thread the professor has to trip over twice.
+  const existing = await sql`
+    SELECT id FROM requests
+    WHERE student_id = ${user.id}
+      AND professor_id = ${profId}
+      AND status = ANY(${asSqlArray(PARTICIPANT_ONGOING)})
+    LIMIT 1;
+  `;
+  if (existing[0]) {
+    return { error: "You already have an open request with this professor." };
   }
 
   // 2. Insert request

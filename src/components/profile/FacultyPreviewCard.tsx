@@ -99,16 +99,16 @@ export function FacultyPreviewCard({
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          borderBottom: "1px solid #e2e8f0",
+          borderBottom: "1px solid var(--border)",
           paddingBottom: "1.25rem",
           flexWrap: "wrap",
           gap: "0.5rem",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", color: "#4f46e5", fontSize: "0.85rem", fontWeight: 800 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", color: "var(--accent)", fontSize: "0.85rem", fontWeight: 800 }}>
           <Sparkles size={18} /> Faculty Candidate Dossier Preview
         </div>
-        <span style={{ fontSize: "0.74rem", color: "#64748b" }}>
+        <span style={{ fontSize: "0.74rem", color: "var(--text-tertiary)" }}>
           This is exactly how evaluating faculty and labs view your profile
         </span>
       </div>
@@ -127,7 +127,7 @@ export function FacultyPreviewCard({
             justifyContent: "center",
             fontSize: "1.4rem",
             fontWeight: 800,
-            color: "#4f46e5",
+            color: "var(--accent)",
             overflow: "hidden",
             flexShrink: 0,
           }}
@@ -142,7 +142,7 @@ export function FacultyPreviewCard({
 
         <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", flexWrap: "wrap" }}>
-            <h3 style={{ fontSize: "1.4rem", fontWeight: 800, color: "#0f172a", margin: 0 }}>
+            <h3 style={{ fontSize: "1.4rem", fontWeight: 800, color: "var(--text-primary)", margin: 0 }}>
               {displayName} {lastName}
             </h3>
             <span
@@ -152,7 +152,7 @@ export function FacultyPreviewCard({
                 padding: "0.2rem 0.65rem",
                 borderRadius: "100px",
                 background: "rgba(99, 102, 241, 0.1)",
-                color: "#4f46e5",
+                color: "var(--accent)",
                 border: "1px solid rgba(99, 102, 241, 0.25)",
               }}
             >
@@ -164,7 +164,7 @@ export function FacultyPreviewCard({
             {major || "General Academic Track"} {institution ? `· ${institution}` : ""}
           </div>
 
-          <div style={{ fontSize: "0.76rem", color: "#64748b" }}>
+          <div style={{ fontSize: "0.76rem", color: "var(--text-tertiary)" }}>
             {graduationYear ? `Expected Graduation: Class of ${graduationYear}` : "Graduation Year Pending"}
           </div>
         </div>
@@ -176,7 +176,7 @@ export function FacultyPreviewCard({
           style={{
             background: "rgba(248, 250, 252, 0.9)",
             borderRadius: "12px",
-            border: "1px solid #e2e8f0",
+            border: "1px solid var(--border)",
             padding: "0.85rem 1.25rem",
             display: "flex",
             alignItems: "center",
@@ -186,29 +186,29 @@ export function FacultyPreviewCard({
         >
           {academicStats.unweighted_gpa !== undefined && academicStats.unweighted_gpa !== null && (
             <div style={{ display: "flex", flexDirection: "column" }}>
-              <span style={{ fontSize: "0.65rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase" }}>Unweighted GPA</span>
-              <span style={{ fontSize: "0.95rem", fontWeight: 800, color: "#0f172a" }}>{Number(academicStats.unweighted_gpa).toFixed(2)} / 4.0</span>
+              <span style={{ fontSize: "0.65rem", fontWeight: 700, color: "var(--text-tertiary)", textTransform: "uppercase" }}>Unweighted GPA</span>
+              <span style={{ fontSize: "0.95rem", fontWeight: 800, color: "var(--text-primary)" }}>{Number(academicStats.unweighted_gpa).toFixed(2)} / 4.0</span>
             </div>
           )}
 
           {academicStats.weighted_gpa !== undefined && academicStats.weighted_gpa !== null && (
             <div style={{ display: "flex", flexDirection: "column" }}>
-              <span style={{ fontSize: "0.65rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase" }}>Weighted GPA</span>
-              <span style={{ fontSize: "0.95rem", fontWeight: 800, color: "#0f172a" }}>{Number(academicStats.weighted_gpa).toFixed(2)}</span>
+              <span style={{ fontSize: "0.65rem", fontWeight: 700, color: "var(--text-tertiary)", textTransform: "uppercase" }}>Weighted GPA</span>
+              <span style={{ fontSize: "0.95rem", fontWeight: 800, color: "var(--text-primary)" }}>{Number(academicStats.weighted_gpa).toFixed(2)}</span>
             </div>
           )}
 
           {academicStats.class_rank && academicStats.class_size && (
             <div style={{ display: "flex", flexDirection: "column" }}>
-              <span style={{ fontSize: "0.65rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase" }}>Class Rank</span>
-              <span style={{ fontSize: "0.95rem", fontWeight: 800, color: "#0f172a" }}>{academicStats.class_rank} / {academicStats.class_size}</span>
+              <span style={{ fontSize: "0.65rem", fontWeight: 700, color: "var(--text-tertiary)", textTransform: "uppercase" }}>Class Rank</span>
+              <span style={{ fontSize: "0.95rem", fontWeight: 800, color: "var(--text-primary)" }}>{academicStats.class_rank} / {academicStats.class_size}</span>
             </div>
           )}
 
           {academicStats.standardized_test_type && academicStats.standardized_test_score && (
             <div style={{ display: "flex", flexDirection: "column" }}>
-              <span style={{ fontSize: "0.65rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase" }}>{academicStats.standardized_test_type}</span>
-              <span style={{ fontSize: "0.95rem", fontWeight: 800, color: "#0f172a" }}>{academicStats.standardized_test_score}</span>
+              <span style={{ fontSize: "0.65rem", fontWeight: 700, color: "var(--text-tertiary)", textTransform: "uppercase" }}>{academicStats.standardized_test_type}</span>
+              <span style={{ fontSize: "0.95rem", fontWeight: 800, color: "var(--text-primary)" }}>{academicStats.standardized_test_score}</span>
             </div>
           )}
         </div>
@@ -217,7 +217,7 @@ export function FacultyPreviewCard({
       {/* Research Statement & Bio */}
       {bio && (
         <div style={{ background: "rgba(99, 102, 241, 0.04)", borderRadius: "12px", border: "1px solid rgba(99, 102, 241, 0.15)", padding: "1.25rem 1.5rem" }}>
-          <span style={{ fontSize: "0.7rem", fontWeight: 800, color: "#4f46e5", textTransform: "uppercase", display: "block", marginBottom: "0.4rem", letterSpacing: "0.04em" }}>
+          <span style={{ fontSize: "0.7rem", fontWeight: 800, color: "var(--accent)", textTransform: "uppercase", display: "block", marginBottom: "0.4rem", letterSpacing: "0.04em" }}>
             Research Pitch & Motivation
           </span>
           <p style={{ fontSize: "0.92rem", color: "#1e293b", lineHeight: 1.6, margin: 0, fontStyle: "italic" }}>
@@ -229,7 +229,7 @@ export function FacultyPreviewCard({
       {/* Target Academic Interests */}
       {interests.length > 0 && (
         <div>
-          <span style={{ fontSize: "0.72rem", fontWeight: 800, color: "#64748b", textTransform: "uppercase", display: "block", marginBottom: "0.5rem", letterSpacing: "0.04em" }}>
+          <span style={{ fontSize: "0.72rem", fontWeight: 800, color: "var(--text-tertiary)", textTransform: "uppercase", display: "block", marginBottom: "0.5rem", letterSpacing: "0.04em" }}>
             Primary Academic Interests
           </span>
           <div style={{ display: "flex", flexWrap: "wrap", gap: "0.45rem" }}>
@@ -239,7 +239,7 @@ export function FacultyPreviewCard({
                 style={{
                   background: "rgba(99, 102, 241, 0.08)",
                   border: "1px solid rgba(99, 102, 241, 0.25)",
-                  color: "#4f46e5",
+                  color: "var(--accent)",
                   padding: "0.35rem 0.8rem",
                   borderRadius: "100px",
                   fontSize: "0.78rem",
@@ -256,7 +256,7 @@ export function FacultyPreviewCard({
       {/* Advanced Coursework */}
       {academicStats.advanced_coursework && academicStats.advanced_coursework.length > 0 && (
         <div>
-          <span style={{ fontSize: "0.72rem", fontWeight: 800, color: "#64748b", textTransform: "uppercase", display: "block", marginBottom: "0.5rem", letterSpacing: "0.04em" }}>
+          <span style={{ fontSize: "0.72rem", fontWeight: 800, color: "var(--text-tertiary)", textTransform: "uppercase", display: "block", marginBottom: "0.5rem", letterSpacing: "0.04em" }}>
             Advanced Coursework
           </span>
           <div style={{ display: "flex", flexWrap: "wrap", gap: "0.45rem" }}>
@@ -265,7 +265,7 @@ export function FacultyPreviewCard({
                 key={idx}
                 style={{
                   background: "#f1f5f9",
-                  border: "1px solid #e2e8f0",
+                  border: "1px solid var(--border)",
                   color: "#334155",
                   padding: "0.3rem 0.7rem",
                   borderRadius: "6px",
@@ -297,7 +297,7 @@ export function FacultyPreviewCard({
                 style={{
                   background: "#f8fafc",
                   borderRadius: "10px",
-                  border: "1px solid #e2e8f0",
+                  border: "1px solid var(--border)",
                   padding: "1rem 1.25rem",
                   display: "flex",
                   flexDirection: "column",
@@ -306,11 +306,11 @@ export function FacultyPreviewCard({
               >
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "0.5rem" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
-                    <span style={{ fontSize: "0.92rem", fontWeight: 700, color: "#0f172a" }}>
+                    <span style={{ fontSize: "0.92rem", fontWeight: 700, color: "var(--text-primary)" }}>
                       {item.title}
                     </span>
                     {item.organization && (
-                      <span style={{ fontSize: "0.85rem", color: "#475569", fontWeight: 600 }}>
+                      <span style={{ fontSize: "0.85rem", color: "var(--text-secondary)", fontWeight: 600 }}>
                         · {item.organization}
                       </span>
                     )}
@@ -323,7 +323,7 @@ export function FacultyPreviewCard({
                         padding: "0.15rem 0.55rem",
                         borderRadius: "100px",
                         background: "rgba(99, 102, 241, 0.1)",
-                        color: "#4f46e5",
+                        color: "var(--accent)",
                         border: "1px solid rgba(99, 102, 241, 0.25)",
                       }}
                     >
@@ -333,7 +333,7 @@ export function FacultyPreviewCard({
                 </div>
 
                 {(item.date_range || item.dateRange) && (
-                  <span style={{ fontSize: "0.74rem", color: "#64748b" }}>
+                  <span style={{ fontSize: "0.74rem", color: "var(--text-tertiary)" }}>
                     {item.date_range || item.dateRange}
                   </span>
                 )}
@@ -368,7 +368,7 @@ export function FacultyPreviewCard({
                   style={{
                     background: "#ffffff",
                     borderRadius: "8px",
-                    border: "1px solid #e2e8f0",
+                    border: "1px solid var(--border)",
                     padding: "0.75rem 1rem",
                     display: "flex",
                     alignItems: "center",
@@ -376,7 +376,7 @@ export function FacultyPreviewCard({
                     gap: "0.75rem",
                   }}
                 >
-                  <span style={{ fontSize: "0.88rem", fontWeight: 700, color: "#0f172a" }}>
+                  <span style={{ fontSize: "0.88rem", fontWeight: 700, color: "var(--text-primary)" }}>
                     {item.title}
                   </span>
                   <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
@@ -396,7 +396,7 @@ export function FacultyPreviewCard({
                       </span>
                     )}
                     {item.year && (
-                      <span style={{ fontSize: "0.75rem", color: "#64748b" }}>
+                      <span style={{ fontSize: "0.75rem", color: "var(--text-tertiary)" }}>
                         {item.year}
                       </span>
                     )}
@@ -413,7 +413,7 @@ export function FacultyPreviewCard({
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "1.5rem" }}>
           {skills.length > 0 && (
             <div>
-              <span style={{ fontSize: "0.72rem", fontWeight: 800, color: "#64748b", textTransform: "uppercase", display: "block", marginBottom: "0.5rem", letterSpacing: "0.04em" }}>
+              <span style={{ fontSize: "0.72rem", fontWeight: 800, color: "var(--text-tertiary)", textTransform: "uppercase", display: "block", marginBottom: "0.5rem", letterSpacing: "0.04em" }}>
                 Technical Skills & Tools
               </span>
               <div style={{ display: "flex", flexWrap: "wrap", gap: "0.45rem" }}>
@@ -439,7 +439,7 @@ export function FacultyPreviewCard({
 
           {languages.length > 0 && (
             <div>
-              <span style={{ fontSize: "0.72rem", fontWeight: 800, color: "#64748b", textTransform: "uppercase", display: "block", marginBottom: "0.5rem", letterSpacing: "0.04em" }}>
+              <span style={{ fontSize: "0.72rem", fontWeight: 800, color: "var(--text-tertiary)", textTransform: "uppercase", display: "block", marginBottom: "0.5rem", letterSpacing: "0.04em" }}>
                 Spoken Languages
               </span>
               <div style={{ display: "flex", flexWrap: "wrap", gap: "0.45rem" }}>
@@ -448,7 +448,7 @@ export function FacultyPreviewCard({
                     key={idx}
                     style={{
                       background: "#f8fafc",
-                      border: "1px solid #e2e8f0",
+                      border: "1px solid var(--border)",
                       color: "#334155",
                       padding: "0.25rem 0.65rem",
                       borderRadius: "6px",
@@ -473,7 +473,7 @@ export function FacultyPreviewCard({
 
         return (
           <div style={{ borderTop: "1px solid #f1f5f9", paddingTop: "1.25rem" }}>
-            <span style={{ fontSize: "0.72rem", fontWeight: 800, color: "#64748b", textTransform: "uppercase", display: "block", marginBottom: "0.65rem", letterSpacing: "0.04em" }}>
+            <span style={{ fontSize: "0.72rem", fontWeight: 800, color: "var(--text-tertiary)", textTransform: "uppercase", display: "block", marginBottom: "0.65rem", letterSpacing: "0.04em" }}>
               Online Portfolios & Profiles
             </span>
             <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem" }}>
@@ -493,7 +493,7 @@ export function FacultyPreviewCard({
                     padding: "0.35rem 0.75rem",
                     borderRadius: "8px",
                     background: "#f1f5f9",
-                    border: "1px solid #e2e8f0",
+                    border: "1px solid var(--border)",
                   }}
                 >
                   <GithubIcon size={14} /> GitHub Profile <ExternalLink size={12} color="#94a3b8" />
@@ -532,7 +532,7 @@ export function FacultyPreviewCard({
                     display: "inline-flex",
                     alignItems: "center",
                     gap: "0.4rem",
-                    color: "#4f46e5",
+                    color: "var(--accent)",
                     fontSize: "0.82rem",
                     fontWeight: 600,
                     textDecoration: "none",

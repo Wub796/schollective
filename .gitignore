@@ -49,10 +49,13 @@ next-env.d.ts
 # Legacy vanilla prototype (superseded by Next.js app)
 _legacy_vanilla/
 
-# Database migration scripts (run manually, not part of the app)
+# SQL is ignored by default so ad-hoc scratch queries never get committed.
 *.sql
-# ...except the checked-in schema the app needs to boot.
+# ...except the ordered schema migrations, which are the source of truth,
 !db/migrations/*.sql
+# ...and one-off data maintenance, which should be reviewable rather than run
+# from an untracked console session.
+!db/maintenance/*.sql
 
 # Dev utility scripts
 /scripts/

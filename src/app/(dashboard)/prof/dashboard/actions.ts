@@ -3,24 +3,34 @@
 import { sql } from "@/lib/neon/db";
 import { runAs } from "@/lib/neon/user-context";
 import { createNotification } from "@/lib/notifications";
-import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { revalidatePath } from "next/cache";
-import { checkRateLimit, sanitiseText, isValidUuid, LIMITS } from "@/lib/security";
+import { checkRateLimit, isValidId } from "@/lib/security";
 import { captureServerEvent } from "@/lib/posthog-server";
+import { requireRole, requireUser } from "@/lib/authz";
+import { PROFESSOR_DECIDABLE_FROM, asSqlArray } from "@/lib/status";
+import { internalError } from "@/lib/utils";
 
+/**
+ * Accepts or declines a pending request.
+ *
+ * The status filter is not cosmetic: without it the UPDATE matched on
+ * `(id, professor_id)` alone, so a professor could flip an already closed or
+ * declined thread back to `active` and re-fire the acceptance notification at a
+ * student whose request they had previously rejected.
+ */
 export async function updateRequestStatus(requestId: string, status: "active" | "declined") {
-  const reqId = sanitiseText(requestId, 100);
-  if (!reqId || !isValidUuid(reqId)) {
+  if (!isValidId(requestId)) {
     return { error: "Invalid request ID." };
   }
   if (status !== "active" && status !== "declined") {
     return { error: "Invalid status." };
   }
 
-  try {
-    const { user } = await getCurrentUserAndProfile();
-    if (!user) return { error: "Unauthorized" };
+  const auth = await requireRole("professor");
+  if (!auth.ok) return { error: auth.error };
+  const { user } = auth;
 
+  try {
     // Rate limit: 20 status changes per minute
     const rate = checkRateLimit(`status:${user.id}`, 20, 60 * 1000);
     if (!rate.allowed) {
@@ -31,64 +41,74 @@ export async function updateRequestStatus(requestId: string, status: "active" | 
       await sql`
         UPDATE requests
         SET status = ${status}, updated_at = now()
-        WHERE id = ${reqId} AND professor_id = ${user.id}
+        WHERE id = ${requestId}
+          AND professor_id = ${user.id}
+          AND status = ANY(${asSqlArray(PROFESSOR_DECIDABLE_FROM)})
         RETURNING student_id;
       `
     );
 
     const studentId = (updatedRows as Array<{ student_id: string }> | undefined)?.[0]?.student_id;
-    if (studentId) {
-      // The student is waiting on this answer — without it the bell never
-      // rings and they only find out by re-checking the directory.
-      await createNotification({
-        actorId: user.id,
-        userId: studentId,
-        type: status === "active" ? "request_accepted" : "request_declined",
-        title: status === "active" ? "Your mentorship request was accepted!" : "Your mentorship request was declined",
-        body: status === "active"
-          ? "Head to your thread to continue the conversation."
-          : undefined,
-        requestId: reqId,
-      });
+    if (!studentId) {
+      // Either not this professor's request, or it has already been decided.
+      // Same answer either way, so the action cannot be used to probe ids.
+      return { error: "That request is no longer awaiting a decision." };
     }
 
-    await captureServerEvent(user.id, "professor_request_status_updated", { request_id: reqId, status });
+    // The student is waiting on this answer — without it the bell never
+    // rings and they only find out by re-checking the directory.
+    await createNotification({
+      actorId: user.id,
+      userId: studentId,
+      type: status === "active" ? "request_accepted" : "request_declined",
+      title: status === "active" ? "Your mentorship request was accepted!" : "Your mentorship request was declined",
+      body: status === "active"
+        ? "Head to your thread to continue the conversation."
+        : undefined,
+      requestId,
+    });
+
+    await captureServerEvent(user.id, "professor_request_status_updated", { request_id: requestId, status });
     revalidatePath("/prof/dashboard");
+    revalidatePath("/threads");
     return { success: true };
-  } catch (err: any) {
-    return { error: err.message || "Failed to update request status." };
+  } catch (err: unknown) {
+    return { error: internalError("updateRequestStatus", err, "Failed to update request status.") };
   }
 }
 
 export async function markRequestViewed(requestId: string) {
-  const reqId = sanitiseText(requestId, 100);
-  if (!reqId || !isValidUuid(reqId)) {
+  if (!isValidId(requestId)) {
     return { error: "Invalid request ID." };
   }
 
-  try {
-    const { user } = await getCurrentUserAndProfile();
-    if (!user) return { error: "Unauthorized" };
+  const auth = await requireRole("professor");
+  if (!auth.ok) return { error: auth.error };
+  const { user } = auth;
 
+  try {
     await runAs(user.id, async () => {
       await sql`
         UPDATE requests
         SET status = 'viewed', updated_at = now()
-        WHERE id = ${reqId} AND professor_id = ${user.id} AND status = 'pending';
+        WHERE id = ${requestId} AND professor_id = ${user.id} AND status = 'pending';
       `;
     });
 
     return { success: true };
-  } catch (err: any) {
-    return { error: err.message || "Failed to mark request as viewed." };
+  } catch (err: unknown) {
+    return { error: internalError("markRequestViewed", err, "Failed to mark request as viewed.") };
   }
 }
 
 export async function toggleAvailability(isAccepting: boolean) {
-  try {
-    const { user } = await getCurrentUserAndProfile();
-    if (!user) return { error: "Unauthorized" };
+  if (typeof isAccepting !== "boolean") return { error: "Invalid value." };
 
+  const auth = await requireRole("professor");
+  if (!auth.ok) return { error: auth.error };
+  const { user } = auth;
+
+  try {
     const rate = checkRateLimit(`toggle:${user.id}`, 5, 60 * 1000);
     if (!rate.allowed) {
       return { error: `Please wait ${rate.retryAfterSeconds}s before toggling again.` };
@@ -102,18 +122,22 @@ export async function toggleAvailability(isAccepting: boolean) {
       `;
     });
 
-
     await captureServerEvent(user.id, "professor_availability_toggled", { is_accepting: isAccepting });
     revalidatePath("/prof/dashboard");
+    // The directory and the public profile both render availability, and
+    // submitMentorshipRequest now enforces it — all three must see the change.
+    revalidatePath("/professors");
+    revalidatePath(`/professors/${user.id}`);
     return { success: true };
-  } catch (err: any) {
-    return { error: err.message || "Failed to toggle availability." };
+  } catch (err: unknown) {
+    return { error: internalError("toggleAvailability", err, "Failed to toggle availability.") };
   }
 }
 
 export async function markAllNotificationsRead() {
-  const { user } = await getCurrentUserAndProfile();
-  if (!user) return;
+  const auth = await requireUser();
+  if (!auth.ok) return;
+  const { user } = auth;
 
   await runAs(user.id, async () => {
     await sql`

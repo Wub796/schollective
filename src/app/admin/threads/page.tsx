@@ -41,10 +41,10 @@ export default async function AdminThreadsPage() {
     <AdminShell>
       <div style={{ display: "flex", flexDirection: "column", gap: "3.5rem" }}>
         <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-          <h1 className="font-display" style={{ fontSize: "clamp(2.4rem, 4.5vw, 3.6rem)", fontWeight: 900, color: "#0f172a", letterSpacing: "-0.035em", lineHeight: 1.1 }}>
-            Mentorship <em style={{ fontStyle: "italic", color: "#4f46e5", fontWeight: 300 }}>Threads</em>
+          <h1 className="font-display" style={{ fontSize: "clamp(2.4rem, 4.5vw, 3.6rem)", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.035em", lineHeight: 1.1 }}>
+            Mentorship <em style={{ fontStyle: "italic", color: "var(--accent)", fontWeight: 300 }}>Threads</em>
           </h1>
-          <p style={{ fontSize: "0.95rem", color: "#475569", opacity: 0.75, fontWeight: 400, maxWidth: "38rem", lineHeight: 1.8, fontFamily: "var(--font-sans)", marginTop: "0.25rem" }}>
+          <p style={{ fontSize: "0.95rem", color: "var(--text-secondary)", opacity: 0.75, fontWeight: 400, maxWidth: "38rem", lineHeight: 1.8, fontFamily: "var(--font-sans)", marginTop: "0.25rem" }}>
             Monitor all mentorship dialogues across the platform. Filter by status or participant to review activity.
           </p>
         </div>
@@ -69,7 +69,7 @@ export default async function AdminThreadsPage() {
               <span className="font-display" style={{ fontSize: "1.8rem", fontWeight: 900, color, letterSpacing: "-0.03em" }}>
                 {value}
               </span>
-              <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#0f172a", fontFamily: "var(--font-sans)", letterSpacing: "0.05em" }}>
+              <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "var(--text-primary)", fontFamily: "var(--font-sans)", letterSpacing: "0.05em" }}>
                 {label}
               </span>
             </div>

@@ -119,7 +119,7 @@ export function AccountSecuritySettings({ profile }: AccountSecuritySettingsProp
             background: isProf ? "rgba(79, 70, 229, 0.1)" : "rgba(99, 102, 241, 0.1)",
             border: "2px solid rgba(99, 102, 241, 0.3)",
             display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: "1.25rem", fontWeight: 800, color: "#4f46e5", overflow: "hidden",
+            fontSize: "1.25rem", fontWeight: 800, color: "var(--accent)", overflow: "hidden",
             flexShrink: 0,
           }}>
             {profile?.avatar_url ? (
@@ -132,20 +132,20 @@ export function AccountSecuritySettings({ profile }: AccountSecuritySettingsProp
 
           <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem", minWidth: 0 }}>
             <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", flexWrap: "wrap" }}>
-              <h2 style={{ fontSize: "1.3rem", fontWeight: 800, color: "#0f172a", margin: 0, wordBreak: "break-word" }}>
+              <h2 style={{ fontSize: "1.3rem", fontWeight: 800, color: "var(--text-primary)", margin: 0, wordBreak: "break-word" }}>
                 {displayName} {profile?.last_name || ""}
               </h2>
               <span style={{
                 fontSize: "0.65rem", fontWeight: 800, textTransform: "uppercase",
                 letterSpacing: "0.15em", padding: "0.2rem 0.65rem", borderRadius: "100px",
-                background: "rgba(99, 102, 241, 0.1)", color: "#4f46e5",
+                background: "rgba(99, 102, 241, 0.1)", color: "var(--accent)",
                 border: "1px solid rgba(99, 102, 241, 0.25)", flexShrink: 0,
               }}>
                 {profile?.role === "professor" ? "Faculty" : profile?.role === "admin" ? "Admin" : "Student"}
               </span>
             </div>
 
-            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.85rem", color: "#475569", fontWeight: 500, flexWrap: "wrap", wordBreak: "break-all" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.85rem", color: "var(--text-secondary)", fontWeight: 500, flexWrap: "wrap", wordBreak: "break-all" }}>
               <Mail size={14} color="#6366f1" style={{ flexShrink: 0 }} />
               <span>{profile?.email || "No email linked"}</span>
               <span style={{ display: "inline-flex", alignItems: "center", gap: "0.2rem", fontSize: "0.7rem", color: "#16a34a", fontWeight: 700, background: "rgba(22, 163, 74, 0.08)", padding: "0.1rem 0.5rem", borderRadius: "100px", flexShrink: 0 }}>
@@ -176,11 +176,11 @@ export function AccountSecuritySettings({ profile }: AccountSecuritySettingsProp
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", marginBottom: "0.3rem" }}>
           <ShieldCheck size={20} color="#4f46e5" />
-          <h3 style={{ fontSize: "1.1rem", fontWeight: 800, color: "#0f172a", margin: 0 }}>
+          <h3 style={{ fontSize: "1.1rem", fontWeight: 800, color: "var(--text-primary)", margin: 0 }}>
             Security & Password Manager
           </h3>
         </div>
-        <p style={{ fontSize: "0.82rem", color: "#64748b", margin: "0 0 1.5rem 0", lineHeight: 1.5 }}>
+        <p style={{ fontSize: "0.82rem", color: "var(--text-tertiary)", margin: "0 0 1.5rem 0", lineHeight: 1.5 }}>
           Update your account password to protect your mentorship communications.
         </p>
 
@@ -201,7 +201,7 @@ export function AccountSecuritySettings({ profile }: AccountSecuritySettingsProp
 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "1.25rem" }}>
             <div>
-              <label style={{ fontSize: "0.65rem", fontWeight: 800, color: "#475569", textTransform: "uppercase", display: "block", marginBottom: "0.45rem", letterSpacing: "0.15em" }}>
+              <label style={{ fontSize: "0.65rem", fontWeight: 800, color: "var(--text-secondary)", textTransform: "uppercase", display: "block", marginBottom: "0.45rem", letterSpacing: "0.15em" }}>
                 New Password
               </label>
               <div style={{ position: "relative" }}>
@@ -218,7 +218,7 @@ export function AccountSecuritySettings({ profile }: AccountSecuritySettingsProp
                     border: "1.5px solid rgba(99, 102, 241, 0.4)",
                     background: "rgba(255, 255, 255, 0.95)",
                     fontSize: "0.9rem",
-                    color: "#0f172a",
+                    color: "var(--text-primary)",
                     outline: "none",
                     fontFamily: "var(--font-sans)",
                   }}
@@ -228,7 +228,7 @@ export function AccountSecuritySettings({ profile }: AccountSecuritySettingsProp
             </div>
 
             <div>
-              <label style={{ fontSize: "0.65rem", fontWeight: 800, color: "#475569", textTransform: "uppercase", display: "block", marginBottom: "0.45rem", letterSpacing: "0.15em" }}>
+              <label style={{ fontSize: "0.65rem", fontWeight: 800, color: "var(--text-secondary)", textTransform: "uppercase", display: "block", marginBottom: "0.45rem", letterSpacing: "0.15em" }}>
                 Confirm New Password
               </label>
               <div style={{ position: "relative" }}>
@@ -245,7 +245,7 @@ export function AccountSecuritySettings({ profile }: AccountSecuritySettingsProp
                     border: "1.5px solid rgba(99, 102, 241, 0.4)",
                     background: "rgba(255, 255, 255, 0.95)",
                     fontSize: "0.9rem",
-                    color: "#0f172a",
+                    color: "var(--text-primary)",
                     outline: "none",
                     fontFamily: "var(--font-sans)",
                   }}
@@ -278,11 +278,11 @@ export function AccountSecuritySettings({ profile }: AccountSecuritySettingsProp
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", marginBottom: "0.3rem" }}>
           <Sliders size={20} color="#4f46e5" />
-          <h3 style={{ fontSize: "1.1rem", fontWeight: 800, color: "#0f172a", margin: 0 }}>
+          <h3 style={{ fontSize: "1.1rem", fontWeight: 800, color: "var(--text-primary)", margin: 0 }}>
             Interface & Cursor Preferences
           </h3>
         </div>
-        <p style={{ fontSize: "0.82rem", color: "#64748b", margin: "0 0 1.5rem 0", lineHeight: 1.5 }}>
+        <p style={{ fontSize: "0.82rem", color: "var(--text-tertiary)", margin: "0 0 1.5rem 0", lineHeight: 1.5 }}>
           Customize your browsing experience across the platform.
         </p>
 
@@ -296,10 +296,10 @@ export function AccountSecuritySettings({ profile }: AccountSecuritySettingsProp
           border: "1px solid rgba(99, 102, 241, 0.15)",
         }}>
           <div>
-            <div style={{ fontSize: "0.9rem", fontWeight: 800, color: "#0f172a", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            <div style={{ fontSize: "0.9rem", fontWeight: 800, color: "var(--text-primary)", display: "flex", alignItems: "center", gap: "0.5rem" }}>
               <Sparkles size={15} color="#4f46e5" /> Animated Custom Cursor
             </div>
-            <div style={{ fontSize: "0.78rem", color: "#64748b", marginTop: "0.2rem" }}>
+            <div style={{ fontSize: "0.78rem", color: "var(--text-tertiary)", marginTop: "0.2rem" }}>
               Enables smooth magnet tracking effects on desktop pointers (OFF by default).
             </div>
           </div>
@@ -314,7 +314,7 @@ export function AccountSecuritySettings({ profile }: AccountSecuritySettingsProp
               width: "2.75rem",
               height: "1.5rem",
               borderRadius: "100px",
-              background: customCursor ? "#4f46e5" : "rgba(15, 23, 42, 0.2)",
+              background: customCursor ? "var(--accent)" : "rgba(15, 23, 42, 0.2)",
               border: "none",
               cursor: "pointer",
               transition: "background 0.3s ease",
@@ -349,7 +349,7 @@ export function AccountSecuritySettings({ profile }: AccountSecuritySettingsProp
         alignItems: "center",
         gap: "0.85rem",
         fontSize: "0.82rem",
-        color: "#475569",
+        color: "var(--text-secondary)",
         lineHeight: 1.5,
       }}>
         <Lock size={20} color="#4f46e5" style={{ flexShrink: 0 }} />

@@ -182,7 +182,7 @@ export function ProfileSectionNav({ className }: Props = {}) {
                 background: isActive
                   ? "rgba(99, 102, 241, 0.12)"
                   : "transparent",
-                color: isActive ? "#4f46e5" : "#64748b",
+                color: isActive ? "var(--accent)" : "var(--text-tertiary)",
                 fontSize: "0.74rem",
                 fontWeight: isActive ? 700 : 500,
                 fontFamily: "var(--font-sans)",

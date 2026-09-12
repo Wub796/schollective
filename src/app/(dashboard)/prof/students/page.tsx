@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { sql } from "@/lib/neon/db";
 import { runAs } from "@/lib/neon/user-context";
+import { PROFESSOR_ROSTER, asSqlArray } from "@/lib/status";
 import { Users } from "lucide-react";
 import Link from "next/link";
 import { StudentRow } from "@/components/features/StudentRow";
@@ -42,7 +43,7 @@ export default async function ProfStudentsPage() {
     FROM requests r
     LEFT JOIN profiles s ON r.student_id = s.id
     WHERE r.professor_id = ${user.id}
-      AND r.status IN ('active', 'closed')
+      AND r.status = ANY(${asSqlArray(PROFESSOR_ROSTER)})
     ORDER BY r.updated_at DESC;
   `);
 
@@ -59,6 +60,9 @@ export default async function ProfStudentsPage() {
   };
 
   const activeStudents = (allRequests || []).filter((r: any) => r.status === "active").map(process);
+  // 'declined' is deliberately absent: a professor's roster is who they mentor,
+  // not who they turned down. 'deleted' is absent because an admin soft-delete
+  // must disappear from both participants' views.
   const pastStudents   = (allRequests || []).filter((r: any) => r.status === "closed").map(process);
 
   return (
@@ -66,11 +70,11 @@ export default async function ProfStudentsPage() {
 
       {/* ── Header ── */}
       <header style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-        <h1 className="font-display" style={{ fontSize: "clamp(2.4rem, 4.5vw, 3.6rem)", fontWeight: 900, color: "#0f172a", letterSpacing: "-0.035em", lineHeight: 1.1 }}>
+        <h1 className="font-display" style={{ fontSize: "clamp(2.4rem, 4.5vw, 3.6rem)", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.035em", lineHeight: 1.1 }}>
           Dr. {displayName}&apos;s{" "}
-          <em style={{ fontStyle: "italic", color: "#4f46e5", fontWeight: 300 }}>students</em>
+          <em style={{ fontStyle: "italic", color: "var(--accent)", fontWeight: 300 }}>students</em>
         </h1>
-        <p style={{ fontSize: "0.95rem", color: "#475569", opacity: 0.75, fontWeight: 400, maxWidth: "42rem", lineHeight: 1.8, fontFamily: "var(--font-sans)", marginTop: "0.25rem" }}>
+        <p style={{ fontSize: "0.95rem", color: "var(--text-secondary)", opacity: 0.75, fontWeight: 400, maxWidth: "42rem", lineHeight: 1.8, fontFamily: "var(--font-sans)", marginTop: "0.25rem" }}>
           An overview of every student you&apos;re currently mentoring and those you&apos;ve guided in the past.
         </p>
       </header>
@@ -89,13 +93,13 @@ export default async function ProfStudentsPage() {
             background: "rgba(99, 102, 241, 0.12)",
             display: "flex", flexDirection: "column", gap: "0.5rem",
           }}>
-            <span className="font-display" style={{ fontSize: "2.8rem", fontWeight: 900, color: "#0f172a", letterSpacing: "-0.04em", lineHeight: 1 }}>
+            <span className="font-display" style={{ fontSize: "2.8rem", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.04em", lineHeight: 1 }}>
               {value}
             </span>
-            <div style={{ fontSize: "0.82rem", fontWeight: 700, color: "#0f172a", fontFamily: "var(--font-sans)", lineHeight: 1.4 }}>{label}</div>
+            <div style={{ fontSize: "0.82rem", fontWeight: 700, color: "var(--text-primary)", fontFamily: "var(--font-sans)", lineHeight: 1.4 }}>{label}</div>
             <div style={{
               display: "inline-block", fontSize: "0.58rem", fontWeight: 800, letterSpacing: "0.2em",
-              textTransform: "uppercase", color: "#0f172a", background: "#6366f1",
+              textTransform: "uppercase", color: "var(--text-primary)", background: "var(--accent-blue)",
               padding: "0.25rem 0.75rem", borderRadius: "100px", width: "fit-content", marginTop: "0.5rem",
               fontFamily: "var(--font-sans, monospace)", border: "1px solid rgba(79, 70, 229, 0.6)"
             }}>

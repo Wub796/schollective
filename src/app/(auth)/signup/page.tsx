@@ -46,7 +46,7 @@ function Field({
           fontWeight: 800,
           letterSpacing: "0.22em",
           textTransform: "uppercase",
-          color: focused ? "#4f46e5" : "#0f172a",
+          color: focused ? "var(--accent)" : "var(--text-primary)",
           marginBottom: "0.55rem",
           transition: "color 0.25s",
           fontFamily: "var(--font-sans)",
@@ -62,11 +62,11 @@ function Field({
         style={{
           width: "100%",
           background: "rgba(255, 255, 255, 0.9)",
-          border: `1.5px solid ${focused ? "#4f46e5" : "rgba(99, 102, 241, 0.5)"}`,
+          border: `1.5px solid ${focused ? "var(--accent)" : "rgba(99, 102, 241, 0.5)"}`,
           borderRadius: "100px",
           padding: "1rem 1.75rem",
           fontSize: "0.95rem",
-          color: "#0f172a",
+          color: "var(--text-primary)",
           outline: "none",
           transition: "all 0.3s cubic-bezier(0.22, 1, 0.36, 1)",
           fontFamily: "var(--font-sans)",
@@ -102,7 +102,7 @@ function FieldSelect({
           fontWeight: 800,
           letterSpacing: "0.22em",
           textTransform: "uppercase",
-          color: focused ? "#4f46e5" : "#0f172a",
+          color: focused ? "var(--accent)" : "var(--text-primary)",
           marginBottom: "0.6rem",
           transition: "color 0.25s",
           fontFamily: "var(--font-sans)",
@@ -119,11 +119,11 @@ function FieldSelect({
         style={{
           width: "100%",
           background: "rgba(255, 255, 255, 0.9)",
-          border: `1.5px solid ${focused ? "#4f46e5" : "rgba(99, 102, 241, 0.5)"}`,
+          border: `1.5px solid ${focused ? "var(--accent)" : "rgba(99, 102, 241, 0.5)"}`,
           borderRadius: "100px",
           padding: "1rem 1.75rem",
           fontSize: "0.95rem",
-          color: "#0f172a",
+          color: "var(--text-primary)",
           outline: "none",
           fontFamily: "var(--font-sans)",
           transition: "all 0.3s cubic-bezier(0.22, 1, 0.36, 1)",
@@ -342,7 +342,7 @@ function SignupContent() {
           <Link href="/login" style={{ textDecoration: "none" }}>
             <span className="hover:text-indigo-700 transition-colors" style={{
               fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.2em",
-              textTransform: "uppercase", color: "#4f46e5",
+              textTransform: "uppercase", color: "var(--accent)",
               fontFamily: "var(--font-sans)",
               whiteSpace: "nowrap",
             }}>
@@ -367,7 +367,7 @@ function SignupContent() {
           {/* Headline */}
           <motion.h1 variants={fadeUp} className="font-display" style={{ fontSize: "clamp(2.6rem, 6vw, 3.8rem)", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.035em", lineHeight: 0.95, marginBottom: "3.5rem" }}>
             Create your<br />
-            <em style={{ fontStyle: "italic", color: "#4f46e5", fontWeight: 300 }}>account.</em>
+            <em style={{ fontStyle: "italic", color: "var(--accent)", fontWeight: 300 }}>account.</em>
           </motion.h1>
 
           {/* Role selector — pill tabs */}
@@ -433,7 +433,7 @@ function SignupContent() {
                       borderRadius: "100px",
                       padding: "1rem 1.75rem",
                       fontSize: "0.95rem",
-                      color: "#0f172a",
+                      color: "var(--text-primary)",
                       outline: "none",
                       transition: "all 0.3s cubic-bezier(0.22, 1, 0.36, 1)",
                       fontFamily: "var(--font-sans)",
@@ -499,7 +499,7 @@ function SignupContent() {
                           fontWeight: 800,
                           letterSpacing: "0.22em",
                           textTransform: "uppercase",
-                          color: "#0f172a",
+                          color: "var(--text-primary)",
                           marginBottom: "0.55rem",
                           fontFamily: "var(--font-sans)",
                         }}
@@ -572,10 +572,10 @@ function SignupContent() {
 
               <motion.p variants={fadeUp} style={{
                 textAlign: "center", fontSize: "0.82rem", fontWeight: 500,
-                color: "#64748b", fontFamily: "var(--font-sans)",
+                color: "var(--text-tertiary)", fontFamily: "var(--font-sans)",
               }}>
                 Already have an account?{" "}
-                <Link href="/login" className="hover:text-indigo-700 transition-colors" style={{ color: "#4f46e5", fontWeight: 700, textDecoration: "none" }}>
+                <Link href="/login" className="hover:text-indigo-700 transition-colors" style={{ color: "var(--accent)", fontWeight: 700, textDecoration: "none" }}>
                   Sign in →
                 </Link>
               </motion.p>
