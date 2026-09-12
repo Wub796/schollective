@@ -19,6 +19,7 @@ An admin surface verifies faculty credentials and moderates activity.
 | AI | Google Gemini (`@google/genai`) — profile review, résumé parsing, recommendations, moderation |
 | Storage | S3-compatible bucket, presigned with Web Crypto (`src/lib/neon/s3-presign.ts`) |
 | Styling | Tailwind v4 with CSS custom properties in `src/app/globals.css` |
+| Type | Mulish (body) + Arima (display), loaded with `next/font` |
 | Observability | Sentry, PostHog, Amplitude |
 
 ## Getting started
@@ -140,6 +141,27 @@ Three modules are worth reading before changing behaviour:
   email, the restore page and `db/maintenance/002` all quote these constants, so
   change them here and nothing has to be found by grepping.
 
+## Design system
+
+Three contracts in `src/app/globals.css` are worth knowing before you style
+anything, because each one exists to stop a specific drift that already happened
+once:
+
+- **Colour.** The palette literals live in the `--color-*` block and nowhere
+  else; every other colour token is an alias onto one of them. Because they use
+  the `--color-` prefix, Tailwind turns them into utilities, so templates write
+  `bg-paper`, `text-ink-soft`, `border-line` instead of a hex or an off-token
+  Tailwind colour. Adding a hue means adding it to that block first.
+- **Type.** `--font-sans` and `--font-display` resolve through `var(--font-mulish)`
+  and `var(--font-arima)`, which `layout.tsx` assigns via `next/font`. They must
+  stay `var()` references: a literal family name in that block wins the cascade
+  over the value `next/font` puts on `<html>`, and the declared typeface quietly
+  stops being the rendered one. The block previously named Berthold and Recoleta
+  — fonts that were never loaded.
+- **Radius.** `--radius-control` (buttons, inputs, pills), `--radius-surface`
+  (cards, panels, mockup windows) and `--radius-inset` (nested inside a
+  surface). Pick by the element's role; do not introduce a new number.
+
 ## Known gaps
 
 - `script-src` still carries `'unsafe-inline'` (`next.config.ts`). Removing it
@@ -148,6 +170,20 @@ Three modules are worth reading before changing behaviour:
 - `ProfileRecord` is hand-maintained against the DDL in `src/lib/neon/schema.ts`.
   `tests/schema-drift.test.mjs` compares the two and fails on divergence;
   generating the types is the real fix.
-- Styling is mid-migration: most colours now resolve through the tokens in
-  `globals.css`, but inline `style` objects remain the dominant pattern and
-  some one-off values are still literal.
+- Styling is mid-migration. The public surface (`src/app/page.tsx`, the
+  `(public)` routes and the components they share) resolves through the tokens
+  above. The dashboard, admin and profile surfaces still carry inline `style`
+  objects with literal values, including hover effects implemented by rewriting
+  `element.style` from `onMouseEnter`.
+- `three` and `@types/three` are in `package.json` but nothing imports them any
+  more; dropping them is a lockfile change, so it is not done here.
+- The icon set is one image wearing four hats. `favicon.ico`, `favicon.png`,
+  `apple-touch-icon.png` and `logo.png` are byte-identical 400x400 PNGs, so no
+  per-size variant exists for the browser to choose, and `favicon.ico` is a PNG
+  with a PNG body under an `.ico` name. The metadata in `layout.tsx` now states
+  the real 400x400 dimensions instead of the 48/192/512/180 it used to claim;
+  generating real 32/180/192/512 variants from the source art is the fix.
+- `public/hero-glass.png`, `public/dark-fluid.png` and the Next.js starter SVGs
+  beside them are listed in `.gitignore` and nothing references them — leftovers
+  from the removed glass/dark treatment and the original scaffold. They are
+  local-only, so they cost the repository nothing; delete them at will.
