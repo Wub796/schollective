@@ -10,13 +10,19 @@ import {
   X,
   Rocket,
   PartyPopper,
+  GraduationCap,
+  FlaskConical,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
 export interface TourStep {
   targetId: string; // matches data-tour attribute
   title: string;
   description: string;
-  emoji?: string;
+  /** A real icon from lucide. Steps previously carried raw emoji, which render
+   *  as a different picture on every platform and cannot inherit colour or
+   *  stroke weight from the surrounding UI. */
+  icon?: LucideIcon;
   position?: "top" | "bottom" | "left" | "right";
 }
 
@@ -250,7 +256,7 @@ export function InteractiveOnboardingTour({ role, steps, suppressAutoLaunch = fa
   }
 
   const roleLabel = role === "student" ? "Scholar" : "Faculty";
-  const roleEmoji = role === "student" ? "🎓" : "🔬";
+  const RoleIcon = role === "student" ? GraduationCap : FlaskConical;
 
   return (
     <div
@@ -400,7 +406,8 @@ export function InteractiveOnboardingTour({ role, steps, suppressAutoLaunch = fa
                     color: "var(--accent)",
                   }}
                 >
-                  {roleEmoji} {roleLabel} Quickstart Tour
+                  <RoleIcon size={13} strokeWidth={2.4} style={{ display: "inline", verticalAlign: "-2px" }} aria-hidden="true" />{" "}
+                  {roleLabel} Quickstart Tour
                 </span>
                 <h2
                   className="font-display"
@@ -686,8 +693,13 @@ export function InteractiveOnboardingTour({ role, steps, suppressAutoLaunch = fa
               }}
             >
               <div style={{ display: "flex", alignItems: "center", gap: "0.45rem" }}>
-                {currentStep.emoji && (
-                  <span style={{ fontSize: "1rem", lineHeight: 1 }}>{currentStep.emoji}</span>
+                {currentStep.icon && (
+                  <currentStep.icon
+                    size={15}
+                    strokeWidth={2.2}
+                    style={{ color: "var(--accent)", flexShrink: 0 }}
+                    aria-hidden="true"
+                  />
                 )}
                 <span
                   style={{
