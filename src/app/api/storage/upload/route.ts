@@ -3,6 +3,7 @@ import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { assertStorageConfigured, getUploadUrl, MAX_AVATAR_BYTES } from "@/lib/neon/storage";
 import { isSuspended } from "@/lib/authz";
 import { checkRateLimit } from "@/lib/security";
+import { internalError } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -70,7 +71,7 @@ export async function POST(req: Request) {
   } catch (error: any) {
     console.error("[storage] Presign error:", error?.message ?? error);
     return NextResponse.json(
-      { error: error?.message || "Failed to create upload URL." },
+      { error: internalError("storage/upload", error, "Uploads are temporarily unavailable.") },
       { status: 500 },
     );
   }

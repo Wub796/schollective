@@ -54,7 +54,7 @@ export function ProfessorCard({ professor }: ProfessorCardProps) {
       {/* Top shimmer line */}
       <div style={{
         position: "absolute", insetInline: 0, top: 0, height: "2px",
-        background: "linear-gradient(90deg, transparent, #4f46e5, #6366f1, transparent)",
+        background: "linear-gradient(90deg, transparent, var(--accent), var(--accent-blue), transparent)",
       }} />
 
       {/* Header row: avatar + verified badge */}
@@ -66,7 +66,7 @@ export function ProfessorCard({ professor }: ProfessorCardProps) {
           border: "1.5px solid rgba(79, 70, 229, 0.25)",
           display: "flex", alignItems: "center", justifyContent: "center",
           fontSize: "0.9rem", fontWeight: 800,
-          color: "#4f46e5",
+          color: "var(--accent)",
           letterSpacing: "0.04em",
           flexShrink: 0,
           fontFamily: "var(--font-sans)",
@@ -87,7 +87,7 @@ export function ProfessorCard({ professor }: ProfessorCardProps) {
             <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#0f172a", flexShrink: 0 }} />
             <span style={{
               fontSize: "0.58rem", fontWeight: 800, letterSpacing: "0.2em",
-              textTransform: "uppercase", color: "#0f172a",
+              textTransform: "uppercase", color: "var(--text-primary)",
               fontFamily: "var(--font-sans, monospace)",
             }}>
               Verified
@@ -102,10 +102,10 @@ export function ProfessorCard({ professor }: ProfessorCardProps) {
             background: isAccepting ? "rgba(79, 70, 229, 0.08)" : "rgba(220, 38, 38, 0.08)",
             flexShrink: 0,
           }}>
-            <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: isAccepting ? "#4f46e5" : "#dc2626", flexShrink: 0 }} />
+            <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: isAccepting ? "var(--accent)" : "#dc2626", flexShrink: 0 }} />
             <span style={{
               fontSize: "0.58rem", fontWeight: 800, letterSpacing: "0.2em",
-              textTransform: "uppercase", color: isAccepting ? "#4f46e5" : "#dc2626",
+              textTransform: "uppercase", color: isAccepting ? "var(--accent)" : "#dc2626",
               fontFamily: "var(--font-sans, monospace)",
             }}>
               {isAccepting ? "Active" : "Busy"}
@@ -118,14 +118,14 @@ export function ProfessorCard({ professor }: ProfessorCardProps) {
       <div style={{ marginBottom: "1.75rem", minWidth: 0 }}>
         <h3 className="font-display" style={{
           fontSize: "1.3rem", fontWeight: 800,
-          color: "#0f172a", lineHeight: 1.3,
+          color: "var(--text-primary)", lineHeight: 1.3,
           marginBottom: "0.5rem", letterSpacing: "-0.02em",
           overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap"
         }}>
           Dr. {displayName} {professor.last_name}
         </h3>
         <div style={{
-          fontSize: "0.78rem", color: "#475569", opacity: 0.8,
+          fontSize: "0.78rem", color: "var(--text-secondary)", opacity: 0.8,
           fontFamily: "var(--font-sans)", lineHeight: 1.5,
           overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap"
         }}>
@@ -140,7 +140,7 @@ export function ProfessorCard({ professor }: ProfessorCardProps) {
       <div style={{ flex: 1, marginBottom: "2rem" }}>
         <div style={{
           fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.25em",
-          textTransform: "uppercase", color: "#4f46e5",
+          textTransform: "uppercase", color: "var(--accent)",
           marginBottom: "0.85rem", fontFamily: "var(--font-sans, monospace)",
         }}>
           Focus Areas
@@ -157,7 +157,7 @@ export function ProfessorCard({ professor }: ProfessorCardProps) {
                   background: "rgba(99, 102, 241, 0.12)",
                   fontSize: "0.7rem",
                   fontWeight: 600,
-                  color: "#0f172a",
+                  color: "var(--text-primary)",
                   fontFamily: "var(--font-sans)",
                   lineHeight: 1.4,
                 }}
@@ -166,7 +166,7 @@ export function ProfessorCard({ professor }: ProfessorCardProps) {
               </span>
             ))
           ) : (
-            <span style={{ fontSize: "0.78rem", fontStyle: "italic", color: "#475569", opacity: 0.6, fontFamily: "var(--font-sans)" }}>
+            <span style={{ fontSize: "0.78rem", fontStyle: "italic", color: "var(--text-secondary)", opacity: 0.6, fontFamily: "var(--font-sans)" }}>
               Open to all topics
             </span>
           )}
@@ -184,8 +184,8 @@ export function ProfessorCard({ professor }: ProfessorCardProps) {
           style={{
             width: "100%",
             padding: "0.95rem 1.75rem",
-            background: "#4f46e5",
-            border: "1px solid #4f46e5",
+            background: "var(--accent)",
+            border: "1px solid var(--accent)",
             borderRadius: "100px",
             textAlign: "center",
             fontSize: "0.65rem",

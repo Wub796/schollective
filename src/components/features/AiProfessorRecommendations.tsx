@@ -59,8 +59,8 @@ export function AiProfessorRecommendations() {
       {/* Header matching site style */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "1.25rem" }}>
         <div>
-          <h3 className="font-display" style={{ fontSize: "1.35rem", fontWeight: 800, color: "#0f172a", margin: 0, letterSpacing: "-0.025em" }}>
-            Recommended <em style={{ fontStyle: "italic", color: "#4f46e5", fontWeight: 300 }}>Professors</em>
+          <h3 className="font-display" style={{ fontSize: "1.35rem", fontWeight: 800, color: "var(--text-primary)", margin: 0, letterSpacing: "-0.025em" }}>
+            Recommended <em style={{ fontStyle: "italic", color: "var(--accent)", fontWeight: 300 }}>Professors</em>
           </h3>
         </div>
 
@@ -74,7 +74,7 @@ export function AiProfessorRecommendations() {
             padding: "0.4rem 0.85rem",
             fontSize: "0.75rem",
             fontWeight: 700,
-            color: "#4f46e5",
+            color: "var(--accent)",
             cursor: "pointer",
             display: "flex",
             alignItems: "center",
@@ -105,7 +105,7 @@ export function AiProfessorRecommendations() {
           {error}
         </div>
       ) : recommendations.length === 0 ? (
-        <div style={{ padding: "2rem", textAlign: "center", background: "#ffffff", border: "1px dashed rgba(99, 102, 241, 0.4)", borderRadius: "14px", color: "#64748b", fontSize: "0.85rem" }}>
+        <div style={{ padding: "2rem", textAlign: "center", background: "#ffffff", border: "1px dashed rgba(99, 102, 241, 0.4)", borderRadius: "14px", color: "var(--text-tertiary)", fontSize: "0.85rem" }}>
           No recommendations found. Complete your research interests on your profile to generate matches!
         </div>
       ) : (
@@ -137,7 +137,7 @@ export function AiProfessorRecommendations() {
                     <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
                       <span
                         style={{
-                          background: rec.matchScore >= 88 ? "#10b981" : "#6366f1",
+                          background: rec.matchScore >= 88 ? "#10b981" : "var(--accent-blue)",
                           color: "#ffffff",
                           fontWeight: 800,
                           fontSize: "0.72rem",
@@ -152,7 +152,7 @@ export function AiProfessorRecommendations() {
                         <span
                           style={{
                             background: "rgba(99, 102, 241, 0.08)",
-                            color: "#4f46e5",
+                            color: "var(--accent)",
                             fontSize: "0.68rem",
                             fontWeight: 800,
                             padding: "0.15rem 0.5rem",
@@ -170,10 +170,10 @@ export function AiProfessorRecommendations() {
                     )}
                   </div>
 
-                  <h4 className="font-display" style={{ fontSize: "1.05rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.15rem 0" }}>
+                  <h4 className="font-display" style={{ fontSize: "1.05rem", fontWeight: 800, color: "var(--text-primary)", margin: "0 0 0.15rem 0" }}>
                     {prof.name}
                   </h4>
-                  <p style={{ fontSize: "0.78rem", color: "#64748b", margin: "0 0 0.75rem 0" }}>
+                  <p style={{ fontSize: "0.78rem", color: "var(--text-tertiary)", margin: "0 0 0.75rem 0" }}>
                     {prof.department ? `${prof.department} • ` : ""}{prof.institution || "Faculty Member"}
                   </p>
 
@@ -185,7 +185,7 @@ export function AiProfessorRecommendations() {
                           key={i}
                           style={{
                             background: "rgba(99, 102, 241, 0.08)",
-                            color: "#4f46e5",
+                            color: "var(--accent)",
                             fontSize: "0.68rem",
                             fontWeight: 700,
                             padding: "0.15rem 0.5rem",
@@ -198,7 +198,7 @@ export function AiProfessorRecommendations() {
                     </div>
                   )}
 
-                  <p style={{ fontSize: "0.76rem", color: "#475569", lineHeight: 1.5, fontStyle: "italic", margin: "0 0 1rem 0" }}>
+                  <p style={{ fontSize: "0.76rem", color: "var(--text-secondary)", lineHeight: 1.5, fontStyle: "italic", margin: "0 0 1rem 0" }}>
                     "{rec.suggestedOutreachAngle}"
                   </p>
                 </div>
@@ -212,7 +212,7 @@ export function AiProfessorRecommendations() {
                     gap: "0.35rem",
                     width: "100%",
                     background: "rgba(79, 70, 229, 0.08)",
-                    color: "#4f46e5",
+                    color: "var(--accent)",
                     border: "1px solid rgba(79, 70, 229, 0.25)",
                     borderRadius: "100px",
                     padding: "0.55rem 1rem",

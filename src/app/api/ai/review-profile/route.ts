@@ -12,6 +12,7 @@ import { sanitizeAiPromptInput } from "@/lib/ai/guardrails";
 import { checkDurableRateLimit } from "@/lib/rate-limit";
 import { checkRateLimit, getClientIp } from "@/lib/security";
 import { runAs } from "@/lib/neon/user-context";
+import { internalError } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
@@ -226,7 +227,7 @@ export async function POST(req: Request) {
   } catch (error: any) {
     console.error("[POST /api/ai/review-profile] Error:", error);
     return NextResponse.json(
-      { error: error?.message || "Failed to start profile review" },
+      { error: internalError("ai/review-profile", error, "Failed to start profile review.") },
       { status: 500, headers: PRIVATE_JSON_HEADERS },
     );
   }
@@ -274,7 +275,7 @@ export async function GET(req: Request) {
   } catch (error: any) {
     console.error("[GET /api/ai/review-profile] Error:", error);
     return NextResponse.json(
-      { error: error?.message || "Failed to load profile review" },
+      { error: internalError("ai/review-profile", error, "Failed to load profile review.") },
       { status: 500, headers: PRIVATE_JSON_HEADERS },
     );
   }

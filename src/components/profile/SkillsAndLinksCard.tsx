@@ -137,16 +137,16 @@ export function SkillsAndLinksCard({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            color: "#4f46e5",
+            color: "var(--accent)",
           }}
         >
           <Code2 size={20} />
         </div>
         <div>
-          <h3 style={{ fontSize: "1.05rem", fontWeight: 800, color: "#0f172a", margin: 0 }}>
+          <h3 style={{ fontSize: "1.05rem", fontWeight: 800, color: "var(--text-primary)", margin: 0 }}>
             Skills & External Links
           </h3>
-          <p style={{ fontSize: "0.76rem", color: "#64748b", margin: 0 }}>
+          <p style={{ fontSize: "0.76rem", color: "var(--text-tertiary)", margin: 0 }}>
             Technical proficiencies, spoken languages, and personal profiles
           </p>
         </div>
@@ -158,7 +158,7 @@ export function SkillsAndLinksCard({
           style={{
             fontSize: "0.68rem",
             fontWeight: 800,
-            color: "#475569",
+            color: "var(--text-secondary)",
             textTransform: "uppercase",
             display: "block",
             marginBottom: "0.4rem",
@@ -189,7 +189,7 @@ export function SkillsAndLinksCard({
             type="button"
             onClick={() => handleAddSkill(skillInput)}
             style={{
-              background: "#4f46e5",
+              background: "var(--accent)",
               color: "#ffffff",
               border: "none",
               borderRadius: "8px",
@@ -247,11 +247,11 @@ export function SkillsAndLinksCard({
               onClick={() => handleAddSkill(s)}
               style={{
                 background: "#ffffff",
-                border: "1px solid #e2e8f0",
+                border: "1px solid var(--border)",
                 borderRadius: "100px",
                 padding: "0.2rem 0.55rem",
                 fontSize: "0.68rem",
-                color: "#64748b",
+                color: "var(--text-tertiary)",
                 cursor: "pointer",
               }}
             >
@@ -268,7 +268,7 @@ export function SkillsAndLinksCard({
             style={{
               fontSize: "0.68rem",
               fontWeight: 800,
-              color: "#475569",
+              color: "var(--text-secondary)",
               textTransform: "uppercase",
               display: "flex",
               alignItems: "center",
@@ -287,7 +287,7 @@ export function SkillsAndLinksCard({
               style={{
                 background: "none",
                 border: "none",
-                color: "#4f46e5",
+                color: "var(--accent)",
                 fontSize: "0.78rem",
                 fontWeight: 700,
                 cursor: "pointer",
@@ -313,13 +313,13 @@ export function SkillsAndLinksCard({
                   padding: "0.35rem 0.75rem",
                   borderRadius: "8px",
                   background: "#f8fafc",
-                  border: "1px solid #e2e8f0",
+                  border: "1px solid var(--border)",
                   fontSize: "0.8rem",
                   color: "#1e293b",
                 }}
               >
                 <span style={{ fontWeight: 700 }}>{item.language}</span>
-                <span style={{ fontSize: "0.72rem", color: "#64748b", background: "#f1f5f9", padding: "0.1rem 0.4rem", borderRadius: "4px" }}>
+                <span style={{ fontSize: "0.72rem", color: "var(--text-tertiary)", background: "#f1f5f9", padding: "0.1rem 0.4rem", borderRadius: "4px" }}>
                   {item.proficiency}
                 </span>
                 <button
@@ -338,7 +338,7 @@ export function SkillsAndLinksCard({
           <div
             style={{
               background: "#f8fafc",
-              border: "1px solid #e2e8f0",
+              border: "1px solid var(--border)",
               borderRadius: "10px",
               padding: "0.85rem",
               display: "flex",
@@ -352,12 +352,12 @@ export function SkillsAndLinksCard({
               value={langName}
               onChange={(e) => setLangName(e.target.value)}
               placeholder="e.g. Spanish or Mandarin"
-              style={{ flex: 1, minWidth: "150px", padding: "0.55rem 0.75rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.82rem", background: "#ffffff" }}
+              style={{ flex: 1, minWidth: "150px", padding: "0.55rem 0.75rem", borderRadius: "6px", border: "1px solid var(--border-hover)", fontSize: "0.82rem", background: "#ffffff" }}
             />
             <Select
               value={langProficiency}
               onChange={(e) => setLangProficiency(e.target.value)}
-              style={{ width: "auto", minWidth: "160px", padding: "0.55rem 0.75rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.82rem", background: "#ffffff" }}
+              style={{ width: "auto", minWidth: "160px", padding: "0.55rem 0.75rem", borderRadius: "6px", border: "1px solid var(--border-hover)", fontSize: "0.82rem", background: "#ffffff" }}
             >
               {PROFICIENCY_OPTIONS.map((p) => (
                 <option key={p} value={p}>{p}</option>
@@ -367,14 +367,14 @@ export function SkillsAndLinksCard({
               <button
                 type="button"
                 onClick={handleAddLanguage}
-                style={{ background: "#4f46e5", color: "#ffffff", border: "none", borderRadius: "6px", padding: "0.55rem 0.85rem", fontSize: "0.78rem", fontWeight: 700, cursor: "pointer" }}
+                style={{ background: "var(--accent)", color: "#ffffff", border: "none", borderRadius: "6px", padding: "0.55rem 0.85rem", fontSize: "0.78rem", fontWeight: 700, cursor: "pointer" }}
               >
                 Save
               </button>
               <button
                 type="button"
                 onClick={() => setIsAddingLang(false)}
-                style={{ background: "#e2e8f0", color: "#475569", border: "none", borderRadius: "6px", padding: "0.55rem 0.75rem", fontSize: "0.78rem", cursor: "pointer" }}
+                style={{ background: "#e2e8f0", color: "var(--text-secondary)", border: "none", borderRadius: "6px", padding: "0.55rem 0.75rem", fontSize: "0.78rem", cursor: "pointer" }}
               >
                 Cancel
               </button>
@@ -389,7 +389,7 @@ export function SkillsAndLinksCard({
           style={{
             fontSize: "0.68rem",
             fontWeight: 800,
-            color: "#475569",
+            color: "var(--text-secondary)",
             textTransform: "uppercase",
             display: "block",
             marginBottom: "0.75rem",

@@ -169,7 +169,7 @@ export function ResumeDropzone({ onParsed, disabled }: ResumeDropzoneProps) {
               width: "28px",
               height: "28px",
               borderRadius: "8px",
-              background: "linear-gradient(135deg, #4f46e5, #6366f1)",
+              background: "linear-gradient(135deg, var(--accent), var(--accent-blue))",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -179,7 +179,7 @@ export function ResumeDropzone({ onParsed, disabled }: ResumeDropzoneProps) {
           >
             <Sparkles size={15} />
           </div>
-          <span style={{ fontSize: "0.95rem", fontWeight: 800, color: "#0f172a", letterSpacing: "-0.01em" }}>
+          <span style={{ fontSize: "0.95rem", fontWeight: 800, color: "var(--text-primary)", letterSpacing: "-0.01em" }}>
             Resume Ingestion & Autofill
           </span>
         </div>
@@ -189,7 +189,7 @@ export function ResumeDropzone({ onParsed, disabled }: ResumeDropzoneProps) {
             fontWeight: 700,
             letterSpacing: "0.1em",
             textTransform: "uppercase",
-            color: "#4f46e5",
+            color: "var(--accent)",
             background: "rgba(99, 102, 241, 0.08)",
             padding: "0.2rem 0.65rem",
             borderRadius: "100px",
@@ -221,7 +221,7 @@ export function ResumeDropzone({ onParsed, disabled }: ResumeDropzoneProps) {
         }}
         style={{
           border: isDragging
-            ? "2px dashed #4f46e5"
+            ? "2px dashed var(--accent)"
             : "1.5px dashed rgba(99, 102, 241, 0.35)",
           background: isDragging
             ? "rgba(99, 102, 241, 0.08)"
@@ -261,16 +261,16 @@ export function ResumeDropzone({ onParsed, disabled }: ResumeDropzoneProps) {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                color: "#4f46e5",
+                color: "var(--accent)",
               }}
             >
               <Loader2 size={24} className="animate-spin" />
             </div>
             <div style={{ width: "100%", maxWidth: "340px", display: "flex", flexDirection: "column", alignItems: "center", gap: "0.35rem" }}>
-              <p style={{ fontSize: "0.88rem", fontWeight: 700, color: "#0f172a", margin: 0 }}>
+              <p style={{ fontSize: "0.88rem", fontWeight: 700, color: "var(--text-primary)", margin: 0 }}>
                 Parsing {fileName || "Resume"}…
               </p>
-              <p style={{ fontSize: "0.74rem", color: "#4f46e5", fontWeight: 600, margin: 0 }}>
+              <p style={{ fontSize: "0.74rem", color: "var(--accent)", fontWeight: 600, margin: 0 }}>
                 {statusText}
               </p>
               <div
@@ -287,7 +287,7 @@ export function ResumeDropzone({ onParsed, disabled }: ResumeDropzoneProps) {
                   style={{
                     height: "100%",
                     width: `${progressPercent}%`,
-                    background: "linear-gradient(90deg, #4f46e5, #818cf8)",
+                    background: "linear-gradient(90deg, var(--accent), #818cf8)",
                     borderRadius: "100px",
                     transition: "width 0.5s ease-out",
                   }}
@@ -306,7 +306,7 @@ export function ResumeDropzone({ onParsed, disabled }: ResumeDropzoneProps) {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                color: "#4f46e5",
+                color: "var(--accent)",
                 transition: "all 0.2s ease",
               }}
             >
@@ -314,9 +314,9 @@ export function ResumeDropzone({ onParsed, disabled }: ResumeDropzoneProps) {
             </div>
             <div>
               <p style={{ fontSize: "0.9rem", fontWeight: 700, color: "#1e293b", margin: 0 }}>
-                Drag &amp; drop your resume (PDF) here, or <span style={{ color: "#4f46e5", textDecoration: "underline" }}>browse files</span>
+                Drag &amp; drop your resume (PDF) here, or <span style={{ color: "var(--accent)", textDecoration: "underline" }}>browse files</span>
               </p>
-              <p style={{ fontSize: "0.76rem", color: "#64748b", margin: "0.35rem 0 0", maxWidth: "420px" }}>
+              <p style={{ fontSize: "0.76rem", color: "var(--text-tertiary)", margin: "0.35rem 0 0", maxWidth: "420px" }}>
                 Optional — extracts your background into the fields below without erasing your existing work (PDF up to 4 MB)
               </p>
             </div>

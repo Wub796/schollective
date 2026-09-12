@@ -103,7 +103,7 @@ function NavLink({
             height: "1.25rem",
             padding: "0 0.35rem",
             borderRadius: "999px",
-            background: "#6366f1",
+            background: "var(--accent-blue)",
             color: "#ffffff",
             fontSize: "0.65rem",
             fontWeight: 700,

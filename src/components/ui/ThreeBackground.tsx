@@ -19,6 +19,19 @@ export function ThreeBackground() {
     if (!mountRef.current) return;
     const el = mountRef.current;
 
+    // Respect prefers-reduced-motion.
+    //
+    // CSS cannot reach a requestAnimationFrame loop, so the blanket
+    // reduced-motion block in globals.css does nothing for this component: a
+    // visitor who has asked their OS to reduce motion was still served a
+    // continuously animating WebGL starfield with camera parallax tracking their
+    // pointer. Bail out entirely rather than animate slower — the scene is
+    // decorative, and not creating a GL context also spares the battery.
+    const prefersReducedMotion =
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReducedMotion) return;
+
     /* ── Scene ──────────────────────────────────────────────────── */
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(55, el.clientWidth / el.clientHeight, 0.1, 1000);
@@ -207,6 +220,12 @@ export function ThreeBackground() {
 
     const animate = () => {
       animId = requestAnimationFrame(animate);
+
+      // Skip the work while the tab is in the background. rAF is usually
+      // throttled there, but not reliably across browsers, and a hidden tab
+      // rendering a GL scene is pure battery cost with nothing to show for it.
+      if (document.hidden) return;
+
       t += 0.005;
 
       /* Camera parallax */
@@ -253,6 +272,11 @@ export function ThreeBackground() {
       starGeo.dispose();
       starMat.dispose();
       renderer.dispose();
+      // Release the GL context explicitly. renderer.dispose() frees Three's own
+      // resources but browsers cap the number of live WebGL contexts per page
+      // (commonly ~16), and mount/unmount cycles across navigations can exhaust
+      // that cap, at which point the canvas silently stops rendering.
+      renderer.forceContextLoss?.();
       if (el.contains(renderer.domElement)) el.removeChild(renderer.domElement);
     };
   }, []);

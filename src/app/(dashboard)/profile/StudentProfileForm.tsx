@@ -530,7 +530,7 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
                 style={{ width: "100%", height: "100%", objectFit: "cover" }}
               />
             ) : (
-              <span style={{ fontSize: "1.4rem", fontWeight: 800, color: "#4f46e5" }}>
+              <span style={{ fontSize: "1.4rem", fontWeight: 800, color: "var(--accent)" }}>
                 {initials}
               </span>
             )}
@@ -543,7 +543,7 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
               position: "absolute",
               bottom: 0,
               right: 0,
-              background: "#4f46e5",
+              background: "var(--accent)",
               color: "#fff",
               border: "none",
               borderRadius: "50%",
@@ -570,7 +570,7 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
 
         <div style={{ display: "flex", flexDirection: "column", gap: "0.2rem" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
-            <h2 style={{ fontSize: "1.4rem", fontWeight: 800, color: "#0f172a", margin: 0 }}>
+            <h2 style={{ fontSize: "1.4rem", fontWeight: 800, color: "var(--text-primary)", margin: 0 }}>
               {displayName} {lastName}
             </h2>
             <span
@@ -580,7 +580,7 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
                 padding: "0.2rem 0.65rem",
                 borderRadius: "100px",
                 background: "rgba(99, 102, 241, 0.1)",
-                color: "#4f46e5",
+                color: "var(--accent)",
                 border: "1px solid rgba(99, 102, 241, 0.25)",
                 flexShrink: 0,
               }}
@@ -588,10 +588,10 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
               {levelConfig.badge}
             </span>
           </div>
-          <span style={{ fontSize: "0.85rem", color: "#4f46e5", fontWeight: 600 }}>
+          <span style={{ fontSize: "0.85rem", color: "var(--accent)", fontWeight: 600 }}>
             {major ? `${major}` : "Student Scholar"} {inst ? `· ${inst}` : ""}
           </span>
-          <span style={{ fontSize: "0.72rem", color: "#64748b" }}>
+          <span style={{ fontSize: "0.72rem", color: "var(--text-tertiary)" }}>
             Graduation: {gradYear ? `Class of ${gradYear}` : "Pending"}
           </span>
         </div>
@@ -621,8 +621,8 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
               fontSize: "0.75rem",
               fontWeight: 700,
               border: "none",
-              background: activeTab === "edit" ? "#4f46e5" : "transparent",
-              color: activeTab === "edit" ? "#ffffff" : "#475569",
+              background: activeTab === "edit" ? "var(--accent)" : "transparent",
+              color: activeTab === "edit" ? "#ffffff" : "var(--text-secondary)",
               cursor: "pointer",
               transition: "all 0.2s ease",
             }}
@@ -641,8 +641,8 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
               fontSize: "0.75rem",
               fontWeight: 700,
               border: "none",
-              background: activeTab === "preview" ? "#4f46e5" : "transparent",
-              color: activeTab === "preview" ? "#ffffff" : "#475569",
+              background: activeTab === "preview" ? "var(--accent)" : "transparent",
+              color: activeTab === "preview" ? "#ffffff" : "var(--text-secondary)",
               cursor: "pointer",
               transition: "all 0.2s ease",
             }}
@@ -712,16 +712,16 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  color: "#4f46e5",
+                  color: "var(--accent)",
                 }}
               >
                 <User size={20} />
               </div>
               <div>
-                <h3 style={{ fontSize: "1.05rem", fontWeight: 800, color: "#0f172a", margin: 0 }}>
+                <h3 style={{ fontSize: "1.05rem", fontWeight: 800, color: "var(--text-primary)", margin: 0 }}>
                   Personal Information
                 </h3>
-                <p style={{ fontSize: "0.76rem", color: "#64748b", margin: 0 }}>
+                <p style={{ fontSize: "0.76rem", color: "var(--text-tertiary)", margin: 0 }}>
                   Your basic identity details and preferred name
                 </p>
               </div>
@@ -733,7 +733,7 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
                   style={{
                     fontSize: "0.68rem",
                     fontWeight: 800,
-                    color: "#475569",
+                    color: "var(--text-secondary)",
                     textTransform: "uppercase",
                     display: "block",
                     marginBottom: "0.4rem",
@@ -756,7 +756,7 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
                   style={{
                     fontSize: "0.68rem",
                     fontWeight: 800,
-                    color: "#475569",
+                    color: "var(--text-secondary)",
                     textTransform: "uppercase",
                     display: "block",
                     marginBottom: "0.4rem",
@@ -779,7 +779,7 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
                   style={{
                     fontSize: "0.68rem",
                     fontWeight: 800,
-                    color: "#475569",
+                    color: "var(--text-secondary)",
                     textTransform: "uppercase",
                     display: "block",
                     marginBottom: "0.4rem",
@@ -948,17 +948,17 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    color: "#4f46e5",
+                    color: "var(--accent)",
                     flexShrink: 0,
                   }}
                 >
                   <Sparkles size={22} />
                 </div>
                 <div>
-                  <h3 id="merge-modal-title" style={{ margin: 0, fontSize: "1.15rem", fontWeight: 800, color: "#0f172a" }}>
+                  <h3 id="merge-modal-title" style={{ margin: 0, fontSize: "1.15rem", fontWeight: 800, color: "var(--text-primary)" }}>
                     Resume Parsed Successfully
                   </h3>
-                  <p style={{ margin: "0.25rem 0 0 0", fontSize: "0.82rem", color: "#64748b" }}>
+                  <p style={{ margin: "0.25rem 0 0 0", fontSize: "0.82rem", color: "var(--text-tertiary)" }}>
                     Choose how to apply extracted information to your existing profile
                   </p>
                 </div>
@@ -1001,7 +1001,7 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
                   gap: "0.35rem",
                   padding: "1.15rem 1.25rem",
                   borderRadius: "14px",
-                  border: "2px solid #4f46e5",
+                  border: "2px solid var(--accent)",
                   background: "rgba(99, 102, 241, 0.04)",
                   cursor: "pointer",
                   textAlign: "left",
@@ -1009,7 +1009,7 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
                 }}
               >
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                  <span style={{ fontWeight: 800, fontSize: "0.95rem", color: "#4f46e5", display: "flex", alignItems: "center", gap: "0.45rem" }}>
+                  <span style={{ fontWeight: 800, fontSize: "0.95rem", color: "var(--accent)", display: "flex", alignItems: "center", gap: "0.45rem" }}>
                     <CheckCircle2 size={16} color="#4f46e5" /> Merge & Fill Empty Fields
                   </span>
                   <span
@@ -1018,7 +1018,7 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
                       fontWeight: 700,
                       padding: "0.15rem 0.5rem",
                       borderRadius: "100px",
-                      background: "#4f46e5",
+                      background: "var(--accent)",
                       color: "#ffffff",
                       letterSpacing: "0.03em",
                     }}
@@ -1026,7 +1026,7 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
                     Safe & Recommended
                   </span>
                 </div>
-                <p style={{ margin: 0, fontSize: "0.78rem", color: "#475569", lineHeight: 1.4 }}>
+                <p style={{ margin: 0, fontSize: "0.78rem", color: "var(--text-secondary)", lineHeight: 1.4 }}>
                   Preserves your existing personal details and bio. Appends newly discovered activities, honors, coursework, and skills without duplicating.
                 </p>
               </button>
@@ -1053,7 +1053,7 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
                 }}
               >
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                  <span style={{ fontWeight: 700, fontSize: "0.92rem", color: "#0f172a" }}>
+                  <span style={{ fontWeight: 700, fontSize: "0.92rem", color: "var(--text-primary)" }}>
                     Replace All with Resume
                   </span>
                   <span
@@ -1070,7 +1070,7 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
                     Overwrite
                   </span>
                 </div>
-                <p style={{ margin: 0, fontSize: "0.78rem", color: "#64748b", lineHeight: 1.4 }}>
+                <p style={{ margin: 0, fontSize: "0.78rem", color: "var(--text-tertiary)", lineHeight: 1.4 }}>
                   Completely resets your profile fields, activities, honors, and coursework to match the contents extracted from this resume.
                 </p>
               </button>
@@ -1086,7 +1086,7 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
                 style={{
                   background: "none",
                   border: "none",
-                  color: "#64748b",
+                  color: "var(--text-tertiary)",
                   fontSize: "0.82rem",
                   fontWeight: 600,
                   cursor: "pointer",

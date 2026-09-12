@@ -7,7 +7,7 @@ import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { ChatThread } from "@/components/features/ChatThread";
 import { CloseThreadButton } from "@/components/features/CloseThreadButton";
 import { ArrowLeft, ShieldCheck } from "lucide-react";
-import { getThreadAccess, isSuspended } from "@/lib/authz";
+import { requireParticipant, isSuspended } from "@/lib/authz";
 import type { ChatThreadProps } from "@/components/features/ChatThread";
 import { parseJsonbArray } from "@/lib/utils";
 import { markRead } from "./actions";
@@ -43,10 +43,12 @@ export default async function MessagePage({ params }: MessagePageProps) {
   // This route is outside the (dashboard) group, so it carries its own gate.
   if (isSuspended(profile)) redirect("/suspended");
 
-  // A thread belongs to its student and professor alone. Anyone else gets the
-  // same 404 as a thread that does not exist, so ids cannot be probed.
-  const { request, isParticipant } = await getThreadAccess(requestId, user.id);
-  if (!request || !isParticipant) return notFound();
+  // A thread belongs to its student and professor alone, and an admin
+  // soft-delete hides it from both. Every other case gets the same 404 as a
+  // thread that does not exist, so ids cannot be probed.
+  const access = await requireParticipant(requestId, user.id);
+  if (!access.ok) return notFound();
+  const request = access.request;
 
   // Mark incoming messages as read
   await markRead(requestId);
@@ -106,7 +108,7 @@ export default async function MessagePage({ params }: MessagePageProps) {
               width: "2.2rem", height: "2.2rem", borderRadius: "100px", flexShrink: 0,
               border: "1px solid rgba(79, 70, 229, 0.3)",
               background: "rgba(79, 70, 229, 0.08)",
-              color: "#4f46e5",
+              color: "var(--accent)",
               textDecoration: "none", transition: "all 0.2s",
             }}
           >
@@ -118,19 +120,19 @@ export default async function MessagePage({ params }: MessagePageProps) {
               background: "rgba(79, 70, 229, 0.1)",
               border: "1px solid rgba(79, 70, 229, 0.25)",
               display: "flex", alignItems: "center", justifyContent: "center",
-              fontSize: "0.82rem", fontWeight: 800, color: "#4f46e5",
+              fontSize: "0.82rem", fontWeight: 800, color: "var(--accent)",
               fontFamily: "var(--font-sans)",
             }}>
               {participant.first_name?.[0] ?? "?"}{participant.last_name?.[0] ?? ""}
             </div>
             <div style={{ minWidth: 0 }}>
               <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
-                <span className="font-display" style={{ fontSize: "0.95rem", fontWeight: 800, color: "#0f172a", letterSpacing: "-0.015em", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                <span className="font-display" style={{ fontSize: "0.95rem", fontWeight: 800, color: "var(--text-primary)", letterSpacing: "-0.015em", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                   {participantTitle}
                 </span>
-                {participant.role === "professor" && <ShieldCheck size={12} style={{ color: "#4f46e5", flexShrink: 0 }} />}
+                {participant.role === "professor" && <ShieldCheck size={12} style={{ color: "var(--accent)", flexShrink: 0 }} />}
               </div>
-              <div style={{ fontSize: "0.58rem", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: "#4f46e5", fontFamily: "var(--font-sans, monospace)" }}>
+              <div style={{ fontSize: "0.58rem", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--accent)", fontFamily: "var(--font-sans, monospace)" }}>
                 {participant.role === "professor" ? (parseJsonbArray(participant.expertise_fields)[0] || "Faculty") : "Student"}
               </div>
             </div>
@@ -140,17 +142,17 @@ export default async function MessagePage({ params }: MessagePageProps) {
         {/* Right: topic + status + close */}
         <div style={{ display: "flex", alignItems: "center", gap: "1rem", flexShrink: 0 }}>
           <div className="hidden md:block" style={{ textAlign: "right" }}>
-            <div style={{ fontSize: "0.52rem", color: "#4f46e5", textTransform: "uppercase", letterSpacing: "0.22em", fontWeight: 800, fontFamily: "var(--font-sans, monospace)", marginBottom: "0.15rem" }}>Topic</div>
-            <div className="font-display" style={{ fontSize: "0.85rem", color: "#0f172a", fontStyle: "italic", maxWidth: "240px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+            <div style={{ fontSize: "0.52rem", color: "var(--accent)", textTransform: "uppercase", letterSpacing: "0.22em", fontWeight: 800, fontFamily: "var(--font-sans, monospace)", marginBottom: "0.15rem" }}>Topic</div>
+            <div className="font-display" style={{ fontSize: "0.85rem", color: "var(--text-primary)", fontStyle: "italic", maxWidth: "240px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
               &ldquo;{request.topic}&rdquo;
             </div>
           </div>
           <div style={{
             padding: "0.3rem 0.85rem", borderRadius: "100px",
             border: `1px solid ${request.status === "active" ? "rgba(79, 70, 229, 0.6)" : "rgba(15, 23, 42, 0.15)"}`,
-            background: request.status === "active" ? "#6366f1" : "rgba(15, 23, 42, 0.05)",
+            background: request.status === "active" ? "var(--accent-blue)" : "rgba(15, 23, 42, 0.05)",
             fontSize: "0.58rem", fontWeight: 800, letterSpacing: "0.2em", textTransform: "uppercase" as const,
-            color: "#0f172a",
+            color: "var(--text-primary)",
             fontFamily: "var(--font-sans, monospace)",
           }}>
             {request.status}

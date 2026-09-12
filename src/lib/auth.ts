@@ -1,5 +1,5 @@
 import { AsyncLocalStorage } from "node:async_hooks";
-import { betterAuth } from "better-auth";
+import { APIError, betterAuth } from "better-auth";
 import { neon } from "@neondatabase/serverless";
 import {
   CompiledQuery,
@@ -11,6 +11,7 @@ import {
 import { describeMissingDbUrl, getServerlessDbUrl } from "@/lib/neon/db";
 import { ensureAuthSchema } from "@/lib/neon/schema";
 import { passwordResetEmail, sendEmail, verificationEmail } from "@/lib/email";
+import { isSignupEmailAllowed } from "@/lib/email-validation";
 
 const PG_DIALECT = {
   createAdapter: () => new PostgresAdapter(),
@@ -151,6 +152,34 @@ export const auth = betterAuth({
   emailVerification: {
     sendVerificationEmail: async ({ user, url }) => {
       await sendEmail({ to: user.email, ...verificationEmail(url) });
+    },
+  },
+  /**
+   * Server-side signup gate.
+   *
+   * The signup page validates the address inline, but that is a browser-side
+   * courtesy: a direct POST to /api/auth/sign-up/email skips it entirely, and
+   * for a long time nothing on the server re-checked (the server-side
+   * `validateEmail` existed but had zero callers). This hook is the enforcement
+   * point — it runs for every account-creation path, including Google sign-in.
+   *
+   * Only the role-independent rules apply here, because the role is not chosen
+   * until onboarding: format, and the disposable-domain block. The professor
+   * institutional-email requirement is enforced where the professor role is
+   * actually granted, in /api/auth/profile/update.
+   */
+  databaseHooks: {
+    user: {
+      create: {
+        before: async (user) => {
+          const verdict = isSignupEmailAllowed(user?.email);
+          if (!verdict.ok) {
+            throw new APIError("BAD_REQUEST", { message: verdict.message });
+          }
+          // Returning the record unchanged: this hook only vetoes.
+          return { data: user };
+        },
+      },
     },
   },
   user: {

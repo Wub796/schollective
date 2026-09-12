@@ -1296,3 +1296,71 @@ body {
 }
 
 
+
+/* ═══════════════════════════════════════════════════════════════
+   REDUCED MOTION
+   ═══════════════════════════════════════════════════════════════
+   The app ships a WebGL starfield, framer-motion page transitions, a custom
+   cursor, a scroll-progress bar and several pulsing background orbs. Before
+   this block, `prefers-reduced-motion` was honoured in exactly one place
+   (CustomCursor), so a visitor who has asked their OS to reduce motion still
+   got all of it — which for a vestibular disorder is not a cosmetic issue.
+
+   This is the blanket fallback: it neutralises CSS animation and transition
+   everywhere. Components that animate in JavaScript have to check the query
+   themselves; ThreeBackground now does.
+
+   `scroll-behavior: auto` matters too — a smooth-scrolled anchor jump is
+   motion the user did not ask for. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Tailwind's animate-pulse on the decorative background orbs: hold them at
+     their mid-opacity rather than freezing on a random frame. */
+  .animate-pulse {
+    animation: none !important;
+    opacity: 0.5;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   FOCUS VISIBILITY
+   ═══════════════════════════════════════════════════════════════
+   Many controls are styled with inline `style` objects and no focus rule, so
+   keyboard focus could land on an element with no visible indication. This is a
+   floor, not a design: a consistent 2px accent ring on anything focusable that
+   has not opted out, only for keyboard focus (`:focus-visible`), so it never
+   appears on a mouse click. */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SCREEN-READER-ONLY TEXT
+   ═══════════════════════════════════════════════════════════════
+   For live regions and icon-button labels: present to assistive technology,
+   invisible on screen. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}

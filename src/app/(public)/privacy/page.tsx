@@ -50,15 +50,15 @@ export default function PrivacyPage() {
   ];
 
   return (
-    <div style={{ minHeight: "100vh", background: "transparent", color: "#0f172a" }}>
+    <div style={{ minHeight: "100vh", background: "transparent", color: "var(--text-primary)" }}>
       <PublicNav />
 
       <div style={{ maxWidth: "800px", margin: "0 auto", padding: "9rem 2rem 6rem", display: "flex", flexDirection: "column", gap: "4.5rem" }}>
         <div>
-          <h1 className="font-display" style={{ fontSize: "clamp(2.4rem, 5vw, 3.8rem)", fontWeight: 900, color: "#0f172a", letterSpacing: "-0.04em", lineHeight: 1.05, marginBottom: "0.75rem" }}>
-            Privacy <em style={{ fontStyle: "italic", color: "#4f46e5", fontWeight: 300 }}>Policy</em>
+          <h1 className="font-display" style={{ fontSize: "clamp(2.4rem, 5vw, 3.8rem)", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.04em", lineHeight: 1.05, marginBottom: "0.75rem" }}>
+            Privacy <em style={{ fontStyle: "italic", color: "var(--accent)", fontWeight: 300 }}>Policy</em>
           </h1>
-          <p style={{ fontSize: "0.88rem", color: "#475569", opacity: 0.75, fontFamily: "var(--font-sans)" }}>
+          <p style={{ fontSize: "0.88rem", color: "var(--text-secondary)", opacity: 0.75, fontFamily: "var(--font-sans)" }}>
             Last updated: May 2025
           </p>
         </div>
@@ -68,8 +68,8 @@ export default function PrivacyPage() {
         <div style={{ display: "flex", flexDirection: "column", gap: "2.75rem" }}>
           {sections.map(({ title, body }) => (
             <div key={title} style={{ padding: "2rem 2.25rem", border: "1px solid rgba(99, 102, 241, 0.4)", borderRadius: "16px", background: "rgba(255, 255, 255, 0.9)" }}>
-              <h2 className="font-display" style={{ fontSize: "1.25rem", fontWeight: 800, color: "#0f172a", letterSpacing: "-0.015em", marginBottom: "0.75rem" }}>{title}</h2>
-              <p style={{ fontSize: "0.95rem", color: "#475569", opacity: 0.8, lineHeight: 1.8, fontFamily: "var(--font-sans)" }}>{body}</p>
+              <h2 className="font-display" style={{ fontSize: "1.25rem", fontWeight: 800, color: "var(--text-primary)", letterSpacing: "-0.015em", marginBottom: "0.75rem" }}>{title}</h2>
+              <p style={{ fontSize: "0.95rem", color: "var(--text-secondary)", opacity: 0.8, lineHeight: 1.8, fontFamily: "var(--font-sans)" }}>{body}</p>
             </div>
           ))}
         </div>

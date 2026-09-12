@@ -20,10 +20,10 @@ export default async function ProfPublicProfilePage() {
     <div style={{ display: "flex", flexDirection: "column", gap: "2rem", maxWidth: "800px", paddingBottom: "6rem" }}>
       {/* Header */}
       <header style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-        <h1 className="font-display" style={{ fontSize: "clamp(2.4rem, 4.5vw, 3.6rem)", fontWeight: 900, color: "#0f172a", letterSpacing: "-0.035em", lineHeight: 1.1 }}>
-          Faculty Security & <em style={{ fontStyle: "italic", color: "#4f46e5", fontWeight: 300 }}>Preferences</em>
+        <h1 className="font-display" style={{ fontSize: "clamp(2.4rem, 4.5vw, 3.6rem)", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.035em", lineHeight: 1.1 }}>
+          Faculty Security & <em style={{ fontStyle: "italic", color: "var(--accent)", fontWeight: 300 }}>Preferences</em>
         </h1>
-        <p style={{ fontSize: "0.9rem", color: "#475569", margin: 0, opacity: 0.85 }}>
+        <p style={{ fontSize: "0.9rem", color: "var(--text-secondary)", margin: 0, opacity: 0.85 }}>
           Manage your password, account verification details, security settings, and UI preferences.
         </p>
       </header>

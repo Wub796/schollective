@@ -65,7 +65,7 @@ export function AdminSafetyQueue({ initialFlaggedAccounts = [] }: Props) {
       {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "1.5rem", flexWrap: "wrap", gap: "1rem" }}>
         <div>
-          <h3 className="font-display" style={{ fontSize: "1.35rem", fontWeight: 800, color: "#0f172a", margin: 0, letterSpacing: "-0.025em" }}>
+          <h3 className="font-display" style={{ fontSize: "1.35rem", fontWeight: 800, color: "var(--text-primary)", margin: 0, letterSpacing: "-0.025em" }}>
             Safety & <em style={{ fontStyle: "italic", color: "#ef4444", fontWeight: 300 }}>Bot Moderation</em> Queue
           </h3>
         </div>
@@ -77,7 +77,7 @@ export function AdminSafetyQueue({ initialFlaggedAccounts = [] }: Props) {
               onClick={() => setFilterRole(role)}
               style={{
                 background: filterRole === role ? "#0f172a" : "rgba(241, 245, 249, 0.9)",
-                color: filterRole === role ? "#ffffff" : "#475569",
+                color: filterRole === role ? "#ffffff" : "var(--text-secondary)",
                 border: "none",
                 borderRadius: "100px",
                 padding: "0.35rem 0.85rem",
@@ -94,9 +94,9 @@ export function AdminSafetyQueue({ initialFlaggedAccounts = [] }: Props) {
       </div>
 
       {filtered.length === 0 ? (
-        <div style={{ padding: "2.5rem 1rem", textAlign: "center", color: "#64748b", background: "rgba(248, 250, 252, 0.8)", borderRadius: "12px", border: "1px dashed #e2e8f0" }}>
+        <div style={{ padding: "2.5rem 1rem", textAlign: "center", color: "var(--text-tertiary)", background: "rgba(248, 250, 252, 0.8)", borderRadius: "12px", border: "1px dashed var(--border)" }}>
           <CheckCircle size={28} color="#10b981" style={{ margin: "0 auto 0.5rem auto", display: "block" }} />
-          <h4 style={{ fontSize: "0.9rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.25rem 0" }}>
+          <h4 style={{ fontSize: "0.9rem", fontWeight: 800, color: "var(--text-primary)", margin: "0 0 0.25rem 0" }}>
             Zero Active Flags
           </h4>
           <p style={{ fontSize: "0.8rem", margin: 0 }}>All user activity passes automated safety checks.</p>
@@ -105,7 +105,7 @@ export function AdminSafetyQueue({ initialFlaggedAccounts = [] }: Props) {
         <div style={{ overflowX: "auto" }}>
           <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "0.82rem" }}>
             <thead>
-              <tr style={{ borderBottom: "1px solid #e2e8f0", color: "#64748b" }}>
+              <tr style={{ borderBottom: "1px solid var(--border)", color: "var(--text-tertiary)" }}>
                 <th style={{ padding: "0.75rem 0.5rem", fontWeight: 800 }}>User Account</th>
                 <th style={{ padding: "0.75rem 0.5rem", fontWeight: 800 }}>Role</th>
                 <th style={{ padding: "0.75rem 0.5rem", fontWeight: 800 }}>AI Legitimacy</th>
@@ -117,17 +117,17 @@ export function AdminSafetyQueue({ initialFlaggedAccounts = [] }: Props) {
               {filtered.map((acc) => (
                 <tr key={acc.id} style={{ borderBottom: "1px solid #f1f5f9" }}>
                   <td style={{ padding: "0.85rem 0.5rem" }}>
-                    <div style={{ fontWeight: 800, color: "#0f172a" }}>
+                    <div style={{ fontWeight: 800, color: "var(--text-primary)" }}>
                       {acc.first_name || acc.last_name ? `${acc.first_name || ""} ${acc.last_name || ""}` : "Unnamed Account"}
                     </div>
-                    <div style={{ fontSize: "0.75rem", color: "#64748b" }}>{acc.email}</div>
+                    <div style={{ fontSize: "0.75rem", color: "var(--text-tertiary)" }}>{acc.email}</div>
                   </td>
 
                   <td style={{ padding: "0.85rem 0.5rem" }}>
                     <span
                       style={{
                         background: acc.role === "professor" ? "rgba(99, 102, 241, 0.1)" : "rgba(16, 185, 129, 0.1)",
-                        color: acc.role === "professor" ? "#4f46e5" : "#059669",
+                        color: acc.role === "professor" ? "var(--accent)" : "#059669",
                         fontWeight: 800,
                         fontSize: "0.68rem",
                         padding: "0.15rem 0.55rem",
@@ -177,7 +177,7 @@ export function AdminSafetyQueue({ initialFlaggedAccounts = [] }: Props) {
                         onClick={() => handleDismissFlag(acc.id)}
                         style={{
                           background: "#f1f5f9",
-                          color: "#475569",
+                          color: "var(--text-secondary)",
                           border: "none",
                           borderRadius: "100px",
                           padding: "0.35rem 0.75rem",

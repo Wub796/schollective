@@ -60,10 +60,10 @@ export default async function RequestNewPage({ searchParams }: RequestNewPagePro
             padding: "0.4rem 0.8rem", borderRadius: "100px", background: "rgba(79, 70, 229, 0.08)", border: "1px solid rgba(79, 70, 229, 0.2)"
           }}
         >
-          <ArrowLeft size={12} style={{ color: "#4f46e5" }} />
+          <ArrowLeft size={12} style={{ color: "var(--accent)" }} />
           <span style={{
             fontSize: "0.58rem", fontWeight: 800, letterSpacing: "0.22em",
-            textTransform: "uppercase", color: "#4f46e5",
+            textTransform: "uppercase", color: "var(--accent)",
             fontFamily: "var(--font-sans, monospace)",
           }}>
             Back to Directory
@@ -72,16 +72,16 @@ export default async function RequestNewPage({ searchParams }: RequestNewPagePro
 
         <h1 className="font-display" style={{
           fontSize: "clamp(2.4rem, 4.5vw, 3.6rem)", fontWeight: 900,
-          color: "#0f172a", letterSpacing: "-0.035em", lineHeight: 1.1,
+          color: "var(--text-primary)", letterSpacing: "-0.035em", lineHeight: 1.1,
         }}>
           Initiate your{" "}
-          <em style={{ fontStyle: "italic", color: "#4f46e5", fontWeight: 300 }}>
+          <em style={{ fontStyle: "italic", color: "var(--accent)", fontWeight: 300 }}>
             intellectual dialogue
           </em>
         </h1>
 
         <p style={{
-          fontSize: "0.95rem", color: "#475569", opacity: 0.75,
+          fontSize: "0.95rem", color: "var(--text-secondary)", opacity: 0.75,
           fontWeight: 400, maxWidth: "44rem", lineHeight: 1.8,
           fontFamily: "var(--font-sans)",
         }}>

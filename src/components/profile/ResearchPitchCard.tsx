@@ -111,16 +111,16 @@ export function ResearchPitchCard({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            color: "#4f46e5",
+            color: "var(--accent)",
           }}
         >
           <Sparkles size={20} />
         </div>
         <div>
-          <h3 style={{ fontSize: "1.05rem", fontWeight: 800, color: "#0f172a", margin: 0 }}>
+          <h3 style={{ fontSize: "1.05rem", fontWeight: 800, color: "var(--text-primary)", margin: 0 }}>
             Research Bio & Direction
           </h3>
-          <p style={{ fontSize: "0.76rem", color: "#64748b", margin: 0 }}>
+          <p style={{ fontSize: "0.76rem", color: "var(--text-tertiary)", margin: 0 }}>
             Elevator pitch and primary research topics
           </p>
         </div>
@@ -131,7 +131,7 @@ export function ResearchPitchCard({
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.4rem" }}>
           <label
             htmlFor="bio"
-            style={{ fontSize: "0.68rem", fontWeight: 800, color: "#475569", textTransform: "uppercase", letterSpacing: "0.04em" }}
+            style={{ fontSize: "0.68rem", fontWeight: 800, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.04em" }}
           >
             Academic Pitch & Motivation
           </label>
@@ -146,7 +146,7 @@ export function ResearchPitchCard({
           </span>
         </div>
 
-        <p style={{ fontSize: "0.78rem", color: "#64748b", margin: "0 0 0.5rem 0", lineHeight: 1.4 }}>
+        <p style={{ fontSize: "0.78rem", color: "var(--text-tertiary)", margin: "0 0 0.5rem 0", lineHeight: 1.4 }}>
           What specific questions or technical problems excite you most?
         </p>
 
@@ -175,11 +175,11 @@ export function ResearchPitchCard({
       <div>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.4rem" }}>
           <label
-            style={{ fontSize: "0.68rem", fontWeight: 800, color: "#475569", textTransform: "uppercase", letterSpacing: "0.04em" }}
+            style={{ fontSize: "0.68rem", fontWeight: 800, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.04em" }}
           >
             Target Academic Interests
           </label>
-          <span style={{ fontSize: "0.72rem", fontWeight: 600, color: interests.length >= 5 ? "#4f46e5" : "#64748b" }}>
+          <span style={{ fontSize: "0.72rem", fontWeight: 600, color: interests.length >= 5 ? "var(--accent)" : "var(--text-tertiary)" }}>
             {interests.length} / 5 max
           </span>
         </div>
@@ -208,7 +208,7 @@ export function ResearchPitchCard({
             disabled={interests.length >= 5 || !tagInput.trim()}
             onClick={() => handleAddTag(tagInput)}
             style={{
-              background: interests.length >= 5 || !tagInput.trim() ? "#e2e8f0" : "#4f46e5",
+              background: interests.length >= 5 || !tagInput.trim() ? "#e2e8f0" : "var(--accent)",
               color: interests.length >= 5 || !tagInput.trim() ? "#94a3b8" : "#ffffff",
               border: "none",
               borderRadius: "8px",
@@ -240,7 +240,7 @@ export function ResearchPitchCard({
                   borderRadius: "100px",
                   background: "rgba(99, 102, 241, 0.1)",
                   border: "1px solid rgba(99, 102, 241, 0.3)",
-                  color: "#4f46e5",
+                  color: "var(--accent)",
                   fontSize: "0.8rem",
                   fontWeight: 700,
                 }}
@@ -254,7 +254,7 @@ export function ResearchPitchCard({
                     background: "none",
                     border: "none",
                     padding: 0,
-                    color: "#4f46e5",
+                    color: "var(--accent)",
                     cursor: "pointer",
                     display: "flex",
                     alignItems: "center",
@@ -281,11 +281,11 @@ export function ResearchPitchCard({
                   onClick={() => handleAddTag(s)}
                   style={{
                     background: "#ffffff",
-                    border: "1px solid #e2e8f0",
+                    border: "1px solid var(--border)",
                     borderRadius: "100px",
                     padding: "0.2rem 0.6rem",
                     fontSize: "0.68rem",
-                    color: "#64748b",
+                    color: "var(--text-tertiary)",
                     cursor: "pointer",
                     transition: "all 0.15s ease",
                   }}

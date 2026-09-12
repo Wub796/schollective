@@ -1,7 +1,27 @@
 <!-- BEGIN:nextjs-agent-rules -->
 # This is NOT the Next.js you know
 
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
+This version has breaking changes — APIs, conventions, and file structure may all
+differ from your training data. Heed deprecation notices.
+
+Check the installed version before relying on remembered API shapes:
+
+```bash
+node -p "require('next/package.json').version"
+```
+
+Things this version does differently, which bite most often:
+
+- `params` and `searchParams` in pages, layouts and route handlers are
+  **Promises** and must be awaited.
+- `cookies()` and `headers()` are **async**.
+- `fetch` is no longer cached by default; opt in explicitly.
+
+(An earlier version of this file pointed at `node_modules/next/dist/docs/` for
+the authoritative guides. That directory is not published in the installed
+package — it does not exist — so the instruction sent every reader to a dead
+path. Use the version check above and https://nextjs.org/docs for the matching
+release.)
 <!-- END:nextjs-agent-rules -->
 
 # TOKEN MONITORING & AUDIT RULE

@@ -13,7 +13,13 @@ interface Notification {
   body: string | null;
   is_read: boolean;
   created_at: string;
-  request_id: string | null;
+  /**
+   * A ready-to-use app path (e.g. `/messages/<id>`), or null. The API returns
+   * the stored link verbatim — it is NOT a bare id, and must not be prefixed
+   * again. Doing that produced `/messages//messages/<id>`, which matched no
+   * route and made every thread notification a dead link.
+   */
+  link: string | null;
 }
 
 const FONT = "var(--font-sans)";
@@ -85,7 +91,7 @@ const STYLES = {
     fontWeight: 800,
     letterSpacing: "0.08em",
     textTransform: "uppercase",
-    color: "#0f172a",
+    color: "var(--text-primary)",
     fontFamily: FONT,
   } as React.CSSProperties,
   newBadge: {
@@ -106,7 +112,7 @@ const STYLES = {
   emptyState: { padding: "2.5rem 1.25rem", textAlign: "center" } as React.CSSProperties,
   emptyText: {
     fontSize: "0.78rem",
-    color: "#64748b",
+    color: "var(--text-tertiary)",
     margin: 0,
     fontFamily: FONT,
     fontWeight: 500,
@@ -130,7 +136,7 @@ const STYLES = {
   itemTitle: (isRead: boolean): React.CSSProperties => ({
     fontSize: "0.82rem",
     fontWeight: isRead ? 600 : 700,
-    color: "#0f172a",
+    color: "var(--text-primary)",
     fontFamily: FONT,
     lineHeight: 1.4,
   }),
@@ -144,7 +150,7 @@ const STYLES = {
   } as React.CSSProperties,
   itemBody: {
     fontSize: "0.72rem",
-    color: "#475569",
+    color: "var(--text-secondary)",
     fontFamily: FONT,
     lineHeight: 1.5,
   } as React.CSSProperties,
@@ -185,13 +191,19 @@ export function NotificationBell() {
   // everything else falls back to the route where the user's threads live.
   // new_request notifications point professors at their request queue instead,
   // where accept/decline actions live.
+  //
+  // `n.link` is already a complete path. Prefixing it is the bug this replaced.
   const getNotificationHref = (n: Notification) =>
-    n.request_id && n.type !== "new_request" ? `/messages/${n.request_id}` : getHref();
+    n.link && n.type !== "new_request" ? n.link : getHref();
 
   useEffect(() => {
     let mounted = true;
 
     const fetchNotifications = async () => {
+      // Don't poll a tab nobody is looking at. At 15s intervals this was a
+      // request every 15 seconds per open tab, forever, each running an
+      // authenticated 20-row query — for a background tab that is pure cost.
+      if (document.hidden) return;
       try {
         const res = await fetch("/api/notifications");
         if (!res.ok) return;
@@ -207,9 +219,17 @@ export function NotificationBell() {
     fetchNotifications();
     const interval = setInterval(fetchNotifications, 15000);
 
+    // Catch up as soon as the tab comes back, so skipping hidden polls never
+    // leaves the bell stale once the user returns.
+    const onVisibility = () => {
+      if (!document.hidden) fetchNotifications();
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+
     return () => {
       mounted = false;
       clearInterval(interval);
+      document.removeEventListener("visibilitychange", onVisibility);
     };
   }, []);
 
@@ -257,13 +277,23 @@ export function NotificationBell() {
 
   return (
     <div ref={dropdownRef} style={STYLES.wrapper}>
+      {/* Announced on change, not on every poll: the text only differs when the
+          count actually moves, so assistive tech stays quiet otherwise. */}
+      <span className="sr-only" role="status" aria-live="polite">
+        {unreadCount > 0 ? `${unreadCount} unread notifications` : ""}
+      </span>
       <button
         id="notification-bell"
         type="button"
         onClick={handleOpen}
         title="Notifications"
-        aria-label="View notifications"
+        aria-label={
+          unreadCount > 0
+            ? `Notifications, ${unreadCount} unread`
+            : "Notifications, none unread"
+        }
         aria-expanded={open}
+        aria-haspopup="menu"
         style={STYLES.bellButton(open)}
         onMouseEnter={(e) => {
           if (!open) {

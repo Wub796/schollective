@@ -119,11 +119,11 @@ export function InstitutionInput({
         style={{
           width: "100%",
           background: "rgba(255, 255, 255, 0.9)",
-          border: `1.5px solid ${focused ? "#4f46e5" : "rgba(99, 102, 241, 0.5)"}`,
+          border: `1.5px solid ${focused ? "var(--accent)" : "rgba(99, 102, 241, 0.5)"}`,
           borderRadius: "100px",
           padding: "1rem 3rem 1rem 1.75rem",
           fontSize: "0.95rem",
-          color: "#0f172a",
+          color: "var(--text-primary)",
           outline: "none",
           fontFamily: "var(--font-sans)",
           transition: "all 0.3s cubic-bezier(0.22, 1, 0.36, 1)",

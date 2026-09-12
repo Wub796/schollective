@@ -346,7 +346,7 @@ export function InteractiveOnboardingTour({ role, steps, suppressAutoLaunch = fa
                   left: 0,
                   right: 0,
                   height: "4px",
-                  background: "linear-gradient(90deg, #4f46e5, #6366f1, #818cf8, #6366f1, #4f46e5)",
+                  background: "linear-gradient(90deg, var(--accent), var(--accent-blue), #818cf8, var(--accent-blue), var(--accent))",
                   borderRadius: "20px 20px 0 0",
                 }}
               />
@@ -380,7 +380,7 @@ export function InteractiveOnboardingTour({ role, steps, suppressAutoLaunch = fa
                   width: "50px",
                   height: "50px",
                   borderRadius: "14px",
-                  background: "#4f46e5",
+                  background: "var(--accent)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
@@ -397,7 +397,7 @@ export function InteractiveOnboardingTour({ role, steps, suppressAutoLaunch = fa
                     fontWeight: 800,
                     letterSpacing: "0.2em",
                     textTransform: "uppercase",
-                    color: "#4f46e5",
+                    color: "var(--accent)",
                   }}
                 >
                   {roleEmoji} {roleLabel} Quickstart Tour
@@ -407,7 +407,7 @@ export function InteractiveOnboardingTour({ role, steps, suppressAutoLaunch = fa
                   style={{
                     fontSize: "1.45rem",
                     fontWeight: 900,
-                    color: "#0f172a",
+                    color: "var(--text-primary)",
                     letterSpacing: "-0.03em",
                     lineHeight: 1.2,
                     margin: 0,
@@ -420,7 +420,7 @@ export function InteractiveOnboardingTour({ role, steps, suppressAutoLaunch = fa
               <p
                 style={{
                   fontSize: "0.84rem",
-                  color: "#475569",
+                  color: "var(--text-secondary)",
                   lineHeight: 1.55,
                   margin: 0,
                   maxWidth: "340px",
@@ -438,7 +438,7 @@ export function InteractiveOnboardingTour({ role, steps, suppressAutoLaunch = fa
                   alignItems: "center",
                   gap: "0.35rem",
                   fontSize: "0.7rem",
-                  color: "#64748b",
+                  color: "var(--text-tertiary)",
                   fontWeight: 600,
                 }}
               >
@@ -455,11 +455,11 @@ export function InteractiveOnboardingTour({ role, steps, suppressAutoLaunch = fa
                     flex: 1,
                     padding: "0.65rem",
                     borderRadius: "8px",
-                    border: "1px solid #cbd5e1",
+                    border: "1px solid var(--border-hover)",
                     background: "#ffffff",
                     fontSize: "0.8rem",
                     fontWeight: 600,
-                    color: "#475569",
+                    color: "var(--text-secondary)",
                     cursor: "pointer",
                     fontFamily: "var(--font-sans)",
                   }}
@@ -474,7 +474,7 @@ export function InteractiveOnboardingTour({ role, steps, suppressAutoLaunch = fa
                     padding: "0.65rem",
                     borderRadius: "8px",
                     border: "none",
-                    background: "#4f46e5",
+                    background: "var(--accent)",
                     fontSize: "0.8rem",
                     fontWeight: 700,
                     color: "#ffffff",
@@ -581,7 +581,7 @@ export function InteractiveOnboardingTour({ role, steps, suppressAutoLaunch = fa
                   style={{
                     fontSize: "1.45rem",
                     fontWeight: 900,
-                    color: "#0f172a",
+                    color: "var(--text-primary)",
                     letterSpacing: "-0.03em",
                     lineHeight: 1.2,
                     margin: 0,
@@ -594,7 +594,7 @@ export function InteractiveOnboardingTour({ role, steps, suppressAutoLaunch = fa
               <p
                 style={{
                   fontSize: "0.84rem",
-                  color: "#475569",
+                  color: "var(--text-secondary)",
                   lineHeight: 1.55,
                   margin: 0,
                   maxWidth: "340px",
@@ -669,7 +669,7 @@ export function InteractiveOnboardingTour({ role, steps, suppressAutoLaunch = fa
               style={{
                 height: "100%",
                 width: `${progressPercent}%`,
-                background: "#4f46e5",
+                background: "var(--accent)",
                 transition: "width 0.6s cubic-bezier(0.16, 1, 0.3, 1)",
               }}
             />
@@ -695,7 +695,7 @@ export function InteractiveOnboardingTour({ role, steps, suppressAutoLaunch = fa
                     fontWeight: 800,
                     letterSpacing: "0.18em",
                     textTransform: "uppercase",
-                    color: "#4f46e5",
+                    color: "var(--accent)",
                     fontFamily: "var(--font-sans, monospace)",
                   }}
                 >
@@ -738,7 +738,7 @@ export function InteractiveOnboardingTour({ role, steps, suppressAutoLaunch = fa
                     style={{
                       fontSize: "1.05rem",
                       fontWeight: 800,
-                      color: "#0f172a",
+                      color: "var(--text-primary)",
                       margin: 0,
                       letterSpacing: "-0.02em",
                       lineHeight: 1.25,
@@ -749,7 +749,7 @@ export function InteractiveOnboardingTour({ role, steps, suppressAutoLaunch = fa
                   <p
                     style={{
                       fontSize: "0.82rem",
-                      color: "#475569",
+                      color: "var(--text-secondary)",
                       lineHeight: 1.55,
                       margin: 0,
                     }}
@@ -779,7 +779,7 @@ export function InteractiveOnboardingTour({ role, steps, suppressAutoLaunch = fa
                     borderRadius: "100px",
                     background:
                       idx === currentStepIndex
-                        ? "#4f46e5"
+                        ? "var(--accent)"
                         : idx < currentStepIndex
                         ? "#a5b4fc"
                         : "#e2e8f0",
@@ -827,7 +827,7 @@ export function InteractiveOnboardingTour({ role, steps, suppressAutoLaunch = fa
                       gap: "0.3rem",
                       padding: "0.45rem 0.85rem",
                       borderRadius: "8px",
-                      border: "1px solid #cbd5e1",
+                      border: "1px solid var(--border-hover)",
                       background: "#ffffff",
                       color: "#334155",
                       fontSize: "0.75rem",
@@ -850,7 +850,7 @@ export function InteractiveOnboardingTour({ role, steps, suppressAutoLaunch = fa
                     padding: "0.45rem 1rem",
                     borderRadius: "8px",
                     border: "none",
-                    background: "#4f46e5",
+                    background: "var(--accent)",
                     color: "#ffffff",
                     fontSize: "0.75rem",
                     fontWeight: 700,

@@ -107,7 +107,7 @@ export default function FeaturesPage() {
               <FadeIn key={f.t} delay={i * 0.05}>
                 <div className="p-8 border border-indigo-300/40 rounded-2xl bg-white h-full transition-all duration-300 hover:shadow-md hover:border-indigo-600 text-left flex flex-col">
                   <div className="w-12 h-12 rounded-xl bg-indigo-600/10 border border-indigo-600/25 flex items-center justify-center mb-6">
-                    <f.i size={20} style={{ color: "#4f46e5" }} />
+                    <f.i size={20} style={{ color: "var(--accent)" }} />
                   </div>
                   <h3 className="font-display text-[1.15rem] font-bold text-slate-900 tracking-[-0.02em] mb-2">{f.t}</h3>
                   <p className="text-[0.88rem] text-slate-600/80 leading-relaxed font-sans mt-auto">{f.d}</p>
@@ -135,14 +135,14 @@ export default function FeaturesPage() {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
                 <div className="p-7 bg-[#faf9f7] rounded-xl border border-indigo-300/40 flex flex-col gap-2">
-                  <ShieldCheck size={22} style={{ color: "#4f46e5" }} />
+                  <ShieldCheck size={22} style={{ color: "var(--accent)" }} />
                   <div className="font-display font-bold text-[1.1rem] text-slate-900">Edge Guards</div>
                   <p className="text-[0.88rem] text-slate-600/80 leading-relaxed font-sans mt-1">
                     Global routing guards enforce authentication at the edge before data loads.
                   </p>
                 </div>
                 <div className="p-7 bg-[#faf9f7] rounded-xl border border-indigo-300/40 flex flex-col gap-2">
-                  <Lock size={22} style={{ color: "#4f46e5" }} />
+                  <Lock size={22} style={{ color: "var(--accent)" }} />
                   <div className="font-display font-bold text-[1.1rem] text-slate-900">JWT Integrity</div>
                   <p className="text-[0.88rem] text-slate-600/80 leading-relaxed font-sans mt-1">
                     Role-based metadata is encrypted within sessions to prevent privilege escalation.

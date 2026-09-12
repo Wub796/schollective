@@ -54,14 +54,14 @@ export function AdminViewBanner({ role }: AdminViewBannerProps) {
     >
       {/* ── Role status indicator ── */}
       <div style={{ display: "flex", alignItems: "center", gap: "0.55rem" }}>
-        <Eye size={14} style={{ color: "#4f46e5", flexShrink: 0 }} />
+        <Eye size={14} style={{ color: "var(--accent)", flexShrink: 0 }} />
         <span
           style={{
             fontSize: "0.62rem",
             fontWeight: 800,
             letterSpacing: "0.18em",
             textTransform: "uppercase",
-            color: "#4f46e5",
+            color: "var(--accent)",
           }}
         >
           Admin Preview
@@ -82,7 +82,7 @@ export function AdminViewBanner({ role }: AdminViewBannerProps) {
             letterSpacing: "0.02em",
           }}
         >
-          Viewing as <strong style={{ color: "#0f172a" }}>{label}</strong>
+          Viewing as <strong style={{ color: "var(--text-primary)" }}>{label}</strong>
         </span>
       </div>
 
@@ -104,7 +104,7 @@ export function AdminViewBanner({ role }: AdminViewBannerProps) {
             borderRadius: "100px",
             border: "1px solid rgba(79, 70, 229, 0.25)",
             background: "rgba(79, 70, 229, 0.08)",
-            color: "#4f46e5",
+            color: "var(--accent)",
             fontSize: "0.62rem",
             fontWeight: 700,
             letterSpacing: "0.08em",
@@ -139,7 +139,7 @@ export function AdminViewBanner({ role }: AdminViewBannerProps) {
             borderRadius: "100px",
             border: "1px solid rgba(15, 23, 42, 0.15)",
             background: "rgba(15, 23, 42, 0.04)",
-            color: "#475569",
+            color: "var(--text-secondary)",
             fontSize: "0.62rem",
             fontWeight: 700,
             letterSpacing: "0.08em",

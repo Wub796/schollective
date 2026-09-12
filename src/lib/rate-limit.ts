@@ -27,6 +27,47 @@ export interface RateLimitResult {
 let lastPruneAt = 0;
 
 /**
+ * One Sentry report per bucket per isolate. The fallback fires on every request
+ * once it starts failing, and a per-request event would bury the signal it is
+ * meant to raise.
+ */
+const reportedBuckets = new Set<string>();
+
+function reportDegradation(bucket: string, err: unknown): void {
+  const detail = err instanceof Error ? err.message : String(err);
+  console.error(
+    `[rate-limit] durable check failed for "${bucket}", falling back to per-isolate counter:`,
+    detail,
+  );
+
+  if (reportedBuckets.has(bucket)) return;
+  reportedBuckets.add(bucket);
+
+  // Imported lazily and defensively: this module is reached from server actions,
+  // route handlers and the Workers runtime, and a monitoring failure must never
+  // be the thing that breaks rate limiting.
+  void (async () => {
+    try {
+      const Sentry = await import("@sentry/nextjs");
+      Sentry.captureException(err instanceof Error ? err : new Error(detail), {
+        level: "error",
+        tags: { subsystem: "rate-limit", bucket, degraded: "fail-open" },
+        extra: {
+          impact:
+            "Durable rate limiting is not running for this bucket. Requests are " +
+            "only bounded by the per-isolate counter, which on Cloudflare barely " +
+            "limits at all. Check that the connecting role has SELECT/INSERT/DELETE " +
+            "on rate_limit_events (db/migrations/0006).",
+        },
+      });
+    } catch {
+      // Sentry unavailable (or not configured in this runtime) — the
+      // console.error above is the remaining signal.
+    }
+  })();
+}
+
+/**
  * Counts events for (bucket, actor) inside the window; if under the max,
  * records one. The count and insert race slightly under concurrency — the
  * rare overshoot is bounded by the number of concurrent requests in flight
@@ -81,7 +122,15 @@ export async function checkDurableRateLimit(
   } catch (err) {
     // DB unavailable: fall back to the per-isolate limiter so the endpoint
     // still has some protection and, more importantly, still works.
-    console.error("[rate-limit] durable check failed, falling back to in-memory:", err instanceof Error ? err.message : err);
+    //
+    // Reported to Sentry, not just console.error. This path is silent by
+    // design — the product keeps working — which is exactly why it needs to be
+    // loud somewhere. A missing GRANT on rate_limit_events (the table was
+    // created in migration 0005, after 0004 had already granted privileges on
+    // "all tables") put every call down this branch, and because the fallback
+    // answers normally there was nothing to notice: the durable limiter was
+    // degraded indefinitely while appearing to work.
+    reportDegradation(bucket, err);
     const local = checkRateLimit(`${bucket}:${actor}`, max, windowMs);
     return {
       allowed: local.allowed,

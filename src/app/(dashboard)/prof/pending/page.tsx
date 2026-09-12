@@ -33,11 +33,16 @@ export default async function ProfessorPendingPage() {
             <div style={{
               display: "inline-flex", alignItems: "center", gap: "0.5rem",
               padding: "0.4rem 1rem", borderRadius: "100px",
-              background: "#6366f1",
+              // Near-black on indigo-500 measured 4.00:1, which fails WCAG AA
+              // for text this size (0.6rem, and AA wants 4.5:1 below 18.66px
+              // bold). White on indigo-500 is only 4.47:1 — still short — so the
+              // badge uses the darker --accent, giving 6.29:1. This is also the
+              // accent/white pairing every primary button already uses.
+              background: "var(--accent)",
               border: "1px solid rgba(79, 70, 229, 0.6)",
               fontSize: "0.6rem", fontWeight: 800, letterSpacing: "0.2em",
               textTransform: "uppercase" as const,
-              color: "#0f172a",
+              color: "#ffffff",
               fontFamily: "var(--font-sans, monospace)",
               marginBottom: "1.5rem",
             }}>
@@ -45,14 +50,14 @@ export default async function ProfessorPendingPage() {
               Verification in Progress
             </div>
             <h1 className="font-display" style={{
-              fontSize: "2.4rem", fontWeight: 900, color: "#0f172a",
+              fontSize: "2.4rem", fontWeight: 900, color: "var(--text-primary)",
               letterSpacing: "-0.03em", lineHeight: 1.1, marginBottom: "1rem",
             }}>
               Application Under{" "}
-              <em style={{ fontStyle: "italic", color: "#4f46e5", fontWeight: 300 }}>Review</em>
+              <em style={{ fontStyle: "italic", color: "var(--accent)", fontWeight: 300 }}>Review</em>
             </h1>
             <p style={{
-              fontSize: "0.9rem", color: "#475569", opacity: 0.75,
+              fontSize: "0.9rem", color: "var(--text-secondary)", opacity: 0.75,
               lineHeight: 1.7, fontFamily: "var(--font-sans)",
             }}>
               Welcome, Dr. {displayName}. Your academic profile has been submitted for manual verification.
@@ -68,17 +73,17 @@ export default async function ProfessorPendingPage() {
             marginBottom: "2.5rem",
           }}>
             <div style={{ display: "flex", alignItems: "flex-start", gap: "0.875rem" }}>
-              <Info size={18} style={{ color: "#4f46e5", marginTop: "0.1rem", flexShrink: 0 }} />
+              <Info size={18} style={{ color: "var(--accent)", marginTop: "0.1rem", flexShrink: 0 }} />
               <div>
                 <h3 style={{
                   fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.2em",
-                  textTransform: "uppercase" as const, color: "#4f46e5",
+                  textTransform: "uppercase" as const, color: "var(--accent)",
                   fontFamily: "var(--font-sans, monospace)", marginBottom: "0.5rem",
                 }}>
                   Our Verification Process
                 </h3>
                 <p style={{
-                  fontSize: "0.82rem", color: "#475569", opacity: 0.8,
+                  fontSize: "0.82rem", color: "var(--text-secondary)", opacity: 0.8,
                   lineHeight: 1.7, fontFamily: "var(--font-sans)",
                 }}>
                   Schollective manually verifies institutional credentials and expertise fields to ensure the highest standard of academic mentorship. This typically takes 24–48 business hours.

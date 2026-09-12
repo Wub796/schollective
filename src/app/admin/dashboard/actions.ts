@@ -2,40 +2,44 @@
 
 import { sql } from "@/lib/neon/db";
 import { runAs } from "@/lib/neon/user-context";
-import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { revalidatePath } from "next/cache";
 import { scoreProfessorApplication } from "@/lib/validators";
-import { checkRateLimit, sanitiseText, isValidUuid, LIMITS } from "@/lib/security";
+import { isValidId } from "@/lib/security";
+import { requireAdmin, requireUser } from "@/lib/authz";
+import { internalError } from "@/lib/utils";
 
 export async function scoreApplication(profileId: string) {
-  const pid = sanitiseText(profileId, 100);
-  if (!pid || !isValidUuid(pid)) {
+  if (!isValidId(profileId)) {
     return { error: "Invalid profile ID." };
   }
 
   try {
-    // Server actions are publicly invokable endpoints — this write path is
-    // admin-only, so resolve the caller and run under their identity. The RLS
-    // admin branch then enforces the same rule at the database layer.
-    const { user, profile: callerProfile } = await getCurrentUserAndProfile();
-    if (!user) {
-      return { error: "Unauthorized" };
-    }
-    const isSelf = user.id === pid;
-    const isAdmin = callerProfile?.role === "admin";
+    // Server actions are publicly invokable endpoints, so the caller is resolved
+    // here and every query runs under their identity; the RLS admin branch then
+    // enforces the same rule at the database layer.
+    const auth = await requireUser();
+    if (!auth.ok) return { error: auth.error };
+    const { user, profile: callerProfile } = auth;
+
+    const isSelf = user.id === profileId;
+    const isAdmin = callerProfile.role === "admin";
     if (!isSelf && !isAdmin) {
       return { error: "Access denied: Admin privileges required." };
     }
 
-    return runAs(user.id, async () => await scoreApplicationFor(pid));
-  } catch (err: any) {
-    console.error("[scoreApplication] Unexpected error:", err);
-    return { error: err.message || "Scoring failed" };
+    // A professor may score their OWN application (that is what the AI reviewer
+    // card does) but scoring must not then approve them. Auto-approval is an
+    // admin-only outcome: with `canAutoApprove` unconditional, any pending
+    // professor whose application scored >= 70 could call this action on their
+    // own id and promote themselves straight past manual credential review.
+    return runAs(user.id, async () => await scoreApplicationFor(profileId, { canAutoApprove: isAdmin }));
+  } catch (err: unknown) {
+    return { error: internalError("scoreApplication", err, "Scoring failed.") };
   }
 }
 
 /** The scoring body — runs under the caller's database identity. */
-async function scoreApplicationFor(pid: string) {
+async function scoreApplicationFor(pid: string, options: { canAutoApprove: boolean }) {
     const profiles = await sql`
       SELECT id, email, institution, expertise_fields, first_name, last_name, lab_website, publications, status, role
       FROM profiles
@@ -58,7 +62,7 @@ async function scoreApplicationFor(pid: string) {
     const isHighLegitimacy = result.score >= 70 && result.level === "high";
     let autoApproved = false;
 
-    if (isHighLegitimacy && (profile.status === "pending" || !profile.status)) {
+    if (options.canAutoApprove && isHighLegitimacy && (profile.status === "pending" || !profile.status)) {
       autoApproved = true;
       await sql`
         UPDATE profiles
@@ -97,10 +101,9 @@ async function scoreApplicationFor(pid: string) {
 
 export async function autoReviewAllPendingProfessors() {
   try {
-    const { user, profile: adminProfile } = await getCurrentUserAndProfile();
-    if (!user || adminProfile?.role !== "admin") {
-      return { error: "Access denied: Admin privileges required." };
-    }
+    const auth = await requireAdmin();
+    if (!auth.ok) return { error: auth.error };
+    const { user } = auth;
 
     return runAs(user.id, async () => {
     const pending = await sql`
@@ -117,7 +120,7 @@ export async function autoReviewAllPendingProfessors() {
     let flaggedCount = 0;
 
     for (const item of pending) {
-      const res = await scoreApplicationFor(item.id);
+      const res = await scoreApplicationFor(item.id, { canAutoApprove: true });
       if (res?.autoApproved) autoApprovedCount++;
       else flaggedCount++;
     }
@@ -128,22 +131,28 @@ export async function autoReviewAllPendingProfessors() {
 
     return { success: true, processed: pending.length, autoApprovedCount, flaggedCount };
     });
-  } catch (err: any) {
-    console.error("[autoReviewAllPendingProfessors] Error:", err);
-    return { error: err.message || "Batch review failed" };
+  } catch (err: unknown) {
+    return { error: internalError("autoReviewAllPendingProfessors", err, "Batch review failed.") };
   }
 }
 
 export async function updateProfessorStatus(profileId: string, newStatus: 'approved' | 'rejected') {
-  const pid = sanitiseText(profileId, 100);
-  if (!pid || !isValidUuid(pid)) return { error: "Invalid profile ID." };
+  const pid = profileId;
+  if (!isValidId(pid)) return { error: "Invalid profile ID." };
   if (newStatus !== "approved" && newStatus !== "rejected") return { error: "Invalid status." };
 
   try {
-    const { user, profile: adminProfile } = await getCurrentUserAndProfile();
-    if (!user || adminProfile?.role !== 'admin') {
-      return { error: "Access denied: Admin privileges required." };
-    }
+    const auth = await requireAdmin();
+    if (!auth.ok) return { error: auth.error };
+    const { user } = auth;
+
+    // Scoped to professors: these two statuses are the faculty review outcomes,
+    // and applying them to a student or another admin would leave that account
+    // in a state no screen knows how to render or recover from.
+    const targets = await runAs(user.id, async () =>
+      sql`SELECT id FROM profiles WHERE id = ${pid} AND role = 'professor' LIMIT 1;`
+    );
+    if (!targets[0]) return { error: "No professor application found for that account." };
 
     if (newStatus === "approved") {
       await runAs(user.id, async () => {
@@ -183,8 +192,7 @@ export async function updateProfessorStatus(profileId: string, newStatus: 'appro
     revalidatePath("/admin/professors");
     revalidatePath("/professors");
     return { success: true };
-  } catch (err: any) {
-    console.error("[updateProfessorStatus] Unexpected error:", err);
-    return { error: err.message || "Failed to update professor status." };
+  } catch (err: unknown) {
+    return { error: internalError("updateProfessorStatus", err, "Failed to update professor status.") };
   }
 }
