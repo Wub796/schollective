@@ -132,6 +132,54 @@ test("role and status type guards reject junk", () => {
   assert.ok(!S.isRequestStatus("rejected"), "'rejected' is a profile status, not a request status");
 });
 
+test("group membership lists are drawn from the member vocabulary", () => {
+  const all = new Set(S.MEMBER_STATUSES);
+  for (const name of ["MEMBER_PARTICIPATING", "MEMBER_CAN_VIEW_REQUEST", "MEMBER_ENDED"]) {
+    for (const value of S[name]) {
+      assert.ok(all.has(value), `${name} contains "${value}", which is not a declared member status`);
+    }
+  }
+});
+
+test("a participating member can see the request, and an ended membership sees nothing", () => {
+  for (const status of S.MEMBER_PARTICIPATING) {
+    assert.ok(S.MEMBER_CAN_VIEW_REQUEST.includes(status), `"${status}" participates but cannot see the request`);
+  }
+  for (const status of S.MEMBER_ENDED) {
+    assert.ok(!S.MEMBER_CAN_VIEW_REQUEST.includes(status), `"${status}" has ended but can still see the request`);
+    assert.ok(!S.MEMBER_PARTICIPATING.includes(status));
+  }
+  // An invitee sees what they are invited to, but may not read the thread yet.
+  assert.ok(S.MEMBER_CAN_VIEW_REQUEST.includes("invited"));
+  assert.ok(!S.MEMBER_PARTICIPATING.includes("invited"));
+});
+
+test("every member status is either live or ended, never both", () => {
+  for (const status of S.MEMBER_STATUSES) {
+    const live = S.MEMBER_CAN_VIEW_REQUEST.includes(status);
+    const ended = S.MEMBER_ENDED.includes(status);
+    assert.ok(live !== ended, `"${status}" is ${live ? "both live and ended" : "neither live nor ended"}`);
+  }
+});
+
+test("students only join requests that are still a live conversation", () => {
+  assert.deepEqual([...S.OPEN_TO_MEMBERS].sort(), [...S.PARTICIPANT_ONGOING].sort());
+  for (const status of S.OPEN_TO_MEMBERS) {
+    assert.ok(!S.TERMINAL_STATUSES.includes(status), `"${status}" is terminal but open to new members`);
+  }
+});
+
+test("member status guard rejects junk and request-only statuses", () => {
+  assert.ok(S.isMemberStatus("joined"));
+  assert.ok(!S.isMemberStatus("active"), "'active' is a request status, not a member status");
+  assert.ok(!S.isMemberStatus("Joined"));
+  assert.ok(!S.isMemberStatus(null));
+});
+
+test("friendships have exactly the two stored states", () => {
+  assert.deepEqual([...S.FRIENDSHIP_STATUSES], ["pending", "accepted"]);
+});
+
 test("asSqlArray returns a plain mutable array the driver can bind", () => {
   const out = S.asSqlArray(S.PARTICIPANT_ONGOING);
   assert.ok(Array.isArray(out));
