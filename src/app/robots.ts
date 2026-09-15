@@ -13,6 +13,8 @@ export default function robots(): MetadataRoute.Robots {
           '/dashboard/',
           '/messages/',
           '/threads/',
+          '/friends',
+          '/students/',
           '/profile/',
           '/prof/',
           '/onboarding',

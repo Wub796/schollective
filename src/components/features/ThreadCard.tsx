@@ -3,11 +3,17 @@
 import React from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { AvatarStack } from "@/components/ui/Avatar";
+import type { PersonSummary } from "@/components/features/PersonRow";
+import { listNames } from "@/lib/people";
+
+/** The statuses a participant's thread list can contain. */
+export type ThreadCardStatus = 'pending' | 'viewed' | 'active' | 'declined' | 'closed';
 
 interface ThreadCardProps {
   request: {
     id: string;
-    status: 'pending' | 'viewed' | 'active' | 'declined' | 'closed';
+    status: ThreadCardStatus;
     topic: string;
     participant: {
       first_name: string;
@@ -23,6 +29,8 @@ interface ThreadCardProps {
   };
   viewerRole: 'student' | 'professor';
   hasUnread?: boolean;
+  /** The other students on a group thread, from the viewer's side. Empty or absent for a one-to-one thread. */
+  groupmates?: PersonSummary[];
 }
 
 const statusConfig = {
@@ -33,7 +41,7 @@ const statusConfig = {
   closed:   { label: "Closed",         color: "rgba(15, 23, 42, 0.5)", glow: "rgba(15, 23, 42, 0.08)", bg: "#0f172a" },
 };
 
-export function ThreadCard({ request, viewerRole, hasUnread }: ThreadCardProps) {
+export function ThreadCard({ request, viewerRole, hasUnread, groupmates = [] }: ThreadCardProps) {
   const displayName = request.participant.preferred_name || request.participant.first_name;
   const prefix = viewerRole === "student" ? "Dr. " : "";
   const status = statusConfig[request.status];
@@ -137,6 +145,27 @@ export function ThreadCard({ request, viewerRole, hasUnread }: ThreadCardProps) 
             </span>
           </div>
         </div>
+
+        {/* Group */}
+        {groupmates.length > 0 && (
+          <div style={{ display: "flex", alignItems: "center", gap: "0.65rem", marginBottom: "1.1rem", minWidth: 0 }}>
+            <AvatarStack people={groupmates} size={1.6} max={3} />
+            <span style={{
+              fontSize: "0.7rem", color: "var(--text-secondary)", fontFamily: "var(--font-sans)",
+              overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", minWidth: 0,
+            }}>
+              With {listNames(groupmates)}
+            </span>
+            <span style={{
+              marginLeft: "auto", flexShrink: 0,
+              fontSize: "0.5rem", fontWeight: 800, letterSpacing: "0.18em", textTransform: "uppercase",
+              color: "var(--accent)", background: "rgba(79, 70, 229, 0.08)", border: "1px solid rgba(79, 70, 229, 0.25)",
+              padding: "0.2rem 0.55rem", borderRadius: "100px", fontFamily: "var(--font-sans, monospace)",
+            }}>
+              Group
+            </span>
+          </div>
+        )}
 
         {/* Topic */}
         <div style={{ flex: 1, marginBottom: "1.25rem" }}>

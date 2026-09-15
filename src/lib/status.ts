@@ -95,6 +95,66 @@ export const PROFESSOR_ROSTER: readonly RequestStatus[] = ["active", "closed"];
 export const UNREAD_COUNTABLE: readonly RequestStatus[] = ["active"];
 
 // ─────────────────────────────────────────────────────────────────
+// GROUP THREADS (students collaborating on one request)
+// ─────────────────────────────────────────────────────────────────
+
+/**
+ * A request's `student_id` is its LEAD: the student who wrote it, who manages
+ * who is on it, and who may close it. Every other student on the thread has a
+ * `request_members` row carrying one of these. The CHECK constraint in
+ * db/migrations/0008 lists the same values (tests/social-schema.test.mjs).
+ */
+export const MEMBER_STATUSES = [
+  /** Invited by the lead. Can see the request, not its messages. */
+  "invited",
+  /** Accepted the invite: reads, posts and counts toward unread. */
+  "joined",
+  /** Turned the invite down. */
+  "declined",
+  /** Left after joining. */
+  "left",
+  /** Removed by the lead or the professor. */
+  "removed",
+] as const;
+
+export type MemberStatus = (typeof MEMBER_STATUSES)[number];
+
+export function isMemberStatus(value: unknown): value is MemberStatus {
+  return typeof value === "string" && (MEMBER_STATUSES as readonly string[]).includes(value);
+}
+
+/** Members who participate in the conversation. */
+export const MEMBER_PARTICIPATING: readonly MemberStatus[] = ["joined"];
+
+/**
+ * Members who can see that the request exists. An invitee has to, to decide
+ * whether to join; they still cannot read the messages.
+ */
+export const MEMBER_CAN_VIEW_REQUEST: readonly MemberStatus[] = ["invited", "joined"];
+
+/** Memberships that are over. The lead may invite the student again. */
+export const MEMBER_ENDED: readonly MemberStatus[] = ["declined", "left", "removed"];
+
+/**
+ * Request states that still take new members. A finished thread is read-only,
+ * so inviting someone into one would hand them nothing to do.
+ */
+export const OPEN_TO_MEMBERS: readonly RequestStatus[] = ["pending", "viewed", "active"];
+
+// ─────────────────────────────────────────────────────────────────
+// FRIENDSHIPS
+// ─────────────────────────────────────────────────────────────────
+
+/**
+ * A declined, cancelled or removed friendship is deleted, not parked in a
+ * terminal state — so there are only two, and nobody learns they were turned
+ * down.
+ */
+export const FRIENDSHIP_STATUSES = ["pending", "accepted"] as const;
+
+export type FriendshipStatus = (typeof FRIENDSHIP_STATUSES)[number];
+
+// ─────────────────────────────────────────────────────────────────
 // ACCOUNTS
 // ─────────────────────────────────────────────────────────────────
 

@@ -2,10 +2,15 @@ import { cookies } from "next/headers";
 import { sql } from "@/lib/neon/db";
 import { runAs } from "@/lib/neon/user-context";
 import { getCurrentUserAndProfile, type ProfileRecord } from "@/lib/neon/profiles";
+import { isCanonicalUuid } from "@/lib/security";
+import type { ThreadRole } from "@/lib/collaboration";
 import {
+  MEMBER_PARTICIPATING,
   PARTICIPANT_VISIBLE,
   asSqlArray,
+  isMemberStatus,
   isUserRole,
+  type MemberStatus,
   type RequestStatus,
   type UserRole,
 } from "@/lib/status";
@@ -137,6 +142,28 @@ export async function requireAdmin(): Promise<AuthzResult> {
   return result;
 }
 
+const PREVIEW_READ_ONLY: Denied = {
+  ok: false,
+  error: "Previewing as a student is read-only.",
+  status: 403,
+};
+
+/**
+ * Establishes that a student is acting as themselves.
+ *
+ * `requireRole("student")` lets admins through, which is right for reading a
+ * student surface and wrong for writing the social graph: a friendship or a
+ * group membership written under an admin's id would attach the admin to a
+ * student's network. So friendships and memberships are written by students
+ * only, and an admin previewing as a student gets a read-only view.
+ */
+export async function requireStudentActor(): Promise<AuthzResult> {
+  const result = await requireUser();
+  if (!result.ok) return result;
+  if (result.profile.role === "student") return result;
+  return result.isAdminPreview ? PREVIEW_READ_ONLY : FORBIDDEN;
+}
+
 export interface ThreadRequest {
   id: string;
   status: RequestStatus;
@@ -148,58 +175,81 @@ export interface ThreadRequest {
 export interface ThreadAccess {
   /** The request row, or null when no such thread exists. */
   request: ThreadRequest | null;
-  /** True only when the viewer is the student or the professor on the thread. */
+  /** True for the thread's lead student, its professor, or a member who has joined. */
   isParticipant: boolean;
+  /** How the viewer takes part in the thread, or null when they do not. */
+  role: ThreadRole | null;
+  /**
+   * The viewer's membership of a group thread in any state, so an invitee or a
+   * former member can be handled deliberately. Null for the lead and professor,
+   * who are not members.
+   */
+  memberStatus: MemberStatus | null;
 }
 
+const NO_THREAD: ThreadAccess = { request: null, isParticipant: false, role: null, memberStatus: null };
+
 /**
- * Loads a mentorship thread together with whether this user is party to it.
+ * Loads a mentorship thread together with how this user takes part in it.
  *
- * Message threads are private between one student and one professor, so every
- * entry point — page, API route and server action — must gate on
- * `isParticipant` rather than on being signed in.
+ * A thread is private to its lead student, its professor and the students who
+ * have joined it, so every entry point — page, API route and server action —
+ * must gate on `isParticipant` rather than on being signed in.
  */
 export async function getThreadAccess(requestId: string, userId: string): Promise<ThreadAccess> {
+  // `requests.id` is a uuid. Anything else cannot exist, and handing it to the
+  // query would surface as a 500 (invalid input syntax) rather than a 404.
+  if (!isCanonicalUuid(requestId)) return NO_THREAD;
+
   return runAs(userId, async () => {
     const rows = await sql`
-      SELECT id, status, topic, student_id, professor_id
-      FROM requests
-      WHERE id = ${requestId}
+      SELECT r.id, r.status, r.topic, r.student_id, r.professor_id,
+             (SELECT m.status FROM request_members m
+               WHERE m.request_id = r.id AND m.student_id = ${userId}) AS member_status
+      FROM requests r
+      WHERE r.id = ${requestId}
       LIMIT 1;
     `;
 
-    const request = (rows[0] as ThreadAccess["request"]) ?? null;
-    if (!request) return { request: null, isParticipant: false };
+    const row = rows[0] as (ThreadRequest & { member_status: unknown }) | undefined;
+    if (!row) return NO_THREAD;
 
-    return {
-      request,
-      isParticipant: request.student_id === userId || request.professor_id === userId,
-    };
+    const { member_status, ...request } = row;
+    const memberStatus = isMemberStatus(member_status) ? member_status : null;
+    const role: ThreadRole | null =
+      request.professor_id === userId ? "professor"
+      : request.student_id === userId ? "lead"
+      : memberStatus && MEMBER_PARTICIPATING.includes(memberStatus) ? "member"
+      : null;
+
+    return { request, isParticipant: role !== null, role, memberStatus };
   });
 }
 
 export type ParticipantResult =
-  | { ok: true; request: ThreadRequest }
+  | { ok: true; request: ThreadRequest; role: ThreadRole }
   | { ok: false; error: string; status: 404 };
 
 /**
- * Establishes that `userId` is party to `requestId` and that the thread is not
+ * Establishes that `userId` takes part in `requestId` and that the thread is not
  * one an admin has soft-deleted.
  *
  * A missing thread and a thread belonging to someone else return the same
- * answer, so the endpoint cannot be used to enumerate which ids exist.
+ * answer, so the endpoint cannot be used to enumerate which ids exist. An
+ * invitee who has not joined gets that answer too: they decide from their
+ * invitations list, and may not read the conversation first.
  */
 export async function requireParticipant(
   requestId: string,
   userId: string,
 ): Promise<ParticipantResult> {
-  const { request, isParticipant } = await getThreadAccess(requestId, userId);
+  const { request, role } = await getThreadAccess(requestId, userId);
   const notFound = { ok: false as const, error: "Thread not found.", status: 404 as const };
 
-  if (!request || !isParticipant) return notFound;
+  if (!request || !role) return notFound;
   if (!PARTICIPANT_VISIBLE.includes(request.status)) return notFound;
 
-  return { ok: true, request };
+  return { ok: true, request, role };
 }
 
 /** The status list to bind into participant-facing queries. */

@@ -1,6 +1,7 @@
 import { sql } from "@/lib/neon/db";
 import { runAs } from "@/lib/neon/user-context";
 import { sanitiseText, isValidId, LIMITS } from "@/lib/security";
+import { safeInternalPath } from "@/lib/safe-redirect";
 
 export type NotificationType =
   | "request_accepted"
@@ -13,7 +14,17 @@ export type NotificationType =
    * target's most recent thread, which meant the unrelated other participant
    * read it too, and a user with no threads could not be warned at all.
    */
-  | "admin_warning";
+  | "admin_warning"
+  /** Another student asked to be friends. */
+  | "friend_request"
+  /** A friend request the recipient sent was accepted. */
+  | "friend_accepted"
+  /** The lead of a request invited the recipient to collaborate on it. */
+  | "group_invite"
+  /** A student joined, left, or was removed from a group thread. */
+  | "group_member_joined"
+  | "group_member_left"
+  | "group_member_removed";
 
 /**
  * Inserts a notification for a recipient, on behalf of the acting user.
@@ -31,6 +42,7 @@ export async function createNotification({
   title,
   body,
   requestId,
+  link,
 }: {
   /** The signed-in user performing the action that caused the notification. */
   actorId: string;
@@ -39,7 +51,14 @@ export async function createNotification({
   type: NotificationType;
   title: string;
   body?: string;
+  /** Links the notification to `/messages/<requestId>`. */
   requestId?: string;
+  /**
+   * An in-app path to link to instead, for notifications that are not about a
+   * thread the recipient can open (a friend request, a pending invite). Only a
+   * site-relative path is accepted.
+   */
+  link?: string;
 }): Promise<void> {
   // Both ids are validated: `actorId` becomes the database identity the insert
   // runs under, so a malformed value would silently widen what the RLS policy
@@ -50,6 +69,7 @@ export async function createNotification({
   const safeTitle = sanitiseText(title, LIMITS.topic);
   const safeBody = body ? sanitiseText(body, LIMITS.messageContent) : null;
   const safeRequestId = requestId && isValidId(requestId) ? requestId : null;
+  const safeLink = safeInternalPath(link) ?? (safeRequestId ? `/messages/${safeRequestId}` : null);
 
   if (!safeTitle) return;
 
@@ -61,7 +81,7 @@ export async function createNotification({
     await runAs(actorId, async () => {
       await sql`
         INSERT INTO notifications (user_id, type, title, message, link)
-        VALUES (${userId}, ${safeType}, ${safeTitle}, ${safeBody || safeTitle}, ${safeRequestId ? '/messages/' + safeRequestId : null});
+        VALUES (${userId}, ${safeType}, ${safeTitle}, ${safeBody || safeTitle}, ${safeLink});
       `;
     });
   } catch (err: any) {

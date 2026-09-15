@@ -36,6 +36,17 @@ export default async function ProfStudentsPage() {
         'preferred_name', s.preferred_name,
         'institution', s.institution
       ) as student,
+      COALESCE((
+        SELECT json_agg(json_build_object(
+          'id', cp.id,
+          'first_name', cp.first_name,
+          'last_name', cp.last_name,
+          'preferred_name', cp.preferred_name
+        ) ORDER BY cm.invited_at, cm.student_id)
+        FROM request_members cm
+        JOIN profiles cp ON cp.id = cm.student_id
+        WHERE cm.request_id = r.id AND cm.status = 'joined'
+      ), '[]'::json) as collaborators,
       COALESCE(
         (SELECT json_agg(json_build_object('content', m.content, 'created_at', m.created_at))
          FROM messages m WHERE m.request_id = r.id), '[]'::json

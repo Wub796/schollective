@@ -4,13 +4,18 @@ import { redirect, notFound } from "next/navigation";
 import { sql } from "@/lib/neon/db";
 import { runAs } from "@/lib/neon/user-context";
 import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
-import { ChatThread } from "@/components/features/ChatThread";
+import { getFriendNetwork, getThreadMembers, recordThreadRead } from "@/lib/neon/social";
+import { ChatThread, type ThreadParticipant } from "@/components/features/ChatThread";
 import { CloseThreadButton } from "@/components/features/CloseThreadButton";
+import { GroupMembersPanel } from "@/components/features/GroupMembersPanel";
+import type { PersonSummary } from "@/components/features/PersonRow";
 import { ArrowLeft, ShieldCheck } from "lucide-react";
-import { requireParticipant, isSuspended } from "@/lib/authz";
+import { getThreadAccess, requireParticipant, isSuspended } from "@/lib/authz";
 import type { ChatThreadProps } from "@/components/features/ChatThread";
+import { canCloseThread, canInviteCollaborators } from "@/lib/collaboration";
+import { MEMBER_CAN_VIEW_REQUEST } from "@/lib/status";
+import { facultyName, fullName } from "@/lib/people";
 import { parseJsonbArray } from "@/lib/utils";
-import { markRead } from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -18,11 +23,7 @@ interface MessagePageProps {
   params: Promise<{ id: string }>;
 }
 
-interface ParticipantRow {
-  id: string;
-  first_name: string | null;
-  last_name: string | null;
-  preferred_name: string | null;
+interface ParticipantRow extends PersonSummary {
   role: string;
   expertise_fields?: unknown;
 }
@@ -43,50 +44,79 @@ export default async function MessagePage({ params }: MessagePageProps) {
   // This route is outside the (dashboard) group, so it carries its own gate.
   if (isSuspended(profile)) redirect("/suspended");
 
-  // A thread belongs to its student and professor alone, and an admin
-  // soft-delete hides it from both. Every other case gets the same 404 as a
-  // thread that does not exist, so ids cannot be probed.
+  // A thread belongs to its lead student, its professor and the students who
+  // have joined it, and an admin soft-delete hides it from all of them. Every
+  // other case gets the same 404 as a thread that does not exist, so ids cannot
+  // be probed.
   const access = await requireParticipant(requestId, user.id);
-  if (!access.ok) return notFound();
-  const request = access.request;
+  if (!access.ok) {
+    // An invitee arriving from a shared link decides on their invitations list;
+    // they do not get to read the conversation before joining it.
+    const { request: invitedTo, memberStatus } = await getThreadAccess(requestId, user.id);
+    if (invitedTo && memberStatus === "invited") redirect("/threads");
+    return notFound();
+  }
+  const { request, role } = access;
 
-  // Mark incoming messages as read
-  await markRead(requestId);
+  // Opening the thread is reading it. This used to call a markRead server action
+  // mid-render, which also revalidated paths — not something a render may do.
+  // Reads are recorded here and by the message poll, so that action is gone.
+  await recordThreadRead(requestId, user.id);
 
-  const [studentRows, professorRows] = await Promise.all([
-    // Profiles are publicly readable, but run inside the viewer's context
-    // anyway so the whole page is consistently RLS-scoped.
-    runAs(user.id, async () => sql`SELECT id, first_name, last_name, preferred_name, role FROM profiles WHERE id = ${request.student_id} LIMIT 1;`),
-    runAs(user.id, async () => sql`SELECT id, first_name, last_name, preferred_name, role, expertise_fields FROM profiles WHERE id = ${request.professor_id} LIMIT 1;`),
-  ]) as [ParticipantRow[], ParticipantRow[]];
+  const [leadRows, professorRows, members, messages] = await Promise.all([
+    runAs(user.id, async () => sql`
+      SELECT id, first_name, last_name, preferred_name, role, avatar_url, institution, major, education_level
+      FROM profiles WHERE id = ${request.student_id} LIMIT 1;
+    `),
+    runAs(user.id, async () => sql`
+      SELECT id, first_name, last_name, preferred_name, role, avatar_url, institution, expertise_fields
+      FROM profiles WHERE id = ${request.professor_id} LIMIT 1;
+    `),
+    getThreadMembers(requestId, user.id),
+    // RLS scopes messages to thread participants: the query must run under the
+    // signed-in user's database identity or every row is filtered out.
+    runAs(user.id, async () => sql`
+      SELECT *
+      FROM messages
+      WHERE request_id = ${requestId}
+      ORDER BY created_at ASC;
+    `),
+  ]) as [ParticipantRow[], ParticipantRow[], Awaited<ReturnType<typeof getThreadMembers>>, MessageRow[]];
 
-  const studentProfile = studentRows[0];
-  const professorProfile = professorRows[0];
+  const unknownPerson = (id: string, fallbackRole: string): ParticipantRow => ({
+    id, first_name: null, last_name: null, preferred_name: null, role: fallbackRole,
+  });
+  const lead = leadRows[0] ?? unknownPerson(request.student_id, "student");
+  const professor = professorRows[0] ?? unknownPerson(request.professor_id, "professor");
 
-  const isProfessor = user.id === request.professor_id;
-  const participant: ParticipantRow = (isProfessor ? studentProfile : professorProfile) ?? {
-    id: "",
-    first_name: null,
-    last_name: null,
-    preferred_name: null,
-    role: isProfessor ? "student" : "professor",
+  const isProfessor = role === "professor";
+  const isGroup = members.length > 0;
+  const joinedCount = members.filter((member) => member.status === "joined").length;
+
+  // The person shown in the header: the professor for students, the lead for the professor.
+  const participant = isProfessor ? lead : professor;
+  const participantTitle = isProfessor ? fullName(participant) : facultyName(participant);
+  const participantDetail = isProfessor
+    ? (isGroup ? `Group · ${joinedCount + 1} students` : "Student")
+    : (parseJsonbArray(professor.expertise_fields)[0] || "Faculty");
+
+  // Names for every author, so a group thread can say who wrote what. Former
+  // members stay in the map: their earlier messages are still on the thread.
+  const participants: Record<string, ThreadParticipant> = {
+    [request.student_id]: { name: fullName(lead), role: "lead" },
+    [request.professor_id]: { name: facultyName(professor), role: "professor" },
   };
-  const participantName = participant.preferred_name || participant.first_name || "Unknown";
-  const participantTitle =
-    participant.role === "professor"
-      ? `Dr. ${participantName} ${participant.last_name ?? ""}`
-      : `${participantName} ${participant.last_name ?? ""}`;
+  for (const member of members) {
+    participants[member.id] ??= { name: fullName(member), role: "member" };
+  }
 
-  // RLS scopes messages to thread participants: the query must run under the
-  // signed-in user's database identity or every row is filtered out.
-  const messages = (await runAs(user.id, async () => sql`
-    SELECT *
-    FROM messages
-    WHERE request_id = ${requestId}
-    ORDER BY created_at ASC;
-  `)) as MessageRow[];
-
-
+  // The lead can bring friends onto an open thread, including a one-to-one
+  // thread that has not been a group until now.
+  const mayInvite = canInviteCollaborators(role, request.status);
+  const onThread = new Set(members.filter((member) => MEMBER_CAN_VIEW_REQUEST.includes(member.status)).map((member) => member.id));
+  const invitableFriends = mayInvite
+    ? (await getFriendNetwork(user.id)).friends.map((entry) => entry.person).filter((person) => !onThread.has(person.id))
+    : [];
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100vh", background: "transparent", overflow: "hidden" }}>
@@ -102,7 +132,8 @@ export default async function MessagePage({ params }: MessagePageProps) {
         {/* Left: back + participant */}
         <div style={{ display: "flex", alignItems: "center", gap: "1rem", minWidth: 0 }}>
           <Link
-            href={isProfessor ? "/prof/dashboard" : "/dashboard"}
+            href={isProfessor ? "/prof/dashboard" : "/threads"}
+            aria-label={isProfessor ? "Back to dashboard" : "Back to threads"}
             style={{
               display: "flex", alignItems: "center", justifyContent: "center",
               width: "2.2rem", height: "2.2rem", borderRadius: "100px", flexShrink: 0,
@@ -133,14 +164,26 @@ export default async function MessagePage({ params }: MessagePageProps) {
                 {participant.role === "professor" && <ShieldCheck size={12} style={{ color: "var(--accent)", flexShrink: 0 }} />}
               </div>
               <div style={{ fontSize: "0.58rem", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--accent)", fontFamily: "var(--font-sans, monospace)" }}>
-                {participant.role === "professor" ? (parseJsonbArray(participant.expertise_fields)[0] || "Faculty") : "Student"}
+                {participantDetail}
               </div>
             </div>
           </div>
         </div>
 
-        {/* Right: topic + status + close */}
+        {/* Right: group + topic + status + close */}
         <div style={{ display: "flex", alignItems: "center", gap: "1rem", flexShrink: 0 }}>
+          {(isGroup || mayInvite) && (
+            <GroupMembersPanel
+              requestId={request.id}
+              viewerId={user.id}
+              role={role}
+              requestStatus={request.status}
+              lead={lead}
+              professor={professor}
+              members={members}
+              invitableFriends={invitableFriends}
+            />
+          )}
           <div className="hidden md:block" style={{ textAlign: "right" }}>
             <div style={{ fontSize: "0.52rem", color: "var(--accent)", textTransform: "uppercase", letterSpacing: "0.22em", fontWeight: 800, fontFamily: "var(--font-sans, monospace)", marginBottom: "0.15rem" }}>Topic</div>
             <div className="font-display" style={{ fontSize: "0.85rem", color: "var(--text-primary)", fontStyle: "italic", maxWidth: "240px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
@@ -157,7 +200,9 @@ export default async function MessagePage({ params }: MessagePageProps) {
           }}>
             {request.status}
           </div>
-          {request.status === "active" && <CloseThreadButton requestId={request.id} />}
+          {request.status === "active" && canCloseThread(role, request.status) && (
+            <CloseThreadButton requestId={request.id} isGroup={isGroup} />
+          )}
         </div>
       </header>
 
@@ -168,6 +213,7 @@ export default async function MessagePage({ params }: MessagePageProps) {
           initialMessages={messages}
           currentUserId={session.user.id}
           status={request.status as ChatThreadProps["status"]}
+          participants={isGroup ? participants : undefined}
         />
       </main>
     </div>

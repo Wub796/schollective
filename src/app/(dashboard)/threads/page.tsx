@@ -5,9 +5,13 @@ import { cookies } from "next/headers";
 import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { sql } from "@/lib/neon/db";
 import { runAs } from "@/lib/neon/user-context";
+import { toIso } from "@/lib/neon/social";
 import { parseJsonbArray } from "@/lib/utils";
-import { ThreadCard } from "@/components/features/ThreadCard";
+import { ThreadCard, type ThreadCardStatus } from "@/components/features/ThreadCard";
+import { GroupInviteCard, type GroupInvite } from "@/components/features/GroupInviteCard";
+import type { PersonSummary } from "@/components/features/PersonRow";
 import {
+  OPEN_TO_MEMBERS,
   PARTICIPANT_ONGOING,
   PARTICIPANT_PAST,
   PARTICIPANT_VISIBLE,
@@ -26,6 +30,30 @@ function SectionLabel({ text }: { text: string }) {
   );
 }
 
+interface ThreadRow {
+  id: string;
+  status: RequestStatus;
+  topic: string;
+  updated_at: string | Date;
+  is_lead: boolean;
+  professor: { first_name: string | null; last_name: string | null; preferred_name: string | null; expertise_fields: unknown } | null;
+  lead: PersonSummary | null;
+  collaborators: PersonSummary[];
+  latest_content: string | null;
+  latest_created_at: string | Date | null;
+  has_unread: boolean;
+}
+
+interface InviteRow {
+  id: string;
+  status: GroupInvite["status"];
+  topic: string;
+  invited_at: string | Date;
+  professor: GroupInvite["professor"];
+  lead: PersonSummary;
+  collaborators: PersonSummary[];
+}
+
 export default async function ThreadsPage() {
   const { user, profile } = await getCurrentUserAndProfile();
   if (!user || !profile) redirect("/login");
@@ -36,57 +64,153 @@ export default async function ThreadsPage() {
 
   if (!isAdminPreviewing && profile.role !== "student") redirect("/prof/dashboard");
 
-  // RLS scopes requests to their participants: the query must run under the
+  // RLS scopes requests to their participants: the queries must run under the
   // signed-in user's database identity or every row is filtered out.
-  const requests = await runAs(user.id, async () => sql`
-    SELECT 
-      r.id, r.status, r.topic, r.updated_at,
-      json_build_object(
-        'first_name', p.first_name,
-        'last_name', p.last_name,
-        'preferred_name', p.preferred_name,
-        'expertise_fields', p.expertise_fields
-      ) as professor,
-      COALESCE(
-        (SELECT json_agg(json_build_object('content', m.content, 'created_at', m.created_at, 'read_at', m.read_at, 'sender_id', m.sender_id))
-         FROM messages m WHERE m.request_id = r.id), '[]'::json
-      ) as messages
-    FROM requests r
-    LEFT JOIN profiles p ON r.professor_id = p.id
-    WHERE r.student_id = ${user.id}
-      AND r.status = ANY(${asSqlArray(PARTICIPANT_VISIBLE)})
-    ORDER BY r.updated_at DESC;
-  `);
+  //
+  // A thread belongs on this list when the student leads it or has joined it.
+  // Unread is measured from the student's own read position (thread_reads), so
+  // a groupmate opening the thread does not clear it here.
+  const [threadRows, inviteRows] = await runAs(user.id, async () => Promise.all([
+    sql`
+      SELECT
+        r.id, r.status, r.topic, r.updated_at,
+        (r.student_id = ${user.id}) AS is_lead,
+        json_build_object(
+          'first_name', p.first_name,
+          'last_name', p.last_name,
+          'preferred_name', p.preferred_name,
+          'expertise_fields', p.expertise_fields
+        ) AS professor,
+        json_build_object(
+          'id', lead.id,
+          'first_name', lead.first_name,
+          'last_name', lead.last_name,
+          'preferred_name', lead.preferred_name,
+          'avatar_url', lead.avatar_url
+        ) AS lead,
+        COALESCE((
+          SELECT json_agg(json_build_object(
+            'id', mp.id,
+            'first_name', mp.first_name,
+            'last_name', mp.last_name,
+            'preferred_name', mp.preferred_name,
+            'avatar_url', mp.avatar_url
+          ) ORDER BY m.invited_at, m.student_id)
+          FROM request_members m
+          JOIN profiles mp ON mp.id = m.student_id
+          WHERE m.request_id = r.id AND m.status = 'joined'
+        ), '[]'::json) AS collaborators,
+        latest.content AS latest_content,
+        latest.created_at AS latest_created_at,
+        EXISTS (
+          SELECT 1 FROM messages um
+          WHERE um.request_id = r.id
+            AND um.sender_id <> ${user.id}
+            AND um.created_at > COALESCE(tr.last_read_at, '-infinity'::timestamptz)
+        ) AS has_unread
+      FROM requests r
+      LEFT JOIN profiles p ON p.id = r.professor_id
+      LEFT JOIN profiles lead ON lead.id = r.student_id
+      LEFT JOIN thread_reads tr ON tr.request_id = r.id AND tr.user_id = ${user.id}
+      LEFT JOIN LATERAL (
+        SELECT lm.content, lm.created_at
+        FROM messages lm
+        WHERE lm.request_id = r.id
+        ORDER BY lm.created_at DESC NULLS LAST
+        LIMIT 1
+      ) latest ON true
+      WHERE r.status = ANY(${asSqlArray(PARTICIPANT_VISIBLE)})
+        AND (
+          r.student_id = ${user.id}
+          OR EXISTS (
+            SELECT 1 FROM request_members me
+            WHERE me.request_id = r.id AND me.student_id = ${user.id} AND me.status = 'joined'
+          )
+        )
+      ORDER BY r.updated_at DESC;
+    `,
+    sql`
+      SELECT
+        r.id, r.status, r.topic, m.invited_at,
+        json_build_object(
+          'first_name', p.first_name,
+          'last_name', p.last_name,
+          'preferred_name', p.preferred_name,
+          'institution', p.institution
+        ) AS professor,
+        json_build_object(
+          'id', lead.id,
+          'first_name', lead.first_name,
+          'last_name', lead.last_name,
+          'preferred_name', lead.preferred_name,
+          'avatar_url', lead.avatar_url
+        ) AS lead,
+        COALESCE((
+          SELECT json_agg(json_build_object(
+            'id', jp.id,
+            'first_name', jp.first_name,
+            'last_name', jp.last_name,
+            'preferred_name', jp.preferred_name,
+            'avatar_url', jp.avatar_url
+          ) ORDER BY jm.invited_at, jm.student_id)
+          FROM request_members jm
+          JOIN profiles jp ON jp.id = jm.student_id
+          WHERE jm.request_id = r.id AND jm.status = 'joined'
+        ), '[]'::json) AS collaborators
+      FROM request_members m
+      JOIN requests r ON r.id = m.request_id
+      LEFT JOIN profiles p ON p.id = r.professor_id
+      LEFT JOIN profiles lead ON lead.id = r.student_id
+      WHERE m.student_id = ${user.id}
+        AND m.status = 'invited'
+        AND r.status = ANY(${asSqlArray(OPEN_TO_MEMBERS)})
+      ORDER BY m.invited_at DESC;
+    `,
+  ])) as [ThreadRow[], InviteRow[]];
 
-  const processed = (requests || []).map((req: any) => {
-    const prof = Array.isArray(req.professor) ? req.professor[0] : req.professor;
-    return {
-      ...req,
+  const processed = (threadRows || []).map((row) => ({
+    request: {
+      id: row.id,
+      // The query only returns participant-visible statuses.
+      status: row.status as ThreadCardStatus,
+      topic: row.topic,
+      updated_at: toIso(row.updated_at),
       participant: {
-        first_name: prof?.first_name ?? "Unknown",
-        last_name: prof?.last_name ?? null,
-        preferred_name: prof?.preferred_name ?? null,
-        detail: parseJsonbArray(prof?.expertise_fields).join(", ") || "Professor",
+        first_name: row.professor?.first_name ?? "Unknown",
+        last_name: row.professor?.last_name ?? null,
+        preferred_name: row.professor?.preferred_name ?? null,
+        detail: parseJsonbArray(row.professor?.expertise_fields).join(", ") || "Professor",
       },
-      latest_message:
-        req.messages?.length > 0
-          ? [...req.messages].sort(
-              (a: any, b: any) =>
-                new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-            )[0]
-          : undefined,
-      hasUnread:
-        req.status === "active" &&
-        req.messages?.some((msg: any) => msg.sender_id !== user.id && !msg.read_at),
-    };
-  });
+      latest_message: row.latest_content
+        ? { content: row.latest_content, created_at: toIso(row.latest_created_at) }
+        : undefined,
+    },
+    // Only a thread you can still post in may carry an unread marker.
+    hasUnread: row.status === "active" && row.has_unread,
+    // The other students, seen from this viewer: the lead unless that is them,
+    // then every joined member except them.
+    groupmates: [
+      ...(!row.is_lead && row.lead ? [row.lead] : []),
+      ...(row.collaborators || []).filter((person) => person.id !== user.id),
+    ],
+  }));
+
+  const invites: GroupInvite[] = (inviteRows || []).map((row) => ({
+    requestId: row.id,
+    topic: row.topic,
+    status: row.status,
+    invitedAt: toIso(row.invited_at),
+    professor: row.professor,
+    lead: row.lead,
+    collaborators: row.collaborators || [],
+  }));
 
   // Bucketed against the explicit status lists rather than "anything that is not
   // closed". The old negative test put `declined`, `viewed` and admin-`deleted`
   // threads in the ongoing list — none of which accept messages, so the student
   // saw live-looking conversations they could not use and could not clear.
-  const ongoing = processed.filter((r: any) => PARTICIPANT_ONGOING.includes(r.status as RequestStatus));
-  const past    = processed.filter((r: any) => PARTICIPANT_PAST.includes(r.status as RequestStatus));
+  const ongoing = processed.filter((t) => PARTICIPANT_ONGOING.includes(t.request.status));
+  const past    = processed.filter((t) => PARTICIPANT_PAST.includes(t.request.status));
   const displayName = profile.preferred_name || profile.first_name || "Scholar";
 
   return (
@@ -116,7 +240,7 @@ export default async function ThreadsPage() {
           </Link>
         </div>
         <p style={{ fontSize: "0.95rem", color: "var(--text-secondary)", opacity: 0.75, fontWeight: 400, maxWidth: "42rem", lineHeight: 1.8, fontFamily: "var(--font-sans)", marginTop: "0.25rem" }}>
-          All your mentorship threads in one place — ongoing dialogues and completed sessions.
+          All your mentorship threads in one place — ongoing dialogues, group collaborations and completed sessions.
         </p>
       </header>
 
@@ -153,6 +277,27 @@ export default async function ThreadsPage() {
       {/* ── Hairline ── */}
       <div style={{ height: "1px", background: "rgba(99, 102, 241, 0.4)" }} />
 
+      {/* ── Collaboration invites ── */}
+      {invites.length > 0 && (
+        <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+            <SectionLabel text="Collaboration Invites" />
+            <span style={{
+              marginLeft: "auto", fontSize: "0.6rem", fontWeight: 800, letterSpacing: "0.22em",
+              textTransform: "uppercase", color: "var(--text-primary)", background: "rgba(79, 70, 229, 0.35)",
+              padding: "0.3rem 0.8rem", borderRadius: "100px", fontFamily: "var(--font-sans, monospace)"
+            }}>
+              {invites.length} waiting
+            </span>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "1.5rem" }}>
+            {invites.map((invite) => (
+              <GroupInviteCard key={invite.requestId} invite={invite} />
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* ── Empty state (no threads at all) ── */}
       {processed.length === 0 && (
         <div style={{
@@ -173,7 +318,7 @@ export default async function ThreadsPage() {
               No threads yet
             </h3>
             <p style={{ fontSize: "0.82rem", color: "var(--text-secondary)", opacity: 0.75, maxWidth: "26rem", lineHeight: 1.7, fontFamily: "var(--font-sans)" }}>
-              Threads appear here once a professor accepts your mentorship request.
+              Threads appear here once you send a mentorship request or join a friend&apos;s group.
               Start by finding a mentor in the directory.
             </p>
           </div>
@@ -205,8 +350,8 @@ export default async function ThreadsPage() {
             </span>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "1.5rem" }}>
-            {ongoing.map((req: any) => (
-              <ThreadCard key={req.id} request={req} viewerRole="student" hasUnread={req.hasUnread} />
+            {ongoing.map((thread) => (
+              <ThreadCard key={thread.request.id} request={thread.request} viewerRole="student" hasUnread={thread.hasUnread} groupmates={thread.groupmates} />
             ))}
           </div>
         </div>
@@ -224,8 +369,8 @@ export default async function ThreadsPage() {
             </span>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "1.5rem", opacity: 0.8 }}>
-            {past.map((req: any) => (
-              <ThreadCard key={req.id} request={req} viewerRole="student" hasUnread={req.hasUnread} />
+            {past.map((thread) => (
+              <ThreadCard key={thread.request.id} request={thread.request} viewerRole="student" hasUnread={thread.hasUnread} groupmates={thread.groupmates} />
             ))}
           </div>
         </div>

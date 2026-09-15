@@ -55,18 +55,30 @@ export async function updateRequestStatus(requestId: string, status: "active" | 
       return { error: "That request is no longer awaiting a decision." };
     }
 
-    // The student is waiting on this answer — without it the bell never
-    // rings and they only find out by re-checking the directory.
-    await createNotification({
-      actorId: user.id,
-      userId: studentId,
-      type: status === "active" ? "request_accepted" : "request_declined",
-      title: status === "active" ? "Your mentorship request was accepted!" : "Your mentorship request was declined",
-      body: status === "active"
-        ? "Head to your thread to continue the conversation."
-        : undefined,
-      requestId,
-    });
+    // The students are waiting on this answer — without it the bell never
+    // rings and they only find out by re-checking the directory. On a group
+    // request that is the lead and everyone who has joined; invitees who have
+    // not answered yet see the outcome on their invitation instead.
+    const joinedRows = await runAs(user.id, async () => sql`
+      SELECT student_id FROM request_members
+      WHERE request_id = ${requestId} AND status = 'joined';
+    `) as Array<{ student_id: string }>;
+    const isGroup = joinedRows.length > 0;
+
+    for (const recipientId of [studentId, ...joinedRows.map((row) => row.student_id)]) {
+      await createNotification({
+        actorId: user.id,
+        userId: recipientId,
+        type: status === "active" ? "request_accepted" : "request_declined",
+        title: status === "active"
+          ? `Your ${isGroup ? "group's " : ""}mentorship request was accepted!`
+          : `Your ${isGroup ? "group's " : ""}mentorship request was declined`,
+        body: status === "active"
+          ? "Head to your thread to continue the conversation."
+          : undefined,
+        requestId,
+      });
+    }
 
     await captureServerEvent(user.id, "professor_request_status_updated", { request_id: requestId, status });
     revalidatePath("/prof/dashboard");

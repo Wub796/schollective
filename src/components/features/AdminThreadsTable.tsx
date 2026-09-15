@@ -13,6 +13,8 @@ export interface ThreadRecord {
   updated_at: string;
   student:   { id: string; first_name: string; last_name: string; email: string } | null;
   professor: { id: string; first_name: string; last_name: string; institution: string | null } | null;
+  /** Students who joined alongside the lead on a group thread. */
+  collaborator_count?: number;
 }
 
 type StatusFilter = "all" | "active" | "pending" | "closed";
@@ -177,6 +179,11 @@ export function AdminThreadsTable({ threads }: { threads: ThreadRecord[] }) {
                         <div>
                           <div style={{ fontSize: "0.75rem", fontWeight: 500, color: "var(--text-primary)", fontFamily: "var(--font-sans)" }}>{t.student.first_name} {t.student.last_name}</div>
                           <div style={{ fontSize: "0.55rem", color: "rgba(15, 23, 42,0.3)", fontFamily: "var(--font-sans)" }}>{t.student.email}</div>
+                          {t.collaborator_count ? (
+                            <div style={{ fontSize: "0.52rem", fontWeight: 700, color: "var(--accent)", fontFamily: "var(--font-sans)", marginTop: "0.1rem" }}>
+                              +{t.collaborator_count} collaborator{t.collaborator_count === 1 ? "" : "s"}
+                            </div>
+                          ) : null}
                         </div>
                       ) : <span style={{ color: "rgba(15, 23, 42,0.2)", fontSize: "0.6rem" }}>—</span>}
                     </td>

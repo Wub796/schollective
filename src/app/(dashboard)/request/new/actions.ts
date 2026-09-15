@@ -9,13 +9,15 @@ import { PROFESSOR_LIVE_STATUS, PARTICIPANT_ONGOING, asSqlArray } from "@/lib/st
 import { captureServerEvent } from "@/lib/posthog-server";
 import { createNotification } from "@/lib/notifications";
 import { checkGenericOutreach } from "@/lib/mentorship-quality";
+import { MAX_COLLABORATORS, normaliseCollaboratorIds } from "@/lib/collaboration";
+import { facultyName, fullName } from "@/lib/people";
 
 export async function submitMentorshipRequest(formData: FormData) {
   // Students send requests. requireRole also rejects suspended accounts, which
   // the previous explicit isSuspended check did by hand.
   const auth = await requireRole("student");
   if (!auth.ok) return { error: auth.error };
-  const { user } = auth;
+  const { user, profile } = auth;
 
   const profId = sanitiseText(formData.get("prof_id"), 100);
   const topic = sanitiseText(formData.get("topic"), LIMITS.topic);
@@ -43,6 +45,13 @@ export async function submitMentorshipRequest(formData: FormData) {
     return { error: quality.reason };
   }
 
+  // Optional co-students. The whole selection is validated before anything is
+  // written, so a bad pick never leaves a request behind without its group.
+  const { ids: collaboratorIds, overLimit } = normaliseCollaboratorIds(formData.getAll("collaborator_ids"), user.id);
+  if (overLimit) {
+    return { error: `You can add up to ${MAX_COLLABORATORS} collaborators to a request.` };
+  }
+
   // All DB work runs under the student's database identity (RLS): creating a
   // request and its opening message are owner-scoped writes.
   return runAs(user.id, async () => {
@@ -68,28 +77,49 @@ export async function submitMentorshipRequest(formData: FormData) {
   // could still deliver a request. The error string already claimed otherwise.
   // `IS NOT FALSE` because the column is nullable and null means "default on".
   const professors = await sql`
-    SELECT id FROM profiles
+    SELECT id, first_name, last_name, preferred_name FROM profiles
     WHERE id = ${profId}
       AND role = 'professor'
       AND status = ${PROFESSOR_LIVE_STATUS}
       AND is_accepting_requests IS NOT FALSE
     LIMIT 1;
   `;
-  if (!professors[0]) {
+  const professor = professors[0];
+  if (!professor) {
     return { error: "That professor is not currently accepting new requests." };
   }
 
-  // One open request per pair: re-sending while a decision is pending creates a
-  // duplicate thread the professor has to trip over twice.
+  // One open conversation per student and professor: re-sending while a
+  // decision is pending creates a duplicate thread the professor has to trip
+  // over twice. A group thread the student has joined counts too.
   const existing = await sql`
-    SELECT id FROM requests
-    WHERE student_id = ${user.id}
-      AND professor_id = ${profId}
-      AND status = ANY(${asSqlArray(PARTICIPANT_ONGOING)})
+    SELECT r.id FROM requests r
+    WHERE r.professor_id = ${profId}
+      AND r.status = ANY(${asSqlArray(PARTICIPANT_ONGOING)})
+      AND (
+        r.student_id = ${user.id}
+        OR EXISTS (
+          SELECT 1 FROM request_members m
+          WHERE m.request_id = r.id AND m.student_id = ${user.id} AND m.status = 'joined'
+        )
+      )
     LIMIT 1;
   `;
   if (existing[0]) {
     return { error: "You already have an open request with this professor." };
+  }
+
+  if (collaboratorIds.length > 0) {
+    const friendRows = await sql`
+      SELECT CASE WHEN requester_id = ${user.id} THEN addressee_id ELSE requester_id END AS id
+      FROM friendships
+      WHERE status = 'accepted'
+        AND ((requester_id = ${user.id} AND addressee_id = ANY(${collaboratorIds}::text[]))
+          OR (addressee_id = ${user.id} AND requester_id = ANY(${collaboratorIds}::text[])));
+    `;
+    if (friendRows.length !== collaboratorIds.length) {
+      return { error: "Collaborators must be on your friends list. Refresh the page and try again." };
+    }
   }
 
   // 2. Insert request
@@ -117,21 +147,51 @@ export async function submitMentorshipRequest(formData: FormData) {
     VALUES (${requestId}, ${user.id}, ${initialMessageContent});
   `;
 
+  // Invite the group in one statement, so either every collaborator is invited
+  // or none is. If a friendship ended in the moment since validation the request
+  // still stands, and the student can invite from the thread.
+  let invited: string[] = [];
+  if (collaboratorIds.length > 0) {
+    try {
+      await sql`
+        INSERT INTO request_members (request_id, student_id)
+        SELECT ${requestId}::uuid, unnest(${collaboratorIds}::text[]);
+      `;
+      invited = collaboratorIds;
+    } catch (err) {
+      console.error("[submitMentorshipRequest] could not invite collaborators:", err instanceof Error ? err.message : err);
+    }
+  }
+
   // Let the professor know a request is waiting in their queue.
   await createNotification({
     actorId: user.id,
     userId: profId,
     type: "new_request",
-    title: "New mentorship request",
-    body: topic,
+    title: invited.length > 0 ? "New group mentorship request" : "New mentorship request",
+    body: invited.length > 0 ? `${topic} · group of ${invited.length + 1} students` : topic,
     requestId,
   });
 
-  await captureServerEvent(user.id, "mentorship_request_submitted", { professor_id: profId, request_id: requestId });
+  for (const collaboratorId of invited) {
+    await createNotification({
+      actorId: user.id,
+      userId: collaboratorId,
+      type: "group_invite",
+      title: `${fullName(profile)} invited you to collaborate`,
+      body: `${topic} — with ${facultyName(professor)}`,
+      link: "/threads",
+    });
+  }
+
+  await captureServerEvent(user.id, "mentorship_request_submitted", {
+    professor_id: profId,
+    request_id: requestId,
+    collaborator_count: invited.length,
+  });
   revalidatePath("/dashboard");
   revalidatePath("/threads");
 
-
-  return { success: true };
+  return { success: true, invitesFailed: invited.length < collaboratorIds.length };
   });
 }

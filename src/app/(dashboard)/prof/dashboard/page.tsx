@@ -96,6 +96,19 @@ export default async function ProfessorDashboard() {
         'portfolio_url', s.portfolio_url,
         'extracurriculars', s.extracurriculars
       ) as student,
+      COALESCE((
+        SELECT json_agg(json_build_object(
+          'id', cp.id,
+          'first_name', cp.first_name,
+          'last_name', cp.last_name,
+          'preferred_name', cp.preferred_name,
+          'avatar_url', cp.avatar_url,
+          'status', cm.status
+        ) ORDER BY cm.invited_at, cm.student_id)
+        FROM request_members cm
+        JOIN profiles cp ON cp.id = cm.student_id
+        WHERE cm.request_id = r.id AND cm.status IN ('invited', 'joined')
+      ), '[]'::json) as collaborators,
       COALESCE(
         (SELECT json_agg(json_build_object('content', m.content, 'created_at', m.created_at, 'sender_id', m.sender_id))
          FROM messages m WHERE m.request_id = r.id), '[]'::json

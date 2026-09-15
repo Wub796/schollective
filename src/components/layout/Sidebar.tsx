@@ -140,7 +140,7 @@ function NavLink({
 export function Sidebar({ onClose, role = "student" }: SidebarProps) {
   const pathname = usePathname();
   const router   = useRouter();
-  const [unreadCount, setUnreadCount] = React.useState(0);
+  const [badges, setBadges] = React.useState({ unreadMessages: 0, friendRequests: 0, groupInvites: 0 });
 
   React.useEffect(() => {
     let active = true;
@@ -151,7 +151,11 @@ export function Sidebar({ onClose, role = "student" }: SidebarProps) {
         if (!res.ok) return;
         const data = await res.json();
         if (active) {
-          setUnreadCount(data.unreadMessages || 0);
+          setBadges({
+            unreadMessages: data.unreadMessages || 0,
+            friendRequests: data.friendRequests || 0,
+            groupInvites: data.groupInvites || 0,
+          });
         }
       } catch (err) {
         console.error("Failed to fetch unread badge:", err);
@@ -171,6 +175,15 @@ export function Sidebar({ onClose, role = "student" }: SidebarProps) {
     return pathname.startsWith(href);
   };
 
+  // Each badge sits on the page where it can be cleared: unread messages and
+  // collaboration invites on the thread list, friend requests on Friends.
+  const badgeFor = (href: string): number | undefined => {
+    if (role === "professor") return href === "/prof/dashboard" ? badges.unreadMessages : undefined;
+    if (href === "/threads") return badges.unreadMessages + badges.groupInvites;
+    if (href === "/friends") return badges.friendRequests;
+    return undefined;
+  };
+
   const handleSignOut = async () => {
     await authClient.signOut();
     router.push("/login");
@@ -186,6 +199,7 @@ export function Sidebar({ onClose, role = "student" }: SidebarProps) {
           { href: "/dashboard",  label: "Dashboard",      sub: "Overview"     },
           { href: "/professors", label: "Browse Mentors", sub: "Directory"    },
           { href: "/threads",    label: "My Threads",     sub: "All Sessions" },
+          { href: "/friends",    label: "Friends",        sub: "Your Network" },
         ];
 
   return (
@@ -237,8 +251,7 @@ export function Sidebar({ onClose, role = "student" }: SidebarProps) {
           }}
         >
           {navItems.map((navItem) => {
-            const isTarget = role === "professor" ? navItem.href === "/prof/dashboard" : navItem.href === "/threads";
-            const badgeValue = isTarget ? unreadCount : undefined;
+            const badgeValue = badgeFor(navItem.href);
             return (
               <motion.li key={navItem.href} variants={itemVariant}>
                 <NavLink

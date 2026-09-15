@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/Button";
 import { Check, X, Loader2, Calendar } from "lucide-react";
 import { updateRequestStatus, markRequestViewed } from "@/app/(dashboard)/prof/dashboard/actions";
 import { toast } from "sonner";
+import { AvatarStack } from "@/components/ui/Avatar";
+import { fullName } from "@/lib/people";
 
 interface RequestQueueCardProps {
   request: {
@@ -22,6 +24,15 @@ interface RequestQueueCardProps {
     };
     initial_message?: string;
     created_at: string;
+    /** Co-students on a group request, invited or joined. Empty for a one-to-one request. */
+    collaborators?: Array<{
+      id: string;
+      first_name: string | null;
+      last_name: string | null;
+      preferred_name: string | null;
+      avatar_url?: string | null;
+      status: "invited" | "joined";
+    }>;
   };
 }
 
@@ -106,6 +117,27 @@ export function RequestQueueCard({ request }: RequestQueueCardProps) {
           {new Date(request.created_at).toLocaleDateString()}
         </div>
       </div>
+
+      {/* Group request */}
+      {request.collaborators && request.collaborators.length > 0 && (
+        <div style={{
+          display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.25rem",
+          padding: "0.75rem 1rem", borderRadius: "12px",
+          background: "rgba(79, 70, 229, 0.04)", border: "1px solid rgba(79, 70, 229, 0.14)",
+        }}>
+          <AvatarStack people={request.collaborators} size={1.6} max={4} />
+          <div style={{ minWidth: 0 }}>
+            <div style={{ fontSize: "0.52rem", color: "var(--accent)", textTransform: "uppercase", letterSpacing: "0.2em", fontWeight: 800, fontFamily: "var(--font-sans, monospace)" }}>
+              Group Request · {request.collaborators.length + 1} Students
+            </div>
+            <div style={{ fontSize: "0.74rem", color: "rgba(15, 23, 42, 0.6)", lineHeight: 1.5, fontFamily: "var(--font-sans)", marginTop: "0.15rem" }}>
+              With {request.collaborators
+                .map((person) => `${fullName(person)}${person.status === "invited" ? " (invited)" : ""}`)
+                .join(", ")}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Topic */}
       <div style={{ marginBottom: "1.25rem" }}>
