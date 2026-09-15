@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { runAs } from "@/lib/neon/user-context";
 import { sql } from "@/lib/neon/db";
 import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
+import { getFriendNetwork } from "@/lib/neon/social";
 import { RequestForm } from "./RequestForm";
 import { ArrowLeft } from "lucide-react";
 
@@ -20,7 +21,7 @@ export default async function RequestNewPage({ searchParams }: RequestNewPagePro
 
   if (!prof_id) redirect("/professors");
 
-  const { session, user } = await getCurrentUserAndProfile();
+  const { session, user, profile } = await getCurrentUserAndProfile();
   if (!session || !user) redirect("/login");
 
   const professors = await sql`
@@ -46,6 +47,12 @@ export default async function RequestNewPage({ searchParams }: RequestNewPagePro
   `);
 
   const requestsToday = countResult[0]?.count || 0;
+
+  // Collaborators are picked from accepted friends. An admin previewing the form
+  // has no friends list and gets the empty picker, not an error.
+  const friends = profile?.role === "student"
+    ? (await getFriendNetwork(user.id)).friends.map((entry) => entry.person)
+    : [];
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "3.5rem", maxWidth: "720px" }}>
@@ -94,7 +101,7 @@ export default async function RequestNewPage({ searchParams }: RequestNewPagePro
       <div style={{ height: "1px", background: "rgba(79, 70, 229, 0.07)" }} />
 
       {/* Form */}
-      <RequestForm professor={professor as any} requestsToday={requestsToday} />
+      <RequestForm professor={professor as any} requestsToday={requestsToday} friends={friends} />
 
       {/* Footer */}
       <p style={{

@@ -8,14 +8,19 @@ import { toast } from "sonner";
 
 interface CloseThreadButtonProps {
   requestId: string;
+  /** A group thread closes for every student on it, and the confirmation says so. */
+  isGroup?: boolean;
 }
 
-export function CloseThreadButton({ requestId }: CloseThreadButtonProps) {
+export function CloseThreadButton({ requestId, isGroup = false }: CloseThreadButtonProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
   const handleClose = async () => {
-    if (!confirm("Are you sure you want to conclude this mentorship? The thread will be closed for further messages.")) return;
+    const question = isGroup
+      ? "Are you sure you want to conclude this mentorship? The thread will be closed for everyone in the group."
+      : "Are you sure you want to conclude this mentorship? The thread will be closed for further messages.";
+    if (!confirm(question)) return;
 
     setLoading(true);
     try {

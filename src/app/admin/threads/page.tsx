@@ -26,7 +26,8 @@ export default async function AdminThreadsPage() {
       r.created_at,
       r.updated_at,
       json_build_object('id', s.id, 'first_name', s.first_name, 'last_name', s.last_name, 'email', s.email) as student,
-      json_build_object('id', p.id, 'first_name', p.first_name, 'last_name', p.last_name, 'institution', p.institution) as professor
+      json_build_object('id', p.id, 'first_name', p.first_name, 'last_name', p.last_name, 'institution', p.institution) as professor,
+      (SELECT COUNT(*)::int FROM request_members m WHERE m.request_id = r.id AND m.status = 'joined') as collaborator_count
     FROM requests r
     LEFT JOIN profiles s ON r.student_id = s.id
     LEFT JOIN profiles p ON r.professor_id = p.id

@@ -65,6 +65,8 @@ const MUST_REQUIRE_SESSION = [
   "/professors",
   "/profile",
   "/threads",
+  "/friends",
+  "/students/abc12345",
   "/request/new",
   "/messages/abc12345",
   "/prof/dashboard",
@@ -119,6 +121,12 @@ test("a public professor page is not caught by the /professors gate", () => {
   assert.equal(requiresSession("/professors"), true);
   assert.equal(requiresSession("/professors/abc12345"), false);
   assert.equal(requiresSession("/professors/abc12345/anything"), false);
+});
+
+test("a student profile is gated without capturing the professor roster", () => {
+  assert.equal(requiresSession("/students/abc12345"), true);
+  assert.equal(requiresSession("/prof/students"), true, "still gated, by its own /prof/ prefix");
+  assert.equal(requiresSession("/students-guide"), false, "a lookalike top-level path is not captured");
 });
 
 test("/prof is gated but /professors is not mistaken for it", () => {
