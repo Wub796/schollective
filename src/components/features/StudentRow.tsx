@@ -43,8 +43,22 @@ export function StudentRow({ req, status }: { req: any; status: "active" | "clos
 
         {/* Info */}
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: "0.9rem", fontWeight: 600, color: "rgba(15, 23, 42, 0.85)", fontFamily: "var(--font-sans)", marginBottom: "0.2rem" }}>
-            {displayName} {student?.last_name}
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.9rem", fontWeight: 600, color: "rgba(15, 23, 42, 0.85)", fontFamily: "var(--font-sans)", marginBottom: "0.2rem" }}>
+            <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+              {displayName} {student?.last_name}
+            </span>
+            {req.collaborators?.length > 0 && (
+              <span
+                title={req.collaborators.map((person: any) => `${person.preferred_name || person.first_name || ""} ${person.last_name || ""}`.trim()).join(", ")}
+                style={{
+                  flexShrink: 0, fontSize: "0.48rem", fontWeight: 800, letterSpacing: "0.18em", textTransform: "uppercase",
+                  color: "var(--accent)", background: "rgba(79, 70, 229, 0.08)", border: "1px solid rgba(79, 70, 229, 0.22)",
+                  padding: "0.15rem 0.5rem", borderRadius: "100px", fontFamily: "var(--font-sans, monospace)",
+                }}
+              >
+                Group · +{req.collaborators.length}
+              </span>
+            )}
           </div>
           <div style={{ fontSize: "0.65rem", color: "rgba(15, 23, 42, 0.35)", fontFamily: "var(--font-sans)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
             {req.topic || "No topic specified"}
