@@ -23,6 +23,37 @@ test("full names never carry stray whitespace or the word null", () => {
   assert.equal(P.facultyName(null), "Dr. Professor");
 });
 
+test("a preferred name is read as a first name or as a whole name", () => {
+  assert.equal(P.preferredNameKind("", "Wu"), "none");
+  assert.equal(P.preferredNameKind("   ", "Wu"), "none");
+  assert.equal(P.preferredNameKind("Benny", "Wu"), "given");
+  assert.equal(P.preferredNameKind("Benny Wu", "Wu"), "full");
+  assert.equal(P.preferredNameKind("benny WU", "Wu"), "full", "case does not matter");
+  assert.equal(P.preferredNameKind("José Nuñez", "Nunez"), "full", "nor do accents");
+  assert.equal(P.preferredNameKind("Mary Jane", "Watson"), "given", "a two-word first name keeps the surname after it");
+  assert.equal(P.preferredNameKind("Ana de la Cruz", "de la Cruz"), "full", "a multi-word surname matches as a whole");
+  assert.equal(P.preferredNameKind("Ben Wu", null), "full", "with no surname on file, more than one word is a whole name");
+  assert.equal(P.preferredNameKind("Ben", null), "given");
+});
+
+test("a whole preferred name never repeats or drops the surname", () => {
+  const ben = { first_name: "Benjamin", last_name: "Wu" };
+  assert.equal(P.fullName({ ...ben, preferred_name: "Benny Wu" }), "Benny Wu", "not Benny Wu Wu");
+  assert.equal(P.givenName({ ...ben, preferred_name: "Benny Wu" }), "Benny", "greetings use only the given part");
+  assert.equal(P.fullName({ ...ben, preferred_name: "Benny" }), "Benny Wu");
+  assert.equal(P.fullName({ ...ben, preferred_name: "benny wu" }), "benny Wu", "the surname on file keeps its spelling");
+  assert.equal(P.fullName({ ...ben, preferred_name: "Wu" }), "Benjamin Wu", "only the surname typed falls back to the first name");
+  assert.equal(P.fullName({ first_name: "Mary", last_name: "Watson", preferred_name: "Mary Jane" }), "Mary Jane Watson");
+  assert.equal(P.fullName({ first_name: "Ben", preferred_name: "Benny Wu" }), "Benny Wu");
+  assert.equal(P.facultyName({ ...ben, preferred_name: "  Ben   Wu " }), "Dr. Ben Wu", "whitespace is collapsed");
+  assert.deepEqual(
+    P.nameParts({ first_name: "Ana", last_name: "de la Cruz", preferred_name: "Anita de la Cruz" }),
+    { given: "Anita", family: "de la Cruz" },
+  );
+  assert.equal(P.initialsOf({ ...ben, preferred_name: "Benny Wu" }), "BW");
+  assert.equal(P.listNames([{ ...ben, preferred_name: "Benny Wu" }, { first_name: "Dev" }]), "Benny and Dev");
+});
+
 test("initials are two uppercase letters, or a single placeholder", () => {
   assert.equal(P.initialsOf({ first_name: "ada", last_name: "lovelace" }), "AL");
   assert.equal(P.initialsOf({ preferred_name: "Ada" }), "A");

@@ -39,7 +39,7 @@ interface RequestQueueCardProps {
 export function RequestQueueCard({ request }: RequestQueueCardProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const studentName = request.student?.preferred_name || request.student?.first_name || "Student";
+  const studentName = fullName(request.student);
 
   React.useEffect(() => {
     markRequestViewed(request.id);
@@ -97,7 +97,7 @@ export function RequestQueueCard({ request }: RequestQueueCardProps) {
           </div>
           <div>
             <div style={{ fontSize: "0.88rem", fontWeight: 500, color: "rgba(15, 23, 42, 0.88)", lineHeight: 1.25, fontFamily: "var(--font-sans)" }}>
-              {studentName} {request.student?.last_name}
+              {studentName}
             </div>
             {(() => {
               const edu = request.student?.education_level || "";

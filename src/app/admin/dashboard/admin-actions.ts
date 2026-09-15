@@ -13,6 +13,7 @@ import {
 import { ADMIN_VIEW_AS_COOKIE, requireAdmin } from "@/lib/authz";
 import { createNotification } from "@/lib/notifications";
 import { defaultStatusForRole, isUserRole } from "@/lib/status";
+import { clearAdminPreviewData } from "@/lib/admin-preview";
 
 const VIEW_AS_COOKIE = ADMIN_VIEW_AS_COOKIE;
 
@@ -24,82 +25,6 @@ const VIEW_AS_COOKIE = ADMIN_VIEW_AS_COOKIE;
  * lose product access with no screen left that could undo it.
  */
 const SELF_TARGET_ERROR = "You cannot apply this to your own account.";
-
-export async function clearAdminNonAdminData(adminUserId: string): Promise<void> {
-  if (!isValidId(adminUserId)) return;
-
-  return runAs(adminUserId, async () => {
-
-  // 1. Reset all student & faculty profile fields on the admin profile
-  try {
-    await sql`
-      UPDATE profiles
-      SET bio = NULL,
-          institution = NULL,
-          education_level = NULL,
-          major = NULL,
-          graduation_year = NULL,
-          academic_interests = NULL,
-          extracurriculars = NULL,
-          coursework = NULL,
-          skills_and_tools = NULL,
-          portfolio_url = NULL,
-          seeking_mentorship_type = NULL,
-          department = NULL,
-          academic_title = NULL,
-          publications = NULL,
-          accepting_student_types = NULL,
-          lab_website = NULL,
-          office_hours = NULL,
-          is_accepting_requests = true,
-          profile_complete = true,
-          ai_score = NULL,
-          ai_level = NULL,
-          ai_flags = NULL,
-          avatar_url = NULL,
-          updated_at = now()
-      WHERE id = ${adminUserId}
-        AND role = 'admin'
-        AND (
-          bio IS NOT NULL OR institution IS NOT NULL OR education_level IS NOT NULL
-          OR major IS NOT NULL OR graduation_year IS NOT NULL
-          OR academic_interests IS NOT NULL OR extracurriculars IS NOT NULL
-          OR coursework IS NOT NULL OR skills_and_tools IS NOT NULL
-          OR portfolio_url IS NOT NULL OR seeking_mentorship_type IS NOT NULL
-          OR department IS NOT NULL OR academic_title IS NOT NULL
-          OR publications IS NOT NULL OR profile_complete = false
-          OR ai_score IS NOT NULL OR avatar_url IS NOT NULL
-        );
-    `;
-  } catch (error) {
-    console.error("[admin-actions] Error clearing admin profile fields:", error);
-  }
-
-  // 2. Remove test AI profile review jobs so reviewer card is completely fresh
-  try {
-    await sql`DELETE FROM ai_profile_review_jobs WHERE user_id = ${adminUserId};`;
-  } catch (error) {
-    console.error("[admin-actions] Error clearing admin test AI review jobs:", error);
-  }
-
-  // 3. Remove test messages & requests created by/for the admin
-  try {
-    await sql`
-      DELETE FROM messages
-      WHERE sender_id = ${adminUserId}
-         OR request_id IN (
-           SELECT id FROM requests WHERE student_id = ${adminUserId} OR professor_id = ${adminUserId}
-         );
-    `;
-    await sql`
-      DELETE FROM requests
-      WHERE student_id = ${adminUserId} OR professor_id = ${adminUserId};
-    `;
-  } catch (error) {
-    console.error("[admin-actions] Error clearing admin test requests/messages:", error);
-  }
-  });
-}
 
 export async function setAdminViewAs(role: "student" | "professor" | null, launchTour?: boolean) {
   const auth = await requireAdmin();
@@ -113,7 +38,7 @@ export async function setAdminViewAs(role: "student" | "professor" | null, launc
   const cookieStore = await cookies();
   if (role) {
     if (launchTour) {
-      await clearAdminNonAdminData(user.id);
+      await clearAdminPreviewData(user.id);
     }
     cookieStore.set(VIEW_AS_COOKIE, role, {
       httpOnly: true,
@@ -125,7 +50,7 @@ export async function setAdminViewAs(role: "student" | "professor" | null, launc
     redirect(launchTour ? `${targetPath}?tour=true` : targetPath);
   } else {
     cookieStore.delete(VIEW_AS_COOKIE);
-    await clearAdminNonAdminData(user.id);
+    await clearAdminPreviewData(user.id);
     redirect("/admin/dashboard");
   }
 }

@@ -27,8 +27,10 @@ const securityHeaders = [
       // `https:` on its own already permits every https image host, so the
       // googleusercontent entry that used to follow it was redundant. Narrowed to
       // the hosts actually used: our own origin, data/blob URIs for previews and
-      // generated avatars, and Google's avatar CDN for OAuth profile pictures.
-      "img-src 'self' data: blob: https://*.googleusercontent.com https://lh3.googleusercontent.com",
+      // generated avatars, Google's avatar CDN for OAuth profile pictures, and
+      // Neon Object Storage: /api/storage/avatar answers with a redirect to a
+      // presigned read there, so without it every uploaded picture is blocked.
+      "img-src 'self' data: blob: https://*.neon.tech https://*.googleusercontent.com https://lh3.googleusercontent.com",
       "font-src 'self' https://fonts.gstatic.com",
       // 'unsafe-inline' stays for styles: the codebase renders ~1,680 inline
       // style objects, which is a legitimate use of the attribute and not a

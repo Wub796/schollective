@@ -108,8 +108,14 @@ export default async function AdminDashboard() {
   const activeStudentCount = activeStudentCountRes[0]?.count || 0;
   const activeThreadsCount = activeThreadsCountRes[0]?.count || 0;
 
+  // 'deactivated' is excluded for the same reason as 'suspended': nobody is
+  // waiting on an admin to review an account its owner switched off.
   const pendingProfessors = (allProfessors ?? []).filter(
-    (p) => p.status !== "approved" && p.status !== "rejected" && p.status !== "suspended"
+    (p) =>
+      p.status !== "approved" &&
+      p.status !== "rejected" &&
+      p.status !== "suspended" &&
+      p.status !== "deactivated"
   );
   const facultyCount = (allProfessors ?? []).filter((p) => p.status === "approved").length;
   const pendingCount = pendingProfessors.length;

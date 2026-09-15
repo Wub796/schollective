@@ -112,6 +112,12 @@ const APP_REQUIRED_COLUMNS: Record<string, ColumnSpec[]> = {
     { name: "honors_awards", ddl: "honors_awards jsonb" },
     { name: "languages", ddl: "languages jsonb" },
     { name: "social_links", ddl: "social_links jsonb" },
+    // The self-service disable pair. Adding the columns here means an older
+    // database can still record a grace window without an operator running a
+    // migration; the POLICY and TRIGGER that make them safe cannot be patched
+    // this way and stay in db/migrations/0010.
+    { name: "deactivated_at", ddl: "deactivated_at timestamptz" },
+    { name: "status_before_deactivation", ddl: "status_before_deactivation text" },
   ],
   ai_profile_review_jobs: [
     { name: "id", ddl: `id text primary key` },
@@ -171,7 +177,11 @@ const APP_INDEXES: Record<string, string[]> = {
 };
 
 // Emitted only when the app's own profile table is absent (a brand new database).
-// An existing profiles table is never altered here.
+// An existing profiles table is never altered here. The self-service disable
+// pair (deactivated_at, status_before_deactivation) is present here as well as
+// in APP_REQUIRED_COLUMNS, so a fresh database gets them in the table definition
+// rather than through an ALTER on the next request; the policy and trigger that
+// make them safe stay in db/migrations/0010.
 const PROFILES_TABLE = `
   CREATE TABLE IF NOT EXISTS profiles (
     id text PRIMARY KEY,
@@ -210,6 +220,8 @@ const PROFILES_TABLE = `
     honors_awards jsonb,
     languages jsonb,
     social_links jsonb,
+    deactivated_at timestamptz,
+    status_before_deactivation text,
     created_at timestamptz DEFAULT now(),
     updated_at timestamptz DEFAULT now()
   )

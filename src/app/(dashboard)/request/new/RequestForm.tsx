@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import posthog from "posthog-js";
 import { MAX_COLLABORATORS } from "@/lib/collaboration";
 import type { StudentCard } from "@/lib/neon/social";
+import { facultyName } from "@/lib/people";
 
 interface RequestFormProps {
   professor: {
@@ -106,7 +107,7 @@ export function RequestForm({ professor, requestsToday, friends }: RequestFormPr
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [collaboratorIds, setCollaboratorIds] = useState<string[]>([]);
-  const profDisplayName = professor.preferred_name || professor.first_name;
+  const professorName = facultyName(professor);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -172,7 +173,7 @@ export function RequestForm({ professor, requestsToday, friends }: RequestFormPr
             color: "rgba(15, 23, 42, 0.88)", letterSpacing: "-0.015em",
             overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
           }}>
-            Dr. {profDisplayName} {professor.last_name}
+            {professorName}
           </div>
           {professor.institution && (
             <div style={{
@@ -230,7 +231,7 @@ export function RequestForm({ professor, requestsToday, friends }: RequestFormPr
         </div>
         <p style={{ fontSize: "0.8rem", color: "rgba(15, 23, 42, 0.5)", lineHeight: 1.7, fontFamily: "var(--font-sans)" }}>
           Working on this with classmates? Add friends and they&apos;ll be invited to join the thread.
-          Dr. {profDisplayName} {professor.last_name} will see that this is a group request.
+          {professorName} will see that this is a group request.
         </p>
         <CollaboratorPicker
           candidates={friends}

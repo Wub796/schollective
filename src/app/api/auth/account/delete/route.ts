@@ -1,0 +1,112 @@
+import { NextResponse, type NextRequest } from "next/server";
+import { sql } from "@/lib/neon/db";
+import { runAs } from "@/lib/neon/user-context";
+import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
+import { isSuspended } from "@/lib/authz";
+import { checkRateLimit } from "@/lib/security";
+import { DELETE_CONFIRMATION_PHRASE, confirmationMatches } from "@/lib/account-deletion";
+import { internalError } from "@/lib/utils";
+
+export const dynamic = "force-dynamic";
+
+const PRIVATE_HEADERS = { "Cache-Control": "private, no-store" };
+
+/**
+ * Permanently deletes the caller's own account. No grace period, no backup kept.
+ *
+ * WHY THIS IS THE LOUD ONE
+ * The foreign keys into `profiles` are ON DELETE CASCADE, so deleting the
+ * profile row takes the whole graph with it: this user's requests, every
+ * message in them, their notifications, friendships, blocks, group memberships
+ * and read positions. For a mentorship thread that means the OTHER participant
+ * also loses the conversation — the messages are one row set, not one per
+ * reader. That is why the UI demands a typed phrase, why this route re-checks
+ * that phrase server side (the button is not the control), and why it is kept
+ * separate from the reversible disable path above rather than being a "make it
+ * permanent now" shortcut on it.
+ *
+ * ORDER MATTERS, and it is chosen for the failure it leaves behind:
+ *   1. sessions — access is gone even if everything below fails;
+ *   2. AI review jobs — keyed by user id with no foreign key, so nothing else
+ *      would ever remove rows that contain a copy of the profile;
+ *   3. the profile row — cascades the app data;
+ *   4. the auth row last — cascades its own sessions and OAuth links.
+ * Failing between 3 and 4 leaves an account that can still sign in and gets a
+ * fresh, empty profile (the schema bootstrap recreates it), which is
+ * recoverable. The reverse order would leave data behind with no way in.
+ */
+export async function POST(request: NextRequest) {
+  const { session, user, profile } = await getCurrentUserAndProfile(request.headers);
+  if (!session || !user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401, headers: PRIVATE_HEADERS });
+  }
+  // A suspended account is a moderation record. Its owner gets one answer, from
+  // support, rather than a self-service way to remove the evidence.
+  if (isSuspended(profile)) {
+    return NextResponse.json(
+      { error: "Your account is suspended. Contact support instead." },
+      { status: 403, headers: PRIVATE_HEADERS },
+    );
+  }
+
+  let body: Record<string, unknown> = {};
+  try {
+    body = ((await request.json()) ?? {}) as Record<string, unknown>;
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON body." }, { status: 400, headers: PRIVATE_HEADERS });
+  }
+
+  if (!confirmationMatches(body.confirmation, DELETE_CONFIRMATION_PHRASE)) {
+    return NextResponse.json(
+      { error: `Type ${DELETE_CONFIRMATION_PHRASE} to confirm.` },
+      { status: 400, headers: PRIVATE_HEADERS },
+    );
+  }
+
+  const rate = checkRateLimit(`account-delete:${user.id}`, 3, 60 * 60 * 1000);
+  if (!rate.allowed) {
+    return NextResponse.json(
+      { error: "Too many attempts. Please try again later." },
+      { status: 429, headers: { ...PRIVATE_HEADERS, "Retry-After": String(rate.retryAfterSeconds) } },
+    );
+  }
+
+  try {
+    const removed = await runAs(user.id, async () => {
+      // An admin is the one account whose removal can lock the platform out of
+      // its own moderation tools, and the deletion is irreversible, so the last
+      // one standing is refused. The count runs as this user: an admin passes
+      // `app_is_admin()` and sees every profile row.
+      if (profile?.role === "admin") {
+        const others = await sql`
+          SELECT count(*)::int AS count FROM profiles
+          WHERE role = 'admin' AND id <> ${user.id} AND status <> 'deactivated';
+        `;
+        if (!others[0]?.count) {
+          return {
+            refused:
+              "This is the only administrator account. Promote another administrator before deleting this one.",
+          };
+        }
+      }
+
+      await sql`DELETE FROM session WHERE "userId" = ${user.id};`;
+      await sql`DELETE FROM ai_profile_review_jobs WHERE user_id = ${user.id};`;
+      await sql`DELETE FROM profiles WHERE id = ${user.id};`;
+      await sql`DELETE FROM "user" WHERE id = ${user.id};`;
+
+      return { refused: null as string | null };
+    });
+
+    if (removed?.refused) {
+      return NextResponse.json({ error: removed.refused }, { status: 409, headers: PRIVATE_HEADERS });
+    }
+
+    return NextResponse.json({ success: true }, { headers: PRIVATE_HEADERS });
+  } catch (err) {
+    return NextResponse.json(
+      { error: internalError("account/delete", err, "Could not delete the account.") },
+      { status: 500, headers: PRIVATE_HEADERS },
+    );
+  }
+}

@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/Button";
 import { InstitutionInput } from "@/components/ui/InstitutionInput";
+import { PreferredNameHint } from "@/components/profile/PreferredNameHint";
 import { scoreApplication } from "@/app/admin/dashboard/actions";
 import posthog from "posthog-js";
 
@@ -138,6 +139,8 @@ function OnboardingContent() {
   const [institution, setInstitution] = useState("");
   const [error, setError]             = useState<string | null>(null);
   const [isDirty, setIsDirty]         = useState(false);
+  // What has been typed into the name fields, so the preferred-name hint can say how it reads.
+  const [typedNames, setTypedNames] = useState<{ first_name?: string; last_name?: string; preferred_name?: string }>({});
 
   // Warning when leaving page with unsaved changes
   useEffect(() => {
@@ -455,7 +458,17 @@ function OnboardingContent() {
           </motion.div>
         )}
 
-        <form onSubmit={handleSubmit} method="post" onChange={() => setIsDirty(true)}>
+        <form
+          onSubmit={handleSubmit}
+          method="post"
+          onChange={(e) => {
+            setIsDirty(true);
+            const field = e.target as HTMLInputElement;
+            if (field.name === "first_name" || field.name === "last_name" || field.name === "preferred_name") {
+              setTypedNames((prev) => ({ ...prev, [field.name]: field.value }));
+            }
+          }}
+        >
           <motion.div variants={fadeUp} style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }}>
 
             {/* Name row */}
@@ -464,7 +477,16 @@ function OnboardingContent() {
               <Field id="last_name" name="last_name" label="Last Name" placeholder="Doe" defaultValue={defaultLast} required={role === "professor"} />
             </div>
 
-            <Field id="preferred_name" name="preferred_name" label="Preferred Name (optional)" placeholder="Janey" />
+            <div>
+              <Field id="preferred_name" name="preferred_name" label="Preferred Name (optional)" placeholder="Janey" />
+              <PreferredNameHint
+                firstName={typedNames.first_name ?? defaultFirst}
+                lastName={typedNames.last_name ?? defaultLast}
+                preferredName={typedNames.preferred_name ?? ""}
+                honorific={role === "professor" ? "Dr." : undefined}
+                style={{ paddingLeft: "1.75rem" }}
+              />
+            </div>
 
             {/* Role-specific fields */}
             <AnimatePresence mode="wait">

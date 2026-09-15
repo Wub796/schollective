@@ -18,8 +18,11 @@ interface SidebarProps {
   role?: string;
 }
 
+// One entry, no subscript: this page holds the account's security, its interface
+// preferences and (below) the two ways out of it, so a second line of grey text
+// under the label had nothing left to say.
 const accountNav: NavItem[] = [
-  { href: "/profile", label: "Profile", sub: "Settings" },
+  { href: "/profile", label: "Settings" },
 ];
 
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];

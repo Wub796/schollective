@@ -6,6 +6,7 @@ import { Search, Mail, GraduationCap, Calendar, ChevronDown, RotateCcw, Ban, Che
 import { revokeVerification, setUserSuspended } from "@/app/admin/dashboard/admin-actions";
 import { updateProfessorStatus } from "@/app/admin/dashboard/actions";
 import { toast } from "sonner";
+import { fullName } from "@/lib/people";
 
 export interface ProfessorRecord {
   id: string;
@@ -25,11 +26,12 @@ type StatusFilter = "all" | "approved" | "pending" | "rejected" | "suspended";
 type SortKey = "name" | "status" | "score" | "joined";
 
 const STATUS_COLOUR: Record<string, string> = {
-  approved:  "rgba(74,222,128,0.8)",
-  active:    "rgba(74,222,128,0.8)",
-  pending:   "rgba(250,204,21,0.8)",
-  rejected:  "rgba(248,113,113,0.8)",
-  suspended: "rgba(239,68,68,0.8)",
+  approved:    "rgba(74,222,128,0.8)",
+  active:      "rgba(74,222,128,0.8)",
+  pending:     "rgba(250,204,21,0.8)",
+  rejected:    "rgba(248,113,113,0.8)",
+  suspended:   "rgba(239,68,68,0.8)",
+  deactivated: "rgba(129,140,248,0.8)",
 };
 
 function formatDate(iso: string) {
@@ -41,6 +43,10 @@ function effectiveStatus(p: ProfessorRecord): string {
   if (p.status === "approved") return "approved";
   if (p.status === "rejected") return "rejected";
   if (p.status === "suspended") return "suspended";
+  // Disabled by its own owner, not waiting on a reviewer: without this branch
+  // it lands in the pending queue, and the queue is what says who needs
+  // attention.
+  if (p.status === "deactivated") return "deactivated";
   return "pending";
 }
 
@@ -183,7 +189,7 @@ export function AdminProfessorsTable({ professors }: { professors: ProfessorReco
               {filtered.length === 0 ? (
                 <tr><td colSpan={7} style={{ padding: "3rem 1.1rem", textAlign: "center", fontSize: "0.75rem", color: "rgba(15, 23, 42,0.2)", fontFamily: "var(--font-sans)" }}>No professors match the current filters.</td></tr>
               ) : filtered.map((p) => {
-                const name = `${p.preferred_name ?? p.first_name} ${p.last_name}`;
+                const name = fullName(p, "Professor");
                 const isBusy = busy === p.id;
                 const status = effectiveStatus(p);
                 const isSuspended = status === "suspended";

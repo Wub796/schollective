@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
 import { getCurrentUserAndProfile, upsertProfile } from "@/lib/neon/profiles";
-import { sanitiseProfileBody } from "@/lib/profile-input";
+import {
+  blankedRequiredField,
+  rejectedProfileField,
+  resolveProfileCompletion,
+  sanitiseProfileBody,
+} from "@/lib/profile-input";
 import { checkRateLimit } from "@/lib/security";
 import { isSuspended } from "@/lib/authz";
 import { validateEmail } from "@/lib/validators";
@@ -59,10 +64,35 @@ export async function POST(req: Request) {
       return NextResponse.json({ error }, { status: 403, headers: PRIVATE_HEADERS });
     }
 
+    const sanitised = sanitiseProfileBody(raw, user.id);
+
+    // Refuse rather than store something other than what was sent: a field that
+    // sanitised to nothing, or a required field being emptied.
+    const problem =
+      rejectedProfileField(raw, sanitised) ??
+      blankedRequiredField(allowedRole ?? profile?.role, profile ?? {}, sanitised);
+    if (problem) {
+      return NextResponse.json(
+        { error: problem.message, field: problem.field },
+        { status: 400, headers: PRIVATE_HEADERS },
+      );
+    }
+
+    // Completion is decided here, from what will actually be stored, rather
+    // than taken from the body (see resolveProfileCompletion).
+    const profileComplete = resolveProfileCompletion({
+      role: allowedRole ?? profile?.role,
+      previousRole: profile?.role,
+      alreadyComplete: profile?.profile_complete === true,
+      requested: raw.profile_complete === true,
+      merged: { ...(profile ?? {}), ...sanitised },
+    });
+
     const updated = await upsertProfile({
-      ...sanitiseProfileBody(raw),
+      ...sanitised,
       ...(allowedRole ? { role: allowedRole } : {}),
       ...(allowedStatus ? { status: allowedStatus } : {}),
+      profile_complete: profileComplete,
       id: user.id,
       email: user.email,
     });

@@ -26,6 +26,8 @@ import {
   Sliders,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { PreferredNameHint } from "@/components/profile/PreferredNameHint";
+import { nameParts } from "@/lib/people";
 
 interface Props {
   profile: any;
@@ -127,7 +129,10 @@ export function ProfProfileForm({ profile: initialProfile }: Props) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ avatar_url: avatarUrl }),
       });
-      if (!profileRes.ok) throw new Error("Failed to save profile picture");
+      if (!profileRes.ok) {
+        const detail = await profileRes.json().catch(() => null);
+        throw new Error(detail?.error || "Failed to save profile picture");
+      }
 
       setProfile((p: any) => ({ ...p, avatar_url: avatarUrl }));
       toast.success("Profile picture updated!");
@@ -176,7 +181,8 @@ export function ProfProfileForm({ profile: initialProfile }: Props) {
     }
   };
 
-  const displayName = preferredName || firstName || "Professor";
+  const shownName = nameParts({ first_name: firstName, last_name: lastName, preferred_name: preferredName });
+  const displayName = shownName.given || "Professor";
   const initials = `${firstName?.[0] ?? ""}${lastName?.[0] ?? ""}`.toUpperCase() || "P";
   const expertiseArray = expertise.split(",").map((s: string) => s.trim()).filter(Boolean);
   const studentTypesArray = studentTypes.split(",").map((s: string) => s.trim()).filter(Boolean);
@@ -239,7 +245,7 @@ export function ProfProfileForm({ profile: initialProfile }: Props) {
 
         <div>
           <h2 className="font-display" style={{ fontSize: "1.6rem", fontWeight: 900, color: "var(--text-primary)", margin: "0 0 0.2rem 0" }}>
-            Dr. {displayName} {lastName}
+            Dr. {displayName} {shownName.family}
           </h2>
           <div style={{ fontSize: "0.85rem", color: "var(--text-secondary)", fontWeight: 600 }}>
             {title} • {inst}
@@ -339,7 +345,7 @@ export function ProfProfileForm({ profile: initialProfile }: Props) {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "1.25rem" }}>
             <FieldInput id="first_name" name="first_name" label="First Name" value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="e.g. Jane" icon={<User size={15} />} />
             <FieldInput id="last_name" name="last_name" label="Last Name" value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="e.g. Smith" icon={<User size={15} />} />
-            <FieldInput id="preferred_name" name="preferred_name" label="Preferred Name (Optional)" value={preferredName} onChange={(e) => setPreferredName(e.target.value)} placeholder="e.g. Janie" icon={<User size={15} />} />
+            <FieldInput id="preferred_name" name="preferred_name" label="Preferred Name (Optional)" value={preferredName} onChange={(e) => setPreferredName(e.target.value)} placeholder="e.g. Janie" icon={<User size={15} />} hint={<PreferredNameHint firstName={firstName} lastName={lastName} preferredName={preferredName} honorific="Dr." style={{ paddingLeft: "1.25rem" }} />} />
           </div>
 
           {/* Academic Profile Details Grid */}
@@ -463,7 +469,7 @@ export function ProfProfileForm({ profile: initialProfile }: Props) {
               </div>
               <div>
                 <h2 className="font-display" style={{ fontSize: "1.6rem", fontWeight: 900, color: "var(--text-primary)", margin: "0 0 0.25rem 0" }}>
-                  Dr. {displayName} {lastName}
+                  Dr. {displayName} {shownName.family}
                 </h2>
                 <div style={{ fontSize: "0.85rem", color: "var(--text-secondary)", fontWeight: 600 }}>
                   {title} • {dept}
@@ -569,7 +575,7 @@ export function ProfProfileForm({ profile: initialProfile }: Props) {
   );
 }
 
-function FieldInput({ id, name, label, value, onChange, placeholder, icon }: { id: string; name: string; label: string; value: string; onChange: (e: any) => void; placeholder: string; icon: React.ReactNode }) {
+function FieldInput({ id, name, label, value, onChange, placeholder, icon, hint }: { id: string; name: string; label: string; value: string; onChange: (e: any) => void; placeholder: string; icon: React.ReactNode; hint?: React.ReactNode }) {
   return (
     <div>
       <label htmlFor={id} style={{ display: "flex", alignItems: "center", gap: "0.4rem", fontSize: "0.72rem", fontWeight: 800, color: "var(--text-primary)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "0.5rem" }}>
@@ -594,6 +600,7 @@ function FieldInput({ id, name, label, value, onChange, placeholder, icon }: { i
           fontFamily: "var(--font-sans)",
         }}
       />
+      {hint}
     </div>
   );
 }
