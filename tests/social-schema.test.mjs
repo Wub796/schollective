@@ -81,6 +81,21 @@ test("every SECURITY DEFINER function in any migration pins its search_path", ()
   assert.deepEqual(problems, [], `SECURITY DEFINER without a pinned search_path:\n  ${problems.join("\n  ")}`);
 });
 
+test("migrations from 0008 on are plain ASCII", () => {
+  // 0007 was applied through a client whose encoding was not UTF-8: an em dash
+  // in one of its exception messages is stored in production as three Mac-Roman
+  // characters. Keeping new migrations ASCII makes the encoding of whatever
+  // client applies them irrelevant.
+  const problems = [];
+  for (const file of readdirSync(MIGRATIONS).filter((f) => f.endsWith(".sql") && Number.parseInt(f, 10) >= 8)) {
+    const text = readFileSync(join(MIGRATIONS, file), "utf8");
+    text.split("\n").forEach((line, index) => {
+      if (/[^\x00-\x7F]/.test(line)) problems.push(`${file}:${index + 1}`);
+    });
+  }
+  assert.deepEqual(problems, [], `non-ASCII characters in:\n  ${problems.join("\n  ")}`);
+});
+
 test("0008 refuses to run as a role that RLS applies to", () => {
   // The membership helpers rely on their owner bypassing RLS; created by the app
   // role they would recurse inside the very policies that call them.

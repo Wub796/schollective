@@ -60,6 +60,13 @@ FROM profiles p
 LEFT JOIN "user" u ON u.id = p.id
 WHERE u.id IS NULL;
 
+-- The backup is for the owner alone. 0006's ALTER DEFAULT PRIVILEGES grants the
+-- app role full access to every table the owner creates, which silently made
+-- these unprotected copies of profile rows readable by the application. (Found
+-- after this script had already run; closed in migration 0009.)
+REVOKE ALL ON profiles_orphan_backup FROM schollective_app;
+ALTER TABLE profiles_orphan_backup ENABLE ROW LEVEL SECURITY;
+
 DO $$
 BEGIN
   RAISE NOTICE 'backup table holds % row(s)', (SELECT count(*) FROM profiles_orphan_backup);

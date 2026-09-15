@@ -3,6 +3,7 @@ import { runAs } from "./user-context";
 import { ensureAuthSchema } from "./schema";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
+import { defaultStatusForRole, isUserRole } from "@/lib/status";
 
 export interface AcademicStats {
   unweighted_gpa?: number | null;
@@ -134,11 +135,16 @@ export async function getCurrentUserAndProfile(customHeaders?: Headers): Promise
       const nameParts = (session.user.name || "").split(" ");
       const firstName = nameParts[0] || "";
       const lastName = nameParts.slice(1).join(" ") || "";
-      const role = (session.user as any).role || "student";
+      // The auth row's role is normally 'student' here; when it is not (a profile
+      // row deleted and recreated), the status must match the role — a
+      // professor re-enters review rather than arriving as professor/active,
+      // a combination no screen knows how to render.
+      const sessionRole = (session.user as any).role;
+      const role = isUserRole(sessionRole) ? sessionRole : "student";
 
       const newRows = await sql`
         INSERT INTO profiles (id, email, first_name, last_name, role, status, profile_complete)
-        VALUES (${userId}, ${userEmail}, ${firstName}, ${lastName}, ${role}, 'active', false)
+        VALUES (${userId}, ${userEmail}, ${firstName}, ${lastName}, ${role}, ${defaultStatusForRole(role)}, false)
         ON CONFLICT (id) DO UPDATE SET email = EXCLUDED.email
         RETURNING *;
       `;

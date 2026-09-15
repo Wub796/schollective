@@ -70,7 +70,7 @@ async function scoreApplicationFor(pid: string, options: { canAutoApprove: boole
             profile_complete = true,
             is_accepting_requests = true,
             ai_score = ${result.score},
-            ai_flags = ${result.flags},
+            ai_flags = ${JSON.stringify(result.flags)}::jsonb,
             ai_level = ${result.level},
             updated_at = now()
         WHERE id = ${pid};
@@ -85,7 +85,7 @@ async function scoreApplicationFor(pid: string, options: { canAutoApprove: boole
       await sql`
         UPDATE profiles
         SET ai_score = ${result.score},
-            ai_flags = ${result.flags},
+            ai_flags = ${JSON.stringify(result.flags)}::jsonb,
             ai_level = ${result.level},
             updated_at = now()
         WHERE id = ${pid};

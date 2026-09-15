@@ -65,8 +65,9 @@ psql "$DATABASE_URL" -f db/migrations/0006_rls_scope_profiles_and_grants.sql
 ```
 
 Apply them as a role that owns the tables (`neondb_owner`), not as the role the
-app connects with. `0008` (friends and group threads) must be applied **before**
-deploying the code that reads its tables — see [`db/README.md`](db/README.md).
+app connects with. `0008` (friends and group threads) and `0009` (live schema
+drift) must be applied **before** deploying the code that depends on them — see
+[`db/README.md`](db/README.md).
 
 Row-level security is **enforcing**: `0004` transfers table ownership to the
 non-`BYPASSRLS` role `schollective_app` and expresses the app's authorization

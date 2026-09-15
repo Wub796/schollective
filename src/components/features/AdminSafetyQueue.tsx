@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { ShieldAlert, CheckCircle, UserX } from "lucide-react";
 import { toast } from "sonner";
+import { suspendUser } from "@/app/admin/dashboard/admin-actions";
 
 interface FlaggedAccount {
   id: string;
@@ -28,23 +29,28 @@ export function AdminSafetyQueue({ initialFlaggedAccounts = [] }: Props) {
   const handleSuspend = async (accountId: string) => {
     setActionLoading(accountId);
     try {
-      await fetch("/api/ai/moderate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "suspend", targetUserId: accountId }),
-      });
+      // The same admin action the users table uses. This used to POST to
+      // /api/ai/moderate and announce success without reading the response, so
+      // a refused or failed suspension still said "Account suspended."
+      const result = await suspendUser(accountId, "Flagged by the safety queue");
+      if (result?.error) {
+        toast.error(result.error);
+        return;
+      }
       setAccounts((prev) => prev.filter((a) => a.id !== accountId));
       toast.success("Account suspended.");
-    } catch (err) {
+    } catch {
       toast.error("Failed to update status.");
     } finally {
       setActionLoading(null);
     }
   };
 
+  // Dismissing is local: the flags are stored on the profile and will be shown
+  // again on the next load, so the toast must not claim they were cleared.
   const handleDismissFlag = async (accountId: string) => {
     setAccounts((prev) => prev.filter((a) => a.id !== accountId));
-    toast.success("Flag cleared.");
+    toast.success("Hidden from the queue until the next refresh.");
   };
 
   const filtered = accounts.filter((a) => {

@@ -70,6 +70,24 @@ psql "$DATABASE_URL" -f db/migrations/0003_rls_policies.sql
 psql "$DATABASE_URL" -f db/migrations/0004_rls_activate.sql   # requires the schollective_app role to exist
 ```
 
+### Applying migrations: encoding
+
+Apply migrations with a UTF-8 client (`PGCLIENTENCODING=UTF8 psql ...`, or the
+Neon SQL editor). `0007` was applied through a client that was not, and an em
+dash in one of its messages is stored in production as mis-encoded characters.
+Migrations from `0008` on are kept ASCII-only so this cannot recur;
+`tests/social-schema.test.mjs` enforces it.
+
+### 0009 — live schema drift
+
+Apply after `0008`. It closes three differences between the repository and
+production: the maintenance backup table `profiles_orphan_backup` was fully
+readable by the app role (via `0006`'s default privileges) with no RLS;
+`profiles.ai_score` was `numeric`, which the driver returns as a string; and the
+mis-encoded guard message above. Any backup table created by hand as the owner
+needs the same `REVOKE ALL ... FROM schollective_app`, because default privileges
+grant the app role access to every table the owner creates.
+
 ### 0008 — friends and group threads
 
 `0008_friends_and_group_mentorship.sql` must be applied, as `neondb_owner`,
