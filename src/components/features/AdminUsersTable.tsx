@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { setUserSuspended, changeUserRole, suspendUser, unsuspendUser, warnUser } from "@/app/admin/dashboard/admin-actions";
 import { useRouter } from "next/navigation";
+import { fullName } from "@/lib/people";
 
 /* ─── Types ─────────────────────────────────────────────────────────────── */
 export interface UserRecord {
@@ -356,7 +357,6 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
                   </td>
                 </tr>
               ) : filtered.map((u) => {
-                const displayName = u.preferred_name || u.first_name;
                 const status = effectiveStatus(u);
                 const isSuspended = status === "suspended";
                 const isMe = false; // can't suspend yourself — server enforces this too
@@ -387,7 +387,7 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
                         </div>
                         <div>
                           <div style={{ fontSize: "0.82rem", fontWeight: 600, color: isSuspended ? "rgba(15, 23, 42,0.35)" : "var(--text-primary)", fontFamily: "var(--font-sans)", textDecoration: isSuspended ? "line-through" : "none" }}>
-                            {displayName} {u.last_name}
+                            {fullName(u, "Unnamed")}
                           </div>
                           <div style={{ display: "flex", alignItems: "center", gap: "0.3rem", fontSize: "0.6rem", color: "rgba(15, 23, 42,0.3)", fontFamily: "var(--font-sans)", marginTop: "0.15rem" }}>
                             <Mail size={9} />
@@ -543,7 +543,6 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
             No accounts match the current filters.
           </div>
         ) : filtered.map((u) => {
-          const displayName = u.preferred_name || u.first_name;
           const status = effectiveStatus(u);
           const isSuspended = status === "suspended";
           const busy = suspending === u.id;
@@ -573,7 +572,7 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontSize: "0.82rem", fontWeight: 600, color: "var(--text-primary)", fontFamily: "var(--font-sans)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                    {displayName} {u.last_name}
+                    {fullName(u, "Unnamed")}
                   </div>
                   <div style={{ fontSize: "0.6rem", color: "rgba(15, 23, 42,0.3)", fontFamily: "var(--font-sans)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                     {u.email}

@@ -6,6 +6,7 @@ import { checkDurableRateLimit } from "@/lib/rate-limit";
 import { checkRateLimit, getClientIp } from "@/lib/security";
 import type { ProfessorCandidate } from "@/lib/ai/recommender";
 import { internalError } from "@/lib/utils";
+import { facultyName } from "@/lib/people";
 
 export const dynamic = "force-dynamic";
 
@@ -71,7 +72,7 @@ export async function GET(req: Request) {
         professor: prof
           ? {
               id: prof.id,
-              name: `Dr. ${prof.preferred_name || prof.first_name || ""} ${prof.last_name || ""}`.trim(),
+              name: facultyName(prof),
               institution: prof.institution || "Academic Faculty",
               department: prof.department || "",
               expertise_fields: prof.expertise_fields || [],

@@ -17,6 +17,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { nameParts } from "@/lib/people";
 
 interface AccountSecuritySettingsProps {
   profile: any;
@@ -107,7 +108,8 @@ export function AccountSecuritySettings({ profile }: AccountSecuritySettingsProp
     }
   };
 
-  const displayName = profile?.preferred_name || profile?.first_name || "User";
+  const shownName = nameParts(profile);
+  const displayName = shownName.given || "User";
   const initials = `${profile?.first_name?.[0] ?? "U"}${profile?.last_name?.[0] ?? ""}`;
   const isProf = profile?.role === "professor";
 
@@ -147,7 +149,7 @@ export function AccountSecuritySettings({ profile }: AccountSecuritySettingsProp
           <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem", minWidth: 0 }}>
             <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", flexWrap: "wrap" }}>
               <h2 style={{ fontSize: "1.3rem", fontWeight: 800, color: "var(--text-primary)", margin: 0, wordBreak: "break-word" }}>
-                {displayName} {profile?.last_name || ""}
+                {displayName} {shownName.family}
               </h2>
               <span style={{
                 fontSize: "0.65rem", fontWeight: 800, textTransform: "uppercase",

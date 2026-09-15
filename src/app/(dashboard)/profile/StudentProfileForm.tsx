@@ -25,7 +25,9 @@ import { HonorsAwardsBuilder } from "@/components/profile/HonorsAwardsBuilder";
 import { SkillsAndLinksCard } from "@/components/profile/SkillsAndLinksCard";
 import { FacultyPreviewCard } from "@/components/profile/FacultyPreviewCard";
 import { ProfileSectionNav } from "@/components/profile/ProfileSectionNav";
+import { PreferredNameHint } from "@/components/profile/PreferredNameHint";
 import type { ParsedResumeProfile } from "@/lib/ai/resume-parser";
+import { nameParts } from "@/lib/people";
 import {
   ProfileRecord,
   AcademicStats,
@@ -426,7 +428,10 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ avatar_url: avatarUrl }),
       });
-      if (!profileRes.ok) throw new Error("Failed to save profile picture");
+      if (!profileRes.ok) {
+        const detail = await profileRes.json().catch(() => null);
+        throw new Error(detail?.error || "Failed to save profile picture");
+      }
 
       setProfile((p: any) => ({ ...p, avatar_url: avatarUrl }));
       toast.success("Profile picture updated.");
@@ -450,7 +455,8 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
       a.organization ? `${a.title} (${a.organization})` : a.title
     );
     const legacyCoursework = academicStats.advanced_coursework || [];
-    const portfolioUrl = socialLinks.portfolio_url || profile?.portfolio_url || "";
+    // An emptied link is "" and clears the stored one; only a link never set falls back.
+    const portfolioUrl = socialLinks.portfolio_url ?? profile?.portfolio_url ?? "";
 
     const updates: Record<string, any> = {
       first_name: firstName.trim(),
@@ -500,7 +506,8 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
     }
   };
 
-  const displayName = preferredName || firstName || "Scholar";
+  const shownName = nameParts({ first_name: firstName, last_name: lastName, preferred_name: preferredName });
+  const displayName = shownName.given || "Scholar";
   const initials = `${firstName?.[0] ?? ""}${lastName?.[0] ?? ""}`.toUpperCase() || "S";
 
   return (
@@ -571,7 +578,7 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
         <div style={{ display: "flex", flexDirection: "column", gap: "0.2rem" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
             <h2 style={{ fontSize: "1.4rem", fontWeight: 800, color: "var(--text-primary)", margin: 0 }}>
-              {displayName} {lastName}
+              {displayName} {shownName.family}
             </h2>
             <span
               style={{
@@ -795,6 +802,7 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
                   style={{ width: "100%", padding: "0.75rem 1rem", borderRadius: "8px", border: "1px solid rgba(99, 102, 241, 0.25)", outline: "none", fontSize: "0.88rem" }}
                   placeholder="Janey"
                 />
+                <PreferredNameHint firstName={firstName} lastName={lastName} preferredName={preferredName} />
               </div>
             </div>
           </div>
@@ -882,7 +890,7 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
         /* Live Faculty View Preview Tab */
         <FacultyPreviewCard
           displayName={displayName}
-          lastName={lastName}
+          lastName={shownName.family}
           avatarUrl={profile?.avatar_url}
           institution={inst}
           educationLevel={educationLevel}

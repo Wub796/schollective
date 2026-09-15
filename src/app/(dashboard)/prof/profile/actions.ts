@@ -4,7 +4,7 @@ import { upsertProfile } from "@/lib/neon/profiles";
 import { revalidatePath } from "next/cache";
 import { checkRateLimit } from "@/lib/security";
 import { requireRole } from "@/lib/authz";
-import { sanitiseProfileFormData } from "@/lib/profile-input";
+import { blankedRequiredField, rejectedProfileField, sanitiseProfileFormData } from "@/lib/profile-input";
 import { internalError } from "@/lib/utils";
 
 export async function updateProfProfile(formData: FormData) {
@@ -29,8 +29,12 @@ export async function updateProfProfile(formData: FormData) {
     // Role and status are deliberately NOT part of this payload. The caller is
     // already a professor (checked above), and their review status belongs to
     // the admin queue — editing your own profile must never re-open or skip it.
+    const input = sanitiseProfileFormData(formData, user.id);
+    const problem = rejectedProfileField(formData, input) ?? blankedRequiredField(profile.role, profile, input);
+    if (problem) return { error: problem.message };
+
     await upsertProfile({
-      ...sanitiseProfileFormData(formData),
+      ...input,
       id: user.id,
       email: user.email,
     });

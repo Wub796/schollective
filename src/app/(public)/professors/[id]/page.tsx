@@ -9,6 +9,7 @@ import { ArrowLeft, GraduationCap, Building2, BookOpen, Mail, ShieldCheck } from
 import { Button } from "@/components/ui/Button";
 import { AppShell } from "@/components/layout/AppShell";
 import { PARTICIPANT_ONGOING, asSqlArray } from "@/lib/status";
+import { facultyName, fullName, nameParts } from "@/lib/people";
 
 export const revalidate = 300;
 export const dynamicParams = true;
@@ -43,10 +44,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   if (!professor) return { title: "Professor Profile | Schollective" };
 
-  const displayName = professor.preferred_name || professor.first_name;
+  const professorName = facultyName(professor);
   const expertiseList = parseArray(professor.expertise_fields);
-  const title = `Dr. ${displayName} ${professor.last_name} — ${professor.institution} | Schollective`;
-  const description = `Connect with Dr. ${displayName} ${professor.last_name}, expert in ${expertiseList.length > 0 ? expertiseList.join(", ") : "academic research"}. Apply for structured mentorship on Schollective.`;
+  const title = `${professorName} — ${professor.institution} | Schollective`;
+  const description = `Connect with ${professorName}, expert in ${expertiseList.length > 0 ? expertiseList.join(", ") : "academic research"}. Apply for structured mentorship on Schollective.`;
 
   return {
     title,
@@ -62,7 +63,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       images: [
         {
           url: professor.avatar_url?.split("?")[0] || "/og-image.png",
-          alt: `Dr. ${displayName} ${professor.last_name}`,
+          alt: professorName,
         },
       ],
     },
@@ -90,7 +91,7 @@ function ProfessorDetail({
   existingRequestId?: string;
   user: any;
 }) {
-  const displayName = professor.preferred_name || professor.first_name;
+  const { given: displayName, family: surname } = nameParts(professor);
   const initials    = `${professor.first_name?.[0] ?? ""}${professor.last_name?.[0] ?? ""}`.toUpperCase();
   const isAccepting = professor.is_accepting_requests !== false;
 
@@ -111,7 +112,7 @@ function ProfessorDetail({
 
           <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
             <h1 className="font-display" style={{ fontSize: "clamp(2.4rem, 4vw, 3.2rem)", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.035em", lineHeight: 1.05 }}>
-              Dr. {displayName} <em style={{ fontStyle: "italic", color: "var(--accent)", fontWeight: 300 }}>{professor.last_name}</em>
+              Dr. {displayName} <em style={{ fontStyle: "italic", color: "var(--accent)", fontWeight: 300 }}>{surname}</em>
             </h1>
             <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap" }}>
               {/* Verified badge */}
@@ -297,7 +298,7 @@ function ProfessorDetail({
                 </span>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: "1.5rem" }}>
                   {similarProfessors.map((p) => {
-                    const name = p.preferred_name || p.first_name;
+                    const name = fullName(p, "Professor");
                     const initials = `${p.first_name?.[0] ?? ""}${p.last_name?.[0] ?? ""}`.toUpperCase();
                     return (
                       <Link href={`/professors/${p.id}`} key={p.id} style={{ textDecoration: "none" }}>
@@ -336,7 +337,7 @@ function ProfessorDetail({
                             )}
                           </div>
                           <div>
-                            <div style={{ fontSize: "0.8rem", fontWeight: 600, color: "rgba(15, 23, 42, 0.8)", fontFamily: "var(--font-sans)" }}>Dr. {name} {p.last_name}</div>
+                            <div style={{ fontSize: "0.8rem", fontWeight: 600, color: "rgba(15, 23, 42, 0.8)", fontFamily: "var(--font-sans)" }}>Dr. {name}</div>
                             <div style={{ fontSize: "0.58rem", color: "rgba(15, 23, 42, 0.4)", fontFamily: "var(--font-sans)", marginTop: "0.15rem", textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap", maxWidth: "160px" }}>{p.institution}</div>
                           </div>
                         </div>

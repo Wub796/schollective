@@ -3,10 +3,11 @@
 import React from "react";
 import Link from "next/link";
 import { MessageSquare } from "lucide-react";
+import { fullName } from "@/lib/people";
 
 export function StudentRow({ req, status }: { req: any; status: "active" | "closed" }) {
   const student     = req.student;
-  const displayName = student?.preferred_name || student?.first_name || "Student";
+  const studentName = fullName(student);
   const initials    = `${student?.first_name?.[0] ?? ""}${student?.last_name?.[0] ?? ""}`.toUpperCase() || "?";
   const isActive    = status === "active";
 
@@ -45,11 +46,11 @@ export function StudentRow({ req, status }: { req: any; status: "active" | "clos
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.9rem", fontWeight: 600, color: "rgba(15, 23, 42, 0.85)", fontFamily: "var(--font-sans)", marginBottom: "0.2rem" }}>
             <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-              {displayName} {student?.last_name}
+              {studentName}
             </span>
             {req.collaborators?.length > 0 && (
               <span
-                title={req.collaborators.map((person: any) => `${person.preferred_name || person.first_name || ""} ${person.last_name || ""}`.trim()).join(", ")}
+                title={req.collaborators.map((person: any) => fullName(person, "")).filter(Boolean).join(", ")}
                 style={{
                   flexShrink: 0, fontSize: "0.48rem", fontWeight: 800, letterSpacing: "0.18em", textTransform: "uppercase",
                   color: "var(--accent)", background: "rgba(79, 70, 229, 0.08)", border: "1px solid rgba(79, 70, 229, 0.22)",

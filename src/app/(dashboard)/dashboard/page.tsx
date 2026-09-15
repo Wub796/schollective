@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { StudentProfileForm } from "@/app/(dashboard)/profile/StudentProfileForm";
 import { InteractiveOnboardingTour, TourStep } from "@/components/features/InteractiveOnboardingTour";
+import { givenName } from "@/lib/people";
 
 export const dynamic = "force-dynamic";
 
@@ -68,7 +69,7 @@ export default async function StudentDashboard() {
     redirect("/onboarding");
   }
 
-  const displayName = profile.preferred_name || profile.first_name || "Scholar";
+  const displayName = givenName(profile, "Scholar");
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "2.5rem", maxWidth: "950px", paddingBottom: "6rem" }}>

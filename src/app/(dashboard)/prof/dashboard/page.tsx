@@ -10,6 +10,7 @@ import { ProfProfileForm } from "@/app/(dashboard)/prof/profile/ProfProfileForm"
 import { InteractiveOnboardingTour, TourStep } from "@/components/features/InteractiveOnboardingTour";
 import { Inbox } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { givenName } from "@/lib/people";
 
 export const dynamic = "force-dynamic";
 
@@ -76,7 +77,7 @@ export default async function ProfessorDashboard() {
   if (!isAdminPreviewing && profile.status !== "approved") redirect("/prof/pending");
 
   const isAccepting = profile.is_accepting_requests !== false; // default true
-  const displayName = profile.preferred_name || profile.first_name || "Professor";
+  const displayName = givenName(profile, "Professor");
 
   // RLS scopes requests to their participants: the query must run under the
   // signed-in user's database identity or every row is filtered out.

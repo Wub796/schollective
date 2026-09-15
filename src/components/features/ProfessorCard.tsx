@@ -3,6 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { facultyName } from "@/lib/people";
 
 interface ProfessorCardProps {
   professor: {
@@ -17,7 +18,7 @@ interface ProfessorCardProps {
 }
 
 export function ProfessorCard({ professor }: ProfessorCardProps) {
-  const displayName = professor.preferred_name || professor.first_name || "Professor";
+  const professorName = facultyName(professor);
   const initials = `${professor.first_name?.[0] || "P"}${professor.last_name?.[0] || ""}`.toUpperCase();
   const isAccepting = professor.is_accepting_requests !== false;
   const fields = Array.isArray(professor.expertise_fields)
@@ -122,7 +123,7 @@ export function ProfessorCard({ professor }: ProfessorCardProps) {
           marginBottom: "0.5rem", letterSpacing: "-0.02em",
           overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap"
         }}>
-          Dr. {displayName} {professor.last_name}
+          {professorName}
         </h3>
         <div style={{
           fontSize: "0.78rem", color: "var(--text-secondary)", opacity: 0.8,

@@ -4,6 +4,7 @@ import { ensureAuthSchema } from "./schema";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { defaultStatusForRole, isUserRole } from "@/lib/status";
+import { CLEARABLE_PROFILE_TEXT_FIELDS } from "@/lib/profile-input";
 
 export interface AcademicStats {
   unweighted_gpa?: number | null;
@@ -251,6 +252,14 @@ export async function upsertProfile(profile: Partial<ProfileRecord> & { id: stri
   const languages = profile.languages !== undefined ? JSON.stringify(profile.languages) : null;
   const socialLinks = profile.social_links !== undefined ? JSON.stringify(profile.social_links) : null;
 
+  // A text field sent as "" was cleared on purpose. COALESCE alone cannot tell
+  // that from a field the caller did not send, so clearing a bio, a major or a
+  // preferred name used to report success and keep the old value.
+  const cleared = CLEARABLE_PROFILE_TEXT_FIELDS.filter((field) => {
+    const value = profile[field];
+    return typeof value === "string" && value.trim() === "";
+  });
+
   const existing = await sql`SELECT role, status, profile_complete FROM profiles WHERE id = ${profile.id} LIMIT 1;`;
   const resolvedRole = (profile.role && profile.role.trim()) ? profile.role : (existing[0]?.role || 'student');
   const resolvedStatus = (profile.status && profile.status.trim()) ? profile.status : (existing[0]?.status || 'active');
@@ -282,17 +291,17 @@ export async function upsertProfile(profile: Partial<ProfileRecord> & { id: stri
     ON CONFLICT (id) DO UPDATE SET
       role = EXCLUDED.role,
       status = EXCLUDED.status,
-      first_name = COALESCE(EXCLUDED.first_name, profiles.first_name),
-      preferred_name = COALESCE(EXCLUDED.preferred_name, profiles.preferred_name),
-      last_name = COALESCE(EXCLUDED.last_name, profiles.last_name),
-      avatar_url = COALESCE(EXCLUDED.avatar_url, profiles.avatar_url),
-      institution = COALESCE(EXCLUDED.institution, profiles.institution),
-      education_level = COALESCE(EXCLUDED.education_level, profiles.education_level),
-      department = COALESCE(EXCLUDED.department, profiles.department),
-      academic_title = COALESCE(EXCLUDED.academic_title, profiles.academic_title),
-      major = COALESCE(EXCLUDED.major, profiles.major),
-      graduation_year = COALESCE(EXCLUDED.graduation_year, profiles.graduation_year),
-      bio = COALESCE(EXCLUDED.bio, profiles.bio),
+      first_name = CASE WHEN 'first_name' = ANY(${cleared}::text[]) THEN NULL ELSE COALESCE(EXCLUDED.first_name, profiles.first_name) END,
+      preferred_name = CASE WHEN 'preferred_name' = ANY(${cleared}::text[]) THEN NULL ELSE COALESCE(EXCLUDED.preferred_name, profiles.preferred_name) END,
+      last_name = CASE WHEN 'last_name' = ANY(${cleared}::text[]) THEN NULL ELSE COALESCE(EXCLUDED.last_name, profiles.last_name) END,
+      avatar_url = CASE WHEN 'avatar_url' = ANY(${cleared}::text[]) THEN NULL ELSE COALESCE(EXCLUDED.avatar_url, profiles.avatar_url) END,
+      institution = CASE WHEN 'institution' = ANY(${cleared}::text[]) THEN NULL ELSE COALESCE(EXCLUDED.institution, profiles.institution) END,
+      education_level = CASE WHEN 'education_level' = ANY(${cleared}::text[]) THEN NULL ELSE COALESCE(EXCLUDED.education_level, profiles.education_level) END,
+      department = CASE WHEN 'department' = ANY(${cleared}::text[]) THEN NULL ELSE COALESCE(EXCLUDED.department, profiles.department) END,
+      academic_title = CASE WHEN 'academic_title' = ANY(${cleared}::text[]) THEN NULL ELSE COALESCE(EXCLUDED.academic_title, profiles.academic_title) END,
+      major = CASE WHEN 'major' = ANY(${cleared}::text[]) THEN NULL ELSE COALESCE(EXCLUDED.major, profiles.major) END,
+      graduation_year = CASE WHEN 'graduation_year' = ANY(${cleared}::text[]) THEN NULL ELSE COALESCE(EXCLUDED.graduation_year, profiles.graduation_year) END,
+      bio = CASE WHEN 'bio' = ANY(${cleared}::text[]) THEN NULL ELSE COALESCE(EXCLUDED.bio, profiles.bio) END,
       academic_interests = COALESCE(EXCLUDED.academic_interests, profiles.academic_interests),
       extracurriculars = COALESCE(EXCLUDED.extracurriculars, profiles.extracurriculars),
       expertise_fields = COALESCE(EXCLUDED.expertise_fields, profiles.expertise_fields),
@@ -300,10 +309,10 @@ export async function upsertProfile(profile: Partial<ProfileRecord> & { id: stri
       skills_and_tools = COALESCE(EXCLUDED.skills_and_tools, profiles.skills_and_tools),
       publications = COALESCE(EXCLUDED.publications, profiles.publications),
       accepting_student_types = COALESCE(EXCLUDED.accepting_student_types, profiles.accepting_student_types),
-      lab_website = COALESCE(EXCLUDED.lab_website, profiles.lab_website),
-      portfolio_url = COALESCE(EXCLUDED.portfolio_url, profiles.portfolio_url),
-      office_hours = COALESCE(EXCLUDED.office_hours, profiles.office_hours),
-      seeking_mentorship_type = COALESCE(EXCLUDED.seeking_mentorship_type, profiles.seeking_mentorship_type),
+      lab_website = CASE WHEN 'lab_website' = ANY(${cleared}::text[]) THEN NULL ELSE COALESCE(EXCLUDED.lab_website, profiles.lab_website) END,
+      portfolio_url = CASE WHEN 'portfolio_url' = ANY(${cleared}::text[]) THEN NULL ELSE COALESCE(EXCLUDED.portfolio_url, profiles.portfolio_url) END,
+      office_hours = CASE WHEN 'office_hours' = ANY(${cleared}::text[]) THEN NULL ELSE COALESCE(EXCLUDED.office_hours, profiles.office_hours) END,
+      seeking_mentorship_type = CASE WHEN 'seeking_mentorship_type' = ANY(${cleared}::text[]) THEN NULL ELSE COALESCE(EXCLUDED.seeking_mentorship_type, profiles.seeking_mentorship_type) END,
       is_accepting_requests = COALESCE(EXCLUDED.is_accepting_requests, profiles.is_accepting_requests),
       profile_complete = EXCLUDED.profile_complete,
       academic_stats = COALESCE(EXCLUDED.academic_stats, profiles.academic_stats),

@@ -8,6 +8,7 @@ import { CheckCircle, XCircle, Loader2, Mail, GraduationCap, RefreshCw, Sparkles
 import { scoreProfessorApplication, scoreLabel } from "@/lib/validators";
 
 import { toast } from "sonner";
+import { facultyName } from "@/lib/people";
 
 interface PendingProfessor {
   id: string;
@@ -262,7 +263,6 @@ export function AdminReviewTable({ applicants }: AdminReviewTableProps) {
             </thead>
             <tbody>
               {list.map((prof) => {
-                const displayName = prof.preferred_name || prof.first_name;
                 const isProcessing = processingId === prof.id;
                 return (
                   <tr
@@ -277,7 +277,7 @@ export function AdminReviewTable({ applicants }: AdminReviewTableProps) {
                           {prof.first_name[0]}{prof.last_name[0]}
                         </div>
                         <div>
-                          <div style={{ fontSize: "0.82rem", fontWeight: 600, color: "var(--text-primary)", fontFamily: "var(--font-sans)" }}>Dr. {displayName} {prof.last_name}</div>
+                          <div style={{ fontSize: "0.82rem", fontWeight: 600, color: "var(--text-primary)", fontFamily: "var(--font-sans)" }}>{facultyName(prof)}</div>
                           <div style={{ display: "flex", alignItems: "center", gap: "0.3rem", fontSize: "0.6rem", color: "rgba(15,23,42,0.3)", fontFamily: "var(--font-sans)", marginTop: "0.15rem" }}>
                             <Mail size={9} />
                             {prof.email}
@@ -337,7 +337,6 @@ export function AdminReviewTable({ applicants }: AdminReviewTableProps) {
       {/* Mobile Cards */}
       <div className="flex lg:hidden" style={{ flexDirection: "column", gap: "0.75rem" }}>
         {list.map((prof) => {
-          const displayName = prof.preferred_name || prof.first_name;
           const isProcessing = processingId === prof.id;
           return (
             <div key={prof.id} style={{ padding: "1.25rem", border: "1px solid rgba(15,23,42,0.06)", borderRadius: "12px", background: "rgba(15,23,42,0.015)", display: "flex", flexDirection: "column", gap: "0.85rem" }}>
@@ -346,7 +345,7 @@ export function AdminReviewTable({ applicants }: AdminReviewTableProps) {
                   {prof.first_name[0]}{prof.last_name[0]}
                 </div>
                 <div>
-                  <div style={{ fontSize: "0.82rem", fontWeight: 600, color: "var(--text-primary)", fontFamily: "var(--font-sans)" }}>Dr. {displayName} {prof.last_name}</div>
+                  <div style={{ fontSize: "0.82rem", fontWeight: 600, color: "var(--text-primary)", fontFamily: "var(--font-sans)" }}>{facultyName(prof)}</div>
                   <div style={{ fontSize: "0.6rem", color: "rgba(15,23,42,0.3)", fontFamily: "var(--font-sans)" }}>{prof.email}</div>
                 </div>
               </div>
