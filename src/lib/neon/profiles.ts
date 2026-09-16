@@ -59,7 +59,8 @@ export interface ProfileRecord {
   id: string;
   email: string;
   role: "student" | "professor" | "admin";
-  status: "active" | "pending" | "approved" | "suspended" | "rejected";
+  /** Mirrors PROFILE_STATUSES in src/lib/status.ts, including 'deactivated'. */
+  status: "active" | "pending" | "approved" | "suspended" | "rejected" | "deactivated";
   first_name?: string | null;
   preferred_name?: string | null;
   last_name?: string | null;
@@ -92,6 +93,10 @@ export interface ProfileRecord {
   honors_awards?: HonorAwardItem[] | null;
   languages?: LanguageItem[] | null;
   social_links?: SocialLinks | null;
+  /** When the owner disabled the account; null while it is live. */
+  deactivated_at?: string | null;
+  /** What a restore returns to. Written by the disable path, never by a client. */
+  status_before_deactivation?: string | null;
   created_at?: string;
   updated_at?: string;
 }

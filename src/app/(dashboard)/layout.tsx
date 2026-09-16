@@ -2,6 +2,7 @@ import { AppShell } from "@/components/layout/AppShell";
 import { AdminViewBanner } from "@/components/ui/AdminViewBanner";
 import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { isSuspended } from "@/lib/authz";
+import { RESTORE_PATH, isDeactivated } from "@/lib/account-deletion";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -19,6 +20,12 @@ export default async function DashboardLayout({
   // Suspending an account has to remove access, not just change a label.
   if (isSuspended(profile)) {
     redirect("/suspended");
+  }
+  // Same for an account its owner disabled: it keeps its session (that is how
+  // it can be restored) but has no product surface. /deactivated sits outside
+  // this layout, so this redirect cannot loop.
+  if (isDeactivated(profile)) {
+    redirect(RESTORE_PATH);
   }
   const role = profile?.role || "student";
 

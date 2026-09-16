@@ -60,8 +60,21 @@ function escapeHtml(value: string): string {
     .replace(/"/g, "&quot;");
 }
 
-/** Shared shell so both emails look like they come from the same product. */
-function layout(heading: string, body: string, ctaLabel: string, ctaUrl: string): string {
+/**
+ * Shared shell so every email looks like it comes from the same product.
+ *
+ * `footer` is overridable because the default line ("this link expires shortly")
+ * is false for an account-disabled notice: that link is good for the whole grace
+ * window, and telling someone their only way back has expired would be a lie
+ * that costs them their account.
+ */
+function layout(
+  heading: string,
+  body: string,
+  ctaLabel: string,
+  ctaUrl: string,
+  footer = "This link expires shortly. If you did not request it, you can ignore this email.",
+): string {
   const safeUrl = escapeHtml(ctaUrl);
   return `<!doctype html>
 <html>
@@ -78,7 +91,7 @@ function layout(heading: string, body: string, ctaLabel: string, ctaUrl: string)
         <span style="word-break:break-all">${safeUrl}</span>
       </td></tr>
       <tr><td style="padding-top:28px;font-size:11px;color:#cbd5e1">
-        This link expires shortly. If you did not request it, you can ignore this email.
+        ${escapeHtml(footer)}
       </td></tr>
     </table>
   </body>
@@ -95,6 +108,40 @@ export function passwordResetEmail(url: string): Omit<SendEmailInput, "to"> {
       url,
     ),
     text: `Reset your Schollective password:\n\n${url}\n\nIf you did not request this, you can ignore this email.`,
+  };
+}
+
+/**
+ * Sent when someone disables their own account. It is the record of the promise
+ * the grace window makes, so it names the date the data goes and the one thing
+ * that stops it.
+ */
+export function accountDisabledEmail({
+  restoreUrl,
+  purgeDateLabel,
+  graceDays,
+}: {
+  restoreUrl: string;
+  purgeDateLabel: string;
+  graceDays: number;
+}): Omit<SendEmailInput, "to"> {
+  return {
+    subject: "Your Schollective account is disabled — here is how to get it back",
+    html: layout(
+      "Your account is disabled",
+      `Nothing has been deleted yet. Your profile is hidden from the directory and your mentorship threads are closed, but you can bring all of it back by signing in and choosing Restore my account — any time in the next ${graceDays} days.`,
+      "Restore my account",
+      restoreUrl,
+      `If you do nothing, this account and its data are permanently deleted after ${purgeDateLabel}. ` +
+        "This is the only reminder we send. If you did not disable this account, sign in and restore it now.",
+    ),
+    text:
+      `Your Schollective account is disabled.\n\n` +
+      `Nothing has been deleted yet: your profile is hidden from the directory and your mentorship threads are closed. ` +
+      `You can bring all of it back by signing in and choosing "Restore my account" any time in the next ${graceDays} days:\n\n` +
+      `${restoreUrl}\n\n` +
+      `If you do nothing, this account and its data are permanently deleted after ${purgeDateLabel}. ` +
+      `This is the only reminder we send.`,
   };
 }
 

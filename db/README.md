@@ -88,6 +88,51 @@ mis-encoded guard message above. Any backup table created by hand as the owner
 needs the same `REVOKE ALL ... FROM schollective_app`, because default privileges
 grant the app role access to every table the owner creates.
 
+### 0010 — self-service account deletion
+
+Apply `0010_self_service_account_deletion.sql` before deploying the code that
+uses it, as `neondb_owner`. Two of its four parts are not expressible as a
+schema-bootstrap patch:
+
+- `profiles.deactivated_at` and `profiles.status_before_deactivation` record a
+grace window. The runtime bootstrap adds the columns (`APP_REQUIRED_COLUMNS`),
+but not the policy or trigger below — so a database without this migration can
+record a disable and cannot honour it.
+- `profiles_delete` changes from admin-only to `id = app_user_id() OR
+app_is_admin()`. Without it the "delete my account" endpoint answers success and
+deletes nothing, because `profiles` carries `FORCE ROW LEVEL SECURITY` and the
+owner is subject to its policies like anyone else.
+- `guard_profile_role_change` learns the disable/restore pair: it still refuses
+self-approval, except where the row records that `approved` is what the account
+held when it disabled itself. The column it reads can only be written in the
+statement that disables the account, and only as the status being left behind,
+so it cannot be used to claim a status the account never had. The trigger now
+fires on that column as well, or the claim could be made on its own.
+
+Deleting an account is irreversible by design and keeps no backup: the
+confirmation promises the data is gone. See `002` below for the other half —
+removing accounts that were disabled and never restored.
+
+### 002 — purging disabled accounts (maintenance)
+
+`db/maintenance/002_purge_deactivated_accounts.sql` deletes accounts that are
+still `deactivated` past the 30-day grace window: their sessions, their AI
+review jobs (keyed by user id, with no foreign key, so nothing else removes
+them), their profile row — which cascades threads, messages, notifications,
+friendships, blocks, memberships and read positions — and finally the auth row.
+
+Nothing runs it automatically: `wrangler.jsonc` declares no cron triggers, so a
+scheduled deletion is not something this deployment can promise. Run it monthly
+as `neondb_owner`, after reading the address list it prints in step 1:
+
+```bash
+psql "$DATABASE_URL" -f db/maintenance/002_purge_deactivated_accounts.sql
+```
+
+The 30 days in that file and `DEACTIVATION_GRACE_DAYS` in
+`src/lib/account-deletion.ts` are the same promise in two places; change them
+together.
+
 ### 0008 — friends and group threads
 
 `0008_friends_and_group_mentorship.sql` must be applied, as `neondb_owner`,

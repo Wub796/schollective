@@ -73,6 +73,7 @@ const MUST_REQUIRE_SESSION = [
   "/prof/pending",
   "/prof/profile",
   "/prof/students",
+  "/deactivated",
   "/admin/dashboard",
   "/admin/professors",
   "/admin/threads",
