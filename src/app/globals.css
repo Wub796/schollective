@@ -499,6 +499,38 @@ body {
 .animate-fade-in  { animation: fade-in 0.35s ease both; }
 
 /* ═══════════════════════════════════════════════════════════════
+   PILLS — the label fits inside the pill, always
+   ═══════════════════════════════════════════════════════════════
+   Pills here are inline-flex, fully rounded, and — before this —
+   `white-space: nowrap` with fixed padding. That is fine until the label is
+   wider than the space the pill is given: a long research tag, "Accepting
+   students" on a 360px phone, an "(14)" suffix on a filter. The text then
+   paints past the rounded edge, which reads as a rendering bug because it is
+   one.
+
+   The fix is one class, and it is deliberately about containment rather than
+   truncation: `white-space: normal` lets the label wrap and the pill grow
+   taller; `overflow-wrap: anywhere` breaks a single long word (a course name,
+   a slug) instead of letting it push; `max-width: 100%` and `min-width: 0`
+   let a pill sitting in a flex row shrink to the width it actually has.
+
+   No height is set here on purpose: a control that states its own height (the
+   nav pill, the status dot) would be flattened by an `auto` in this class,
+   which is unlayered and therefore beats a Tailwind utility.
+
+   A label that already fitted renders exactly as before: same padding, same
+   radius, same height, because nothing here touches padding or type size.
+   ───────────────────────────────────────────────────────────── */
+.pill {
+  max-width: 100%;
+  min-width: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: center;
+  line-height: 1.35;
+}
+
+/* ═══════════════════════════════════════════════════════════════
    TYPOGRAPHY UTILITIES
    ═══════════════════════════════════════════════════════════════ */
 .eyebrow {
@@ -822,18 +854,16 @@ a:not([class]):hover {
   flex-shrink: 0;
 }
 
+/* Wraps at every width, not just below 900px. These are pill-shaped links on
+   one line by design, but "fits at 900px" was measured against the current
+   labels: one more link, or a wider word in one of them, and the row ran past
+   the edge instead of onto a second line. */
 .lp-footer-links {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
   gap: 0.25rem 0.5rem;
-}
-
-@media (min-width: 900px) {
-  .lp-footer-links {
-    flex-wrap: nowrap;
-  }
 }
 
 .lp-footer-links a {
@@ -847,7 +877,9 @@ a:not([class]):hover {
   padding: 0.4rem 0.75rem;
   border-radius: 100px;
   background: transparent;
-  white-space: nowrap;
+  /* No `white-space: nowrap`: the label is inside the pill or it is not. */
+  max-width: 100%;
+  overflow-wrap: anywhere;
   transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
