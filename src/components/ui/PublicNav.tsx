@@ -159,7 +159,7 @@ export function PublicNav() {
               className="group select-none whitespace-nowrap"
             >
               <SchollectiveLogo size={32} className="-translate-y-0.5 flex-shrink-0" />
-              <span className="font-display font-bold text-slate-900 tracking-tight transition-colors group-hover:text-indigo-600 whitespace-nowrap" style={{ fontSize: "1.12rem" }}>
+              <span className="font-display font-bold text-ink tracking-tight transition-colors group-hover:text-accent whitespace-nowrap" style={{ fontSize: "1.12rem" }}>
                 Schollective
               </span>
             </Link>
@@ -183,7 +183,7 @@ export function PublicNav() {
             {/* Hamburger toggle button */}
             <button
               onClick={() => setMenuOpen(!menuOpen)}
-              className="lg:hidden flex items-center justify-center text-slate-900 hover:text-indigo-600 transition-colors"
+              className="lg:hidden flex items-center justify-center text-ink hover:text-accent transition-colors"
               style={{ background: "transparent", border: "none", cursor: "pointer" }}
               aria-label="Toggle menu"
             >
