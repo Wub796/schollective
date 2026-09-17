@@ -19,7 +19,9 @@ export default async function ProfessorPendingPage() {
 
   return (
     <div className="page-bg flex items-center justify-center p-8" data-no-morph="true" style={{ minHeight: "100vh" }}>
-      <main className="relative z-10 w-full max-w-[500px] text-center">
+      {/* A div, not a `main` — see the note on the public professor page: the
+          root layout is the page's single main landmark. */}
+      <div className="relative z-10 w-full max-w-[500px] text-center">
         <div style={{
           background: "rgba(255, 255, 255, 0.95)",
           border: "1.5px solid rgba(99, 102, 241, 0.5)",
@@ -87,7 +89,7 @@ export default async function ProfessorPendingPage() {
                   fontSize: "0.82rem", color: "var(--text-secondary)", opacity: 0.8,
                   lineHeight: 1.7, fontFamily: "var(--font-sans)",
                 }}>
-                  Schollective manually verifies institutional credentials and expertise fields to ensure the highest standard of academic mentorship. This typically takes 24–48 business hours.
+                  Schollective verifies institutional credentials and expertise fields by hand: an admin reads every professor application before the profile appears in the directory. There is nothing to do while it sits here — sign in again and you will land on your dashboard the moment it is approved.
                 </p>
               </div>
             </div>
@@ -95,7 +97,7 @@ export default async function ProfessorPendingPage() {
 
           <PendingActions />
         </div>
-      </main>
+      </div>
     </div>
   );
 }
