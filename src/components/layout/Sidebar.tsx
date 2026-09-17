@@ -31,9 +31,11 @@ const stagger = {
   hidden: {},
   show: { transition: { staggerChildren: 0.06, delayChildren: 0.08 } },
 };
+/* Slides, and does not fade: a nav that starts at `opacity: 0` is an empty
+   sidebar until hydration finishes. See src/components/ui/entrance.ts. */
 const itemVariant = {
-  hidden: { opacity: 0, x: -8 },
-  show:   { opacity: 1, x: 0, transition: { duration: 0.45, ease: EASE } },
+  hidden: { x: -8 },
+  show:   { x: 0, transition: { duration: 0.45, ease: EASE } },
 };
 
 function NavLink({

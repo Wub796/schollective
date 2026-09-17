@@ -149,17 +149,22 @@ export function AppShell({ children, role = "student" }: AppShellProps) {
           <Sidebar onClose={closeSidebar} role={role} />
         </aside>
 
-        <main className="app-main" style={{ background: "var(--bg-base)" }}>
+        {/* The root layout's <main id="main-content"> is this page's one main
+            landmark; this is the layout box that sits inside it. */}
+        <div className="app-main" style={{ background: "var(--bg-base)" }}>
+          {/* Slides on route change rather than fading from `opacity: 0`:
+              the server-rendered HTML would otherwise be an empty page until
+              hydration runs. See src/components/ui/entrance.ts. */}
           <motion.div
             key={pathname}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            initial={{ y: 6 }}
+            animate={{ y: 0 }}
             transition={{ duration: 0.28, ease: "easeOut" }}
             className="content-container py-10 sm:py-14"
           >
             {children}
           </motion.div>
-        </main>
+        </div>
       </div>
     </>
   );
