@@ -51,6 +51,7 @@ export function StudentRow({ req, status }: { req: any; status: "active" | "clos
             {req.collaborators?.length > 0 && (
               <span
                 title={req.collaborators.map((person: any) => fullName(person, "")).filter(Boolean).join(", ")}
+                className="pill"
                 style={{
                   flexShrink: 0, fontSize: "0.48rem", fontWeight: 800, letterSpacing: "0.18em", textTransform: "uppercase",
                   color: "var(--accent)", background: "rgba(79, 70, 229, 0.08)", border: "1px solid rgba(79, 70, 229, 0.22)",

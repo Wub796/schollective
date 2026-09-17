@@ -105,11 +105,13 @@ export function PersonRow({ person, href, badge, detail, actions, muted = false 
   );
 }
 
-/** The small uppercase tag beside a name. */
+/** The small uppercase tag beside a name. `.pill` keeps a longer tag — "Invited",
+ *  a translated label — inside the capsule at phone widths. */
 export function RowBadge({ children, tone = "accent" }: { children: React.ReactNode; tone?: "accent" | "neutral" }) {
   const accent = tone === "accent";
   return (
     <span
+      className="pill"
       style={{
         flexShrink: 0,
         padding: "0.18rem 0.55rem",
