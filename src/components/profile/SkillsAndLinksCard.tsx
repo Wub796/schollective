@@ -211,6 +211,7 @@ export function SkillsAndLinksCard({
             {skills.map((skill, idx) => (
               <span
                 key={idx}
+                className="pill"
                 style={{
                   display: "inline-flex",
                   alignItems: "center",
@@ -224,7 +225,7 @@ export function SkillsAndLinksCard({
                   fontWeight: 600,
                 }}
               >
-                {skill}
+                <span style={{ minWidth: 0, overflowWrap: "anywhere" }}>{skill}</span>
                 <button
                   type="button"
                   onClick={() => handleRemoveSkill(idx)}
@@ -245,6 +246,7 @@ export function SkillsAndLinksCard({
               key={s}
               type="button"
               onClick={() => handleAddSkill(s)}
+              className="pill"
               style={{
                 background: "#ffffff",
                 border: "1px solid var(--border)",
