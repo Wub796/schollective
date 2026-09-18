@@ -15,7 +15,7 @@
  * Registered via tests/helpers/register.mjs, loaded by `npm test`.
  */
 
-import { existsSync, statSync } from "node:fs";
+import { existsSync, readFileSync, statSync } from "node:fs";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { dirname, resolve as resolvePath } from "node:path";
 
@@ -53,6 +53,30 @@ export async function resolve(specifier, context, nextResolve) {
     const found = firstExisting(resolvePath(parentDir, specifier));
     if (found) {
       return { url: pathToFileURL(found).href, shortCircuit: true };
+    }
+  }
+
+  // A dependency subpath with no extension, in a package that declares no
+  // `exports` map.
+  //
+  // `next` is the case: `next/server` is what every middleware and route handler
+  // imports, and webpack resolves it to the sibling `server.js`, but Node ESM
+  // cannot — without an `exports` map there is nothing to tell it the extension.
+  // That made the real middleware unimportable from a test.
+  //
+  // Guarded on the package having no `exports` field so this can never shadow a
+  // package that declares one: those already resolve correctly, and reaching past
+  // their map would pick the wrong file.
+  if (!specifier.startsWith(".") && !specifier.startsWith("/")) {
+    const pkgName = specifier.startsWith("@")
+      ? specifier.split("/").slice(0, 2).join("/")
+      : specifier.split("/")[0];
+    const pkgManifest = resolvePath(ROOT, "node_modules", pkgName, "package.json");
+    if (existsSync(pkgManifest) && !("exports" in JSON.parse(readFileSync(pkgManifest, "utf8")))) {
+      const found = firstExisting(resolvePath(ROOT, "node_modules", specifier));
+      if (found) {
+        return { url: pathToFileURL(found).href, shortCircuit: true };
+      }
     }
   }
 
