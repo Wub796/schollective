@@ -1,8 +1,15 @@
 "use client";
 
-import * as Sentry from "@sentry/nextjs";
-import { useEffect } from "react";
+import { ErrorState } from "@/components/ui/ErrorState";
 
+/**
+ * Catches a failure in the root layout itself, which is why this is the one
+ * error surface that has to render its own <html> and <body>: the root layout,
+ * and therefore `globals.css`, did not run.
+ *
+ * `ErrorState` writes every colour as `var(--token, literal)`, so it renders in
+ * the app's ink-on-paper palette here even with no stylesheet loaded.
+ */
 export default function GlobalError({
   error,
   reset,
@@ -10,20 +17,10 @@ export default function GlobalError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  useEffect(() => {
-    Sentry.captureException(error);
-  }, [error]);
-
   return (
     <html lang="en">
-      <body>
-        <main style={{ padding: "3rem", fontFamily: "sans-serif" }}>
-          <h1>Something went wrong</h1>
-          <p>We could not load this page.</p>
-          <button type="button" onClick={() => reset()}>
-            Try again
-          </button>
-        </main>
+      <body style={{ margin: 0 }}>
+        <ErrorState error={error} reset={reset} scope="root-layout" />
       </body>
     </html>
   );
