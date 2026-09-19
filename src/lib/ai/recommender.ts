@@ -15,6 +15,8 @@ export interface ProfessorCandidate {
   first_name?: string | null;
   preferred_name?: string | null;
   last_name?: string | null;
+  /** The title this professor chose; the prompt names them the way a student reads them. */
+  honorific?: string | null;
   institution?: string | null;
   department?: string | null;
   academic_title?: string | null;

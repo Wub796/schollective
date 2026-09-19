@@ -5,7 +5,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { AvatarStack } from "@/components/ui/Avatar";
 import type { PersonSummary } from "@/components/features/PersonRow";
-import { fullName, listNames } from "@/lib/people";
+import { facultyName, fullName, listNames } from "@/lib/people";
 
 /** The statuses a participant's thread list can contain. */
 export type ThreadCardStatus = 'pending' | 'viewed' | 'active' | 'declined' | 'closed';
@@ -19,6 +19,8 @@ interface ThreadCardProps {
       first_name: string;
       last_name: string | null;
       preferred_name: string | null;
+      /** The title this professor chose to be addressed by; null is read as "Dr.". */
+      honorific?: string | null;
       detail: string;
     };
     latest_message?: {
@@ -42,8 +44,10 @@ const statusConfig = {
 };
 
 export function ThreadCard({ request, viewerRole, hasUnread, groupmates = [] }: ThreadCardProps) {
-  const participantName = fullName(request.participant);
-  const prefix = viewerRole === "student" ? "Dr. " : "";
+  // A student reads the professor's chosen title in front of their name. A
+  // professor reading the thread reads the student's name, which carries none.
+  const participantName =
+    viewerRole === "student" ? facultyName(request.participant) : fullName(request.participant);
   const status = statusConfig[request.status];
   const initials = `${request.participant.first_name[0]}${request.participant.last_name?.[0] ?? ""}`;
 
@@ -101,7 +105,7 @@ export function ThreadCard({ request, viewerRole, hasUnread, groupmates = [] }: 
                   lineHeight: 1.3, fontFamily: "var(--font-sans)",
                   overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap"
                 }}>
-                  {prefix}{participantName}
+                  {participantName}
                 </span>
                 {hasUnread && (
                   <span style={{

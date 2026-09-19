@@ -25,7 +25,7 @@ export default async function RequestNewPage({ searchParams }: RequestNewPagePro
   if (!session || !user) redirect("/login");
 
   const professors = await sql`
-    SELECT id, first_name, last_name, preferred_name, institution
+    SELECT id, first_name, last_name, preferred_name, honorific, institution
     FROM profiles
     WHERE id = ${prof_id} AND role = 'professor' AND status = 'approved'
     LIMIT 1;

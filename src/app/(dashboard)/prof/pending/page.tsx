@@ -4,7 +4,7 @@ import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { LottieReview } from "./LottieReview";
 import { PendingActions } from "./PendingActions";
 import { ShieldCheck, Info } from "lucide-react";
-import { givenName } from "@/lib/people";
+import { givenName, withTitle } from "@/lib/people";
 
 export const dynamic = "force-dynamic";
 
@@ -61,7 +61,7 @@ export default async function ProfessorPendingPage() {
               fontSize: "0.9rem", color: "var(--text-secondary)", opacity: 0.75,
               lineHeight: 1.7, fontFamily: "var(--font-sans)",
             }}>
-              Welcome, Dr. {displayName}. Your academic profile has been submitted for manual verification.
+              Welcome, {withTitle(profile, displayName)}. Your academic profile has been submitted for manual verification.
             </p>
           </header>
 

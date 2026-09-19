@@ -118,6 +118,12 @@ const APP_REQUIRED_COLUMNS: Record<string, ColumnSpec[]> = {
     // this way and stay in db/migrations/0010.
     { name: "deactivated_at", ddl: "deactivated_at timestamptz" },
     { name: "status_before_deactivation", ddl: "status_before_deactivation text" },
+    // How a professor asked to be addressed. Nullable on purpose: a null means
+    // "never chosen", which the naming helpers read as "Dr.", so existing
+    // profiles keep the title they already had.
+    { name: "honorific", ddl: "honorific text" },
+    // The gender on the profile, if the account chose to list one at all.
+    { name: "gender", ddl: "gender text" },
   ],
   ai_profile_review_jobs: [
     { name: "id", ddl: `id text primary key` },
@@ -196,6 +202,8 @@ const PROFILES_TABLE = `
     education_level text,
     department text,
     academic_title text,
+    honorific text,
+    gender text,
     major text,
     graduation_year text,
     bio text,

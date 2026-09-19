@@ -4,6 +4,7 @@ import React, { useState, useMemo } from "react";
 import { Search, Calendar, ChevronDown } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { softDeleteThread } from "@/app/admin/dashboard/admin-actions";
+import { facultyName } from "@/lib/people";
 
 export interface ThreadRecord {
   id: string;
@@ -12,7 +13,14 @@ export interface ThreadRecord {
   created_at: string;
   updated_at: string;
   student:   { id: string; first_name: string; last_name: string; email: string } | null;
-  professor: { id: string; first_name: string; last_name: string; institution: string | null } | null;
+  professor: {
+    id: string;
+    first_name: string;
+    last_name: string;
+    /** The title this professor chose to be addressed by; null is read as "Dr.". */
+    honorific?: string | null;
+    institution: string | null;
+  } | null;
   /** Students who joined alongside the lead on a group thread. */
   collaborator_count?: number;
 }
@@ -192,7 +200,7 @@ export function AdminThreadsTable({ threads }: { threads: ThreadRecord[] }) {
                     <td style={{ padding: "0.9rem 1.1rem" }}>
                       {t.professor ? (
                         <div>
-                          <div style={{ fontSize: "0.75rem", fontWeight: 500, color: "var(--text-primary)", fontFamily: "var(--font-sans)" }}>Dr. {t.professor.first_name} {t.professor.last_name}</div>
+                          <div style={{ fontSize: "0.75rem", fontWeight: 500, color: "var(--text-primary)", fontFamily: "var(--font-sans)" }}>{facultyName(t.professor)}</div>
                           <div style={{ fontSize: "0.55rem", color: "rgba(15, 23, 42,0.3)", fontFamily: "var(--font-sans)" }}>{t.professor.institution ?? "—"}</div>
                         </div>
                       ) : <span style={{ color: "rgba(15, 23, 42,0.2)", fontSize: "0.6rem" }}>—</span>}

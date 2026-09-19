@@ -6,8 +6,11 @@ import { safeInternalPath } from "@/lib/safe-redirect";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/Button";
+import { Select } from "@/components/ui/Select";
 import { InstitutionInput } from "@/components/ui/InstitutionInput";
 import { PreferredNameHint } from "@/components/profile/PreferredNameHint";
+import { PreferredTitlePicker } from "@/components/profile/PreferredTitlePicker";
+import { DEFAULT_FACULTY_HONORIFIC, GENDER_CHOICES, honorificOf } from "@/lib/people";
 import { scoreApplication } from "@/app/admin/dashboard/actions";
 import posthog from "posthog-js";
 
@@ -122,6 +125,38 @@ function TextArea({
   );
 }
 
+/**
+ * The gender an account may list, for both roles. Optional, and it says so: the
+ * field is not part of what makes a profile complete, and "Prefer not to say" is
+ * one of the answers rather than the only way out of answering.
+ */
+function GenderField({ value, onChange }: { value: string; onChange: (value: string) => void }) {
+  return (
+    <div>
+      <label htmlFor="gender" style={{
+        display: "block", fontSize: "0.62rem", fontWeight: 800,
+        letterSpacing: "0.22em", textTransform: "uppercase",
+        color: "var(--text-primary)", marginBottom: "0.55rem",
+        fontFamily: "var(--font-sans)",
+      }}>
+        Gender (optional)
+      </label>
+      <Select id="gender" name="gender" value={value} onChange={(e) => onChange(e.target.value)}>
+        <option value="">Not specified</option>
+        {GENDER_CHOICES.map((choice) => (
+          <option key={choice.value} value={choice.value}>{choice.label}</option>
+        ))}
+      </Select>
+      <p style={{
+        margin: "0.5rem 0 0", fontSize: "0.72rem", fontWeight: 600,
+        color: "var(--text-tertiary)", fontFamily: "var(--font-sans)",
+      }}>
+        Shown to the people who can see your profile. Choose Prefer not to say to keep it off.
+      </p>
+    </div>
+  );
+}
+
 function OnboardingContent() {
   const router       = useRouter();
   const searchParams = useSearchParams();
@@ -141,6 +176,11 @@ function OnboardingContent() {
   const [isDirty, setIsDirty]         = useState(false);
   // What has been typed into the name fields, so the preferred-name hint can say how it reads.
   const [typedNames, setTypedNames] = useState<{ first_name?: string; last_name?: string; preferred_name?: string }>({});
+  // How a professor asked to be addressed. "Dr." is what the product shows until
+  // they choose otherwise, so it is what the picker starts on.
+  const [honorific, setHonorific] = useState<string>(DEFAULT_FACULTY_HONORIFIC);
+  // Optional for both roles, and shown on the profile when set.
+  const [gender, setGender] = useState<string>("");
 
   // Warning when leaving page with unsaved changes
   useEffect(() => {
@@ -234,6 +274,8 @@ function OnboardingContent() {
       institution:    role === "professor"
         ? (institution || fd.get("institution") as string)
         : (fd.get("institution") as string ?? ""),
+      // Sent as "" when unset, which stores NULL rather than keeping an older choice.
+      gender,
       updated_at:     new Date().toISOString(),
     };
 
@@ -264,6 +306,7 @@ function OnboardingContent() {
       payload.profile_complete = true;
     }
     if (role === "professor") {
+      payload.honorific = honorific;
       payload.academic_title = (fd.get("academic_title") as string ?? "").trim();
       payload.department = (fd.get("department") as string ?? "").trim();
       payload.lab_website = (fd.get("lab_website") as string ?? "").trim();
@@ -483,10 +526,26 @@ function OnboardingContent() {
                 firstName={typedNames.first_name ?? defaultFirst}
                 lastName={typedNames.last_name ?? defaultLast}
                 preferredName={typedNames.preferred_name ?? ""}
-                honorific={role === "professor" ? "Dr." : undefined}
+                honorific={role === "professor" ? honorificOf({ honorific }) : undefined}
                 style={{ paddingLeft: "1.75rem" }}
               />
             </div>
+
+            {/* How a professor is addressed. Students are named by their given
+                name throughout the product, so there is nothing for them to
+                choose here. */}
+            {role === "professor" ? (
+              <PreferredTitlePicker
+                name="honorific"
+                value={honorific}
+                onChange={(next) => { setHonorific(next); setIsDirty(true); }}
+                person={{
+                  first_name: typedNames.first_name ?? defaultFirst,
+                  last_name: typedNames.last_name ?? defaultLast,
+                  preferred_name: typedNames.preferred_name ?? "",
+                }}
+              />
+            ) : null}
 
             {/* Role-specific fields */}
             <AnimatePresence mode="wait">
@@ -536,6 +595,8 @@ function OnboardingContent() {
                         placeholder="e.g. Computer Science, Bioengineering"
                       />
                     </div>
+
+                    <GenderField value={gender} onChange={(next) => { setGender(next); setIsDirty(true); }} />
 
                     <div className="grid-2" style={{ gap: "1.5rem" }}>
                       <Field
@@ -614,6 +675,8 @@ function OnboardingContent() {
                       <Field id="academic_title" name="academic_title" label="Academic Position / Title" placeholder="e.g. Associate Professor" />
                       <Field id="department" name="department" label="Department" placeholder="e.g. Computer Science" />
                     </div>
+
+                    <GenderField value={gender} onChange={(next) => { setGender(next); setIsDirty(true); }} />
 
                     <Field id="expertise" name="expertise" label="Expertise Fields (comma-separated)" placeholder="e.g. Machine Learning, Computational Biology" required />
 

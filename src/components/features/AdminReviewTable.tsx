@@ -15,6 +15,8 @@ interface PendingProfessor {
   first_name: string;
   last_name: string;
   preferred_name: string | null;
+  /** The title this professor chose to be addressed by; null is read as "Dr.". */
+  honorific?: string | null;
   email: string;
   institution: string | null;
   expertise_fields: string[] | null;

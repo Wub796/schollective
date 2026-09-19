@@ -8,7 +8,7 @@ import { runAs } from "@/lib/neon/user-context";
 import { getRelationship, getStudentCards, type StudentCard } from "@/lib/neon/social";
 import { isValidId, sanitiseUrl } from "@/lib/security";
 import { parseJsonbArray } from "@/lib/utils";
-import { educationLabel, friendshipStateFor, fullName, givenName } from "@/lib/people";
+import { educationLabel, friendshipStateFor, fullName, genderLabel, givenName } from "@/lib/people";
 import { Avatar } from "@/components/ui/Avatar";
 import { FriendshipControls, UnblockButton } from "@/components/features/FriendshipControls";
 
@@ -25,6 +25,8 @@ interface PageProps {
  */
 interface ConnectedProfile extends StudentCard {
   status: string;
+  /** A slug from GENDER_CHOICES; null when unset, or held back by its owner. */
+  gender: string | null;
   bio: string | null;
   academic_interests: unknown;
   skills_and_tools: unknown;
@@ -102,7 +104,7 @@ export default async function StudentProfilePage({ params }: PageProps) {
   if (canSeeProfile) {
     const rows = await runAs(user.id, async () => sql`
       SELECT id, status, first_name, last_name, preferred_name, avatar_url, institution,
-             education_level, major, graduation_year, bio, academic_interests,
+             education_level, major, graduation_year, gender, bio, academic_interests,
              skills_and_tools, social_links, portfolio_url
       FROM profiles
       WHERE id = ${id} AND role = 'student'
@@ -147,6 +149,9 @@ export default async function StudentProfilePage({ params }: PageProps) {
     { label: "Major", value: student.major },
     { label: "Education", value: educationLabel(student.education_level) },
     { label: "Graduating", value: student.graduation_year ? `Class of ${student.graduation_year}` : null },
+    // Only what the owner chose to list: genderLabel is null for an unanswered
+    // field and for "prefer not to say" alike, and the filter drops it.
+    { label: "Gender", value: genderLabel(student.gender) },
   ].filter((fact) => fact.value);
 
   return (

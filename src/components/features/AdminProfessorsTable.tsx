@@ -6,13 +6,15 @@ import { Search, Mail, GraduationCap, Calendar, ChevronDown, RotateCcw, Ban, Che
 import { revokeVerification, setUserSuspended } from "@/app/admin/dashboard/admin-actions";
 import { updateProfessorStatus } from "@/app/admin/dashboard/actions";
 import { toast } from "sonner";
-import { fullName } from "@/lib/people";
+import { facultyName } from "@/lib/people";
 
 export interface ProfessorRecord {
   id: string;
   first_name: string;
   last_name: string;
   preferred_name: string | null;
+  /** The title this professor chose to be addressed by; null is read as "Dr.". */
+  honorific?: string | null;
   email: string;
   status: string | null;
   institution: string | null;
@@ -189,7 +191,8 @@ export function AdminProfessorsTable({ professors }: { professors: ProfessorReco
               {filtered.length === 0 ? (
                 <tr><td colSpan={7} style={{ padding: "3rem 1.1rem", textAlign: "center", fontSize: "0.75rem", color: "rgba(15, 23, 42,0.2)", fontFamily: "var(--font-sans)" }}>No professors match the current filters.</td></tr>
               ) : filtered.map((p) => {
-                const name = fullName(p, "Professor");
+                // The title the professor chose, not one we assumed for them.
+                const name = facultyName(p);
                 const isBusy = busy === p.id;
                 const status = effectiveStatus(p);
                 const isSuspended = status === "suspended";
@@ -204,7 +207,7 @@ export function AdminProfessorsTable({ professors }: { professors: ProfessorReco
                           {p.first_name[0]}{p.last_name[0]}
                         </div>
                         <div>
-                          <div style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--text-primary)", fontFamily: "var(--font-sans)" }}>Dr. {name}</div>
+                          <div style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--text-primary)", fontFamily: "var(--font-sans)" }}>{name}</div>
                           <div style={{ fontSize: "0.58rem", color: "rgba(15, 23, 42,0.3)", fontFamily: "var(--font-sans)", display: "flex", alignItems: "center", gap: "0.25rem" }}><Mail size={8} />{p.email}</div>
                         </div>
                       </div>

@@ -69,6 +69,10 @@ export interface ProfileRecord {
   education_level?: string | null;
   department?: string | null;
   academic_title?: string | null;
+  /** The title the account chose to be addressed by; see HONORIFIC_OPTIONS. */
+  honorific?: string | null;
+  /** A slug from GENDER_CHOICES, or null when unset or held back. */
+  gender?: string | null;
   major?: string | null;
   graduation_year?: string | null;
   bio?: string | null;
@@ -274,7 +278,7 @@ export async function upsertProfile(profile: Partial<ProfileRecord> & { id: stri
     INSERT INTO profiles (
       id, email, role, status, first_name, preferred_name, last_name,
       avatar_url, institution, education_level, department, academic_title,
-      major, graduation_year, bio, academic_interests, extracurriculars,
+      honorific, gender, major, graduation_year, bio, academic_interests, extracurriculars,
       expertise_fields, coursework, skills_and_tools, publications,
       accepting_student_types, lab_website, portfolio_url, office_hours,
       seeking_mentorship_type, is_accepting_requests, profile_complete,
@@ -284,7 +288,8 @@ export async function upsertProfile(profile: Partial<ProfileRecord> & { id: stri
       ${profile.id}, ${profile.email}, ${resolvedRole}, ${resolvedStatus},
       ${profile.first_name || null}, ${profile.preferred_name || null}, ${profile.last_name || null},
       ${profile.avatar_url || null}, ${profile.institution || null}, ${profile.education_level || null},
-      ${profile.department || null}, ${profile.academic_title || null}, ${profile.major || null},
+      ${profile.department || null}, ${profile.academic_title || null}, ${profile.honorific || null},
+      ${profile.gender || null}, ${profile.major || null},
       ${profile.graduation_year || null}, ${profile.bio || null}, ${interests}, ${extras},
       ${expertise}, ${courseworkStr}, ${skills}, ${publications}, ${studentTypes},
       ${profile.lab_website || null}, ${portfolioUrl}, ${profile.office_hours || null},
@@ -304,6 +309,8 @@ export async function upsertProfile(profile: Partial<ProfileRecord> & { id: stri
       education_level = CASE WHEN 'education_level' = ANY(${cleared}::text[]) THEN NULL ELSE COALESCE(EXCLUDED.education_level, profiles.education_level) END,
       department = CASE WHEN 'department' = ANY(${cleared}::text[]) THEN NULL ELSE COALESCE(EXCLUDED.department, profiles.department) END,
       academic_title = CASE WHEN 'academic_title' = ANY(${cleared}::text[]) THEN NULL ELSE COALESCE(EXCLUDED.academic_title, profiles.academic_title) END,
+      honorific = CASE WHEN 'honorific' = ANY(${cleared}::text[]) THEN NULL ELSE COALESCE(EXCLUDED.honorific, profiles.honorific) END,
+      gender = CASE WHEN 'gender' = ANY(${cleared}::text[]) THEN NULL ELSE COALESCE(EXCLUDED.gender, profiles.gender) END,
       major = CASE WHEN 'major' = ANY(${cleared}::text[]) THEN NULL ELSE COALESCE(EXCLUDED.major, profiles.major) END,
       graduation_year = CASE WHEN 'graduation_year' = ANY(${cleared}::text[]) THEN NULL ELSE COALESCE(EXCLUDED.graduation_year, profiles.graduation_year) END,
       bio = CASE WHEN 'bio' = ANY(${cleared}::text[]) THEN NULL ELSE COALESCE(EXCLUDED.bio, profiles.bio) END,

@@ -10,7 +10,7 @@ import { ProfProfileForm } from "@/app/(dashboard)/prof/profile/ProfProfileForm"
 import { InteractiveOnboardingTour, TourStep } from "@/components/features/InteractiveOnboardingTour";
 import { Inbox } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import { givenName } from "@/lib/people";
+import { givenName, honorificOf } from "@/lib/people";
 
 export const dynamic = "force-dynamic";
 
@@ -78,6 +78,8 @@ export default async function ProfessorDashboard() {
 
   const isAccepting = profile.is_accepting_requests !== false; // default true
   const displayName = givenName(profile, "Professor");
+  // The title this professor chose, or "Dr." until they choose another.
+  const honorific = honorificOf(profile);
 
   // RLS scopes requests to their participants: the query must run under the
   // signed-in user's database identity or every row is filtered out.
@@ -150,7 +152,7 @@ export default async function ProfessorDashboard() {
             fontSize: "clamp(2.6rem, 5vw, 4rem)", fontWeight: 900,
             color: "var(--text-primary)", letterSpacing: "-0.035em", lineHeight: 1.05,
           }}>
-            Dr. <em style={{ fontStyle: "italic", color: "var(--accent)", fontWeight: 300 }}>{displayName}</em>
+            {honorific ? `${honorific} ` : null}<em style={{ fontStyle: "italic", color: "var(--accent)", fontWeight: 300 }}>{displayName}</em>
           </h1>
 
           {/* DB-backed availability toggle */}

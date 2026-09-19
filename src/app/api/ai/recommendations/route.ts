@@ -55,7 +55,7 @@ export async function GET(req: Request) {
     };
 
     const professors = (await sql`
-      SELECT id, first_name, last_name, preferred_name, institution, department, academic_title, expertise_fields, is_accepting_requests, bio, lab_website, publications, status, role
+      SELECT id, first_name, last_name, preferred_name, honorific, institution, department, academic_title, expertise_fields, is_accepting_requests, bio, lab_website, publications, status, role
       FROM profiles
       WHERE role = 'professor' AND status = 'approved'
       ORDER BY updated_at DESC, last_name ASC, id ASC

@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/Button";
 import { useHydrated } from "@/lib/use-hydrated";
 import { InstitutionInput } from "@/components/ui/InstitutionInput";
 import { PreferredNameHint } from "@/components/profile/PreferredNameHint";
+import { DEFAULT_FACULTY_HONORIFIC } from "@/lib/people";
 import { validateEmail, type EmailValidationResult } from "@/lib/validators-client";
 import posthog from "posthog-js";
 
@@ -413,7 +414,7 @@ function SignupContent() {
                   firstName={typedNames.first_name ?? ""}
                   lastName={typedNames.last_name ?? ""}
                   preferredName={typedNames.preferred_name ?? ""}
-                  honorific={role === "professor" ? "Dr." : undefined}
+                  honorific={role === "professor" ? DEFAULT_FACULTY_HONORIFIC : undefined}
                   style={{ paddingLeft: "1.75rem" }}
                 />
               </motion.div>
