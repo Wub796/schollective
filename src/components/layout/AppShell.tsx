@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { NotificationBell } from "@/components/features/NotificationBell";
+import { BetaTicker } from "./BetaTicker";
 import { Sidebar } from "./Sidebar";
 
 interface AppShellProps {
@@ -115,6 +116,14 @@ export function AppShell({ children, role = "student" }: AppShellProps) {
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexShrink: 0 }}>
           <NotificationBell />
         </div>
+
+        {/*
+          The rest of the bar. On desktop the two items above are the whole of
+          it, so this fills what was empty space with the one thing a beta build
+          owes its users: that it is one. Hidden below 1024px, where the nav is
+          the hamburger, the wordmark and the bell and none of them can move.
+        */}
+        <BetaTicker />
       </header>
 
       {/* ── Mobile backdrop ─────────────────────────────────────── */}

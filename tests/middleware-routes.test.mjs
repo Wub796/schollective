@@ -75,6 +75,7 @@ const MUST_REQUIRE_SESSION = [
   "/prof/students",
   "/deactivated",
   "/admin/dashboard",
+  "/admin/feedback",
   "/admin/professors",
   "/admin/threads",
   "/admin/users",

@@ -24,7 +24,7 @@ export default async function ProfPublicProfilePage() {
           Faculty Security & <em style={{ fontStyle: "italic", color: "var(--accent)", fontWeight: 300 }}>Preferences</em>
         </h1>
         <p style={{ fontSize: "0.9rem", color: "var(--text-secondary)", margin: 0, opacity: 0.85 }}>
-          Manage your password, account verification details, security settings, and UI preferences.
+          Manage your password, security settings and interface preferences — and report anything the beta got wrong.
         </p>
       </header>
 

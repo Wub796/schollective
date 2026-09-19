@@ -14,6 +14,7 @@ stateless HTTP driver, which is what makes it work inside a Cloudflare Worker.
 | `request_members`, `thread_reads` | The app | Co-students on a group thread; each participant's read position |
 | `friendships`, `user_blocks` | The app | Student friend requests and friends; one-directional blocks |
 | `ai_profile_review_jobs` | The app | Durable AI profile-review requests and results |
+| `feedback_reports` | The app | Beta feedback: bugs, suggestions, and anything else, written by its author |
 
 The bootstrap also creates the indexes these tables are queried by. The rate
 limiter is deliberately database-backed: an in-memory counter is per Worker
@@ -139,6 +140,35 @@ who may see that profile; it is deliberately not part of `app_student_cards`, so
 it is not shown to students who are not connected to its owner. The runtime
 bootstrap adds the column through `APP_REQUIRED_COLUMNS` as well.
 
+### 0013 — beta feedback
+
+`0013_feedback_reports.sql` creates `feedback_reports`, the queue behind
+Settings → Feedback (student and faculty) and `/admin/feedback`. It must be
+applied **before** deploying that code: the runtime bootstrap creates the table
+through `APP_TABLES`, but it cannot create the policies, and without them the
+table is owned by `schollective_app` with no `FORCE ROW LEVEL SECURITY` — one
+person's report would be readable by any query that forgot to filter on
+`user_id`.
+
+- A report is readable by its author and by admins, and by nobody else. There is
+deliberately no public branch here, unlike `profiles`: a report is free text
+about someone's experience and may name another student.
+- Authors may insert their own reports and nothing else. No UPDATE and no DELETE
+for authors — a report is a record of what was asked for at a point in time, and
+letting the reporter rewrite it would make the status column meaningless.
+  (`updated_at` moves when an admin changes the status.)
+- `user_id` references `profiles (id)` `ON DELETE CASCADE`: deleting an account
+deletes its reports, which is what the delete button promises.
+- `page_path` is an in-app path or NULL. The route refuses absolute and
+  protocol-relative URLs before writing (`sanitiseFeedbackPage`), so nothing in
+  the queue can point at another origin.
+- The stored vocabulary is mirrored in `src/lib/feedback.ts` and compared against
+  these CHECK constraints by `tests/feedback.test.mjs`; change the lists together.
+
+Notifying the team by email is best effort and off unless `FEEDBACK_EMAIL_TO` is
+set. The row is written first and is the record; the email is a heads-up that can
+fail without losing anything.
+
 ### 002 — purging disabled accounts (maintenance)
 
 `db/maintenance/002_purge_deactivated_accounts.sql` deletes accounts that are
@@ -194,6 +224,7 @@ Authentication needs these set on the Worker (`wrangler secret put <NAME>`):
 | `BETTER_AUTH_URL` | yes | The origin the app is served from. Google's redirect URI is derived from it, so it must match the URI registered in the Google console (`<BETTER_AUTH_URL>/api/auth/callback/google`). |
 | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | for Google sign-in | From the Google Cloud console OAuth client. Google sign-in is offered only when both are set; without them the button reports itself as unconfigured rather than failing mid-handshake. |
 | `RESEND_API_KEY` / `EMAIL_FROM` | for password reset | Without them, reset and verification emails are logged instead of delivered — so nobody can recover an account. `EMAIL_FROM` must use a domain verified in Resend. |
+| `FEEDBACK_EMAIL_TO` | no | Where the heads-up for a new beta report goes. Without it (or without the two Resend variables) reports still land in `/admin/feedback`; only the notification is skipped, and the route reports `emailed: false` rather than claiming one was sent. |
 | `AUTH_SCHEMA_AUTO_MIGRATE` | no | Set to `false` to manage the schema by hand. |
 
 None of these have in-code fallbacks: a secret committed to the repository is a

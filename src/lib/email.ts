@@ -145,6 +145,46 @@ export function accountDisabledEmail({
   };
 }
 
+/**
+ * Tells the team that a beta report landed.
+ *
+ * Deliberately a notification and not the transport: the report is stored in
+ * `feedback_reports` (db/migrations/0013) before this is attempted, so a
+ * rejected address or a missing key costs a heads-up and nothing else. The
+ * footer says so, because the cheapest way to lose a report is for the reader
+ * to believe this email *is* the report and delete it.
+ */
+export function feedbackReportEmail({
+  categoryLabel,
+  reporterLabel,
+  message,
+  pagePath,
+  adminUrl,
+}: {
+  categoryLabel: string;
+  reporterLabel: string;
+  message: string;
+  pagePath: string | null;
+  adminUrl: string;
+}): Omit<SendEmailInput, "to"> {
+  const where = pagePath ? `from ${pagePath}` : "without naming a page";
+
+  return {
+    subject: `[Beta feedback] ${categoryLabel} from ${reporterLabel}`,
+    html: layout(
+      `New ${categoryLabel.toLowerCase()}`,
+      `${reporterLabel} wrote this ${where}: ${message}`,
+      "Open the feedback queue",
+      adminUrl,
+      "Sent by the beta feedback form. The report itself is stored in the admin queue whether or not this email arrives, and this link does not expire.",
+    ),
+    text:
+      `New ${categoryLabel.toLowerCase()} from ${reporterLabel} ${where}:\n\n` +
+      `${message}\n\n` +
+      `The report is stored in the admin queue: ${adminUrl}`,
+  };
+}
+
 export function verificationEmail(url: string): Omit<SendEmailInput, "to"> {
   return {
     subject: "Confirm your Schollective email",
