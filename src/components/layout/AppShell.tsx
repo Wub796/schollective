@@ -103,39 +103,17 @@ export function AppShell({ children, role = "student" }: AppShellProps) {
           </span>
         </Link>
 
-        {/* Right: notification + account */}
+        {/*
+          Right: notifications.
+
+          An "Account" button used to sit here, linking to /profile for every role
+          — the student settings URL, so for a professor it did not lead to the
+          faculty settings the sidebar links to. The sidebar's own Account
+          section already resolves that per role, so the top bar carries the
+          notification bell alone rather than a second, wrong door.
+        */}
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexShrink: 0 }}>
           <NotificationBell />
-          <Link href="/profile" style={{ textDecoration: "none" }}>
-            <div
-              style={{
-                height: "28px", padding: "0 0.9rem",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                borderRadius: "100px",
-                border: "1px solid var(--border)",
-                background: "transparent",
-                fontSize: "0.52rem", fontWeight: 700,
-                letterSpacing: "0.1em", textTransform: "uppercase",
-                color: "var(--text-secondary)",
-                fontFamily: "var(--font-sans)",
-                transition: "all 0.2s",
-                cursor: "pointer",
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.borderColor = "var(--border-focus)";
-                (e.currentTarget as HTMLElement).style.color = "var(--text-primary)";
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.borderColor = "var(--border)";
-                (e.currentTarget as HTMLElement).style.color = "var(--text-secondary)";
-              }}
-              role="button"
-              tabIndex={0}
-              aria-label="Account settings"
-            >
-              Account
-            </div>
-          </Link>
         </div>
       </header>
 
