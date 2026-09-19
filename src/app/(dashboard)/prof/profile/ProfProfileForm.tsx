@@ -27,7 +27,8 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { PreferredNameHint } from "@/components/profile/PreferredNameHint";
-import { nameParts } from "@/lib/people";
+import { PreferredTitlePicker } from "@/components/profile/PreferredTitlePicker";
+import { DEFAULT_FACULTY_HONORIFIC, GENDER_CHOICES, facultyName, honorificOf, nameParts } from "@/lib/people";
 
 interface Props {
   profile: any;
@@ -68,6 +69,11 @@ export function ProfProfileForm({ profile: initialProfile }: Props) {
   const [firstName, setFirstName] = useState(profile?.first_name || "");
   const [lastName, setLastName] = useState(profile?.last_name || "");
   const [preferredName, setPreferredName] = useState(profile?.preferred_name || "");
+  // How this professor is addressed on every student-facing screen. "Dr." stands
+  // in until they choose something else, which is what every profile showed before.
+  const [honorific, setHonorific] = useState<string>(profile?.honorific || DEFAULT_FACULTY_HONORIFIC);
+  // Optional, and only ever shown because this account chose to list it.
+  const [gender, setGender] = useState<string>(profile?.gender || "");
   const [title, setTitle] = useState(profile?.academic_title || "Professor / Principal Investigator");
   const [dept, setDept] = useState(profile?.department || "Academic Department");
   const [inst, setInst] = useState(profile?.institution || "University");
@@ -161,6 +167,8 @@ export function ProfProfileForm({ profile: initialProfile }: Props) {
           first_name: firstName,
           last_name: lastName,
           preferred_name: preferredName,
+          honorific,
+          gender,
           academic_title: title,
           department: dept,
           institution: inst,
@@ -181,8 +189,11 @@ export function ProfProfileForm({ profile: initialProfile }: Props) {
     }
   };
 
-  const shownName = nameParts({ first_name: firstName, last_name: lastName, preferred_name: preferredName });
+  const shownPerson = { first_name: firstName, last_name: lastName, preferred_name: preferredName, honorific };
+  const shownName = nameParts(shownPerson);
   const displayName = shownName.given || "Professor";
+  // "Dr. Jiwoo Kim", exactly as a student reads it, title included.
+  const shownAs = facultyName(shownPerson);
   const initials = `${firstName?.[0] ?? ""}${lastName?.[0] ?? ""}`.toUpperCase() || "P";
   const expertiseArray = expertise.split(",").map((s: string) => s.trim()).filter(Boolean);
   const studentTypesArray = studentTypes.split(",").map((s: string) => s.trim()).filter(Boolean);
@@ -245,7 +256,7 @@ export function ProfProfileForm({ profile: initialProfile }: Props) {
 
         <div>
           <h2 className="font-display" style={{ fontSize: "1.6rem", fontWeight: 900, color: "var(--text-primary)", margin: "0 0 0.2rem 0" }}>
-            Dr. {displayName} {shownName.family}
+            {shownAs}
           </h2>
           <div style={{ fontSize: "0.85rem", color: "var(--text-secondary)", fontWeight: 600 }}>
             {title} • {inst}
@@ -345,7 +356,35 @@ export function ProfProfileForm({ profile: initialProfile }: Props) {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "1.25rem" }}>
             <FieldInput id="first_name" name="first_name" label="First Name" value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="e.g. Jane" icon={<User size={15} />} />
             <FieldInput id="last_name" name="last_name" label="Last Name" value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="e.g. Smith" icon={<User size={15} />} />
-            <FieldInput id="preferred_name" name="preferred_name" label="Preferred Name (Optional)" value={preferredName} onChange={(e) => setPreferredName(e.target.value)} placeholder="e.g. Janie" icon={<User size={15} />} hint={<PreferredNameHint firstName={firstName} lastName={lastName} preferredName={preferredName} honorific="Dr." style={{ paddingLeft: "1.25rem" }} />} />
+            <FieldInput id="preferred_name" name="preferred_name" label="Preferred Name (Optional)" value={preferredName} onChange={(e) => setPreferredName(e.target.value)} placeholder="e.g. Janie" icon={<User size={15} />} hint={<PreferredNameHint firstName={firstName} lastName={lastName} preferredName={preferredName} honorific={honorificOf(shownPerson)} style={{ paddingLeft: "1.25rem" }} />} />
+            <PreferredTitlePicker
+              name="honorific"
+              value={honorific}
+              onChange={setHonorific}
+              person={shownPerson}
+              style={{ minWidth: 0 }}
+            />
+
+            <div style={{ minWidth: 0 }}>
+              <label htmlFor="gender" style={{ display: "flex", alignItems: "center", gap: "0.4rem", fontSize: "0.72rem", fontWeight: 800, color: "var(--text-primary)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "0.5rem" }}>
+                <Users size={15} /> Gender (Optional)
+              </label>
+              <select
+                id="gender"
+                name="gender"
+                value={gender}
+                onChange={(e) => setGender(e.target.value)}
+                style={{ width: "100%", background: "#ffffff", border: "1px solid rgba(99, 102, 241, 0.18)", borderRadius: "100px", padding: "0.75rem 1.25rem", fontSize: "0.88rem", color: "var(--text-primary)", outline: "none", fontFamily: "var(--font-sans)", cursor: "pointer" }}
+              >
+                <option value="">Not specified</option>
+                {GENDER_CHOICES.map((choice) => (
+                  <option key={choice.value} value={choice.value}>{choice.label}</option>
+                ))}
+              </select>
+              <p style={{ margin: "0.45rem 0 0", fontSize: "0.72rem", fontWeight: 600, color: "var(--text-tertiary)", fontFamily: "var(--font-sans)" }}>
+                Shown on your public profile. Choose Prefer not to say to keep it off.
+              </p>
+            </div>
           </div>
 
           {/* Academic Profile Details Grid */}
@@ -469,7 +508,7 @@ export function ProfProfileForm({ profile: initialProfile }: Props) {
               </div>
               <div>
                 <h2 className="font-display" style={{ fontSize: "1.6rem", fontWeight: 900, color: "var(--text-primary)", margin: "0 0 0.25rem 0" }}>
-                  Dr. {displayName} {shownName.family}
+                  {shownAs}
                 </h2>
                 <div style={{ fontSize: "0.85rem", color: "var(--text-secondary)", fontWeight: 600 }}>
                   {title} • {dept}

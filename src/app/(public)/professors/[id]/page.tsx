@@ -9,7 +9,7 @@ import { ArrowLeft, GraduationCap, Building2, BookOpen, Mail, ShieldCheck } from
 import { Button } from "@/components/ui/Button";
 import { AppShell } from "@/components/layout/AppShell";
 import { PARTICIPANT_ONGOING, asSqlArray } from "@/lib/status";
-import { facultyName, fullName, nameParts } from "@/lib/people";
+import { facultyName, fullName, genderLabel, honorificOf, nameParts, withTitle } from "@/lib/people";
 
 export const revalidate = 300;
 export const dynamicParams = true;
@@ -35,7 +35,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { id } = await params;
 
   const professors = await sql`
-    SELECT first_name, last_name, preferred_name, institution, expertise_fields, avatar_url
+    SELECT first_name, last_name, preferred_name, honorific, institution, expertise_fields, avatar_url
     FROM profiles
     WHERE id = ${id} AND role = 'professor' AND status = 'approved'
     LIMIT 1;
@@ -92,6 +92,8 @@ function ProfessorDetail({
   user: any;
 }) {
   const { given: displayName, family: surname } = nameParts(professor);
+  // The title this professor chose to be addressed by, or "Dr." if they never chose.
+  const honorific   = honorificOf(professor);
   const initials    = `${professor.first_name?.[0] ?? ""}${professor.last_name?.[0] ?? ""}`.toUpperCase();
   const isAccepting = professor.is_accepting_requests !== false;
 
@@ -112,7 +114,7 @@ function ProfessorDetail({
 
           <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
             <h1 className="font-display" style={{ fontSize: "clamp(2.4rem, 4vw, 3.2rem)", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.035em", lineHeight: 1.05 }}>
-              Dr. {displayName} <em style={{ fontStyle: "italic", color: "var(--accent)", fontWeight: 300 }}>{surname}</em>
+              {honorific ? `${honorific} ` : null}{displayName} <em style={{ fontStyle: "italic", color: "var(--accent)", fontWeight: 300 }}>{surname}</em>
             </h1>
             <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap" }}>
               {/* Verified badge */}
@@ -152,6 +154,14 @@ function ProfessorDetail({
             <div style={{ background: "#ffffff", padding: "1rem 1.25rem", borderRadius: "12px", border: "1px solid rgba(99, 102, 241, 0.15)" }}>
               <div style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--accent)", marginBottom: "0.35rem" }}>Institution</div>
               <div style={{ fontSize: "0.9rem", fontWeight: 700, color: "var(--text-primary)" }}>{professor.institution}</div>
+            </div>
+          )}
+          {/* Only listed if this professor chose to list it: genderLabel is null
+              for an unanswered field and for "prefer not to say" alike. */}
+          {genderLabel(professor.gender) && (
+            <div style={{ background: "#ffffff", padding: "1rem 1.25rem", borderRadius: "12px", border: "1px solid rgba(99, 102, 241, 0.15)" }}>
+              <div style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--accent)", marginBottom: "0.35rem" }}>Gender</div>
+              <div style={{ fontSize: "0.9rem", fontWeight: 700, color: "var(--text-primary)" }}>{genderLabel(professor.gender)}</div>
             </div>
           )}
         </div>
@@ -240,7 +250,7 @@ function ProfessorDetail({
             gap: "1.25rem"
           }}>
             <h3 className="font-display" style={{ fontSize: "1.25rem", fontWeight: 700, color: "rgba(15, 23, 42, 0.85)", margin: 0 }}>
-              Request Mentorship with Dr. {displayName}
+              Request Mentorship with {withTitle(professor, displayName)}
             </h3>
             <p style={{ fontSize: "0.85rem", color: "rgba(15, 23, 42, 0.5)", lineHeight: 1.65, maxWidth: "28rem", margin: 0, fontFamily: "var(--font-sans)" }}>
               Schollective connects motivated scholars with verified professors through structured, high-context mentorship requests. Create a free account to send outreach today.
@@ -284,7 +294,7 @@ function ProfessorDetail({
               textAlign: "center"
             }}>
               <h3 className="font-display" style={{ fontSize: "1.15rem", fontWeight: 700, color: "rgba(15, 23, 42, 0.8)", margin: 0 }}>
-                Dr. {displayName} is not accepting new requests right now
+                {withTitle(professor, displayName)} is not accepting new requests right now
               </h3>
               <p style={{ fontSize: "0.82rem", color: "rgba(15, 23, 42, 0.45)", lineHeight: 1.6, fontFamily: "var(--font-sans)", margin: 0 }}>
                 This professor has temporarily paused new mentorship outreach requests. You can browse similar professors below.
@@ -299,6 +309,7 @@ function ProfessorDetail({
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: "1.5rem" }}>
                   {similarProfessors.map((p) => {
                     const name = fullName(p, "Professor");
+                    const shownAs = facultyName(p);
                     const initials = `${p.first_name?.[0] ?? ""}${p.last_name?.[0] ?? ""}`.toUpperCase();
                     return (
                       <Link href={`/professors/${p.id}`} key={p.id} style={{ textDecoration: "none" }}>
@@ -337,7 +348,7 @@ function ProfessorDetail({
                             )}
                           </div>
                           <div>
-                            <div style={{ fontSize: "0.8rem", fontWeight: 600, color: "rgba(15, 23, 42, 0.8)", fontFamily: "var(--font-sans)" }}>Dr. {name}</div>
+                            <div style={{ fontSize: "0.8rem", fontWeight: 600, color: "rgba(15, 23, 42, 0.8)", fontFamily: "var(--font-sans)" }}>{shownAs}</div>
                             <div style={{ fontSize: "0.58rem", color: "rgba(15, 23, 42, 0.4)", fontFamily: "var(--font-sans)", marginTop: "0.15rem", textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap", maxWidth: "160px" }}>{p.institution}</div>
                           </div>
                         </div>
@@ -362,7 +373,7 @@ export default async function PublicProfessorProfilePage({ params }: PageProps) 
   // remains request-scoped and is never included in a public cache response.
   // Fetch professor
   const professors = await sql`
-    SELECT id, first_name, last_name, preferred_name, institution, academic_title, department, bio, lab_website, office_hours, accepting_student_types, publications, expertise_fields, avatar_url, is_accepting_requests
+    SELECT id, first_name, last_name, preferred_name, honorific, gender, institution, academic_title, department, bio, lab_website, office_hours, accepting_student_types, publications, expertise_fields, avatar_url, is_accepting_requests
     FROM profiles
     WHERE id = ${id} AND role = 'professor' AND status = 'approved'
     LIMIT 1;
@@ -416,7 +427,7 @@ export default async function PublicProfessorProfilePage({ params }: PageProps) 
   const isAccepting = professor.is_accepting_requests !== false;
   if (!isAccepting && professor.expertise_fields && professor.expertise_fields.length > 0) {
     const similar = await sql`
-      SELECT id, first_name, last_name, preferred_name, institution, expertise_fields, avatar_url
+      SELECT id, first_name, last_name, preferred_name, honorific, institution, expertise_fields, avatar_url
       FROM profiles
       WHERE role = 'professor'
         AND status = 'approved'

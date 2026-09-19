@@ -20,6 +20,12 @@ export interface StudentCard {
   first_name: string | null;
   last_name: string | null;
   preferred_name: string | null;
+  /**
+   * A slug from GENDER_CHOICES, present only on a full profile row: the safe
+   * card (`app_student_cards`) a stranger's card comes from does not carry it,
+   * so this stays optional and reads as "nothing to show" when it is absent.
+   */
+  gender?: string | null;
   institution: string | null;
   education_level: string | null;
   major: string | null;

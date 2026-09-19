@@ -67,7 +67,7 @@ export default async function ProfessorsPage({ searchParams }: ProfessorsPagePro
   const [pageRows, countRows, institutionRows, expertiseRows] = await Promise.all([
     currentSort === "recent"
       ? sql`
-          SELECT id, first_name, last_name, preferred_name, institution, expertise_fields, is_accepting_requests, updated_at
+          SELECT id, first_name, last_name, preferred_name, honorific, institution, expertise_fields, is_accepting_requests, updated_at
           FROM profiles
           WHERE role = 'professor' AND status = 'approved'
             AND (${isAcceptingOnly}::boolean IS NOT TRUE OR is_accepting_requests IS NOT FALSE)
@@ -88,7 +88,7 @@ export default async function ProfessorsPage({ searchParams }: ProfessorsPagePro
           LIMIT ${PAGE_SIZE} OFFSET ${offset};
         `
       : sql`
-          SELECT id, first_name, last_name, preferred_name, institution, expertise_fields, is_accepting_requests, updated_at
+          SELECT id, first_name, last_name, preferred_name, honorific, institution, expertise_fields, is_accepting_requests, updated_at
           FROM profiles
           WHERE role = 'professor' AND status = 'approved'
             AND (${isAcceptingOnly}::boolean IS NOT TRUE OR is_accepting_requests IS NOT FALSE)

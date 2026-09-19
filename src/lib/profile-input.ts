@@ -30,6 +30,7 @@ import {
   sanitiseUrl,
 } from "@/lib/security";
 import { avatarKeyFromRoute, avatarOwner } from "@/lib/avatar";
+import { normaliseGender, normaliseHonorific } from "@/lib/people";
 
 /** Fields the account owner may set about themselves. */
 export interface SanitisedProfileInput {
@@ -40,6 +41,8 @@ export interface SanitisedProfileInput {
   education_level?: string;
   department?: string;
   academic_title?: string;
+  honorific?: string;
+  gender?: string;
   major?: string;
   graduation_year?: string;
   bio?: string;
@@ -125,6 +128,29 @@ function avatarField(get: Source, ownerId: string | undefined): string | undefin
   return /^https:\/\//i.test(url) ? url : undefined;
 }
 
+/**
+ * The title someone chose to be addressed by. Canonicalised on the way in, so
+ * "dr", "DR." and "Dr." are one stored value, and the "none" sentinel (shown
+ * without a title) stays distinct from a cleared field, which falls back to the
+ * default title for the account's role.
+ */
+function honorificField(get: Source): string | undefined {
+  const raw = get("honorific");
+  if (raw === undefined || raw === null) return undefined;
+  return normaliseHonorific(sanitiseText(raw, LIMITS.honorific)) ?? "";
+}
+
+/**
+ * A gender, kept only if it is one of the values GENDER_CHOICES offers. Anything
+ * else is stored as "" — a clear, so an unrecognised value cannot reach a profile
+ * and render as a label nobody chose. `rejectedProfileField` reports the refusal.
+ */
+function genderField(get: Source): string | undefined {
+  const raw = get("gender");
+  if (raw === undefined || raw === null) return undefined;
+  return normaliseGender(sanitiseText(raw, LIMITS.gender)) ?? "";
+}
+
 function tagField(get: Source, key: string, max: number): string[] | undefined {
   const raw = get(key);
   if (raw === undefined || raw === null) return undefined;
@@ -178,6 +204,8 @@ function build(get: Source, ownerId?: string): SanitisedProfileInput {
     education_level: textField(get, "education_level", LIMITS.studentType),
     department: textField(get, "department", LIMITS.department),
     academic_title: textField(get, "academic_title", LIMITS.academicTitle),
+    honorific: honorificField(get),
+    gender: genderField(get),
     major: textField(get, "major", LIMITS.institution),
     graduation_year: textField(get, "graduation_year", 30),
     bio: textField(get, "bio", LIMITS.bio),
@@ -240,6 +268,8 @@ const TEXT_FIELD_LABELS = {
   education_level: "Education level",
   department: "Department",
   academic_title: "Academic title",
+  honorific: "Display title",
+  gender: "Gender",
   major: "Major",
   graduation_year: "Graduation year",
   bio: "Bio",

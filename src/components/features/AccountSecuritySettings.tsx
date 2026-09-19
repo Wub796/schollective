@@ -20,6 +20,7 @@ import {
   Clock,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { FeedbackSettings } from "@/components/features/FeedbackSettings";
 import { nameParts } from "@/lib/people";
 import {
   DEACTIVATION_GRACE_DAYS,
@@ -620,7 +621,12 @@ export function AccountSecuritySettings({ profile }: AccountSecuritySettingsProp
         </div>
       </div>
 
-      {/* ── 4. Session Protection Notice ── */}
+      {/* ── 4. Feedback & Bug Reports ── */}
+      {/* Both settings pages (student and faculty) render this component, so the
+          form lands in exactly one place for both roles. */}
+      <FeedbackSettings />
+
+      {/* ── 5. Session Protection Notice ── */}
       <div style={{
         background: "rgba(99, 102, 241, 0.05)",
         borderRadius: "14px",
@@ -639,7 +645,7 @@ export function AccountSecuritySettings({ profile }: AccountSecuritySettingsProp
         </div>
       </div>
 
-      {/* ── 5. Danger Zone — the two ways out ── */}
+      {/* ── 6. Danger Zone — the two ways out ── */}
       <div style={{
         background: "rgba(255, 255, 255, 0.9)",
         borderRadius: "16px",

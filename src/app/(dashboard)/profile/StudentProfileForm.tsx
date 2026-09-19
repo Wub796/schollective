@@ -27,7 +27,7 @@ import { FacultyPreviewCard } from "@/components/profile/FacultyPreviewCard";
 import { ProfileSectionNav } from "@/components/profile/ProfileSectionNav";
 import { PreferredNameHint } from "@/components/profile/PreferredNameHint";
 import type { ParsedResumeProfile } from "@/lib/ai/resume-parser";
-import { nameParts } from "@/lib/people";
+import { GENDER_CHOICES, nameParts } from "@/lib/people";
 import {
   ProfileRecord,
   AcademicStats,
@@ -115,6 +115,8 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
   const [firstName, setFirstName] = useState(profile?.first_name || "");
   const [lastName, setLastName] = useState(profile?.last_name || "");
   const [preferredName, setPreferredName] = useState(profile?.preferred_name || "");
+  // Optional, and only ever shown because this account chose to list it.
+  const [gender, setGender] = useState(profile?.gender || "");
 
   // Section 1: Academic Identity
   const [inst, setInst] = useState(profile?.institution || "");
@@ -462,6 +464,7 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
       first_name: firstName.trim(),
       last_name: lastName.trim(),
       preferred_name: preferredName.trim(),
+      gender,
       institution: inst.trim(),
       education_level: educationLevel,
       major: major.trim(),
@@ -803,6 +806,38 @@ export function StudentProfileForm({ profile: initialProfile }: Props) {
                   placeholder="Janey"
                 />
                 <PreferredNameHint firstName={firstName} lastName={lastName} preferredName={preferredName} />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="gender"
+                  style={{
+                    fontSize: "0.68rem",
+                    fontWeight: 800,
+                    color: "var(--text-secondary)",
+                    textTransform: "uppercase",
+                    display: "block",
+                    marginBottom: "0.4rem",
+                    letterSpacing: "0.04em",
+                  }}
+                >
+                  Gender (Optional)
+                </label>
+                <select
+                  id="gender"
+                  name="gender"
+                  value={gender}
+                  onChange={(e) => setGender(e.target.value)}
+                  style={{ width: "100%", padding: "0.75rem 1rem", borderRadius: "8px", border: "1px solid rgba(99, 102, 241, 0.25)", outline: "none", fontSize: "0.88rem", background: "#ffffff", cursor: "pointer" }}
+                >
+                  <option value="">Not specified</option>
+                  {GENDER_CHOICES.map((choice) => (
+                    <option key={choice.value} value={choice.value}>{choice.label}</option>
+                  ))}
+                </select>
+                <p style={{ margin: "0.45rem 0 0", fontSize: "0.7rem", fontWeight: 600, color: "var(--text-tertiary)" }}>
+                  Shown to the people who can see your profile. Choose Prefer not to say to keep it off.
+                </p>
               </div>
             </div>
           </div>

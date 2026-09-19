@@ -14,6 +14,7 @@ interface AdminProfessorRow {
   first_name: string | null;
   last_name: string | null;
   preferred_name: string | null;
+  honorific: string | null;
   email: string | null;
   status: string | null;
   institution: string | null;
@@ -34,7 +35,7 @@ export default async function AdminProfessorsPage() {
   // Under the admin's identity: the scoped profiles_select policy (migration
   // 0006) only exposes non-approved professor rows via its admin branch.
   const professors = (await runAs(user.id, async () => sql`
-    SELECT id, first_name, last_name, preferred_name, email, status, institution, expertise_fields, ai_score, ai_level, created_at
+    SELECT id, first_name, last_name, preferred_name, honorific, email, status, institution, expertise_fields, ai_score, ai_level, created_at
     FROM profiles
     WHERE role = 'professor'
     ORDER BY created_at DESC;

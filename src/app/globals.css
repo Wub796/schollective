@@ -603,6 +603,136 @@ body::after {
 }
 
 /* ═══════════════════════════════════════════════════════════════
+   BETA TICKER — the rolling notice in the empty middle of the nav
+   Desktop only: the same 1024px line that reveals the hamburger is
+   the one that hides this, because on a phone the bar is three
+   controls that all earn their space.
+   ═══════════════════════════════════════════════════════════════ */
+.beta-ticker {
+  display: none;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1 1 auto;
+  min-width: 0;
+  margin-left: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+  .beta-ticker {
+    display: flex;
+  }
+}
+
+.beta-ticker-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  flex-shrink: 0;
+  height: 20px;
+  padding: 0 0.55rem;
+  border-radius: 100px;
+  background: var(--accent-dim);
+  border: 1px solid var(--accent-glow);
+  color: var(--accent);
+  font-size: 0.55rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-family: var(--font-sans, monospace);
+}
+
+.beta-ticker-window {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  /* Fade the two ends so text does not appear to be cut by a hard edge. */
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 28px, #000 calc(100% - 28px), transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0, #000 28px, #000 calc(100% - 28px), transparent 100%);
+}
+
+.beta-ticker-track {
+  display: flex;
+  align-items: center;
+  width: max-content;
+  animation: beta-ticker-scroll 58s linear infinite;
+  will-change: transform;
+}
+
+/* Paused by its own control, or while the reader is pointing at it. */
+.beta-ticker-track[data-paused="true"],
+.beta-ticker-window:hover .beta-ticker-track {
+  animation-play-state: paused;
+}
+
+.beta-ticker-group {
+  display: flex;
+  align-items: center;
+}
+
+.beta-ticker-item {
+  display: inline-flex;
+  align-items: center;
+  padding-right: 1.5rem;
+  font-size: 0.73rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.beta-ticker-item::after {
+  content: "";
+  width: 4px;
+  height: 4px;
+  margin-left: 1.5rem;
+  border-radius: 50%;
+  background: var(--border-focus);
+  flex-shrink: 0;
+}
+
+.beta-ticker-pause {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.beta-ticker-pause:hover {
+  color: var(--accent);
+  border-color: var(--border-focus);
+  background: var(--accent-dim);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .beta-ticker-track {
+    animation: none;
+  }
+
+  /* One static line, not a frozen two-copy track: the second copy would
+     otherwise sit behind the first and be reachable by nothing. */
+  .beta-ticker-group + .beta-ticker-group {
+    display: none;
+  }
+
+  .beta-ticker-window {
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .beta-ticker-pause {
+    display: none;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
    ANIMATIONS
    ═══════════════════════════════════════════════════════════════ */
 @keyframes float {
@@ -623,6 +753,13 @@ body::after {
 @keyframes shimmer {
   from { background-position: -200% center; }
   to   { background-position: 200% center; }
+}
+
+@keyframes beta-ticker-scroll {
+  /* -25% of a four-copy track is exactly one copy: the loop restarts where it
+     began, with no gap and no sub-pixel jump. */
+  from { transform: translateX(0); }
+  to   { transform: translateX(-25%); }
 }
 
 .animate-float    { animation: float 9s ease-in-out infinite; }

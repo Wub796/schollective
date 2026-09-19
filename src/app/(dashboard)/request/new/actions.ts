@@ -77,7 +77,7 @@ export async function submitMentorshipRequest(formData: FormData) {
   // could still deliver a request. The error string already claimed otherwise.
   // `IS NOT FALSE` because the column is nullable and null means "default on".
   const professors = await sql`
-    SELECT id, first_name, last_name, preferred_name FROM profiles
+    SELECT id, first_name, last_name, preferred_name, honorific FROM profiles
     WHERE id = ${profId}
       AND role = 'professor'
       AND status = ${PROFESSOR_LIVE_STATUS}

@@ -69,7 +69,7 @@ export default async function MessagePage({ params }: MessagePageProps) {
       FROM profiles WHERE id = ${request.student_id} LIMIT 1;
     `),
     runAs(user.id, async () => sql`
-      SELECT id, first_name, last_name, preferred_name, role, avatar_url, institution, expertise_fields
+      SELECT id, first_name, last_name, preferred_name, honorific, role, avatar_url, institution, expertise_fields
       FROM profiles WHERE id = ${request.professor_id} LIMIT 1;
     `),
     getThreadMembers(requestId, user.id),
@@ -84,7 +84,7 @@ export default async function MessagePage({ params }: MessagePageProps) {
   ]) as [ParticipantRow[], ParticipantRow[], Awaited<ReturnType<typeof getThreadMembers>>, MessageRow[]];
 
   const unknownPerson = (id: string, fallbackRole: string): ParticipantRow => ({
-    id, first_name: null, last_name: null, preferred_name: null, role: fallbackRole,
+    id, first_name: null, last_name: null, preferred_name: null, honorific: null, role: fallbackRole,
   });
   const lead = leadRows[0] ?? unknownPerson(request.student_id, "student");
   const professor = professorRows[0] ?? unknownPerson(request.professor_id, "professor");

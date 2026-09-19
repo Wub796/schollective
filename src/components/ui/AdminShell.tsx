@@ -10,6 +10,7 @@ import {
   Users,
   GraduationCap,
   MessageSquare,
+  Inbox,
   Settings,
   LogOut,
   Menu,
@@ -23,6 +24,7 @@ const NAV = [
   { href: "/admin/users",      icon: Users,           label: "Users",     sub: "All accounts"    },
   { href: "/admin/professors", icon: GraduationCap,   label: "Faculty",   sub: "Roster"          },
   { href: "/admin/threads",    icon: MessageSquare,   label: "Threads",   sub: "Activity"        },
+  { href: "/admin/feedback",   icon: Inbox,           label: "Feedback",  sub: "Beta reports"    },
 ];
 
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
