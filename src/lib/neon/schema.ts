@@ -124,6 +124,14 @@ const APP_REQUIRED_COLUMNS: Record<string, ColumnSpec[]> = {
     { name: "honorific", ddl: "honorific text" },
     // The gender on the profile, if the account chose to list one at all.
     { name: "gender", ddl: "gender text" },
+    // Derived, never client-set: whether the youth protection rules apply to
+    // this account (db/migrations/0014_youth_protection.sql,
+    // src/lib/youth-protection.ts). Here as well as in the migration because
+    // the message guard reads it on every send, and a running app that could
+    // not read it would either fail closed on every message or fall back to an
+    // education level nobody maintains. `ensureAuthSchema` runs from
+    // getCurrentUserAndProfile, so this column exists before any guard runs.
+    { name: "is_minor", ddl: "is_minor boolean not null default false" },
   ],
   // The beta feedback queue. The columns are added here so a database that has
   // never run db/migrations/0013 can still store a report; the RLS policies and
@@ -182,6 +190,69 @@ const APP_TABLES: Record<string, string> = {
       CONSTRAINT feedback_reports_message_check  CHECK (char_length(message) BETWEEN 10 AND 2000)
     )
   `,
+  // Mirrors db/migrations/0014 (table bodies only; policies live there). Read
+  // the note in that file about why the date of birth is not a column on
+  // `profiles` - the short version is that profiles is read with SELECT * and
+  // handed to client components, and a child's birth date does not belong one
+  // careless query away from a browser.
+  youth_protection: `
+    CREATE TABLE IF NOT EXISTS youth_protection (
+      profile_id          text PRIMARY KEY REFERENCES profiles (id) ON DELETE CASCADE,
+      date_of_birth       date NOT NULL,
+      guardian_name       text,
+      guardian_email      text,
+      guardian_consent_at timestamptz,
+      consent_version     text,
+      created_at          timestamptz NOT NULL DEFAULT now(),
+      updated_at          timestamptz NOT NULL DEFAULT now(),
+      CONSTRAINT youth_protection_dob_check CHECK (
+        date_of_birth > DATE '1900-01-01' AND date_of_birth <= CURRENT_DATE
+      ),
+      CONSTRAINT youth_protection_consent_check CHECK (
+        (guardian_consent_at IS NULL AND consent_version IS NULL)
+        OR (guardian_consent_at IS NOT NULL AND consent_version IS NOT NULL)
+      )
+    )
+  `,
+  safety_reports: `
+    CREATE TABLE IF NOT EXISTS safety_reports (
+      id                  text PRIMARY KEY,
+      reporter_id         text REFERENCES profiles (id) ON DELETE SET NULL,
+      reporter_role       text,
+      reported_profile_id text REFERENCES profiles (id) ON DELETE SET NULL,
+      request_id          uuid,
+      category            text NOT NULL,
+      message             text NOT NULL,
+      minor_involved      boolean NOT NULL DEFAULT false,
+      snapshot_summary    text,
+      status              text NOT NULL DEFAULT 'new',
+      admin_note          text,
+      created_at          timestamptz NOT NULL DEFAULT now(),
+      updated_at          timestamptz NOT NULL DEFAULT now(),
+      CONSTRAINT safety_reports_category_check CHECK (category IN (
+        'off-platform', 'boundaries', 'sexual-content',
+        'threats', 'impersonation', 'self-harm', 'other'
+      )),
+      CONSTRAINT safety_reports_status_check CHECK (status IN ('new', 'reviewing', 'closed')),
+      CONSTRAINT safety_reports_message_check CHECK (
+        char_length(message) BETWEEN 10 AND 4000
+      )
+    )
+  `,
+  // References nothing that can cascade, on purpose: this table exists to
+  // outlive the accounts it names.
+  safety_report_evidence: `
+    CREATE TABLE IF NOT EXISTS safety_report_evidence (
+      id           text PRIMARY KEY,
+      report_id    text NOT NULL REFERENCES safety_reports (id) ON DELETE CASCADE,
+      sender_id    text,
+      sender_label text,
+      sender_role  text,
+      content      text NOT NULL,
+      sent_at      timestamptz NOT NULL,
+      copied_at    timestamptz NOT NULL DEFAULT now()
+    )
+  `,
   ai_profile_review_jobs: `
     CREATE TABLE IF NOT EXISTS ai_profile_review_jobs (
       id text PRIMARY KEY,
@@ -219,6 +290,14 @@ const APP_INDEXES: Record<string, string[]> = {
   feedback_reports: [
     `CREATE INDEX IF NOT EXISTS "feedback_reports_user_created_at_idx" ON feedback_reports (user_id, created_at DESC)`,
     `CREATE INDEX IF NOT EXISTS "feedback_reports_status_created_at_idx" ON feedback_reports (status, created_at DESC)`,
+  ],
+  safety_reports: [
+    `CREATE INDEX IF NOT EXISTS "safety_reports_status_created_idx" ON safety_reports (status, created_at DESC)`,
+    `CREATE INDEX IF NOT EXISTS "safety_reports_category_created_idx" ON safety_reports (category, created_at DESC)`,
+    `CREATE INDEX IF NOT EXISTS "safety_reports_reported_idx" ON safety_reports (reported_profile_id) WHERE reported_profile_id IS NOT NULL`,
+  ],
+  safety_report_evidence: [
+    `CREATE INDEX IF NOT EXISTS "safety_report_evidence_report_idx" ON safety_report_evidence (report_id, sent_at)`,
   ],
   ai_profile_review_jobs: [
     `CREATE UNIQUE INDEX IF NOT EXISTS "ai_profile_review_jobs_active_user_uidx" ON ai_profile_review_jobs (user_id) WHERE status IN ('pending', 'processing')`,
@@ -275,6 +354,7 @@ const PROFILES_TABLE = `
     social_links jsonb,
     deactivated_at timestamptz,
     status_before_deactivation text,
+    is_minor boolean NOT NULL DEFAULT false,
     created_at timestamptz DEFAULT now(),
     updated_at timestamptz DEFAULT now()
   )
