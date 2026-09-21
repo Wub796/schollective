@@ -79,6 +79,10 @@ const MUST_REQUIRE_SESSION = [
   "/admin/professors",
   "/admin/threads",
   "/admin/users",
+  // Safety reports are about named people, including minors. Behind the wall
+  // with every other admin surface, and doubling as a reminder that a new admin
+  // page is a deliberate decision rather than a default.
+  "/admin/safety",
 ];
 
 /** Routes that must stay reachable without a session. */
@@ -95,6 +99,9 @@ const MUST_BE_PUBLIC = [
   "/for-students",
   "/privacy",
   "/terms",
+  // A policy page about minors has to be readable without an account: it is
+  // what a parent or a school is sent when they ask what the rules are.
+  "/safety",
   "/professors/abc12345",
 ];
 
