@@ -185,6 +185,62 @@ export function feedbackReportEmail({
   };
 }
 
+/**
+ * Tells the team that a safety report landed.
+ *
+ * Deliberately louder than the feedback notification, and for the same reason
+ * that one is deliberately quiet: this may be the only thing anyone reads today
+ * that concerns a child. The subject line carries the two facts that decide how
+ * fast it is opened - whether a minor is involved, and what the concern is - so
+ * the inbox sorts itself without a rule.
+ *
+ * Like the feedback notice, the email is not the transport: the report is stored
+ * in `safety_reports` (db/migrations/0014) before this is attempted, and a report
+ * made from a thread also carries its own copy of the messages, so nothing here
+ * being lost costs the evidence.
+ */
+export function safetyReportEmail({
+  categoryLabel,
+  reporterLabel,
+  message,
+  involvesMinor,
+  evidenceCopied,
+  adminUrl,
+}: {
+  categoryLabel: string;
+  reporterLabel: string;
+  message: string;
+  involvesMinor: boolean;
+  evidenceCopied: number;
+  adminUrl: string;
+}): Omit<SendEmailInput, "to"> {
+  const minorFlag = involvesMinor ? "MINOR INVOLVED" : "no minor on the thread";
+  const evidenceLine = evidenceCopied > 0
+    ? `${evidenceCopied} message${evidenceCopied === 1 ? "" : "s"} were copied into the report and will survive the accounts being deleted.`
+    : "No messages were copied - the report was not made from a thread, or the thread was empty.";
+
+  return {
+    subject: `[Safety report] ${minorFlag}: ${categoryLabel}`,
+    // One paragraph, because `layout` escapes the body and HTML collapses the
+    // newlines a human-readable version would want. The plain-text alternative
+    // below is where the line breaks live.
+    html: layout(
+      "New safety report",
+      `${reporterLabel} reported ${categoryLabel.toLowerCase()}. ` +
+        `${involvesMinor ? "A minor was on the thread at the time. " : ""}` +
+        `What they wrote: ${message}`,
+      "Open the safety queue",
+      adminUrl,
+      `${evidenceLine} This email is a heads-up, not the record: the report and its evidence are stored in the admin queue whether or not it arrives.`,
+    ),
+    text:
+      `New safety report (${minorFlag}): ${categoryLabel}\n` +
+      `Reported by ${reporterLabel}:\n\n${message}\n\n` +
+      `${evidenceLine}\n\n` +
+      `The report and its evidence are stored in the admin queue: ${adminUrl}`,
+  };
+}
+
 export function verificationEmail(url: string): Omit<SendEmailInput, "to"> {
   return {
     subject: "Confirm your Schollective email",
