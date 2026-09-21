@@ -8,7 +8,7 @@ import {
 } from "@/lib/profile-input";
 import { checkRateLimit } from "@/lib/security";
 import { isSuspended } from "@/lib/authz";
-import { validateEmail } from "@/lib/validators";
+import { validateEmail } from "@/lib/validators";import { refreshMinorFlag } from "@/lib/neon/youth-protection";
 import {
   defaultStatusForRole,
   isProfileStatus,
@@ -96,6 +96,21 @@ export async function POST(req: Request) {
       id: user.id,
       email: user.email,
     });
+
+    // `profiles.is_minor` is derived, so a write that could change its inputs has
+    // to recompute it: this is the route the signup form and every profile form
+    // save through, and `education_level` is one of the two signals (the date of
+    // birth is the other, and lives in a table this one does not touch).
+    //
+    // Best effort, and after the save rather than before it: the profile write is
+    // what the caller asked for, and a flag that could not be refreshed must not
+    // turn a successful save into an error. A stale flag errs towards protecting
+    // — the message guard still reads the education level as a fallback.
+    try {
+      await refreshMinorFlag(user.id);
+    } catch (err: unknown) {
+      console.error("[profile/update] Could not refresh the youth protection flag:", err);
+    }
 
     return NextResponse.json({ success: true, profile: updated }, { headers: PRIVATE_HEADERS });
   } catch (err: unknown) {
