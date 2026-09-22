@@ -330,11 +330,11 @@ export const AiProfileReviewerCard = React.memo(function AiProfileReviewerCard({
               Admissions Calibration
             </span>
             <h3 className="font-display text-xl font-extrabold text-slate-900 m-0 tracking-tight">
-              AI Profile <span className="font-light italic text-indigo-600">Reviewer</span>
+              AI Profile <span className="text-indigo-600">Reviewer</span>
             </h3>
           </div>
           <p className="text-xs sm:text-sm text-slate-600 m-0">
-            Calibrated on Harvard admissions 1–6 rubric: Academic Rigor, Domain Alignment, Leadership, & Completeness.
+            Reviewed on four dimensions: academic rigour, domain alignment, leadership, and completeness.
           </p>
         </div>
 
@@ -414,7 +414,7 @@ export const AiProfileReviewerCard = React.memo(function AiProfileReviewerCard({
                       }`}
                     >
                       {review.status === "Ready for Outreach"
-                        ? "Ready for Faculty Outreach ✓"
+                        ? "Ready for Faculty Outreach"
                         : "Edits Recommended Before Outreach"}
                     </div>
                   </div>

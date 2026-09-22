@@ -256,7 +256,7 @@ function LoginContent() {
               fontFamily: "var(--font-sans)",
               whiteSpace: "nowrap",
             }}>
-              Create Account →
+              Get Started
             </span>
           </Link>
         </div>
@@ -282,7 +282,7 @@ function LoginContent() {
             marginBottom: "3.5rem",
           }}>
             Welcome<br />
-            <em style={{ fontStyle: "italic", color: "var(--accent)", fontWeight: 300 }}>back.</em>
+            <em style={{ color: "var(--accent)" }}>back.</em>
           </motion.h1>
 
           <form onSubmit={handleSubmit} method="post">
@@ -320,7 +320,7 @@ function LoginContent() {
                   size="lg"
                   className="w-full uppercase tracking-widest text-[0.6rem]"
                 >
-                  {loading ? "Authenticating…" : "Sign In"}
+                  {loading ? "Authenticating…" : "Log In"}
                 </Button>
 
                 {/* Divider */}
@@ -357,7 +357,7 @@ function LoginContent() {
               }}>
                 New to Schollective?{" "}
                 <Link href={signupHref} className="hover:text-indigo-700 transition-colors" style={{ color: "var(--accent)", fontWeight: 700, textDecoration: "none" }}>
-                  Create an account →
+                  Get Started
                 </Link>
               </motion.p>
             </div>

@@ -30,7 +30,7 @@ export default async function AdminUsersPage() {
       <div style={{ display: "flex", flexDirection: "column", gap: "3.5rem" }}>
         <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
           <h1 className="font-display" style={{ fontSize: "clamp(2.4rem, 4.5vw, 3.6rem)", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.035em", lineHeight: 1.1 }}>
-            Registered <em style={{ fontStyle: "italic", color: "var(--accent)", fontWeight: 300 }}>Accounts</em>
+            Registered <em style={{ color: "var(--accent)" }}>Accounts</em>
           </h1>
           <p style={{ fontSize: "0.95rem", color: "var(--text-secondary)", opacity: 0.75, fontWeight: 400, maxWidth: "38rem", lineHeight: 1.8, fontFamily: "var(--font-sans)", marginTop: "0.25rem" }}>
             Browse, search, and manage every account on the Schollective platform. Suspend or reactivate users as needed.

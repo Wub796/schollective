@@ -225,7 +225,7 @@ export default async function ThreadsPage() {
         <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: "2rem", flexWrap: "wrap" }}>
           <h1 className="font-display" style={{ fontSize: "clamp(2.4rem, 4.5vw, 3.6rem)", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.035em", lineHeight: 1.1 }}>
             {displayName}&apos;s{" "}
-            <em style={{ fontStyle: "italic", color: "var(--accent)", fontWeight: 300 }}>threads</em>
+            <em style={{ color: "var(--accent)" }}>threads</em>
           </h1>
           <Link href="/professors" style={{ textDecoration: "none", flexShrink: 0 }}>
             <div style={{

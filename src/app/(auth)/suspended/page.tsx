@@ -64,7 +64,7 @@ export default function SuspendedPage() {
             lineHeight: 1.05,
             margin: 0
           }}>
-            Account <em style={{ fontStyle: "italic", color: "rgba(239, 68, 68, 0.75)" }}>Suspended.</em>
+            Account <em style={{ color: "rgba(239, 68, 68, 0.75)" }}>Suspended.</em>
           </h1>
           <p style={{
             fontSize: "0.88rem",

@@ -6,9 +6,12 @@ import { CustomCursor } from "@/components/ui/CustomCursor";
 import { AmplitudeAnalytics } from "@/components/analytics/AmplitudeAnalytics";
 import { CookieBanner } from "@/components/CookieBanner";
 
+/* These two faces are the site's actual type identity. `globals.css` maps
+   `--font-sans` / `--font-display` onto these properties, so the token layer
+   and the rendered page can no longer drift apart. */
 const mulish = Mulish({
   subsets: ["latin"],
-  variable: "--font-sans",
+  variable: "--font-mulish",
   preload: false,
   display: "swap",
   weight: ["300", "400", "500", "600", "700", "800", "900"],
@@ -16,7 +19,7 @@ const mulish = Mulish({
 
 const arima = Arima({
   subsets: ["latin"],
-  variable: "--font-display",
+  variable: "--font-arima",
   preload: false,
   display: "swap",
   weight: ["300", "400", "500", "600", "700"],
@@ -89,14 +92,20 @@ export const metadata: Metadata = {
     },
   },
 
+  /* Sizes below state what the files actually are. They used to claim
+     48/192/512/180, but `favicon.ico`, `favicon.png`, `apple-touch-icon.png` and
+     `logo.png` are all byte-identical copies of one 400x400 PNG, so every
+     declared size was wrong and the browser was told to pick a file that does
+     not exist. Real per-size variants should be generated from the source art;
+     until then, telling the truth means a browser scales one image instead of
+     choosing among four identical ones. */
   icons: {
     icon: [
-      { url: "/favicon.ico", sizes: "48x48", type: "image/x-icon" },
-      { url: "/favicon.png", sizes: "192x192", type: "image/png" },
-      { url: "/logo.png", sizes: "512x512", type: "image/png" },
+      { url: "/favicon.ico", sizes: "400x400", type: "image/x-icon" },
+      { url: "/logo.png", sizes: "400x400", type: "image/png" },
     ],
     apple: [
-      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+      { url: "/apple-touch-icon.png", sizes: "400x400", type: "image/png" },
     ],
     shortcut: "/favicon.ico",
   },
@@ -106,10 +115,12 @@ export const metadata: Metadata = {
   },
 };
 
+/* No `maximumScale`: pinning it to 1 blocks pinch-zoom (WCAG 1.4.4), and the
+   layout is responsive enough not to need the lock. */
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
+  themeColor: "#faf9f7",
 };
 
 export default function RootLayout({
@@ -119,7 +130,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${mulish.variable} ${arima.variable}`} suppressHydrationWarning>
-      <body className="min-h-screen scroll-smooth" style={{ background: 'var(--bg-base)', color: 'var(--text-primary)' }} suppressHydrationWarning>
+      <body className="min-h-screen scroll-smooth" suppressHydrationWarning>
         {/* JSON-LD structured data for Google rich results + knowledge panel */}
         <script
           type="application/ld+json"
@@ -143,36 +154,34 @@ export default function RootLayout({
           }}
         />
 
-        {/* ── Layer 0: Film-grain noise ──────────────────────────
-            Fixed, pointer-events-none. z-index: 0 via .noise-overlay
-        ─────────────────────────────────────────────────────── */}
-        <div className="noise-overlay" aria-hidden="true" />
+        <a href="#main-content" className="skip-link">Skip to content</a>
 
         {/* ── Amplitude Analytics & Session Replay ───────────── */}
         <AmplitudeAnalytics />
 
-        {/* ── Layer 50: Custom cursor ─────────────────────────── */}
+        {/* ── Layer 50: Custom cursor (opt-in via user preference) ── */}
         <CustomCursor />
 
         {/* ── Layer 10: Page content ──────────────────────────── */}
-        <div className="relative z-[10]">
+        <main id="main-content" className="relative z-[10]">
           {children}
-        </div>
+        </main>
 
         {/* ── Layer 40: Toasts ────────────────────────────────── */}
         <CookieBanner />
 
+        {/* Light surface: a near-black toast on a cream page was the one piece
+            of UI still wearing the old dark theme. */}
         <Toaster
           position="top-right"
           visibleToasts={3}
           toastOptions={{
             style: {
-              background: "rgba(11, 18, 36, 0.96)",
-              backdropFilter: "blur(20px)",
-              border: "1px solid rgba(79, 70, 229, 0.18)",
-              color: "#e8f0ff",
-              borderRadius: "10px",
-              boxShadow: "0 24px 48px rgba(0,0,0,0.55)",
+              background: "var(--bg-surface-1)",
+              border: "1px solid var(--border)",
+              color: "var(--text-primary)",
+              borderRadius: "var(--radius-inset)",
+              boxShadow: "0 12px 32px -8px rgba(15, 23, 42, 0.16)",
               fontFamily: "var(--font-sans)",
               fontSize: "0.875rem",
               zIndex: "var(--z-toast, 9999)" as string,

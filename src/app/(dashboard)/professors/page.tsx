@@ -196,7 +196,7 @@ export default async function ProfessorsPage({ searchParams }: ProfessorsPagePro
 
         <h1 className="font-display" style={{ fontSize: "clamp(2.5rem, 5vw, 4rem)", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.035em", lineHeight: 1.12 }}>
           Discover your{" "}
-          <em style={{ fontStyle: "italic", color: "var(--accent)", fontWeight: 300 }}>intellectual mentor</em>
+          <em style={{ color: "var(--accent)" }}>intellectual mentor</em>
         </h1>
         <p style={{ fontSize: "1.02rem", color: "var(--text-secondary)", opacity: 0.8, fontWeight: 400, maxWidth: "46rem", lineHeight: 1.85, fontFamily: "var(--font-sans)", marginTop: "0.35rem" }}>
           Connect with verified experts across all academic disciplines. Every professor

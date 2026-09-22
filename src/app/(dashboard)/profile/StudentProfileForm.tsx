@@ -53,7 +53,7 @@ export function getEducationLevelConfig(level: string) {
   if (isHighSchool) {
     return {
       category: "high_school",
-      badge: "🎓 High School Scholar",
+      badge: "High School Scholar",
       schoolLabel: "High School Name",
       majorLabel: "Intended Major / Research Focus",
       gradYearLabel: "High School Graduation Year",
@@ -64,14 +64,14 @@ export function getEducationLevelConfig(level: string) {
         "Remote Independent Study",
         "Year-round Mentorship",
       ],
-      tip: "💡 High Schooler Guidance: Professors love seeing self-taught coding projects, AP/IB science rigor, science fair initiatives, and genuine curiosity!",
+      tip: "High Schooler guidance: professors respond to self-taught coding projects, AP/IB science rigor, science fair work and genuine curiosity.",
     };
   }
 
   if (isGraduate) {
     return {
       category: "graduate",
-      badge: "🔬 Graduate / Doctoral Scholar",
+      badge: "Graduate / Doctoral Scholar",
       schoolLabel: "Graduate Institution / Research Institute",
       majorLabel: "Degree Program & Field of Study",
       gradYearLabel: "Target Defense / Graduation Year",
@@ -81,14 +81,14 @@ export function getEducationLevelConfig(level: string) {
         "Grant Proposal & Fellowship Review",
         "Postdoctoral Career Advisory",
       ],
-      tip: "💡 Graduate Researcher Guidance: Focus on methodology synergy, dataset availability, and potential publication collaboration.",
+      tip: "Graduate researcher guidance: focus on methodology, dataset availability and whether co-authorship is realistic.",
     };
   }
 
   // Default: College / Undergraduate
   return {
     category: "college",
-    badge: "🏛️ Undergraduate Scholar",
+    badge: "Undergraduate Scholar",
     schoolLabel: "University / College Name",
     majorLabel: "Undergraduate Major & Minor",
     gradYearLabel: "Expected Graduation Year",
@@ -98,7 +98,7 @@ export function getEducationLevelConfig(level: string) {
       "Summer Research Internship",
       "Graduate School Application Prep",
     ],
-    tip: "💡 Undergrad Guidance: Highlight relevant lab techniques, programming languages, and upper-division math/science classes!",
+    tip: "Undergraduate guidance: highlight lab techniques, programming languages and upper-division math and science coursework.",
   };
 }
 

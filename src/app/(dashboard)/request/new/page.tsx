@@ -82,7 +82,7 @@ export default async function RequestNewPage({ searchParams }: RequestNewPagePro
           color: "var(--text-primary)", letterSpacing: "-0.035em", lineHeight: 1.1,
         }}>
           Initiate your{" "}
-          <em style={{ fontStyle: "italic", color: "var(--accent)", fontWeight: 300 }}>
+          <em style={{ color: "var(--accent)" }}>
             intellectual dialogue
           </em>
         </h1>

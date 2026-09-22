@@ -60,7 +60,7 @@ export function AiProfessorRecommendations() {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "1.25rem" }}>
         <div>
           <h3 className="font-display" style={{ fontSize: "1.35rem", fontWeight: 800, color: "var(--text-primary)", margin: 0, letterSpacing: "-0.025em" }}>
-            Recommended <em style={{ fontStyle: "italic", color: "var(--accent)", fontWeight: 300 }}>Professors</em>
+            Recommended <em style={{ color: "var(--accent)" }}>Professors</em>
           </h3>
         </div>
 

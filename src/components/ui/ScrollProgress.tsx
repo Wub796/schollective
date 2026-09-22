@@ -1,51 +1,54 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
+/**
+ * ScrollProgress — a hairline reading indicator pinned to the top of the page.
+ *
+ * Previously this subscribed to `scroll` on both `window` and `document` *and*
+ * ran a 60ms `setInterval`, so it recomputed position ~17 times a second even
+ * when nothing had scrolled, then wrote `style.width` (a layout-triggering
+ * property) on a 3px bar with a two-layer glow. One listener and a transform
+ * gets the same result without the layout work or the polling.
+ */
 export function ScrollProgress() {
+  const barRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
-    let prev = -1;
+    let frame = 0;
 
-    const tick = () => {
-      const y = window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0;
-      const max = document.documentElement.scrollHeight - window.innerHeight || 1;
-      const p = Math.max(0, Math.min(100, (y / max) * 100));
-
-      if (p !== prev) {
-        prev = p;
-        const bar = document.getElementById("scroll-progress-bar");
-        if (bar) bar.style.width = p + "%";
+    const update = () => {
+      frame = 0;
+      const doc = document.documentElement;
+      const max = doc.scrollHeight - window.innerHeight;
+      const progress = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+      if (barRef.current) {
+        barRef.current.style.transform = `scaleX(${progress})`;
       }
     };
 
-    window.addEventListener("scroll", tick, { passive: true });
-    document.addEventListener("scroll", tick, { passive: true });
-    const id = setInterval(tick, 60);
-    tick();
+    const onScroll = () => {
+      if (frame) return;
+      frame = window.requestAnimationFrame(update);
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    update();
 
     return () => {
-      window.removeEventListener("scroll", tick);
-      document.removeEventListener("scroll", tick);
-      clearInterval(id);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (frame) window.cancelAnimationFrame(frame);
     };
   }, []);
 
   return (
     <div
-      id="scroll-progress-bar"
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        height: "3px",
-        width: "0%",
-        background: "linear-gradient(90deg, var(--accent) 0%, #818cf8 50%, #a5b4fc 100%)",
-        boxShadow: "0 0 12px rgba(79, 70, 229, 0.8), 0 0 24px rgba(99, 102, 241, 0.4)",
-        zIndex: 999999,
-        pointerEvents: "none",
-        borderRadius: "0 2px 0 0",
-      }}
+      ref={barRef}
       aria-hidden="true"
+      className="fixed inset-x-0 top-0 h-0.5 origin-left bg-accent"
+      style={{ transform: "scaleX(0)", zIndex: "var(--z-toast)" } as React.CSSProperties}
     />
   );
 }

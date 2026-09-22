@@ -57,7 +57,7 @@ export function MobileStickyBar() {
                 href="/signup"
                 className="px-4 py-2 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white text-[0.7rem] font-bold uppercase tracking-wider shadow-[0_4px_14px_rgba(79,70,229,0.32)] active:scale-95 transition-all select-none"
               >
-                Get Started →
+                Get Started
               </Link>
             </div>
           </div>

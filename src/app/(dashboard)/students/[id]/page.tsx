@@ -177,7 +177,7 @@ export default async function StudentProfilePage({ params }: PageProps) {
           <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem", minWidth: 0 }}>
             <h1 className="font-display" style={{ fontSize: "clamp(2.2rem, 4vw, 3rem)", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.035em", lineHeight: 1.05 }}>
               {given}{student.last_name ? " " : ""}
-              {student.last_name && <em style={{ fontStyle: "italic", color: "var(--accent)", fontWeight: 300 }}>{student.last_name}</em>}
+              {student.last_name && <em style={{ color: "var(--accent)" }}>{student.last_name}</em>}
             </h1>
             <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", flexWrap: "wrap" }}>
               {isSelf && <StatusPill>You</StatusPill>}

@@ -58,7 +58,7 @@ export function AcceptingToggle({ initialValue }: AcceptingToggleProps) {
         height: "6px",
         borderRadius: "50%",
         background: accepting ? "rgba(120,220,120,0.8)" : "rgba(15, 23, 42, 0.2)",
-        animation: accepting ? "pulse 2s infinite" : "none",
+        animation: accepting ? "dot-pulse 2s infinite" : "none",
         transition: "background 0.3s",
       }} />
       <span style={{

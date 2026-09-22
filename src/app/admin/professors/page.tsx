@@ -58,7 +58,7 @@ export default async function AdminProfessorsPage() {
       <div style={{ display: "flex", flexDirection: "column", gap: "3.5rem" }}>
         <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
           <h1 className="font-display" style={{ fontSize: "clamp(2.4rem, 4.5vw, 3.6rem)", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.035em", lineHeight: 1.1 }}>
-            Professor <em style={{ fontStyle: "italic", color: "var(--accent)", fontWeight: 300 }}>Roster</em>
+            Professor <em style={{ color: "var(--accent)" }}>Roster</em>
           </h1>
           <p style={{ fontSize: "0.95rem", color: "var(--text-secondary)", opacity: 0.75, fontWeight: 400, maxWidth: "38rem", lineHeight: 1.8, fontFamily: "var(--font-sans)", marginTop: "0.25rem" }}>
             All professor applications and approved faculty. Revoke verification or suspend accounts directly from here.

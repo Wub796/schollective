@@ -114,7 +114,7 @@ function ProfessorDetail({
 
           <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
             <h1 className="font-display" style={{ fontSize: "clamp(2.4rem, 4vw, 3.2rem)", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.035em", lineHeight: 1.05 }}>
-              {honorific ? `${honorific} ` : null}{displayName} <em style={{ fontStyle: "italic", color: "var(--accent)", fontWeight: 300 }}>{surname}</em>
+              {honorific ? `${honorific} ` : null}{displayName} <em style={{ color: "var(--accent)" }}>{surname}</em>
             </h1>
             <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap" }}>
               {/* Verified badge */}
@@ -256,7 +256,7 @@ function ProfessorDetail({
               Schollective connects motivated scholars with verified professors through structured, high-context mentorship requests. Create a free account to send outreach today.
             </p>
             <Button href="/signup" size="lg" className="px-10" style={{ width: "100%", maxWidth: "320px" }}>
-              Get Started for Free
+              Get Started
             </Button>
           </div>
         ) : hasActiveRequest ? (
