@@ -6,7 +6,9 @@ import { runAs } from "@/lib/neon/user-context";
 import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { getFriendNetwork, getThreadMembers, recordThreadRead } from "@/lib/neon/social";
 import { ChatThread, type ThreadParticipant } from "@/components/features/ChatThread";
+import { MinorAnalyticsGuard } from "@/components/analytics/MinorAnalyticsGuard";
 import { CloseThreadButton } from "@/components/features/CloseThreadButton";
+import { ReportSafetyConcern } from "@/components/features/ReportSafetyConcern";
 import { GroupMembersPanel } from "@/components/features/GroupMembersPanel";
 import type { PersonSummary } from "@/components/features/PersonRow";
 import { ArrowLeft, ShieldCheck } from "lucide-react";
@@ -15,6 +17,7 @@ import type { ChatThreadProps } from "@/components/features/ChatThread";
 import { canCloseThread, canInviteCollaborators } from "@/lib/collaboration";
 import { MEMBER_CAN_VIEW_REQUEST } from "@/lib/status";
 import { facultyName, fullName } from "@/lib/people";
+import { minorThreadNotice, threadInvolvesMinor, SAFETY_REPORT_EMAIL } from "@/lib/youth-protection";
 import { parseJsonbArray } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -26,6 +29,8 @@ interface MessagePageProps {
 interface ParticipantRow extends PersonSummary {
   role: string;
   expertise_fields?: unknown;
+  /** Derived from the date of birth; see db/migrations/0014. */
+  is_minor?: boolean | null;
 }
 
 interface MessageRow {
@@ -65,7 +70,8 @@ export default async function MessagePage({ params }: MessagePageProps) {
 
   const [leadRows, professorRows, members, messages] = await Promise.all([
     runAs(user.id, async () => sql`
-      SELECT id, first_name, last_name, preferred_name, role, avatar_url, institution, major, education_level
+      SELECT id, first_name, last_name, preferred_name, role, avatar_url, institution, major,
+             education_level, is_minor
       FROM profiles WHERE id = ${request.student_id} LIMIT 1;
     `),
     runAs(user.id, async () => sql`
@@ -85,6 +91,7 @@ export default async function MessagePage({ params }: MessagePageProps) {
 
   const unknownPerson = (id: string, fallbackRole: string): ParticipantRow => ({
     id, first_name: null, last_name: null, preferred_name: null, honorific: null, role: fallbackRole,
+    is_minor: null,
   });
   const lead = leadRows[0] ?? unknownPerson(request.student_id, "student");
   const professor = professorRows[0] ?? unknownPerson(request.professor_id, "professor");
@@ -92,6 +99,17 @@ export default async function MessagePage({ params }: MessagePageProps) {
   const isProfessor = role === "professor";
   const isGroup = members.length > 0;
   const joinedCount = members.filter((member) => member.status === "joined").length;
+
+  // A minor on the thread changes what may be written on it, so the rule is
+  // stated where the conversation happens rather than only on a policy page
+  // nobody opens. The education levels are already loaded for the header, so
+  // this costs no extra query. The same rule is enforced server-side in
+  // sendMessage — this notice explains a refusal, it is not the guard itself.
+  const involvesMinor =
+    lead.is_minor === true ||
+    members.some((member) => member.is_minor === true) ||
+    threadInvolvesMinor([lead.education_level, ...members.map((member) => member.education_level)]);
+  const safetyNotice = involvesMinor ? minorThreadNotice(isProfessor ? "professor" : "student") : null;
 
   // The person shown in the header: the professor for students, the lead for the professor.
   const participant = isProfessor ? lead : professor;
@@ -120,6 +138,10 @@ export default async function MessagePage({ params }: MessagePageProps) {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100vh", background: "transparent", overflow: "hidden" }}>
+      {/* This route sits outside the (dashboard) group, so it carries its own
+          copy of what that layout does for a minor account. */}
+      <MinorAnalyticsGuard isMinor={profile?.is_minor === true} />
+
       {/* Header */}
       <header style={{
         display: "flex", alignItems: "center", justifyContent: "space-between",
@@ -200,11 +222,56 @@ export default async function MessagePage({ params }: MessagePageProps) {
           }}>
             {request.status}
           </div>
+          {/* Available to every participant, in every status, including a
+              declined or closed thread: the report is often about what happened
+              before it ended, and a thread that cannot be reported is a thread
+              that cannot be reported. */}
+          <ReportSafetyConcern requestId={request.id} reportedName={participantTitle} />
           {request.status === "active" && canCloseThread(role, request.status) && (
             <CloseThreadButton requestId={request.id} isGroup={isGroup} />
           )}
         </div>
       </header>
+
+      {/* Youth protection notice — only on a thread with a high-school student
+          on it, so an all-adult thread is unmarked. */}
+      {safetyNotice && (
+        <div
+          role="note"
+          style={{
+            display: "flex", alignItems: "flex-start", gap: "0.7rem",
+            padding: "0.7rem 2rem", flexShrink: 0,
+            background: "var(--accent-dim)",
+            borderBottom: "1px solid rgba(79, 70, 229, 0.18)",
+          }}
+        >
+          <ShieldCheck size={14} style={{ color: "var(--accent)", flexShrink: 0, marginTop: "0.15rem" }} />
+          <div style={{ minWidth: 0 }}>
+            <div style={{ fontSize: "0.7rem", fontWeight: 700, color: "var(--text-primary)", fontFamily: "var(--font-sans)" }}>
+              {safetyNotice.headline}
+            </div>
+            <div style={{ fontSize: "0.66rem", color: "var(--text-secondary)", opacity: 0.85, lineHeight: 1.6, fontFamily: "var(--font-sans)", marginTop: "0.15rem" }}>
+              {safetyNotice.detail}{" "}
+              <Link
+                href="/safety"
+                className="link-underline"
+                style={{ color: "var(--accent)", fontWeight: 700, textDecoration: "none" }}
+              >
+                Youth Protection Policy
+              </Link>
+              {" — report a concern to "}
+              <a
+                href={`mailto:${SAFETY_REPORT_EMAIL}`}
+                className="link-underline"
+                style={{ color: "var(--accent)", fontWeight: 700, textDecoration: "none" }}
+              >
+                {SAFETY_REPORT_EMAIL}
+              </a>
+              .
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Chat — fills remaining height. A div, not a `main`: the root layout
           already provides this page's main landmark. */}
