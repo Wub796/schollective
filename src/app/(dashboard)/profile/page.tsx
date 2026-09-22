@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AccountSecuritySettings } from "@/components/features/AccountSecuritySettings";
+import { AgeStatementSettings } from "@/components/features/AgeStatementSettings";
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -50,6 +51,11 @@ export default function ProfilePage() {
       </header>
 
       <div style={{ height: "1px", background: "rgba(99, 102, 241, 0.15)" }} />
+
+      {/* Before the security panel, and mounted for every role because only the
+          student variant renders: onboarding asks new accounts, and this is how
+          an account that predates that question ever gets asked at all. */}
+      <AgeStatementSettings role={profile?.role} />
 
       <AccountSecuritySettings profile={profile} />
     </div>

@@ -1,5 +1,6 @@
 import { AppShell } from "@/components/layout/AppShell";
 import { AdminViewBanner } from "@/components/ui/AdminViewBanner";
+import { MinorAnalyticsGuard } from "@/components/analytics/MinorAnalyticsGuard";
 import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { isSuspended } from "@/lib/authz";
 import { RESTORE_PATH, isDeactivated } from "@/lib/account-deletion";
@@ -39,6 +40,10 @@ export default async function DashboardLayout({
 
   return (
     <AppShell role={effectiveRole}>
+      {/* Rendered from here because this layout is the first signed-in surface
+          that knows the account's age. See the component: consent is not
+          enough for a minor. */}
+      <MinorAnalyticsGuard isMinor={profile?.is_minor === true} />
       {adminViewAs && <AdminViewBanner role={adminViewAs} />}
       {children}
     </AppShell>
