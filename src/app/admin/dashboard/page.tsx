@@ -7,8 +7,10 @@ import { AdminShell } from "@/components/ui/AdminShell";
 import { AdminReviewTable } from "@/components/features/AdminReviewTable";
 import { AdminPreviewControls } from "@/components/features/AdminPreviewControls";
 import { AdminSafetyQueue } from "@/components/features/AdminSafetyQueue";
+import { countSafetyByStatus, type SafetyReportCounts } from "@/lib/neon/youth-protection";
+import Link from "next/link";
 import {
-  Users, GraduationCap, MessageSquare, ClipboardCheck,
+  Users, GraduationCap, MessageSquare, ClipboardCheck, ShieldAlert,
 } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -105,6 +107,20 @@ export default async function AdminDashboard() {
     sql`SELECT COUNT(*)::int as count FROM requests WHERE status = 'active';`,
   ]))) as [AdminProfessorRow[], CountRow[], CountRow[], CountRow[]];
 
+  // The unread safety count, and the first thing on this page when it is not
+  // zero. Read separately from the query above and with its own catch: the 0014
+  // tables are created by the runtime bootstrap, but a deployment that turned
+  // `AUTH_SCHEMA_AUTO_MIGRATE` off and has not applied the migration would
+  // otherwise 500 the entire admin overview over a badge. Without the count the
+  // page is exactly what it was; with it, an unread report about a child is not
+  // something an admin has to go looking for.
+  const safetyCounts = await runAs(user.id, async () =>
+    countSafetyByStatus().catch((err: unknown) => {
+      console.error("[admin] Could not read the safety queue counts:", err);
+      return null;
+    }),
+  ) as SafetyReportCounts | null;
+
   const studentCount = studentCountRes[0]?.count || 0;
   const activeStudentCount = activeStudentCountRes[0]?.count || 0;
   const activeThreadsCount = activeThreadsCountRes[0]?.count || 0;
@@ -136,6 +152,29 @@ export default async function AdminDashboard() {
           </p>
           <AdminPreviewControls />
         </div>
+
+        {/* ── Unread safety reports ── */}
+        {safetyCounts && safetyCounts.new > 0 && (
+          <Link href="/admin/safety" style={{ textDecoration: "none" }}>
+            <div style={{
+              display: "flex", alignItems: "center", gap: "0.9rem",
+              padding: "1rem 1.35rem", borderRadius: "var(--radius-surface)",
+              border: "1px solid rgba(220, 38, 38, 0.35)",
+              background: "rgba(220, 38, 38, 0.06)",
+            }}>
+              <ShieldAlert size={18} style={{ color: "#b91c1c", flexShrink: 0 }} />
+              <div>
+                <div style={{ fontSize: "0.85rem", fontWeight: 700, color: "var(--text-primary)", fontFamily: "var(--font-sans)" }}>
+                  {safetyCounts.new} safety report{safetyCounts.new === 1 ? "" : "s"} nobody has opened yet
+                </div>
+                <div style={{ fontSize: "0.72rem", color: "var(--text-secondary)", fontFamily: "var(--font-sans)", marginTop: "0.15rem" }}>
+                  Some may involve a minor. Reports made from a thread carry their own copy of the messages —
+                  read it before assuming the thread still exists.
+                </div>
+              </div>
+            </div>
+          </Link>
+        )}
 
         {/* ── Stats ── */}
         <div className="dash-stat-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1.25rem" }}>
