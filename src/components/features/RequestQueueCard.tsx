@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
-import { Check, X, Loader2, Calendar } from "lucide-react";
+import { Check, X, Loader2, Calendar, GraduationCap, Landmark, FlaskConical } from "lucide-react";
 import { updateRequestStatus, markRequestViewed } from "@/app/(dashboard)/prof/dashboard/actions";
 import { toast } from "sonner";
 import { AvatarStack } from "@/components/ui/Avatar";
@@ -103,9 +103,13 @@ export function RequestQueueCard({ request }: RequestQueueCardProps) {
               const edu = request.student?.education_level || "";
               const isHS = edu.includes("high-school");
               const isCol = edu.includes("undergraduate") || edu === "college";
+              // Real icons instead of emoji: emoji render differently on every
+              // platform, cannot take the accent colour, and read as filler.
+              const LevelIcon = isHS ? GraduationCap : isCol ? Landmark : FlaskConical;
               return (
-                <div style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", fontSize: "0.62rem", color: "var(--accent)", background: "rgba(79, 70, 229, 0.08)", padding: "0.2rem 0.6rem", borderRadius: "100px", border: "1px solid rgba(79, 70, 229, 0.2)", fontWeight: 700, marginTop: "0.25rem", fontFamily: "var(--font-sans)" }}>
-                  {isHS ? "🎓 High School" : isCol ? "🏛️ College Undergrad" : "🔬 Graduate"}
+                <div style={{ display: "inline-flex", alignItems: "center", gap: "0.35rem", fontSize: "0.62rem", color: "var(--accent)", background: "rgba(79, 70, 229, 0.08)", padding: "0.2rem 0.6rem", borderRadius: "var(--radius-control)", border: "1px solid rgba(79, 70, 229, 0.2)", fontWeight: 700, marginTop: "0.25rem", fontFamily: "var(--font-sans)" }}>
+                  <LevelIcon size={11} strokeWidth={2.4} aria-hidden="true" />
+                  {isHS ? "High School" : isCol ? "College Undergrad" : "Graduate"}
                   {edu && <span style={{ opacity: 0.7 }}>· {edu.replace(/-/g, " ")}</span>}
                 </div>
               );

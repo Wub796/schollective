@@ -28,7 +28,7 @@ export default function NotFound() {
         <div style={{ marginTop: "-3rem" }}>
           <h1 className="font-display" style={{ fontSize: "clamp(1.8rem, 4vw, 2.8rem)", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.035em", lineHeight: 1.1, marginBottom: "1rem" }}>
             Page not<br />
-            <em style={{ fontStyle: "italic", color: "var(--accent)", fontWeight: 300 }}>found.</em>
+            <em style={{ color: "var(--accent)" }}>found.</em>
           </h1>
           <p style={{ fontSize: "0.88rem", color: "var(--text-secondary)", opacity: 0.8, lineHeight: 1.8, fontFamily: "var(--font-sans)", maxWidth: 400 }}>
             The page you&apos;re looking for doesn&apos;t exist or has been moved.
@@ -47,7 +47,7 @@ export default function NotFound() {
           </Link>
           <Link href="/login" style={{ textDecoration: "none" }}>
             <div style={{ padding: "0.85rem 2rem", background: "rgba(79, 70, 229, 0.06)", color: "var(--accent)", border: "1px solid rgba(79, 70, 229, 0.3)", borderRadius: "100px", fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.2em", textTransform: "uppercase", fontFamily: "var(--font-sans)", cursor: "pointer" }}>
-              Sign In
+              Log In
             </div>
           </Link>
         </div>

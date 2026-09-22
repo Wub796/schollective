@@ -48,7 +48,7 @@ export default async function AdminFeedbackPage() {
               color: "var(--text-primary)", letterSpacing: "-0.035em", lineHeight: 1.1,
             }}
           >
-            Beta <em style={{ fontStyle: "italic", color: "var(--accent)", fontWeight: 300 }}>Feedback</em>
+            Beta <em style={{ color: "var(--accent)" }}>Feedback</em>
           </h1>
           <p style={{
             fontSize: "0.95rem", color: "var(--text-secondary)", opacity: 0.75,

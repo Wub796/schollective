@@ -5,6 +5,16 @@ import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 
 const EASE: [number, number, number, number] = [0.25, 1, 0.5, 1];
 
+/**
+ * PublicTemplate — a short cross-fade between public pages.
+ *
+ * This used to also animate `filter: blur(8px)`, scale the whole page down to
+ * 0.97 and paint a full-screen `#fdfdfd` overlay that flashed to 85% opacity on
+ * every navigation. Animating a filter over a full page forces a repaint of
+ * everything beneath it, and the flash read as a glitch rather than a
+ * transition — a page change needs to signal "new content", not call attention
+ * to itself. What remains is a plain fade and a small lift.
+ */
 export default function PublicTemplate({
   children,
 }: {
@@ -21,42 +31,10 @@ export default function PublicTemplate({
     <AnimatePresence mode="wait" initial={false}>
       <motion.div
         key={pathname}
-        initial={{
-          opacity: 0,
-          y: 40,
-          scale: 0.97,
-          filter: "blur(8px)",
-        }}
-        animate={{
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          filter: "blur(0px)",
-          transition: {
-            duration: 0.6,
-            ease: EASE,
-            filter: { duration: 0.5, ease: "easeOut" },
-          },
-        }}
-        exit={{
-          opacity: 0,
-          y: -20,
-          scale: 0.98,
-          transition: {
-            duration: 0.25,
-            ease: [0.55, 0, 1, 0.45],
-          },
-        }}
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0, transition: { duration: 0.35, ease: EASE } }}
+        exit={{ opacity: 0, transition: { duration: 0.18, ease: "easeIn" } }}
       >
-        {/* Full-screen flash overlay nested inside the page key so it doesn't
-            create a second animating child in AnimatePresence */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: [0, 0.85, 0] }}
-          transition={{ duration: 0.7, ease: "easeInOut", times: [0, 0.3, 1] }}
-          className="fixed inset-0 z-[9998] pointer-events-none"
-          style={{ background: "#fdfdfd" }}
-        />
         {children}
       </motion.div>
     </AnimatePresence>

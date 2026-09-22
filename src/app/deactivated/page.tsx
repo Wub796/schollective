@@ -89,7 +89,7 @@ export default async function DeactivatedPage() {
             lineHeight: 1.05,
             margin: 0,
           }}>
-            Account <em style={{ fontStyle: "italic", color: "var(--accent)", fontWeight: 300 }}>disabled.</em>
+            Account <em style={{ color: "var(--accent)" }}>disabled.</em>
           </h1>
           <p style={{
             fontSize: "0.88rem",

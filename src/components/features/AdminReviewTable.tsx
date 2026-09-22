@@ -95,7 +95,7 @@ function ScoreBadge({ prof }: { prof: PendingProfessor }) {
             }}
           >
             {scoring
-              ? <Loader2 size={8} style={{ animation: "spin 1s linear infinite" }} />
+              ? <Loader2 size={8} style={{ animation: "app-spin 1s linear infinite" }} />
               : <RefreshCw size={8} />
             }
             {scoring ? "Scoring…" : "Rescore"}
@@ -107,8 +107,9 @@ function ScoreBadge({ prof }: { prof: PendingProfessor }) {
       {(prof.ai_flags ?? []).length > 0 && (
         <div style={{ display: "flex", flexDirection: "column", gap: "0.15rem" }}>
           {(prof.ai_flags ?? []).slice(0, 2).map((flag, i) => (
-            <div key={i} style={{ fontSize: "0.48rem", color: "rgba(255,120,60,0.75)", fontFamily: "var(--font-sans)" }}>
-              ⚠ {flag}
+            <div key={i} style={{ display: "flex", alignItems: "center", gap: "0.2rem", fontSize: "0.48rem", color: "rgba(255,120,60,0.75)", fontFamily: "var(--font-sans)" }}>
+              <ShieldAlert size={9} strokeWidth={2.4} style={{ flexShrink: 0 }} aria-hidden="true" />
+              {flag}
             </div>
           ))}
         </div>
