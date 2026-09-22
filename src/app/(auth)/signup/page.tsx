@@ -13,6 +13,7 @@ import { InstitutionInput } from "@/components/ui/InstitutionInput";
 import { PreferredNameHint } from "@/components/profile/PreferredNameHint";
 import { DEFAULT_FACULTY_HONORIFIC } from "@/lib/people";
 import { validateEmail, type EmailValidationResult } from "@/lib/validators-client";
+import { isPresumedMinorEducationLevel } from "@/lib/youth-protection";
 import posthog from "posthog-js";
 import { X, AlertTriangle, Check } from "lucide-react";
 
@@ -264,14 +265,23 @@ function SignupContent() {
         );
       }
 
-      // Identify user and capture signup event
-      posthog.identify(res.data?.user?.id ?? emailInput, {
-        role,
-      });
-      posthog.capture("user_signed_up", {
-        role,
-        signup_method: "email",
-      });
+      // Identify the new account and capture the signup event — unless this is a
+      // high-school student. This is the one place where the age is known BEFORE
+      // an analytics identity exists, so it is the one place a minor can be kept
+      // out of product analytics by declining rather than by tearing down:
+      // sign-in identifies first and learns the age afterwards, which leaves an
+      // event already delivered (see MinorAnalyticsGuard). The education level is
+      // what the form already asked for, and the same helper the server uses
+      // decides it, so the two cannot disagree.
+      if (!isPresumedMinorEducationLevel(educationLevel)) {
+        posthog.identify(res.data?.user?.id ?? emailInput, {
+          role,
+        });
+        posthog.capture("user_signed_up", {
+          role,
+          signup_method: "email",
+        });
+      }
 
       toast.success("Account created successfully!");
       router.refresh();
