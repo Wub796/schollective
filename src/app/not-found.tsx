@@ -44,7 +44,10 @@ export default function NotFound() {
 
         {/* Actions */}
         <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
-          <Link href="/" style={{ textDecoration: "none" }}>
+          {/* `/home` rather than `/`: a 404 is served inside the dashboard as
+              often as it is for a stranger, and a signed-in user belongs on
+              their dashboard, not the marketing page. The route resolves it. */}
+          <Link href="/home" style={{ textDecoration: "none" }}>
             <div style={{ padding: "0.85rem 2rem", background: "var(--accent)", color: "#ffffff", borderRadius: "100px", fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.2em", textTransform: "uppercase", fontFamily: "var(--font-sans)", cursor: "pointer", boxShadow: "0 4px 14px rgba(79, 70, 229, 0.2)" }}>
               Go Home
             </div>
