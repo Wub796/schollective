@@ -65,14 +65,50 @@ Notes for future changes:
   never in git. Rollback is a connection-string change back to `neondb_owner`.
 
 To manage the schema by hand instead, set `AUTH_SCHEMA_AUTO_MIGRATE=false` and
-apply the files yourself. Every statement is idempotent:
+apply the files yourself, in filename order. Every statement is idempotent, so
+re-running one is safe — but re-running an *older* one is not the same as
+applying a newer one, because later files replace objects earlier files create:
 
 ```bash
-psql "$DATABASE_URL" -f db/migrations/0001_better_auth.sql
-psql "$DATABASE_URL" -f db/migrations/0002_ai_profile_review_jobs.sql
-psql "$DATABASE_URL" -f db/migrations/0003_rls_policies.sql
-psql "$DATABASE_URL" -f db/migrations/0004_rls_activate.sql   # requires the schollective_app role to exist
+for file in db/migrations/*.sql; do
+  echo "$file"
+  psql "$DATABASE_URL" -f "$file" || break
+done
 ```
+
+Re-apply a file only when it is the newest state of the object. `0004` is the
+clearest example: it creates `profiles_delete` as admin-only, which `0010`
+replaces so an account can delete its own row. Running `0001`..`0004` over a
+database that already had `0010` silently takes that ability away again, and
+nothing about the app's behaviour says so — under FORCE ROW LEVEL SECURITY the
+deletion just stops matching rows. Several files must also be run by a role the
+policies do not apply to (`neondb_owner`), and they refuse to run otherwise;
+their headers say which.
+
+## Checking what is actually applied
+
+A migration is a file until somebody runs it, and a schema change that was never
+applied looks identical to one that was: the app boots, the pages render, CI
+passes. `db/migrations` cannot tell you the difference — only the database can.
+
+```bash
+npm run verify:db             # the live database, against what this repo says must be true
+npm run verify:db -- --offline   # the repository alone: is each invariant still declared?
+```
+
+It reads the catalogs (read-only — every statement is a `SELECT` against `pg_*`
+and `information_schema`) and reports, for the environment `DATABASE_URL` or
+`DATABASE_URL_UNPOOLED` points at: row-level security enabled *and* forced on
+every app table, the policies whose contents are load-bearing (an older
+migration can leave a policy present but wrong), the current body of the guard
+functions, the indexes the bootstrap promises, and the app role's privileges.
+It exits non-zero on any problem, so it belongs in the release checklist next to
+`npm run verify:email`.
+
+The failure it was written for is real and was live: `0004`'s admin-only
+`profiles_delete` was in production while `0010` said otherwise, so "delete my
+account" answered success and deleted nothing. No file in the repository and no
+test in the suite could see it.
 
 ### Applying migrations: encoding
 
@@ -222,9 +258,21 @@ Resend pair is configured (`isEmailConfigured`, i.e. `RESEND_API_KEY` and
 `EMAIL_FROM`). It is
 deliberately a different address from `FEEDBACK_EMAIL_TO`: a report about a child
 and a suggestion about the profile form are not the same inbox, and turning
-feedback notifications off is not a decision to stop hearing about safety. The
-public policy names `safety@schollective.com`, so that mailbox has to exist and
+feedback notifications off is not a decision to stop hearing about safety.The public policy names `safety@schollective.com`, so that mailbox has to exist and
 be read — the `/admin/safety` page says so on screen when the variable is unset.
+
+### 0015 — the safety reporter index
+
+`0015_safety_reporter_index.sql` adds `safety_reports_reporter_idx`. `0014`
+indexed the queue's read (status and category, newest first) and the admin's
+(reported_profile_id), but not the reporter's: `listOwnSafetyReports` filters
+`reporter_id = $1`, the SELECT policy that scopes a report to its author
+(`reporter_id = app_user_id()`) is evaluated per row, and both foreign keys into
+`profiles` are `ON DELETE SET NULL`, which needs to find the referencing rows
+when an account goes. That index is only an index, so the runtime bootstrap
+creates it too (`APP_INDEXES` in `src/lib/neon/schema.ts`) — this file is for a
+database whose schema is managed by hand, and for knowing an environment has it
+without waiting for a request. Either role may run it.
 
 ### 002 — purging disabled accounts (maintenance)
 
