@@ -22,6 +22,7 @@ import {
   threadAudience,
 } from "@/lib/collaboration";
 import { facultyName, fullName } from "@/lib/people";
+import { reviewMentorMessage, threadInvolvesMinor } from "@/lib/youth-protection";
 import { internalError } from "@/lib/utils";
 
 const MESSAGE_RATE_LIMIT = 15;
@@ -43,6 +44,50 @@ async function joinedMemberIds(requestId: string): Promise<string[]> {
     WHERE request_id = ${requestId} AND status = 'joined';
   `;
   return (rows as Array<{ student_id: string }>).map((row) => row.student_id);
+}
+
+/**
+ * Whether any student on this thread is a minor under the youth-protection rules
+ * (src/lib/youth-protection.ts).
+ *
+ * One query for the whole thread — the lead plus every joined member — because a
+ * professor writing to a group does not get to speak freely just because the
+ * lead is 20. Only `joined` members count: an invitee cannot read the thread, so
+ * nothing written here reaches them.
+ *
+ * Two signals, and both are needed:
+ *   - `profiles.is_minor` is the answer the account gave, derived from its date
+ *     of birth (db/migrations/0014) and refreshed on every profile write. It is
+ *     the authority, and it is the one that stops treating a 19-year-old as a
+ *     child once they have corrected their education level.
+ *   - `education_level` is the fallback for an account that has never given a
+ *     date of birth. It is belt-and-braces rather than redundancy: the two agree
+ *     on every account this app has written, and the fallback only matters on a
+ *     database where the derived flag has not been refreshed yet.
+ *
+ * `is_minor` exists because this query runs as the CALLER, and a professor
+ * cannot read a student's `youth_protection` row — nor should they be able to,
+ * to avoid saying the wrong thing. The flag carries the one bit the guard needs
+ * and no more.
+ *
+ * This read runs under the caller's own database identity and row-level
+ * security, exactly as the thread page's read of the same rows does. If it ever
+ * returns nothing, the guard is off rather than blocking every message — the
+ * trade documented in the module: a broken read must not silence a working
+ * thread.
+ */
+async function threadHasMinorStudent(requestId: string, leadStudentId: string): Promise<boolean> {
+  const rows = (await sql`
+    SELECT is_minor, education_level FROM profiles
+    WHERE id = ${leadStudentId}
+       OR id IN (
+         SELECT student_id FROM request_members
+         WHERE request_id = ${requestId} AND status = 'joined'
+       );
+  `) as Array<{ is_minor: boolean | null; education_level: string | null }>;
+
+  if (rows.some((row) => row.is_minor === true)) return true;
+  return threadInvolvesMinor(rows.map((row) => row.education_level));
 }
 
 export async function sendMessage(requestId: string, content: string) {
@@ -82,6 +127,21 @@ export async function sendMessage(requestId: string, content: string) {
     }
 
     return runAs(user.id, async () => {
+      // Youth protection, checked before the row is written. A one-to-one thread
+      // with a high-school student stays on the platform: no phone numbers, no
+      // personal addresses, no other apps, no secrecy. See
+      // src/lib/youth-protection.ts for why the check is inferred from the
+      // education level and why it fails open on an unknown one.
+      const involvesMinor = await threadHasMinorStudent(requestId, access.request.student_id);
+      const safety = reviewMentorMessage({
+        text: sanitisedContent,
+        senderRole: access.role === "professor" ? "professor" : "student",
+        involvesMinor,
+      });
+      if (safety.action === "block") {
+        return { error: safety.reason ?? "This message broke a youth protection rule." };
+      }
+
       // The thread's updated_at moves with this insert, via the
       // messages_touch_request trigger (db/migrations/0008). The explicit UPDATE
       // this used to run was refused for joined members, who may not update a
