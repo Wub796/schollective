@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, Suspense } from "react";
+import React, { useState, useEffect, useRef, Suspense } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -142,6 +142,8 @@ function SignupContent() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const hydrated = useHydrated();
+  /** In-flight lock for the Google button; see handleGoogleSignIn. */
+  const googlePending = useRef(false);
 
   // Sync role if URL search parameter changes
   useEffect(() => {
@@ -155,7 +157,13 @@ function SignupContent() {
   useEffect(() => {
     const errorParam = searchParams.get("error");
     if (errorParam) {
-      if (errorParam === "oauth_exchange_failed") {
+      if (errorParam === "state_mismatch" || errorParam === "state_not_found") {
+        // The stored OAuth state and the browser's state cookie disagree —
+        // usually two starts of the same handshake, since each one overwrites
+        // `__Secure-better-auth.state`, or more than five minutes spent on the
+        // Google side. Name the remedy rather than "an error occurred".
+        setError("That Google sign-up couldn\u2019t be completed. It looks like sign-up was started more than once, or the page was left open too long. Please try again.");
+      } else if (errorParam === "oauth_exchange_failed") {
         setError("Failed to exchange Google account information. Please try again.");
       } else if (errorParam === "oauth_missing_code") {
         setError("The authentication code is missing. Please try again.");
@@ -278,6 +286,11 @@ function SignupContent() {
   };
 
   const handleGoogleSignIn = async () => {
+    // See the note on the login page: React state is not a lock, and a second
+    // start of the same handshake overwrites the state cookie, which strands the
+    // first tab with `?error=state_mismatch`.
+    if (googlePending.current) return;
+    googlePending.current = true;
     try {
       setLoading(true);
       toast.info("Connecting to Google...");
@@ -298,6 +311,8 @@ function SignupContent() {
     } catch (err: any) {
       toast.error(err?.message || "Failed to sign up with Google.");
       setLoading(false);
+      // Released only on failure: on success the browser is leaving for Google.
+      googlePending.current = false;
     }
   };
 
@@ -569,6 +584,9 @@ function SignupContent() {
                 <Button
                   type="button"
                   onClick={handleGoogleSignIn}
+                  // Without this the button stays live through the whole Google
+                  // round trip, and every click overwrites the state cookie.
+                  disabled={loading || !hydrated}
                   variant="ghost"
                   size="lg"
                   className="w-full uppercase tracking-widest text-[0.6rem]"
