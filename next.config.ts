@@ -1,5 +1,20 @@
 import type { NextConfig } from "next";
 
+/**
+ * `next dev` compiles and links every module through `eval` — webpack's devtool
+ * and React Refresh both do it — so a `script-src` without `'unsafe-eval'`
+ * blocks each client chunk outright. The page still server-renders, which is
+ * what makes this so confusing: the HTML, the CSS and the copy all arrive, and
+ * then hydration never happens. Nothing that waits on it works. The nav renders
+ * null until it mounts, and every form whose submit button is gated on
+ * `useHydrated()` — sign-in, sign-up, reset-password — stays disabled forever,
+ * which is why nobody could log in.
+ *
+ * Production bundles do not eval, so this is dev-only: the deployed policy keeps
+ * the tighter `script-src` it had.
+ */
+const isDev = process.env.NODE_ENV === "development";
+
 const securityHeaders = [
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "X-Frame-Options", value: "DENY" },
@@ -36,15 +51,15 @@ const securityHeaders = [
       // style objects, which is a legitimate use of the attribute and not a
       // script-execution vector.
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-      // 'unsafe-eval' removed — nothing here needs eval/new Function, and leaving
-      // it on hands any injected string a direct route to execution.
+      // No `eval`/`new Function` in the app itself, so 'unsafe-eval' is granted
+      // only where the toolchain requires it (see `isDev` above).
       //
       // 'unsafe-inline' in script-src is still present and is the weakest part of
       // this policy: Next's App Router emits inline bootstrap and flight-data
       // scripts, so removing it requires per-request nonces threaded through the
       // document, which needs every page to be dynamically rendered. Tracked as
       // the next step rather than silently accepted — see README.
-      "script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://cdn.amplitude.com https://accounts.google.com https://apis.google.com",
+      `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""} https://static.cloudflareinsights.com https://cdn.amplitude.com https://accounts.google.com https://apis.google.com`,
       "worker-src 'self' blob:",
       "connect-src 'self' https://*.neon.tech wss://*.neon.tech https://*.amplitude.com https://api2.amplitude.com https://sr-client-cfg.amplitude.com https://generativelanguage.googleapis.com https://accounts.google.com https://static.cloudflareinsights.com https://us.i.posthog.com https://us-assets.i.posthog.com https://*.ingest.us.sentry.io https://*.ingest.sentry.io",
       "object-src 'none'",

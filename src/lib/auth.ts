@@ -12,6 +12,7 @@ import { describeMissingDbUrl, getServerlessDbUrl } from "@/lib/neon/db";
 import { ensureAuthSchema } from "@/lib/neon/schema";
 import { passwordResetEmail, sendEmail, verificationEmail } from "@/lib/email";
 import { isSignupEmailAllowed } from "@/lib/email-validation";
+import { resolveTrustedOrigins } from "@/lib/trusted-origins";
 
 const PG_DIALECT = {
   createAdapter: () => new PostgresAdapter(),
@@ -103,16 +104,14 @@ export const auth = betterAuth({
       path: "/",
     },
   },
-  trustedOrigins: [
-    "https://schollective.com",
-    "https://www.schollective.com",
-    "https://schollective.schollective.workers.dev",
-    "http://localhost:3000",
-    "http://localhost:3100",
-    "http://localhost:8787",
-    ...(process.env.BETTER_AUTH_URL ? [process.env.BETTER_AUTH_URL] : []),
-    ...(process.env.NEXT_PUBLIC_APP_URL ? [process.env.NEXT_PUBLIC_APP_URL.replace(/\/$/, "")] : []),
-  ],
+  // Resolved per request rather than once at module load, because the answer
+  // depends on where the request landed. See src/lib/trusted-origins.ts for why
+  // that is the Host header and not NODE_ENV.
+  trustedOrigins: async (request) =>
+    resolveTrustedOrigins(request?.headers?.get?.("host"), {
+      betterAuthUrl: process.env.BETTER_AUTH_URL,
+      publicAppUrl: process.env.NEXT_PUBLIC_APP_URL,
+    }),
   socialProviders: googleProvider,
   /**
    * Database-backed so the counters are shared across Worker isolates. The
