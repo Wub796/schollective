@@ -6,6 +6,7 @@ import { safeInternalPath } from "@/lib/safe-redirect";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/Button";
+import { riseIn, staggerChildren } from "@/components/ui/entrance";
 import { Select } from "@/components/ui/Select";
 import { InstitutionInput } from "@/components/ui/InstitutionInput";
 import { PreferredNameHint } from "@/components/profile/PreferredNameHint";
@@ -13,16 +14,6 @@ import { PreferredTitlePicker } from "@/components/profile/PreferredTitlePicker"
 import { DEFAULT_FACULTY_HONORIFIC, GENDER_CHOICES, honorificOf } from "@/lib/people";
 import { scoreApplication } from "@/app/admin/dashboard/actions";
 import posthog from "posthog-js";
-
-const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
-const fadeUp = {
-  hidden: { opacity: 0, y: 22 },
-  show:   { opacity: 1, y: 0, transition: { duration: 0.9, ease: EASE } },
-};
-const stagger = {
-  hidden: {},
-  show:   { transition: { staggerChildren: 0.09, delayChildren: 0.05 } },
-};
 
 
 
@@ -431,21 +422,21 @@ function OnboardingContent() {
       }} />
 
       <motion.div
-        variants={stagger} initial="hidden" animate="show"
+        variants={staggerChildren} initial="hidden" animate="show"
         style={{
           position: "relative", zIndex: 1,
           width: "100%", maxWidth: "560px",
         }}
       >
         {/* Wordmark */}
-        <motion.div variants={fadeUp} style={{ marginBottom: "3rem" }}>
+        <motion.div variants={riseIn} style={{ marginBottom: "3rem" }}>
           <span className="font-display" style={{ fontSize: "1.1rem", fontWeight: 800, color: "var(--text-primary)", letterSpacing: "-0.02em" }}>
             Schollective
           </span>
         </motion.div>
 
         {/* Eyebrow */}
-        <motion.div variants={fadeUp} style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.5rem" }}>
+        <motion.div variants={riseIn} style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.5rem" }}>
           <span style={{ width: "1.5rem", height: "1px", background: "rgba(15, 23, 42, 0.2)", display: "block" }} />
           <span style={{ fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.38em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.32)", fontFamily: "var(--font-sans)" }}>
             Complete Profile Setup
@@ -453,7 +444,7 @@ function OnboardingContent() {
         </motion.div>
 
         {/* Headline */}
-        <motion.h1 variants={fadeUp} className="font-display" style={{
+        <motion.h1 variants={riseIn} className="font-display" style={{
           fontSize: "clamp(2.4rem, 5vw, 3.5rem)", fontWeight: 900, color: "var(--text-primary)",
           letterSpacing: "-0.035em", lineHeight: 0.95, marginBottom: "2rem",
         }}>
@@ -461,7 +452,7 @@ function OnboardingContent() {
           <em style={{ color: "var(--accent)" }}>academic profile.</em>
         </motion.h1>
 
-        <motion.p variants={fadeUp} style={{
+        <motion.p variants={riseIn} style={{
           fontSize: "0.88rem", color: "rgba(15, 23, 42, 0.55)",
           marginBottom: "2.5rem", lineHeight: 1.7,
         }}>
@@ -470,7 +461,7 @@ function OnboardingContent() {
 
         {/* Role indicator */}
         {hasFixedRole ? (
-          <motion.div variants={fadeUp} style={{ marginBottom: "2.5rem" }}>
+          <motion.div variants={riseIn} style={{ marginBottom: "2.5rem" }}>
             <div style={{
               display: "inline-flex", alignItems: "center", gap: "0.5rem",
               padding: "0.5rem 1.25rem", borderRadius: "100px",
@@ -483,7 +474,7 @@ function OnboardingContent() {
             </div>
           </motion.div>
         ) : (
-          <motion.div variants={fadeUp} style={{
+          <motion.div variants={riseIn} style={{
             display: "flex", gap: "0.5rem", marginBottom: "2.5rem",
             padding: "0.3rem", background: "rgba(15, 23, 42, 0.04)",
             borderRadius: "100px", border: "1px solid rgba(15, 23, 42, 0.07)",
@@ -493,7 +484,7 @@ function OnboardingContent() {
                 key={r} type="button" onClick={() => { setRole(r); setIsDirty(true); }}
                 variant={role === r ? "primary" : "ghost"}
                 size="md"
-                className={`flex-1 ${role !== r && 'border-transparent text-slate-400'}`}
+                className={`flex-1 ${role !== r && 'border-transparent text-ink-mute'}`}
               >
                 {r === "student" ? "Student" : "Professor"}
               </Button>
@@ -512,7 +503,7 @@ function OnboardingContent() {
             }
           }}
         >
-          <motion.div variants={fadeUp} style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }}>
+          <motion.div variants={riseIn} style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }}>
 
             {/* Name row */}
             <div className="grid-2" style={{ gap: "1.5rem" }}>
@@ -705,7 +696,7 @@ function OnboardingContent() {
               size="lg"
               className="w-full uppercase tracking-widest text-[0.6rem]"
             >
-              {loading ? "Setting up your account…" : "Enter the Collective →"}
+              {loading ? "Setting up your account…" : "Finish setup"}
             </Button>
           </motion.div>
         </form>

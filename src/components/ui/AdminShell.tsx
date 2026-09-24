@@ -32,9 +32,11 @@ const stagger = {
   hidden: {},
   show: { transition: { staggerChildren: 0.06, delayChildren: 0.08 } },
 };
+/* Slides, and does not fade: a nav that starts at `opacity: 0` is an empty
+   sidebar until hydration finishes. See src/components/ui/entrance.ts. */
 const itemVariant = {
-  hidden: { opacity: 0, x: -8 },
-  show:   { opacity: 1, x: 0, transition: { duration: 0.45, ease: EASE } },
+  hidden: { x: -8 },
+  show:   { x: 0, transition: { duration: 0.45, ease: EASE } },
 };
 
 /* ─── Sidebar nav link ────────────────────────────────────────────────────── */
@@ -402,17 +404,19 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           <AdminSidebarContent onClose={closeSidebar} />
         </aside>
 
-        <main className="app-main" style={{ background: "var(--bg-base)" }}>
+        {/* The root layout's <main id="main-content"> is this page's one main
+            landmark; this is the layout box that sits inside it. */}
+        <div className="app-main" style={{ background: "var(--bg-base)" }}>
           <motion.div
             key={pathname}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ y: 8 }}
+            animate={{ y: 0 }}
             transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
             className="content-container py-10 sm:py-14"
           >
             {children}
           </motion.div>
-        </main>
+        </div>
       </div>
     </>
   );

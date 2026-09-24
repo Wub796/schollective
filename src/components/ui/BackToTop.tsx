@@ -47,7 +47,7 @@ export function BackToTop() {
         >
           <ArrowUp
             size={18}
-            className="text-indigo-600 transition-transform duration-300 group-hover:-translate-y-0.5"
+            className="text-accent transition-transform duration-300 group-hover:-translate-y-0.5"
             strokeWidth={2.2}
           />
         </motion.button>

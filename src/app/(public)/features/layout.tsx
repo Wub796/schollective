@@ -3,16 +3,16 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Features",
   description:
-    "Explore Schollective's features: role-based integrity, structured request flow, manual academic verification, global mentor network, and real-time thread sync.",
+    "What Schollective does: roles fixed at signup, a three-field request instead of a blank email, manual review of every professor, group requests, one thread per request, and named request states.",
   openGraph: {
     title: "Features | Schollective",
     description:
-      "Explore Schollective's features: role-based integrity, structured request flow, manual academic verification, and real-time mentorship tools.",
+      "What Schollective does: a structured request form, manual review of every professor profile, group requests, and one thread per request.",
   },
   twitter: {
     title: "Features | Schollective",
     description:
-      "Explore Schollective's features: role-based integrity, structured request flow, and real-time mentorship tools.",
+      "What Schollective does: a structured request form, reviewed professor profiles, and one thread per request.",
   },
 };
 
