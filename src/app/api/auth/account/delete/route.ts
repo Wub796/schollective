@@ -18,7 +18,11 @@ const PRIVATE_HEADERS = { "Cache-Control": "private, no-store" };
  * The foreign keys into `profiles` are ON DELETE CASCADE, so deleting the
  * profile row takes the whole graph with it: this user's requests, every
  * message in them, their notifications, friendships, blocks, group memberships
- * and read positions. For a mentorship thread that means the OTHER participant
+ * and read positions. One table does not follow it: `safety_reports` references
+ * profiles with ON DELETE SET NULL (db/migrations/0014), so a safety report — and
+ * the copy of the thread filed with it — outlives both accounts. That is
+ * deliberate, and it is why deleting an account is not a way to erase a report.
+ * For a mentorship thread that means the OTHER participant
  * also loses the conversation — the messages are one row set, not one per
  * reader. That is why the UI demands a typed phrase, why this route re-checks
  * that phrase server side (the button is not the control), and why it is kept
