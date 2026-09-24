@@ -206,8 +206,9 @@ export default async function MessagePage({ params }: MessagePageProps) {
         </div>
       </header>
 
-      {/* Chat — fills remaining height */}
-      <main style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column" }}>
+      {/* Chat — fills remaining height. A div, not a `main`: the root layout
+          already provides this page's main landmark. */}
+      <div style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column" }}>
         <ChatThread
           requestId={requestId}
           initialMessages={messages}
@@ -215,7 +216,7 @@ export default async function MessagePage({ params }: MessagePageProps) {
           status={request.status as ChatThreadProps["status"]}
           participants={isGroup ? participants : undefined}
         />
-      </main>
+      </div>
     </div>
   );
 }

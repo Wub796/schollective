@@ -7,6 +7,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { authClient, authErrorMessage } from "@/lib/auth-client";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/Button";
+import { riseIn, staggerChildren } from "@/components/ui/entrance";
 import { useHydrated } from "@/lib/use-hydrated";
 import { InstitutionInput } from "@/components/ui/InstitutionInput";
 import { PreferredNameHint } from "@/components/profile/PreferredNameHint";
@@ -19,17 +20,6 @@ import { X, AlertTriangle, Check } from "lucide-react";
 export const dynamic = "force-dynamic";
 
 type Role = "student" | "professor";
-
-const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 22 },
-  show: { opacity: 1, y: 0, transition: { duration: 1.1, ease: EASE } },
-};
-const stagger = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.1, delayChildren: 0.1 } },
-};
 
 /* ── Underline field with animated focus state ── */
 function Field({
@@ -339,13 +329,13 @@ function SignupContent() {
           boxShadow: "0 4px 30px rgba(0, 0, 0, 0.03)",
         }}>
           <Link href="/" style={{ textDecoration: "none" }}>
-            <span className="font-display hover:text-indigo-600 transition-colors" style={{ fontSize: "0.95rem", fontWeight: 800, color: "var(--text-primary)", letterSpacing: "-0.02em" }}>
+            <span className="font-display hover:text-accent transition-colors" style={{ fontSize: "0.95rem", fontWeight: 800, color: "var(--text-primary)", letterSpacing: "-0.02em" }}>
               Schollective
             </span>
           </Link>
           <div style={{ width: "1px", height: "1rem", background: "rgba(79, 70, 229, 0.15)" }} />
           <Link href="/login" style={{ textDecoration: "none" }}>
-            <span className="hover:text-indigo-700 transition-colors" style={{
+            <span className="hover:text-accent transition-colors" style={{
               fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.2em",
               textTransform: "uppercase", color: "var(--accent)",
               fontFamily: "var(--font-sans)",
@@ -364,19 +354,19 @@ function SignupContent() {
         position: "relative", zIndex: 1,
       }}>
         <motion.div
-          variants={stagger}
+          variants={staggerChildren}
           initial="hidden"
           animate="show"
           style={{ width: "100%", maxWidth: "480px" }}
         >
           {/* Headline */}
-          <motion.h1 variants={fadeUp} className="font-display" style={{ fontSize: "clamp(2.6rem, 6vw, 3.8rem)", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.035em", lineHeight: 0.95, marginBottom: "3.5rem" }}>
+          <motion.h1 variants={riseIn} className="font-display" style={{ fontSize: "clamp(2.6rem, 6vw, 3.8rem)", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.035em", lineHeight: 0.95, marginBottom: "3.5rem" }}>
             Create your<br />
             <em style={{ color: "var(--accent)" }}>account.</em>
           </motion.h1>
 
           {/* Role selector — pill tabs */}
-          <motion.div variants={fadeUp} style={{ display: "flex", gap: "0.5rem", marginBottom: "2.5rem", padding: "0.3rem", background: "rgba(15, 23, 42, 0.04)", borderRadius: "100px", border: "1px solid rgba(15, 23, 42, 0.07)", width: "100%" }}>
+          <motion.div variants={riseIn} style={{ display: "flex", gap: "0.5rem", marginBottom: "2.5rem", padding: "0.3rem", background: "rgba(15, 23, 42, 0.04)", borderRadius: "100px", border: "1px solid rgba(15, 23, 42, 0.07)", width: "100%" }}>
             {(["student", "professor"] as Role[]).map(r => (
               <Button
                 key={r}
@@ -384,7 +374,7 @@ function SignupContent() {
                 onClick={() => handleRoleChange(r)}
                 variant={role === r ? "primary" : "ghost"}
                 size="md"
-                className={`flex-1 ${role !== r && 'border-transparent text-slate-400'}`}
+                className={`flex-1 ${role !== r && 'border-transparent text-ink-mute'}`}
               >
                 {r === "student" ? "Student" : "Professor"}
               </Button>
@@ -404,12 +394,12 @@ function SignupContent() {
             <div style={{ display: "flex", flexDirection: "column", gap: "3rem" }}>
 
               {/* Name row */}
-              <motion.div variants={fadeUp} className="grid-2" style={{ gap: "1.5rem" }}>
+              <motion.div variants={riseIn} className="grid-2" style={{ gap: "1.5rem" }}>
                 <Field id="first_name" name="first_name" label="First Name" placeholder="Jane" required />
                 <Field id="last_name" name="last_name" label="Last Name" placeholder="Doe" required={role === "professor"} />
               </motion.div>
 
-              <motion.div variants={fadeUp}>
+              <motion.div variants={riseIn}>
                 <Field id="preferred_name" name="preferred_name" label="Preferred Name (optional)" placeholder="Janey" />
                 <PreferredNameHint
                   firstName={typedNames.first_name ?? ""}
@@ -420,7 +410,7 @@ function SignupContent() {
                 />
               </motion.div>
 
-              <motion.div variants={fadeUp}>
+              <motion.div variants={riseIn}>
                 {/* Email field with inline validation feedback */}
                 <div style={{ position: "relative" }}>
                   <label
@@ -549,7 +539,7 @@ function SignupContent() {
                 )}
               </AnimatePresence>
 
-              <motion.div variants={fadeUp}>
+              <motion.div variants={riseIn}>
                 <Field id="password" name="password" type="password" label="Password" placeholder="Min. 8 characters" required />
               </motion.div>
 
@@ -559,7 +549,7 @@ function SignupContent() {
                 </motion.p>
               )}
 
-              <motion.div variants={fadeUp} style={{ paddingTop: "0.25rem", display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+              <motion.div variants={riseIn} style={{ paddingTop: "0.25rem", display: "flex", flexDirection: "column", gap: "0.75rem" }}>
                 <Button
                   type="submit"
                   disabled={loading || !hydrated}
@@ -567,7 +557,7 @@ function SignupContent() {
                   size="lg"
                   className="w-full uppercase tracking-widest text-[0.6rem]"
                 >
-                  {loading ? "Creating account…" : "Enter the Collective"}
+                  {loading ? "Creating account…" : "Create Account"}
                 </Button>
 
                 <div style={{ display: "flex", alignItems: "center", gap: "1rem", margin: "0.5rem 0" }}>
@@ -595,12 +585,12 @@ function SignupContent() {
                 </Button>
               </motion.div>
 
-              <motion.p variants={fadeUp} style={{
+              <motion.p variants={riseIn} style={{
                 textAlign: "center", fontSize: "0.82rem", fontWeight: 500,
                 color: "var(--text-tertiary)", fontFamily: "var(--font-sans)",
               }}>
                 Already have an account?{" "}
-                <Link href="/login" className="hover:text-indigo-700 transition-colors" style={{ color: "var(--accent)", fontWeight: 700, textDecoration: "none" }}>
+                <Link href="/login" className="hover:text-accent transition-colors" style={{ color: "var(--accent)", fontWeight: 700, textDecoration: "none" }}>
                   Sign in →
                 </Link>
               </motion.p>

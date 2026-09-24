@@ -7,22 +7,12 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { safeInternalPath } from "@/lib/safe-redirect";
 import { authClient, authErrorMessage } from "@/lib/auth-client";
 import { Button } from "@/components/ui/Button";
+import { riseIn, staggerChildren } from "@/components/ui/entrance";
 import { useHydrated } from "@/lib/use-hydrated";
 import { toast } from "sonner";
 import posthog from "posthog-js";
 
 export const dynamic = "force-dynamic";
-
-const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 24 },
-  show:   { opacity: 1, y: 0,  transition: { duration: 0.9, ease: EASE } },
-};
-const stagger = {
-  hidden: {},
-  show:   { transition: { staggerChildren: 0.1, delayChildren: 0.1 } },
-};
 
 function Field({
   id, name, type = "text", label, placeholder, required = false, suffix
@@ -219,7 +209,9 @@ function LoginContent() {
   return (
     <div
       style={{
-        minHeight: "100vh",
+        // The consent banner is fixed and out of flow, so a page that fills the
+        // viewport has to make room for it (CookieBanner publishes the height).
+        minHeight: "calc(100vh - var(--cookie-banner-height, 0px))",
         background: "transparent",
         display: "flex",
         flexDirection: "column",
@@ -244,13 +236,13 @@ function LoginContent() {
           boxShadow: "0 4px 30px rgba(0, 0, 0, 0.03)",
         }}>
           <Link href="/" style={{ textDecoration: "none" }}>
-            <span className="font-display hover:text-indigo-600 transition-colors" style={{ fontSize: "0.95rem", fontWeight: 800, color: "var(--text-primary)", letterSpacing: "-0.02em" }}>
+            <span className="font-display hover:text-accent transition-colors" style={{ fontSize: "0.95rem", fontWeight: 800, color: "var(--text-primary)", letterSpacing: "-0.02em" }}>
               Schollective
             </span>
           </Link>
           <div style={{ width: "1px", height: "1rem", background: "rgba(79, 70, 229, 0.15)" }} />
           <Link href={signupHref} style={{ textDecoration: "none" }}>
-            <span className="hover:text-indigo-700 transition-colors" style={{
+            <span className="hover:text-accent transition-colors" style={{
               fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.2em",
               textTransform: "uppercase", color: "var(--accent)",
               fontFamily: "var(--font-sans)",
@@ -265,18 +257,20 @@ function LoginContent() {
       {/* ── Form centered ──────────────────────────────────────── */}
       <div style={{
         flex: 1, display: "flex", alignItems: "center", justifyContent: "center",
-        padding: "8rem 1.5rem 4rem",
+        // Tight enough that the whole form clears the consent banner on a
+        // laptop viewport instead of scrolling behind it.
+        padding: "7rem 1.5rem 2rem",
         position: "relative", zIndex: 1,
       }}>
         <motion.div
-          variants={stagger}
+          variants={staggerChildren}
           initial="hidden"
           animate="show"
           style={{ width: "100%", maxWidth: "480px" }}
         >
 
           {/* Headline */}
-          <motion.h1 variants={fadeUp} className="font-display" style={{
+          <motion.h1 variants={riseIn} className="font-display" style={{
             fontSize: "clamp(2.6rem, 6vw, 3.8rem)", fontWeight: 900,
             color: "var(--text-primary)", letterSpacing: "-0.035em", lineHeight: 0.95,
             marginBottom: "3.5rem",
@@ -287,11 +281,11 @@ function LoginContent() {
 
           <form onSubmit={handleSubmit} method="post">
             <div style={{ display: "flex", flexDirection: "column", gap: "3rem" }}>
-              <motion.div variants={fadeUp}>
+              <motion.div variants={riseIn}>
                 <Field id="email" name="email" type="email" label="Institutional Email" placeholder="name@university.edu" required />
               </motion.div>
 
-              <motion.div variants={fadeUp}>
+              <motion.div variants={riseIn}>
                 <Field
                   id="password" name="password" type="password"
                   label="Password" placeholder="••••••••" required
@@ -311,7 +305,7 @@ function LoginContent() {
                 </motion.p>
               )}
 
-              <motion.div variants={fadeUp} style={{ display: "flex", flexDirection: "column", gap: "0.75rem", paddingTop: "0.25rem" }}>
+              <motion.div variants={riseIn} style={{ display: "flex", flexDirection: "column", gap: "0.75rem", paddingTop: "0.25rem" }}>
                 {/* Primary button */}
                 <Button
                   type="submit"
@@ -351,12 +345,12 @@ function LoginContent() {
               </motion.div>
 
               {/* Footer link */}
-              <motion.p variants={fadeUp} style={{
+              <motion.p variants={riseIn} style={{
                 textAlign: "center", fontSize: "0.82rem", fontWeight: 500,
                 color: "var(--text-tertiary)", fontFamily: "var(--font-sans)",
               }}>
                 New to Schollective?{" "}
-                <Link href={signupHref} className="hover:text-indigo-700 transition-colors" style={{ color: "var(--accent)", fontWeight: 700, textDecoration: "none" }}>
+                <Link href={signupHref} className="hover:text-accent transition-colors" style={{ color: "var(--accent)", fontWeight: 700, textDecoration: "none" }}>
                   Get Started
                 </Link>
               </motion.p>

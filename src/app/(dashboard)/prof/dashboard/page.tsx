@@ -18,7 +18,7 @@ const PROF_TOUR_STEPS: TourStep[] = [
   {
     targetId: "tour-prof-header",
     title: "Your Faculty Dashboard",
-    description: "Welcome to your command center. From here you can manage availability, review student requests, and fine-tune your research profile — all in one place.",
+    description: "Manage your availability, review student requests, and edit your research profile.",
     icon: Landmark,
   },
   {

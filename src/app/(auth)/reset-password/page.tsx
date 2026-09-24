@@ -7,19 +7,10 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/Button";
+import { riseIn, staggerChildren } from "@/components/ui/entrance";
 import { useHydrated } from "@/lib/use-hydrated";
 
 export const dynamic = "force-dynamic";
-
-const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
-const fadeUp = {
-  hidden: { opacity: 0, y: 22 },
-  show:   { opacity: 1, y: 0, transition: { duration: 1.1, ease: EASE } },
-};
-const stagger = {
-  hidden: {},
-  show:   { transition: { staggerChildren: 0.1, delayChildren: 0.1 } },
-};
 
 function Field({ id, name, type = "text", label, placeholder, required = false }: {
   id: string; name: string; type?: string; label: string; placeholder: string; required?: boolean;
@@ -123,21 +114,21 @@ function ResetPasswordContent() {
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: "transparent", display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem" }}>
+    <div style={{ minHeight: "calc(100vh - var(--cookie-banner-height, 0px))", background: "transparent", display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem" }}>
       {/* Removed local glow */}
 
-      <motion.div variants={stagger} initial="hidden" animate="show"
+      <motion.div variants={staggerChildren} initial="hidden" animate="show"
         style={{ position: "relative", zIndex: 1, maxWidth: 480, width: "100%", display: "flex", flexDirection: "column", gap: "3.5rem" }}
       >
         {/* Wordmark */}
-        <motion.div variants={fadeUp}>
+        <motion.div variants={riseIn}>
           <Link href="/" style={{ textDecoration: "none" }}>
             <span className="font-display" style={{ fontSize: "1.25rem", fontWeight: 800, color: "var(--text-primary)", letterSpacing: "-0.02em" }}>Schollective</span>
           </Link>
         </motion.div>
 
         {/* Eyebrow */}
-        <motion.div variants={fadeUp} style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+        <motion.div variants={riseIn} style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
           <span style={{ width: "1.5rem", height: "1px", background: "rgba(15, 23, 42, 0.2)", display: "block" }} />
           <span style={{ fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.38em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.32)", fontFamily: "var(--font-sans)" }}>
             Password Reset
@@ -145,7 +136,7 @@ function ResetPasswordContent() {
         </motion.div>
 
         {/* Headline */}
-        <motion.h1 variants={fadeUp} className="font-display" style={{ fontSize: "clamp(2.4rem, 5vw, 3.5rem)", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.035em", lineHeight: 0.95 }}>
+        <motion.h1 variants={riseIn} className="font-display" style={{ fontSize: "clamp(2.4rem, 5vw, 3.5rem)", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.035em", lineHeight: 0.95 }}>
           {step === "request" ? <>Recover your<br /><em style={{ color: "var(--accent)" }}>access.</em></> : <>Set a new<br /><em style={{ color: "var(--accent)" }}>password.</em></>}
         </motion.h1>
 
@@ -214,7 +205,7 @@ function ResetPasswordContent() {
         </AnimatePresence>
 
         {/* Back link */}
-        <motion.div variants={fadeUp}>
+        <motion.div variants={riseIn}>
           <Link href="/login" style={{ textDecoration: "none" }}>
             <span style={{ fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(15, 23, 42, 0.3)", fontFamily: "var(--font-sans)" }}>
               ← Back to Login
