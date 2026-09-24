@@ -27,7 +27,11 @@ export default function NotFound() {
 
         <div style={{ marginTop: "-3rem" }}>
           <h1 className="font-display" style={{ fontSize: "clamp(1.8rem, 4vw, 2.8rem)", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.035em", lineHeight: 1.1, marginBottom: "1rem" }}>
-            Page not<br />
+            {/* The space before the break matters: without it the rendered
+                lines are still "Page not" / "found.", but the accessible name
+                concatenates to "Page notfound.". */}
+            Page not{" "}
+            <br />
             <em style={{ color: "var(--accent)" }}>found.</em>
           </h1>
           <p style={{ fontSize: "0.88rem", color: "var(--text-secondary)", opacity: 0.8, lineHeight: 1.8, fontFamily: "var(--font-sans)", maxWidth: 400 }}>
