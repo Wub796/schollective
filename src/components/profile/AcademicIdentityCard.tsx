@@ -435,6 +435,7 @@ export function AcademicIdentityCard({
                   {courseworkList.map((course, idx) => (
                     <span
                       key={idx}
+                      className="pill"
                       style={{
                         display: "inline-flex",
                         alignItems: "center",
@@ -448,7 +449,7 @@ export function AcademicIdentityCard({
                         fontWeight: 600,
                       }}
                     >
-                      {course}
+                      <span style={{ minWidth: 0, overflowWrap: "anywhere" }}>{course}</span>
                       <button
                         type="button"
                         onClick={() => handleRemoveCourse(idx)}
@@ -469,6 +470,7 @@ export function AcademicIdentityCard({
                     key={s}
                     type="button"
                     onClick={() => handleAddCourse(s)}
+                    className="pill"
                     style={{
                       background: "#ffffff",
                       border: "1px solid var(--border)",

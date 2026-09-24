@@ -350,7 +350,7 @@ export const AiProfileReviewerCard = React.memo(function AiProfileReviewerCard({
               ? "0 4px 14px rgba(217, 119, 6, 0.25)"
               : "0 4px 14px rgba(79, 70, 229, 0.25)",
           }}
-          className="w-full sm:w-auto text-white rounded-full px-5 py-2.5 text-xs font-extrabold tracking-wide cursor-pointer flex items-center justify-center gap-2 transition-all hover:opacity-95 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="pill w-full sm:w-auto text-white rounded-full px-5 py-2.5 text-xs font-extrabold tracking-wide cursor-pointer flex items-center justify-center gap-2 transition-all hover:opacity-95 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {cooldownSeconds > 0 ? (
             <>
@@ -423,7 +423,7 @@ export const AiProfileReviewerCard = React.memo(function AiProfileReviewerCard({
                 <div className="flex items-center gap-2">
                   <span className="text-xs text-slate-500 font-medium">Outreach Gate:</span>
                   <span
-                    className={`px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider ${
+                    className={`pill px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider ${
                       review.status === "Ready for Outreach"
                         ? "bg-emerald-100 text-emerald-800"
                         : "bg-amber-100 text-amber-800"
@@ -579,7 +579,7 @@ export const AiProfileReviewerCard = React.memo(function AiProfileReviewerCard({
                           type="button"
                           onClick={() => addInterestTag(topic)}
                           disabled={isAdded}
-                          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all shadow-sm ${
+                          className={`pill inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all shadow-sm ${
                             isAdded
                               ? "bg-emerald-50 text-emerald-700 border border-emerald-200 cursor-default opacity-80"
                               : "bg-indigo-50/80 text-indigo-700 border border-indigo-200 hover:bg-indigo-100 hover:border-indigo-300 cursor-pointer active:scale-95"

@@ -80,7 +80,9 @@ export function ProfessorCard({ professor }: ProfessorCardProps) {
         {/* Pills wrapper */}
         <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "0.45rem" }}>
           {/* Verified pill */}
-          <div style={{
+          <div
+            className="pill"
+            style={{
             display: "flex", alignItems: "center", gap: "0.4rem",
             padding: "0.38rem 0.8rem", borderRadius: "100px",
             border: "1px solid rgba(79, 70, 229, 0.6)",
@@ -98,7 +100,9 @@ export function ProfessorCard({ professor }: ProfessorCardProps) {
           </div>
 
           {/* Availability pill */}
-          <div style={{
+          <div
+            className="pill"
+            style={{
             display: "flex", alignItems: "center", gap: "0.4rem",
             padding: "0.38rem 0.8rem", borderRadius: "100px",
             border: isAccepting ? "1px solid rgba(79, 70, 229, 0.3)" : "1px solid rgba(220, 38, 38, 0.3)",
@@ -153,6 +157,7 @@ export function ProfessorCard({ professor }: ProfessorCardProps) {
             fields.slice(0, 4).map((field, idx) => (
               <span
                 key={idx}
+                className="pill"
                 style={{
                   padding: "0.45rem 0.85rem",
                   borderRadius: "100px",

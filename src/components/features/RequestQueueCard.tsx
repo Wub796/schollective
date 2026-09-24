@@ -172,7 +172,7 @@ export function RequestQueueCard({ request }: RequestQueueCardProps) {
       {((request.student?.academic_interests?.length ?? 0) > 0 || (request.student?.extracurriculars?.length ?? 0) > 0 || ((request.student as any)?.skills_and_tools?.length ?? 0) > 0) && (
         <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem", marginBottom: "1.25rem" }}>
           {request.student?.academic_interests?.map((interest, idx) => (
-            <span key={`i-${idx}`} style={{
+            <span key={`i-${idx}`} className="pill" style={{
               padding: "0.3rem 0.7rem", borderRadius: "100px",
               border: "1px solid rgba(79, 70, 229, 0.2)",
               background: "rgba(79, 70, 229, 0.06)",
@@ -183,7 +183,7 @@ export function RequestQueueCard({ request }: RequestQueueCardProps) {
             </span>
           ))}
           {(request.student as any)?.skills_and_tools?.map((sk: string, idx: number) => (
-            <span key={`sk-${idx}`} style={{
+            <span key={`sk-${idx}`} className="pill" style={{
               padding: "0.3rem 0.7rem", borderRadius: "100px",
               border: "1px solid rgba(16, 185, 129, 0.25)",
               background: "rgba(16, 185, 129, 0.08)",
@@ -194,7 +194,7 @@ export function RequestQueueCard({ request }: RequestQueueCardProps) {
             </span>
           ))}
           {request.student?.extracurriculars?.map((extra, idx) => (
-            <span key={`e-${idx}`} style={{
+            <span key={`e-${idx}`} className="pill" style={{
               padding: "0.3rem 0.7rem", borderRadius: "100px",
               border: "1px solid rgba(15, 23, 42, 0.1)",
               background: "rgba(15, 23, 42, 0.04)",

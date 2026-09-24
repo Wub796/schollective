@@ -159,7 +159,7 @@ export function GroupMembersPanel({
         aria-haspopup="dialog"
         aria-expanded={open}
         aria-label={isGroup ? `Group members, ${students.length} students` : "Add collaborators"}
-        className="btn-action"
+        className="btn-action pill"
         style={{
           display: "inline-flex",
           alignItems: "center",

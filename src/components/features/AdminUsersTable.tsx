@@ -95,7 +95,7 @@ function FilterPill({
   return (
     <button
       onClick={onClick}
-      className="btn-filter-pill"
+      className="btn-filter-pill pill"
       style={{
         padding: "0.55rem 1.4rem",
         borderRadius: "100px",
@@ -110,7 +110,6 @@ function FilterPill({
         textTransform: "uppercase",
         fontFamily: "var(--font-sans)",
         cursor: "pointer",
-        whiteSpace: "nowrap",
       }}
     >
       {label}
@@ -584,7 +583,9 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
                   </div>
                 </div>
                 {/* Role pill */}
-                <span style={{
+                <span
+                  className="pill"
+                  style={{
                   display: "inline-flex", alignItems: "center", gap: "0.25rem",
                   padding: "0.2rem 0.55rem",
                   borderRadius: "6px",
@@ -652,6 +653,7 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
                 {u.role !== "admin" && (
                   <button
                     onClick={() => handleWarn(u.id)}
+                    className="pill"
                     style={{
                       display: "inline-flex", alignItems: "center", gap: "0.35rem",
                       padding: "0.45rem 1.25rem",
@@ -673,7 +675,7 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
                   <button
                     disabled={busy}
                     onClick={() => handleSuspend(u.id, !isSuspended)}
-                    className={isSuspended ? "btn-action-success" : "btn-action-danger"}
+                    className={`pill ${isSuspended ? "btn-action-success" : "btn-action-danger"}`}
                     style={{
                       alignSelf: "flex-start",
                       display: "inline-flex", alignItems: "center", gap: "0.35rem",

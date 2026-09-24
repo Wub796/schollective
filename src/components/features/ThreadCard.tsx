@@ -131,13 +131,14 @@ export function ThreadCard({ request, viewerRole, hasUnread, groupmates = [] }: 
           </div>
 
           {/* Status badge */}
-          <div style={{
+          <div
+            className="pill"
+            style={{
             display: "flex", alignItems: "center", gap: "0.4rem",
             padding: "0.35rem 0.8rem", borderRadius: "100px",
             border: `1px solid ${status.glow}`,
             background: status.glow,
             flexShrink: 0,
-            whiteSpace: "nowrap"
           }}>
             <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: status.bg, flexShrink: 0 }} />
             <span style={{
@@ -160,7 +161,9 @@ export function ThreadCard({ request, viewerRole, hasUnread, groupmates = [] }: 
             }}>
               With {listNames(groupmates)}
             </span>
-            <span style={{
+            <span
+              className="pill"
+              style={{
               marginLeft: "auto", flexShrink: 0,
               fontSize: "0.5rem", fontWeight: 800, letterSpacing: "0.18em", textTransform: "uppercase",
               color: "var(--accent)", background: "rgba(79, 70, 229, 0.08)", border: "1px solid rgba(79, 70, 229, 0.25)",
