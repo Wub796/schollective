@@ -7,11 +7,18 @@ on:
 
 jobs:
   checks:
-    runs-on: ubuntu-latest
+    # Pinned rather than `ubuntu-latest`. The `-latest` label migrates to Ubuntu
+    # 26 on 2026-10-19, so the environment this gate builds in would change
+    # without a single commit to this repository — and a red build should mean
+    # the code changed, not the runner under it.
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      # Both bumped to v7, the majors that declare Node 24. v4 targeted Node 20
+      # and the runner was force-executing it on 24, which is the deprecation
+      # warning attached to every run.
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: npm
