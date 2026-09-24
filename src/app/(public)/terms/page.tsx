@@ -13,7 +13,7 @@ export default function TermsPage() {
     },
     {
       title: "2. Eligibility",
-      body: "You must be at least 13 years old to use Schollective as a student. Professors must be currently employed or affiliated with a recognized academic institution and must provide accurate credential information during registration.",
+      body: "You must be at least 13 years old to use Schollective as a student. Students between 13 and 17 may use the platform only with the knowledge of a parent or guardian. Professors must be currently employed or affiliated with a recognized academic institution and must provide accurate credential information during registration. Every mentorship between a mentor and a student is governed by the Youth Protection Policy at /safety, which forms part of these Terms.",
     },
     {
       title: "3. Academic Integrity",
@@ -29,7 +29,7 @@ export default function TermsPage() {
     },
     {
       title: "6. Prohibited Conduct",
-      body: "You may not use Schollective to: harass, threaten, or abuse other users; share spam, malware, or phishing links; post content that is illegal, defamatory, or sexually explicit; or attempt to reverse-engineer or compromise platform security.",
+      body: "You may not use Schollective to: harass, threaten, or abuse other users; share spam, malware, or phishing links; post content that is illegal, defamatory, or sexually explicit; or attempt to reverse-engineer or compromise platform security. In any conversation with a student you may not ask for a phone number, a personal email address or another messaging app, ask the student to keep anything from a parent or guardian, request photographs, or propose a private meeting. Messages that break these rules are refused before they are sent, and the rules are set out in full at /safety.",
     },
     {
       title: "7. Termination",
@@ -59,7 +59,7 @@ export default function TermsPage() {
             Terms of Service
           </h1>
           <p style={{ fontSize: "0.88rem", color: "var(--text-secondary)", opacity: 0.75, fontFamily: "var(--font-sans)" }}>
-            Last updated: May 2025
+            Last updated: September 2026
           </p>
         </div>
 
