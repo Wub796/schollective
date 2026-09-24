@@ -1,160 +1,131 @@
 "use client";
 
 import React from "react";
-import { Reveal } from "@/components/ui/PublicPage";
+import Image from "next/image";
+import { PageHero, PageSection, RowList, SectionHeading } from "@/components/ui/PublicPage";
 import { ScrollProgress } from "@/components/ui/ScrollProgress";
 import { PublicNav } from "@/components/ui/PublicNav";
 import { PublicFooter } from "@/components/ui/PublicFooter";
 import { Button } from "@/components/ui/Button";
 
-import Image from "next/image";
-
+const PROBLEM = [
+  {
+    title: "For students",
+    body: "Finding a professor who takes high-schoolers means weeks in faculty directories last updated years ago, and most emails go unanswered because they never say what the student has actually done.",
+  },
+  {
+    title: "For professors",
+    body: "Labs get copy-pasted emails every week, and reading each one to work out whether a student has relevant skills is not a good use of an afternoon.",
+  },
+];
 
 const VALUES = [
-  { n: "01", title: "Free for students", body: "No subscriptions, paywalls, or paid tiers." },
-  { n: "02", title: "Verified faculty", body: "Every profile is matched against current university faculty rosters and recent lab publications." },
-  { n: "03", title: "Specific pitches only", body: "We replace blind outreach with structured messages that highlight your actual coursework, technical skills, and familiarity with the lab's papers." },
+  {
+    n: "01",
+    title: "Free for students",
+    body: "No subscription, no paywall, no paid tier. Nothing behind a card.",
+  },
+  {
+    n: "02",
+    title: "Reviewed by a person",
+    body: "An admin checks each faculty application before the profile appears in the directory.",
+  },
+  {
+    n: "03",
+    title: "Specific requests only",
+    body: "A request has to say what you have done and what you want. That is the difference between a question and a broadcast.",
+  },
 ];
 
 const TEAM = [
-  { initials: "AR", name: "Aiden Raj", desc: "Leads product development and faculty outreach across regional universities.", image: "/team/aiden.jpg" },
-  { initials: "AS", name: "Ayaan Siddiqui", desc: "Manages student community growth and school partnership onboarding.", image: "/team/ayaan.jpg" },
-  { initials: "BW", name: "Benjamin Wu", desc: "Builds frontend interfaces and student onboarding flows.", image: "/team/ben.jpg" },
-  { initials: "JH", name: "Joseph Hu", desc: "Builds full-stack application architecture, AI review services, and data integrations.", image: "/team/joseph.jpg" },
-  { initials: "MT", name: "Michelle Truong", desc: "Directs student research resources, academic workshops, and school partner collaborations.", image: "/team/michelle.jpg" },
+  { initials: "AR", name: "Aiden Raj", desc: "Product and faculty outreach.", image: "/team/aiden.jpg" },
+  { initials: "AS", name: "Ayaan Siddiqui", desc: "Student community and school partnerships.", image: "/team/ayaan.jpg" },
+  { initials: "BW", name: "Benjamin Wu", desc: "Frontend and onboarding flows.", image: "/team/ben.jpg" },
+  { initials: "JH", name: "Joseph Hu", desc: "Application architecture, AI review services, data.", image: "/team/joseph.jpg" },
+  { initials: "MT", name: "Michelle Truong", desc: "Research resources and academic workshops.", image: "/team/michelle.jpg" },
 ];
 
 export default function AboutPage() {
   return (
-    <div className="bg-transparent text-ink min-h-screen">
+    <div className="bg-paper font-sans text-ink min-h-screen">
       <ScrollProgress />
       <PublicNav />
 
-      {/* ── HERO ──────────────────────────────────────────── */}
-      <section className="relative z-10 px-8 min-h-[75vh] flex flex-col items-center justify-center pt-36 md:pt-44 pb-20">
-        <div className="w-full max-w-[820px] mx-auto flex flex-col items-center text-center">
-          <Reveal className="w-full flex flex-col items-center">
-            <h1 className="font-display text-[clamp(2.65rem,5.7vw,4.65rem)] font-black tracking-[-0.04em] leading-[1.08] mb-8 text-ink text-center">
-              Research shouldn&apos;t depend on who you know.
-            </h1>
-          </Reveal>
-          <Reveal delay={0.15} className="w-full flex flex-col items-center">
-            <p style={{ textAlign: "center" }} className="text-[clamp(1.05rem,1.35vw,1.2rem)] text-ink-soft leading-relaxed max-w-[680px]">
-              Most students do not have family ties to university labs or attend schools with dedicated research pipelines. Schollective gives anyone with genuine curiosity a direct way to find active professors, understand their publications, and send professional inquiries.
-            </p>
-          </Reveal>
-        </div>
-      </section>
+      <PageHero
+        eyebrow="About"
+        title={
+          <>
+            Research shouldn&apos;t depend on{" "}
+            {/* The accent italic clause is the site's one typographic move: ink
+                for the statement, accent for the part that carries the point.
+                The break is md-only so the clause does not wrap into rags on a
+                phone. */}
+            <br className="hidden md:inline" />
+            <em className="font-light italic text-accent">who you know.</em>
+          </>
+        }
+        lede="Most students have no family tie to a lab and no research programme at their school. Schollective is for anyone willing to read a paper first: find the people who wrote it, see what else they publish, and ask them something specific."
+      >
+        <Button href="/signup" variant="primary" size="lg">
+          Get Started
+        </Button>
+        <Button href="/features" variant="ghost" size="lg">
+          See what it does
+        </Button>
+      </PageHero>
 
-      {/* ── THE PROBLEM ──────────────────────────────────── */}
-      <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-indigo-300/40" style={{ paddingTop: "9rem", paddingBottom: "9rem" }}>
-        <div className="w-full max-w-[920px] mx-auto">
-          <Reveal>
-            <h2 className="font-display text-[clamp(2rem,3.5vw,2.8rem)] font-black tracking-[-0.03em] text-ink mb-12 text-center">
-              Why cold emailing is broken for both sides
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 text-left">
-              <div className="p-8 md:p-10 border border-indigo-300/40 rounded-2xl bg-white/80 shadow-xs flex flex-col gap-4">
-                <h3 className="font-display font-bold text-[clamp(1.4rem,2vw,1.8rem)] tracking-[-0.02em] leading-snug text-ink">
-                  For students
-                </h3>
-                <p className="text-[0.95rem] text-ink-soft/80 leading-relaxed font-sans">
-                  Finding professors who actually take high schoolers takes weeks of digging through outdated faculty directories. Most emails go unanswered because students do not know how to pitch their background.
-                </p>
-              </div>
-              <div className="p-8 md:p-10 border border-indigo-300/40 rounded-2xl bg-white/80 shadow-xs flex flex-col gap-4">
-                <h3 className="font-display font-bold text-[clamp(1.4rem,2vw,1.8rem)] tracking-[-0.02em] leading-snug text-ink">
-                  For professors
-                </h3>
-                <p className="text-[0.95rem] text-ink-soft/80 leading-relaxed font-sans">
-                  Labs receive dozens of generic, copy-pasted templates every week. Faculty do not have time to read through vague pitches to figure out if a student has relevant skills.
-                </p>
-              </div>
-            </div>
-          </Reveal>
-        </div>
-      </section>
+      <PageSection>
+        <SectionHeading>Why cold emailing is broken for both sides</SectionHeading>
+        <RowList items={PROBLEM} columns={2} className="mt-10" />
+      </PageSection>
 
-      {/* ── VALUES ───────────────────────────────────────── */}
-      <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-indigo-300/40" style={{ paddingTop: "9rem", paddingBottom: "9rem" }}>
-        <div className="w-full max-w-[920px] mx-auto">
-          <Reveal>
-            <h2 className="font-display text-[clamp(2.2rem,4vw,3.5rem)] font-black tracking-[-0.04em] leading-[1.05] mb-14 text-ink">
-              How we run Schollective
-            </h2>
-          </Reveal>
-          <div className="w-full">
-            {VALUES.map((v, i) => (
-              <Reveal key={v.n} delay={i * 0.07}>
-                <div className="grid grid-cols-[2.5rem_1fr] md:grid-cols-[3rem_1fr] gap-6 md:gap-8 p-8 md:p-10 mb-6 border border-indigo-300/40 rounded-2xl bg-white/90 text-left items-start shadow-xs">
-                  <span className="w-9 h-9 rounded-full bg-indigo-50 border border-indigo-200/80 text-indigo-600 font-sans font-bold text-xs flex items-center justify-center flex-shrink-0 mt-0.5">{v.n}</span>
-                  <div>
-                    <h3 className="font-display text-[1.35rem] font-bold text-ink tracking-[-0.02em] mb-2">{v.title}</h3>
-                    <p className="text-[0.95rem] text-ink-soft/80 leading-relaxed font-sans">{v.body}</p>
-                  </div>
-                </div>
-              </Reveal>
-            ))}
+      <PageSection>
+        <SectionHeading>How we run Schollective</SectionHeading>
+        <RowList items={VALUES} columns={3} className="mt-10" />
+      </PageSection>
+
+      <PageSection>
+        <SectionHeading>Built by students who lived the problem</SectionHeading>
+        <p className="mt-3 max-w-lg text-[0.95rem] leading-relaxed text-ink-soft text-pretty">
+          Five people, all of whom have written an email to a professor and waited.
+        </p>
+
+        <ul className="m-0 mt-10 grid list-none gap-x-10 gap-y-8 p-0 sm:grid-cols-2 lg:grid-cols-3">
+          {TEAM.map((member) => (
+            <li key={member.name} className="flex items-start gap-4 border-t border-line pt-5">
+              <span className="relative h-11 w-11 shrink-0 overflow-hidden rounded-full border border-line bg-accent/8">
+                {member.image ? (
+                  <Image src={member.image} alt={member.name} width={44} height={44} className="h-full w-full object-cover" />
+                ) : (
+                  <span className="flex h-full w-full items-center justify-center bg-accent font-display text-[0.8rem] font-black text-white">
+                    {member.initials}
+                  </span>
+                )}
+              </span>
+              <span className="min-w-0">
+                <span className="block font-display text-[1.02rem] font-semibold tracking-[-0.01em] text-ink">
+                  {member.name}
+                </span>
+                <span className="mt-1 block text-[0.86rem] leading-relaxed text-ink-soft">{member.desc}</span>
+              </span>
+            </li>
+          ))}
+        </ul>
+      </PageSection>
+
+      <PageSection>
+        <div className="flex flex-col items-start gap-8 md:flex-row md:items-end md:justify-between">
+          <SectionHeading className="md:max-w-xl">
+            Read a paper. Write to the person who wrote it.
+          </SectionHeading>
+          <div className="shrink-0">
+            <Button href="/signup" variant="primary" size="lg">
+              Get Started
+            </Button>
+            <p className="mt-3 text-[0.8rem] text-ink-mute">Free for students. No card.</p>
           </div>
         </div>
-      </section>
-
-      {/* ── TEAM ─────────────────────────────────────────── */}
-      <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-indigo-300/40" style={{ paddingTop: "9rem", paddingBottom: "9rem" }}>
-        <div className="w-full max-w-[1040px] mx-auto">
-          <Reveal>
-            <h2 className="font-display text-[clamp(2.2rem,3.5vw,3rem)] font-black tracking-[-0.04em] leading-[1.05] mb-14 text-ink">
-              Built by students who lived the problem
-            </h2>
-          </Reveal>
-          <div className="flex flex-wrap justify-center gap-6 w-full">
-            {TEAM.map((m, i) => (
-              <Reveal key={m.name} delay={i * 0.07} className="w-full sm:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] max-w-[340px] flex">
-                <div className="p-8 border border-indigo-300/40 rounded-2xl bg-white w-full flex flex-col text-left transition-all duration-300 hover:shadow-md hover:border-indigo-600">
-                  <div className="w-14 h-14 rounded-2xl overflow-hidden mb-6 shadow-sm border border-indigo-200/60 bg-indigo-50 flex-shrink-0">
-                    {m.image ? (
-                      <Image
-                        src={m.image}
-                        alt={m.name}
-                        width={56}
-                        height={56}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-indigo-600 flex items-center justify-center">
-                        <span className="font-display font-black text-lg text-white">{m.initials}</span>
-                      </div>
-                    )}
-                  </div>
-                  <div className="font-display font-bold text-[1.15rem] text-ink tracking-[-0.02em] mb-2">{m.name}</div>
-                  <p className="text-[0.88rem] text-ink-soft/80 leading-relaxed font-sans mt-auto">{m.desc}</p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── CTA ──────────────────────────────────────────── */}
-      <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-indigo-300/40" style={{ paddingTop: "9rem", paddingBottom: "9rem" }}>
-        <div className="w-full max-w-[920px] mx-auto">
-          <Reveal>
-            <div className="border border-indigo-300/50 rounded-3xl bg-indigo-300/10 flex flex-col items-center gap-8 text-center w-full px-8 md:px-16" style={{ paddingTop: "6.5rem", paddingBottom: "6.5rem" }}>
-              <h2 className="font-display font-black text-[clamp(2rem,3.5vw,3rem)] tracking-[-0.04em] text-ink leading-tight max-w-[640px] mx-auto">
-                Reach out to the people behind the research you read.
-              </h2>
-              <div className="flex gap-4 flex-wrap justify-center">
-                <Button href="/signup" variant="primary" size="lg">
-                  Get Started
-                </Button>
-                <Button href="/" variant="ghost" size="lg">
-                  Back to Home
-                </Button>
-              </div>
-            </div>
-          </Reveal>
-        </div>
-      </section>
+      </PageSection>
 
       <PublicFooter />
     </div>

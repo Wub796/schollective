@@ -38,24 +38,24 @@ export function MobileStickyBar() {
         >
           <div className="flex items-center justify-between gap-3 max-w-lg mx-auto">
             <div className="flex flex-col min-w-0">
-              <span className="font-display font-bold text-xs text-slate-900 tracking-tight truncate">
+              <span className="font-display font-bold text-xs text-ink tracking-tight truncate">
                 Schollective
               </span>
-              <span className="font-sans text-[0.66rem] text-slate-500 font-medium truncate">
-                Academic Mentorship
+              <span className="font-sans text-[0.66rem] text-ink-mute font-medium truncate">
+                Structured academic outreach
               </span>
             </div>
 
             <div className="flex items-center gap-2 shrink-0">
               <Link
                 href="/login"
-                className="px-3.5 py-2 rounded-full border border-slate-200/80 text-[0.7rem] font-bold text-slate-700 bg-white/70 hover:bg-white transition-all select-none"
+                className="pill px-3.5 py-2 rounded-full border border-line text-[0.7rem] font-bold text-ink bg-surface/70 hover:bg-surface transition-all select-none"
               >
                 Log In
               </Link>
               <Link
                 href="/signup"
-                className="px-4 py-2 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white text-[0.7rem] font-bold uppercase tracking-wider shadow-[0_4px_14px_rgba(79,70,229,0.32)] active:scale-95 transition-all select-none"
+                className="pill px-4 py-2 rounded-full bg-accent hover:bg-accent-alt text-white text-[0.7rem] font-bold uppercase tracking-wider shadow-[0_4px_14px_rgba(79,70,229,0.32)] active:scale-95 transition-all select-none"
               >
                 Get Started
               </Link>

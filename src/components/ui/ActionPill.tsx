@@ -36,7 +36,9 @@ const TONES: Record<Tone, React.CSSProperties> = {
 
 /**
  * The compact uppercase pill for row-level actions — accept, add, remove.
- * Hover and press timing come from the shared `.btn-action` rule in globals.css.
+ * Hover and press timing come from the shared `.btn-action` rule in globals.css,
+ * and `.pill` is what keeps a longer label — "Request sent", a name with no
+ * spaces — inside the rounded edge instead of running over it.
  */
 export function ActionPill({
   tone = "outline",
@@ -54,7 +56,7 @@ export function ActionPill({
       type="button"
       disabled={inactive}
       aria-busy={loading || undefined}
-      className={["btn-action", className].filter(Boolean).join(" ")}
+      className={["btn-action", "pill", className].filter(Boolean).join(" ")}
       style={{
         display: "inline-flex",
         alignItems: "center",
@@ -67,7 +69,6 @@ export function ActionPill({
         letterSpacing: "0.14em",
         textTransform: "uppercase",
         fontFamily: "var(--font-sans)",
-        whiteSpace: "nowrap",
         cursor: inactive ? "not-allowed" : "pointer",
         opacity: disabled && !loading ? 0.5 : 1,
         ...TONES[tone],

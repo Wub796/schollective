@@ -35,9 +35,11 @@ const SIZES: Record<NonNullable<BaseProps["size"]>, string> = {
 };
 
 /* Focus ring lives on the shared class list: the button previously had none,
-   so keyboard users got only the browser default on a `focus:`-styled control. */
+   so keyboard users got only the browser default on a `focus:`-styled control.
+   `pill` (globals.css) replaces the old `whitespace-nowrap`: a long label wraps
+   and the button grows, rather than the label leaving the button. */
 const BASE =
-  "group relative inline-flex items-center justify-center rounded-control whitespace-nowrap cursor-pointer " +
+  "group relative inline-flex items-center justify-center rounded-control pill cursor-pointer " +
   "transition-[background,border-color,opacity,transform] duration-300 " +
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-paper " +
   "disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98]";

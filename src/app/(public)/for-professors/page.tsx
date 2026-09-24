@@ -1,17 +1,52 @@
 "use client";
 
 import React from "react";
-import { Reveal } from "@/components/ui/PublicPage";
+import { AccentBand, PageHero, PageSection, RowList, SectionHeading } from "@/components/ui/PublicPage";
 import { ScrollProgress } from "@/components/ui/ScrollProgress";
 import { PublicNav } from "@/components/ui/PublicNav";
 import { PublicFooter } from "@/components/ui/PublicFooter";
 import { Button } from "@/components/ui/Button";
+import { ShieldCheck } from "lucide-react";
 
 const BENEFITS = [
-  { n: "01", title: "Verified academic background upfront", body: "Before a student can message you, they must list their completed coursework, technical skills, and current projects so you can gauge their preparation in seconds." },
-  { n: "02", title: "Zero response obligations", body: "You choose whether to respond. Decline or archive inquiries with a single click without cluttering your institutional inbox." },
-  { n: "03", title: "Isolated from your university email", body: "Keep student questions contained in an external dashboard rather than wading through lengthy email threads." },
-  { n: "04", title: "No copy-pasted templates", body: "The outreach editor rejects generic mass messages, requiring students to cite specific papers or methods relevant to your group." },
+  {
+    n: "01",
+    title: "The background is already there",
+    body: "Every request carries the student's topic, coursework, projects and goal, so you can tell what they have done without a follow-up email.",
+  },
+  {
+    n: "02",
+    title: "No obligation to answer",
+    body: "Declining is one click, and a thread you are finished with can be closed. Nothing has to be left hanging.",
+  },
+  {
+    n: "03",
+    title: "Out of your university inbox",
+    body: "Requests and replies live in the dashboard, not in the mail you are already behind on.",
+  },
+  {
+    n: "04",
+    title: "A daily cap on requests",
+    body: "A student can send a handful of requests a day, which is what stops the same message arriving from forty accounts.",
+  },
+];
+
+const AFTER_SIGNUP = [
+  {
+    n: "1",
+    title: "Register",
+    body: "Sign up as faculty with an institutional address, then enter your research areas and the publications you want listed.",
+  },
+  {
+    n: "2",
+    title: "Review",
+    body: "An admin confirms the affiliation. A profile that cannot be matched to an institution stays out of the directory.",
+  },
+  {
+    n: "3",
+    title: "Requests",
+    body: "An approved profile takes requests in the dashboard, each with the student's background attached and no obligation to accept.",
+  },
 ];
 
 const FIELDS = [
@@ -21,157 +56,104 @@ const FIELDS = [
 ];
 
 const FAQ = [
-  { q: "How much time does this take?", a: "Only what you choose. Most participating faculty spend five to ten minutes a month answering an occasional inquiry about literature or experimental methodology." },
-  { q: "Does this commit me to hosting a student in my group?", a: "No. The platform supports discrete academic questions. If a standout student contacts you and you happen to have an open position, you may choose to discuss it, but there is no expectation to take on advisees." },
-  { q: "Can I close a thread?", a: "Yes. You can archive an inquiry or close an active thread whenever a question has been addressed." },
-  { q: "Is there any cost?", a: "Schollective is free for faculty and students." },
+  {
+    title: "How much time does this take?",
+    body: "Only what you choose. A request is one thread with one student, and you can decline it or close it whenever you like.",
+  },
+  {
+    title: "Does this commit me to hosting a student in my group?",
+    body: "No. The platform is for discrete academic questions. If a student impresses you and you happen to have a place going, that conversation is yours to start, and there is no expectation to take on an advisee.",
+  },
+  {
+    title: "Can I close a thread?",
+    body: "Yes. You can archive an inquiry, or close an active thread once the question has been addressed.",
+  },
+  {
+    title: "Is there any cost?",
+    body: "No. Schollective is free for faculty and for students.",
+  },
 ];
 
 export default function ForProfessorsPage() {
   return (
-    <div className="bg-transparent text-ink min-h-screen">
+    <div className="bg-paper font-sans text-ink min-h-screen">
       <ScrollProgress />
       <PublicNav />
 
-      {/* ── HERO ──────────────────────────────────────────── */}
-      <section className="relative z-10 px-8 min-h-[75vh] flex flex-col items-center justify-center pt-36 md:pt-44 pb-20">
-        <div className="w-full max-w-[820px] mx-auto flex flex-col items-center text-center">
-          <Reveal className="w-full flex flex-col items-center">
-            <h1 className="font-display text-[clamp(2.65rem,5.7vw,4.65rem)] font-black tracking-[-0.04em] leading-[1.08] mb-8 text-ink text-center">
-              Fewer generic cold emails. Better questions from students who actually read your work
-            </h1>
-          </Reveal>
-          <Reveal delay={0.15} className="w-full flex flex-col items-center">
-            <p style={{ textAlign: "center" }} className="text-[clamp(1.05rem,1.4vw,1.25rem)] text-ink-soft leading-relaxed max-w-[640px] mb-10">
-              Schollective replaces unvetted email blasts with structured academic inquiries that include verified coursework,
-              technical background, and direct questions about your research.
-            </p>
-          </Reveal>
-          <Reveal delay={0.2} className="w-full flex justify-center">
-            <div className="flex justify-center gap-4 flex-wrap">
-              <Button href="/signup?role=professor" variant="primary" size="lg">
-                Join as Faculty
-              </Button>
-              <Button href="/about" variant="ghost" size="lg">
-                Learn About Us
-              </Button>
-            </div>
-          </Reveal>
-        </div>
-      </section>
+      <PageHero
+        eyebrow="For faculty"
+        title={
+          <>
+            Fewer generic emails,{" "}
+            {/* Ink for the statement, accent italic for the half that carries
+                the point. */}
+            <br className="hidden md:inline" />
+            <em className="font-light italic text-accent">from students who read your work first.</em>
+          </>
+        }
+        lede="Requests arrive with the student's topic, coursework, projects and goal attached, in one thread you can answer, decline or close. None of it lands in your university inbox."
+      >
+        <Button href="/signup?role=professor" variant="primary" size="lg">
+          Join as Faculty
+        </Button>
+        <a href="#verification" className="link-underline text-sm font-semibold text-ink-soft hover:text-accent">
+          How verification works
+        </a>
+      </PageHero>
 
-      {/* ── WHY SCHOLLECTIVE ─────────────────────────────── */}
-      <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-indigo-300/40" style={{ paddingTop: "9rem", paddingBottom: "9rem" }}>
-        <div className="w-full max-w-[920px] mx-auto">
-          <Reveal>
-            <h2 className="font-display text-[clamp(2.2rem,4vw,3.5rem)] font-black tracking-[-0.04em] leading-[1.05] mb-14 text-ink">
-              Why faculty use Schollective instead of an open inbox
-            </h2>
-          </Reveal>
-          <div className="w-full">
-            {BENEFITS.map((b, i) => (
-              <Reveal key={b.n} delay={i * 0.06}>
-                <div className="grid grid-cols-[2.5rem_1fr] md:grid-cols-[3rem_1fr] gap-6 md:gap-8 p-8 md:p-10 mb-6 border border-indigo-300/40 rounded-2xl bg-white/90 text-left items-start shadow-xs">
-                  <span className="w-9 h-9 rounded-full bg-indigo-50 border border-indigo-200/80 text-indigo-600 font-sans font-bold text-xs flex items-center justify-center flex-shrink-0 mt-0.5">{b.n}</span>
-                  <div>
-                    <h3 className="font-display text-[1.35rem] font-bold text-ink tracking-[-0.02em] mb-2">{b.title}</h3>
-                    <p className="text-[0.95rem] text-ink-soft/80 leading-relaxed font-sans">{b.body}</p>
-                  </div>
-                </div>
-              </Reveal>
-            ))}
+      <PageSection>
+        <SectionHeading>Why faculty use this instead of an open inbox</SectionHeading>
+        <RowList items={BENEFITS} columns={2} className="mt-10" />
+      </PageSection>
+
+      <PageSection>
+        <SectionHeading>The areas students ask from</SectionHeading>
+        <p className="mt-3 max-w-lg text-[0.95rem] leading-relaxed text-ink-soft text-pretty">
+          These are the research areas students enter on their profiles. A request names one of them, rather than a whole department.
+        </p>
+        <div className="mt-10 flex flex-wrap gap-2.5">
+          {FIELDS.map((field) => (
+            <span
+              key={field}
+              className="pill rounded-full border border-line bg-surface px-4 py-2 text-[0.82rem] font-medium text-ink-soft"
+            >
+              {field}
+            </span>
+          ))}
+        </div>
+      </PageSection>
+
+      <div id="verification">
+        <AccentBand
+          icon={<ShieldCheck size={28} strokeWidth={1.75} aria-hidden="true" />}
+          title="An admin confirms your affiliation before students see you."
+          body="Faculty registration requires an institutional address. There is no automated approval, and no promised turnaround to miss."
+        />
+      </div>
+
+      <PageSection>
+        <SectionHeading>What happens after you sign up</SectionHeading>
+        <RowList items={AFTER_SIGNUP} columns={3} className="mt-10" />
+      </PageSection>
+
+      <PageSection>
+        <SectionHeading>What faculty need to know</SectionHeading>
+        <RowList items={FAQ} columns={1} className="mt-10" />
+      </PageSection>
+
+      <PageSection>
+        <div className="flex flex-col items-start gap-8 md:flex-row md:items-end md:justify-between">
+          <SectionHeading className="md:max-w-xl">
+            Answer the students who read your work first.
+          </SectionHeading>
+          <div className="shrink-0">
+            <Button href="/signup?role=professor" variant="primary" size="lg">
+              Join as Faculty
+            </Button>
+            <p className="mt-3 text-[0.8rem] text-ink-mute">Free for faculty, and free for students.</p>
           </div>
         </div>
-      </section>
-
-      {/* ── FIELDS ───────────────────────────────────────── */}
-      <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-indigo-300/40" style={{ paddingTop: "9rem", paddingBottom: "9rem" }}>
-        <div className="w-full max-w-[920px] mx-auto">
-          <Reveal>
-            <h2 className="font-display text-[clamp(2.2rem,3vw,3.2rem)] font-black tracking-[-0.04em] leading-[1.05] mb-12 text-ink">
-              Students seeking guidance across every discipline
-            </h2>
-            <div className="flex flex-wrap gap-3 justify-center">
-              {FIELDS.map((f) => (
-                <span key={f} className="px-5 py-2.5 border border-indigo-300/50 rounded-full text-[0.85rem] text-ink bg-white font-sans shadow-2xs font-semibold">
-                  {f}
-                </span>
-              ))}
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* ── VERIFICATION ─────────────────────────────────── */}
-      <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-indigo-300/40" style={{ paddingTop: "9rem", paddingBottom: "9rem" }}>
-        <div className="w-full max-w-[920px] mx-auto">
-          <Reveal>
-            <div className="border border-indigo-300/50 rounded-3xl bg-white/90 shadow-sm w-full px-8 md:px-16" style={{ paddingTop: "6.5rem", paddingBottom: "6.5rem" }}>
-              <h2 className="font-display font-black text-[clamp(1.8rem,2.8vw,2.4rem)] tracking-[-0.03em] text-ink mb-6">
-                Faculty Verification
-              </h2>
-              <div className="w-full flex flex-col items-center justify-center text-center">
-                <p className="text-center text-[1rem] text-ink-soft/80 leading-relaxed max-w-[620px] mb-12 font-sans">
-                  To prevent impersonation, faculty registration requires an active .edu or accredited institutional email address
-                  and a link to your official department profile. Our team confirms institutional affiliation within 24 to 48 hours.
-                </p>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
-                {[
-                  { step: "1", label: "Institutional Profile", desc: "Register with your active .edu or accredited institutional email and official department URL." },
-                  { step: "2", label: "Affiliation Check", desc: "Our team confirms your institutional profile and department standing within 24 to 48 hours." },
-                  { step: "3", label: "Direct Inquiries", desc: "Once verified, receive structured student questions directly in your dashboard on your terms." },
-                ].map(({ step, label, desc }) => (
-                  <div key={step} className="p-7 bg-[#faf9f7] rounded-xl border border-indigo-300/40 flex flex-col gap-2">
-                    <div className="text-[0.6rem] font-bold tracking-[0.25em] uppercase text-indigo-600 font-sans">Step {step}</div>
-                    <div className="font-display font-bold text-[1.1rem] text-ink">{label}</div>
-                    <p className="text-[0.88rem] text-ink-soft/80 leading-relaxed font-sans mt-1">{desc}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* ── FAQ ──────────────────────────────────────────── */}
-      <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-indigo-300/40" style={{ paddingTop: "9rem", paddingBottom: "9rem" }}>
-        <div className="w-full max-w-[920px] mx-auto">
-          <Reveal>
-            <h2 className="font-display text-[clamp(2.2rem,3.5vw,3rem)] font-black tracking-[-0.04em] leading-[1.05] mb-14 text-ink">
-              What faculty need to know
-            </h2>
-          </Reveal>
-          <div className="w-full text-left">
-            {FAQ.map((item, i) => (
-              <Reveal key={i} delay={i * 0.05}>
-                <div className="p-8 md:p-10 mb-6 border border-indigo-300/40 rounded-2xl bg-white/90 shadow-xs">
-                  <h3 className="font-display text-[1.25rem] font-bold text-ink tracking-[-0.02em] mb-3">{item.q}</h3>
-                  <p className="text-[0.95rem] text-ink-soft/80 leading-relaxed max-w-[680px] font-sans">{item.a}</p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── CTA ──────────────────────────────────────────── */}
-      <section className="relative z-10 flex flex-col items-center text-center px-8 border-t border-indigo-300/40" style={{ paddingTop: "9rem", paddingBottom: "9rem" }}>
-        <div className="w-full max-w-[920px] mx-auto">
-          <Reveal>
-            <div className="border border-indigo-300/50 rounded-3xl bg-indigo-300/10 flex flex-col items-center gap-10 text-center w-full px-8 md:px-16" style={{ paddingTop: "6.5rem", paddingBottom: "6.5rem" }}>
-              <div className="flex flex-col gap-4">
-                <h2 className="font-display font-black text-[clamp(2rem,3vw,2.8rem)] tracking-[-0.04em] text-ink leading-tight">
-                  Engage with students who actually read your work.
-                </h2>
-              </div>
-              <Button href="/signup?role=professor" variant="primary" size="lg">
-                Join as Faculty
-              </Button>
-            </div>
-          </Reveal>
-        </div>
-      </section>
+      </PageSection>
 
       <PublicFooter />
     </div>

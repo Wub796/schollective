@@ -3,16 +3,16 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "For Faculty",
   description:
-    "Fewer generic cold emails. Schollective replaces unvetted email blasts with structured academic inquiries with verified coursework and research questions.",
+    "Fewer cold emails. Every request arrives with the student's topic, coursework and goal, you choose who to accept, and declining takes one click.",
   openGraph: {
     title: "For Faculty | Schollective",
     description:
-      "Fewer generic cold emails. Schollective replaces unvetted email blasts with structured academic inquiries with verified coursework and research questions.",
+      "Requests arrive with the student's topic, coursework and goal. You accept or decline each one, and accepted requests open a single thread.",
   },
   twitter: {
     title: "For Faculty | Schollective",
     description:
-      "Fewer generic cold emails. Schollective replaces unvetted email blasts with structured academic inquiries with verified coursework and research questions.",
+      "Requests arrive with the student's topic, coursework and goal. Accept or decline each one.",
   },
 };
 
