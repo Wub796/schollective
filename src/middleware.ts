@@ -22,15 +22,21 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(canonical, 308);
   }
 
-  // NOTE on /api/auth: this middleware never runs for those paths at all — the
-  // matcher below excludes them. There used to be an explicit
-  // `if (path.startsWith("/api/auth")) return next()` here, which could not
-  // execute and implied a protection this function does not provide: the
-  // canonical-host redirect above cannot reach the auth endpoints either. It
-  // does not need to. A visitor arriving on www hits a *page* first, gets
-  // redirected to the apex, and every subsequent /api/auth call their browser
-  // makes is already same-origin. The Google callback is delivered to
-  // BETTER_AUTH_URL, which is the apex.
+  // An OAuth failure that reaches the landing page belongs on the page that can
+  // explain it.
+  //
+  // Better Auth's error endpoint defaults its `errorURL` to `/`, and `/` is a
+  // prerendered marketing page that reads no query parameters — so a visitor
+  // whose Google round trip fails is handed a page that looks entirely normal,
+  // with the reason sitting in the address bar. Forwarding here rather than
+  // reading `searchParams` on `/` keeps `/` prerendered: adding that would make
+  // the busiest page in the app dynamic.
+  if (path === "/" && url.searchParams.has("error")) {
+    const login = new URL("/login", request.url);
+    // Only ever a path and one query value, so this cannot become a redirect.
+    login.searchParams.set("error", url.searchParams.get("error") ?? "");
+    return NextResponse.redirect(login, 307);
+  }
 
   const sessionCookie = getSessionCookie(request);
 
@@ -47,8 +53,32 @@ export async function middleware(request: NextRequest) {
   return NextResponse.next();
 }
 
+/**
+ * NOTE on `/api/auth`: it is deliberately NOT excluded from the matcher any more.
+ *
+ * The exclusion was justified on the grounds that a visitor always reaches a page
+ * first, is canonicalised there, and so every later `/api/auth` call their
+ * browser makes is already same-origin. That holds for a navigation and fails for
+ * every other way a request arrives — and `www.schollective.com` answers
+ * `/api/auth/sign-in/social` with a 200 and a `Set-Cookie`, because the matcher
+ * kept this redirect away from it.
+ *
+ * Better Auth then sets `__Secure-better-auth.state` as a HOST-ONLY cookie on
+ * www, while `redirect_uri` is built from BETTER_AUTH_URL and always names the
+ * apex. Google returns to the apex, which cannot see a cookie set on www, the
+ * state row still exists in the database, and the visitor is bounced to
+ * `/?error=state_mismatch` — an error that names neither the host nor the cookie.
+ * The same split strands the session cookie for anyone who signs in on www.
+ *
+ * Running the middleware here costs nothing: `requiresSession` matches no `/api`
+ * path, so an auth request only ever picks up the canonical host.
+ *
+ * `schollective.schollective.workers.dev` has the same failure and is left alone
+ * on purpose — it is a preview host, and pointing it at the apex would send a
+ * preview deploy's auth calls to production.
+ */
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|api/auth|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };

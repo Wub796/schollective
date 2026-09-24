@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, Suspense } from "react";
+import React, { useState, useEffect, useRef, Suspense } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -80,6 +80,8 @@ function LoginContent() {
   const [loading, setLoading] = useState(false);
   const [error,   setError]   = useState<string | null>(null);
   const hydrated = useHydrated();
+  /** In-flight lock for the Google button; see handleGoogleSignIn. */
+  const googlePending = useRef(false);
 
   const roleParam = searchParams.get("role");
   const signupHref = roleParam ? `/signup?role=${encodeURIComponent(roleParam)}` : "/signup";
@@ -87,7 +89,15 @@ function LoginContent() {
   useEffect(() => {
     const errorParam = searchParams.get("error");
     if (errorParam) {
-      if (errorParam === "oauth_exchange_failed") {
+      if (errorParam === "state_mismatch" || errorParam === "state_not_found") {
+        // The stored OAuth state and the browser's state cookie disagree. In
+        // practice the sign-in was started twice — every start issues a new
+        // state and overwrites `__Secure-better-auth.state`, so the first tab's
+        // state is gone by the time Google returns — or it was left open past
+        // the five minutes that cookie lives. Either way the remedy is to start
+        // again, once, in one tab, so say that rather than "an error occurred".
+        setError("That Google sign-in couldn\u2019t be completed. It looks like sign-in was started more than once, or the page was left open too long. Please try again.");
+      } else if (errorParam === "oauth_exchange_failed") {
         setError("Failed to sign in with Google. Please try again.");
       } else if (errorParam === "oauth_missing_code") {
         setError("Authentication code missing. Please try again.");
@@ -186,6 +196,15 @@ function LoginContent() {
   };
 
   const handleGoogleSignIn = async () => {
+    // React state is not a lock. A second click in the same frame still sees
+    // `loading === false`, because the re-render that disables the button has
+    // not happened yet. Each call to signIn.social issues a NEW state and
+    // overwrites `__Secure-better-auth.state`, so the visitor who completes the
+    // flow in the first tab is bounced to `?error=state_mismatch` having done
+    // nothing wrong. The disabled button closes the visible window; this ref
+    // closes the invisible one.
+    if (googlePending.current) return;
+    googlePending.current = true;
     try {
       setLoading(true);
       toast.info("Connecting to Google...");
@@ -203,6 +222,9 @@ function LoginContent() {
     } catch (err: any) {
       toast.error(err?.message || "Failed to sign in with Google.");
       setLoading(false);
+      // Released only on failure: on success the browser is leaving for Google,
+      // and clearing it first would let a stray click start a second handshake.
+      googlePending.current = false;
     }
   };
 
@@ -328,6 +350,9 @@ function LoginContent() {
                 <Button
                   type="button"
                   onClick={handleGoogleSignIn}
+                  // Without this the button stays live through the whole Google
+                  // round trip, and every click overwrites the state cookie.
+                  disabled={loading || !hydrated}
                   variant="ghost"
                   size="lg"
                   className="w-full uppercase tracking-widest text-[0.6rem]"
