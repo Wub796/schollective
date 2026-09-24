@@ -62,10 +62,11 @@ function StatusPill({ status }: { status: string }) {
   const style = STATUS_STYLES[status] ?? STATUS_STYLES.received;
   return (
     <span
+      className="pill"
       style={{
         fontSize: "0.58rem", fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase",
         color: style.color, background: style.background, border: `1px solid ${style.border}`,
-        padding: "0.2rem 0.6rem", borderRadius: "100px", flexShrink: 0,
+        padding: "0.2rem 0.6rem", borderRadius: "100px",
         fontFamily: "var(--font-sans, monospace)",
       }}
     >

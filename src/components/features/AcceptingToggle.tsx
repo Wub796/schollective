@@ -38,7 +38,7 @@ export function AcceptingToggle({ initialValue }: AcceptingToggleProps) {
       onClick={toggle}
       disabled={isPending}
       title={accepting ? "Click to stop accepting requests" : "Click to accept requests"}
-      className="btn-availability"
+      className="btn-availability pill"
       style={{
         display: "flex",
         alignItems: "center",

@@ -57,7 +57,7 @@ export function CollaboratorPicker({
               aria-pressed={isSelected}
               disabled={unavailable}
               onClick={() => toggle(person.id)}
-              className="btn-action"
+              className="btn-action pill"
               title={!isSelected && atLimit ? `A group can include up to ${max} collaborators` : undefined}
               style={{
                 display: "inline-flex",

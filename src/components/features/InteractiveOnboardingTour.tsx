@@ -12,17 +12,75 @@ import {
   PartyPopper,
   GraduationCap,
   FlaskConical,
+  Home,
+  Camera,
+  Eye,
+  Lightbulb,
+  Bot,
+  PencilLine,
+  Save,
+  Inbox,
+  Landmark,
+  CircleDot,
+  FileText,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+
+/**
+ * The icon a step carries, named rather than referenced.
+ *
+ * These step lists are declared in Server Components and handed to this client
+ * component as props, and props cross that boundary as RSC serialisation, which
+ * carries plain data and nothing else. A lucide icon is a function, so
+ * `icon: Home` arrived at React as `{$$typeof: ..., render: fn}` and threw
+ * "Functions cannot be passed directly to Client Components" — with a digest,
+ * which is why the browser only ever reported the generic "An error occurred in
+ * the Server Components render" and never named the prop. Naming the icon keeps
+ * it a string in flight; `TOUR_ICONS` resolves it back to a component down here,
+ * where the size and colour already live.
+ */
+export type TourIcon =
+  | "home"
+  | "camera"
+  | "eye"
+  | "lightbulb"
+  | "bot"
+  | "pencil"
+  | "save"
+  | "inbox"
+  | "landmark"
+  | "circle-dot"
+  | "file-text";
+
+/**
+ * The names resolve against this map.
+ *
+ * Written out rather than looked up on the lucide namespace so the set that ships
+ * stays tree-shakeable, and so a name a server page invented is a compile error
+ * at that page rather than an undefined render at runtime.
+ */
+const TOUR_ICONS: Record<TourIcon, LucideIcon> = {
+  home: Home,
+  camera: Camera,
+  eye: Eye,
+  lightbulb: Lightbulb,
+  bot: Bot,
+  pencil: PencilLine,
+  save: Save,
+  inbox: Inbox,
+  landmark: Landmark,
+  "circle-dot": CircleDot,
+  "file-text": FileText,
+};
 
 export interface TourStep {
   targetId: string; // matches data-tour attribute
   title: string;
   description: string;
-  /** A real icon from lucide. Steps previously carried raw emoji, which render
-   *  as a different picture on every platform and cannot inherit colour or
-   *  stroke weight from the surrounding UI. */
-  icon?: LucideIcon;
+  /** A named icon from the lucide set; see TourIcon. Steps previously carried raw
+   *  emoji, which render as a different picture on every platform and cannot
+   *  inherit colour or stroke weight from the surrounding UI. */
+  icon?: TourIcon;
   position?: "top" | "bottom" | "left" | "right";
 }
 
@@ -220,6 +278,10 @@ export function InteractiveOnboardingTour({ role, steps, suppressAutoLaunch = fa
   const isTouring = currentStepIndex >= 0 && currentStepIndex < steps.length;
 
   const currentStep = isTouring ? steps[currentStepIndex] : null;
+  // Capitalised: JSX reads a lowercase-leading name as an intrinsic tag rather
+  // than a component, so `<currentStepIcon />` would have emitted an unknown
+  // element instead of the icon.
+  const CurrentStepIcon = currentStep?.icon ? TOUR_ICONS[currentStep.icon] : null;
   const progressPercent = isWelcome
     ? 0
     : isComplete
@@ -693,8 +755,8 @@ export function InteractiveOnboardingTour({ role, steps, suppressAutoLaunch = fa
               }}
             >
               <div style={{ display: "flex", alignItems: "center", gap: "0.45rem" }}>
-                {currentStep.icon && (
-                  <currentStep.icon
+                {CurrentStepIcon && (
+                  <CurrentStepIcon
                     size={15}
                     strokeWidth={2.2}
                     style={{ color: "var(--accent)", flexShrink: 0 }}

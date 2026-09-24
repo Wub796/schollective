@@ -42,11 +42,18 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   `;
   const professor = professors[0];
 
-  if (!professor) return { title: "Professor Profile | Schollective" };
+  if (!professor) return { title: "Professor Profile" };
 
   const professorName = facultyName(professor);
   const expertiseList = parseArray(professor.expertise_fields);
-  const title = `${professorName} — ${professor.institution} | Schollective`;
+  // The document title stays bare here. The root layout sets
+  // `title.template = "%s | Schollective"`, so baking the suffix in as well
+  // produced "Dr. Jane Doe — MIT | Schollective | Schollective" in the tab and
+  // in search results. OpenGraph and Twitter titles do not pass through that
+  // template, so those carry the brand explicitly — which is the same split
+  // every other public page in this app already uses.
+  const title = `${professorName} — ${professor.institution}`;
+  const shareTitle = `${title} | Schollective`;
   const description = `Connect with ${professorName}, expert in ${expertiseList.length > 0 ? expertiseList.join(", ") : "academic research"}. Apply for structured mentorship on Schollective.`;
 
   return {
@@ -56,7 +63,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       canonical: `/professors/${id}`,
     },
     openGraph: {
-      title,
+      title: shareTitle,
       description,
       type: "profile",
       url: `/professors/${id}`,
@@ -69,7 +76,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     },
     twitter: {
       card: "summary_large_image",
-      title,
+      title: shareTitle,
       description,
       images: [professor.avatar_url?.split("?")[0] || "/og-image.png"],
     },
@@ -491,8 +498,10 @@ export default async function PublicProfessorProfilePage({ params }: PageProps) 
         </div>
       </header>
 
-      {/* Main Container */}
-      <main style={{ flex: 1, padding: "4rem 1.5rem", display: "flex", justifyContent: "center" }}>
+      {/* Main Container — a div, not a `main`: the root layout already supplies
+          this page's one main landmark, and a second one nested inside it gives
+          assistive tech two mains to choose from. */}
+      <div style={{ flex: 1, padding: "4rem 1.5rem", display: "flex", justifyContent: "center" }}>
         <div style={{ width: "100%", maxWidth: "680px" }}>
           {/* Back button */}
           <Link href="/" style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", textDecoration: "none", width: "fit-content", marginBottom: "3rem" }}>
@@ -508,7 +517,7 @@ export default async function PublicProfessorProfilePage({ params }: PageProps) 
             user={null}
           />
         </div>
-      </main>
+      </div>
     </div>
   );
 }

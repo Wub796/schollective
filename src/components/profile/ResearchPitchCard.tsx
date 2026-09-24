@@ -232,6 +232,7 @@ export function ResearchPitchCard({
             {interests.map((tag, idx) => (
               <span
                 key={idx}
+                className="pill"
                 style={{
                   display: "inline-flex",
                   alignItems: "center",
@@ -246,7 +247,9 @@ export function ResearchPitchCard({
                 }}
               >
                 <Tag size={12} />
-                {tag}
+                {/* The label is a flex item of its own so a long interest can
+                    wrap inside the pill instead of pushing past its edge. */}
+                <span style={{ minWidth: 0, overflowWrap: "anywhere" }}>{tag}</span>
                 <button
                   type="button"
                   onClick={() => handleRemoveTag(idx)}
@@ -279,6 +282,7 @@ export function ResearchPitchCard({
                   key={s}
                   type="button"
                   onClick={() => handleAddTag(s)}
+                  className="pill"
                   style={{
                     background: "#ffffff",
                     border: "1px solid var(--border)",

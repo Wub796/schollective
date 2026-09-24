@@ -17,10 +17,17 @@ export function CookieBanner() {
    * is the submit button, which cannot be clicked until the banner is
    * dismissed. Pad the page by the banner's real height instead of guessing,
    * and keep it in step with wrapping at narrow widths.
+   *
+   * The height is published as a custom property as well, because body padding
+   * only helps pages that scroll: a page that centres its content inside 100vh
+   * ignores it and the banner ends up on the last line of the login form.
+   * Those pages subtract `--cookie-banner-height` from their own height.
    */
   useLayoutEffect(() => {
+    const root = document.documentElement;
     if (!visible) {
       document.body.style.removeProperty("padding-bottom");
+      root.style.removeProperty("--cookie-banner-height");
       return;
     }
     const element = ref.current;
@@ -28,6 +35,7 @@ export function CookieBanner() {
 
     const apply = () => {
       document.body.style.paddingBottom = `${element.offsetHeight + 32}px`;
+      root.style.setProperty("--cookie-banner-height", `${element.offsetHeight + 32}px`);
     };
     apply();
 
@@ -39,6 +47,7 @@ export function CookieBanner() {
       observer.disconnect();
       window.removeEventListener("resize", apply);
       document.body.style.removeProperty("padding-bottom");
+      root.style.removeProperty("--cookie-banner-height");
     };
   }, [visible]);
 
