@@ -6,12 +6,13 @@ import { Pause, Play, Rocket } from "lucide-react";
 /**
  * The rolling beta notice in the top bar.
  *
- * WHY HERE. On a desktop the app nav holds a hamburger (mobile only), the
- * wordmark (`lg:hidden`) and the notification bell — so on a wide screen the
- * entire middle of a 56px bar was empty. A beta build that never says it is a
- * beta produces the wrong kind of bug report ("this is broken") instead of the
- * useful one ("this is broken, here is where"), and this is the one surface
- * every signed-in page shares.
+ * WHY HERE. A beta build that never says it is a beta produces the wrong kind of
+ * bug report ("this is broken") instead of the useful one ("this is broken, here
+ * is where"), and this is the one surface every signed-in page shares.
+ *
+ * It now shares a desktop bar with the notification island, which owns the
+ * centre, so it is right-aligned and capped rather than taking every pixel it
+ * can reach — see the width note below.
  *
  * WHY IT CAN BE PAUSED. Text that moves on its own and loops indefinitely is
  * exactly what WCAG 2.2.2 covers: it must be stoppable. Hovering pauses it, but
@@ -27,11 +28,11 @@ import { Pause, Play, Rocket } from "lucide-react";
  *
  * WHY FOUR COPIES. A marquee is seamless only while the visible window is
  * narrower than the repeated unit: past that, the track's end scrolls into view
- * and the bar goes empty on every loop. The window is the nav minus the bell, so
- * on an ultrawide display it can approach 3000px, and one pass of these four
- * messages is about 2350px. Four copies animated by -25% (exactly one copy, and
- * a quarter is exact in floating point, so no sub-pixel seam) stay seamless up
- * to three copies of slack -- roughly 7000px of window.
+ * and the bar goes empty on every loop. One pass of these four messages is about
+ * 2350px, and `.beta-ticker` is capped at `min(32rem, 30vw)` — under 600px even
+ * on an ultrawide display — so a single copy is already wider than the window.
+ * Four copies animated by -25% (exactly one copy, and a quarter is exact in
+ * floating point, so no sub-pixel seam) keep that true however the cap is tuned.
  */
 
 const MESSAGES = [

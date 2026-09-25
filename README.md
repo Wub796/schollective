@@ -19,6 +19,7 @@ An admin surface verifies faculty credentials and moderates activity.
 | AI | Google Gemini (`@google/genai`) — profile review, résumé parsing, recommendations, moderation |
 | Storage | S3-compatible bucket, presigned with Web Crypto (`src/lib/neon/s3-presign.ts`) |
 | Styling | Tailwind v4 with CSS custom properties in `src/app/globals.css` |
+| Notifications | Postgres rows (`notifications`), surfaced by the Dynamic Island chip in the top bar |
 | Type | Mulish (body) + Arima (display), loaded with `next/font` |
 | Observability | Sentry, PostHog, Amplitude |
 
@@ -140,6 +141,14 @@ Three modules are worth reading before changing behaviour:
   window, the confirmation phrases and the status a restore returns to. The
   email, the restore page and `db/maintenance/002` all quote these constants, so
   change them here and nothing has to be found by grepping.
+- [`src/lib/notification-style.ts`](src/lib/notification-style.ts) — what each
+  notification type looks like (eyebrow, glyph, accent, lifetime) and how it is
+  worded for the reader's role. Typed as a `Record` over `NotificationType`, so a
+  new type in `src/lib/notifications.ts` fails `tsc` until it has a face here.
+  The chip, the card it grows into and the list it opens all read it, which is
+  why none of them decides what a "request_declined" looks like. The feed is
+  polled once, in `NotificationCenter`, and the chip in the top bar is the only
+  way into the list — the bell that used to sit opposite it is gone.
 
 ## Design system
 

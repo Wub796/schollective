@@ -55,7 +55,7 @@ export async function updateRequestStatus(requestId: string, status: "active" | 
       return { error: "That request is no longer awaiting a decision." };
     }
 
-    // The students are waiting on this answer — without it the bell never
+    // The students are waiting on this answer — without it the island never
     // rings and they only find out by re-checking the directory. On a group
     // request that is the lead and everyone who has joined; invitees who have
     // not answered yet see the outcome on their invitation instead.
