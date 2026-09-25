@@ -126,6 +126,11 @@ export function AppShell({ children, role = "student" }: AppShellProps) {
           span the whole bar and scroll behind the chip rather than stopping
           short of it.
 
+          The ticker is told where the chip actually ends — its measured width,
+          and whether it is there at all — through the document root, the one
+          node those two subtrees share. See DynamicIsland.tsx, and
+          `.beta-ticker` in globals.css for the lane it draws from it.
+
           A bell icon used to sit opposite this, and an "Account" button before
           that, linking to /profile for every role — the student settings URL, so
           for a professor it did not lead to the faculty settings the sidebar
