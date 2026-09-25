@@ -63,6 +63,7 @@ import {
   type IslandViewer,
   type NotificationGlyph,
 } from "@/lib/notification-style";
+import { EASE_SOFT } from "@/components/ui/entrance";
 import { useNotificationFeed } from "./NotificationCenter";
 import { IslandInbox } from "./IslandInbox";
 import { NotificationGlyphMark } from "./glyphs";
@@ -75,6 +76,59 @@ const GOO_FILTER_ID = "schollective-island-goo";
 
 /** Space between the chip and the body below it, published to CSS as a custom property. */
 const PILL_GAP = 10;
+
+/**
+ * The spring under every shape the island's transition moves.
+ *
+ * The droplet stretching out of the chip, the body arriving from it and the card
+ * drawing back into it are one gesture, so they share their physics: a mismatch
+ * shows up as the goo poking out from behind the card it is meant to be merging
+ * with, and the chip's own length rides the same spring in its `layout`
+ * animation for the same reason. Stiffness 340 over mass 0.85 settles in a little
+ * under half a second with one shallow overshoot — about 3px on the longest
+ * stretch, which is the droplet landing rather than a bounce.
+ */
+const SHAPE_SPRING = { type: "spring", stiffness: 340, damping: 28, mass: 0.85 } as const;
+
+/**
+ * Where a body starts, a little above where it settles.
+ *
+ * `boolean | null` because that is what `useReducedMotion` hands back — null
+ * until the media query has been read, which reads as "no preference". The
+ * fades here ride `EASE_SOFT`, the curve the rest of the site's entrances use;
+ * only the shapes get physics.
+ */
+function bodyEntry(reduceMotion: boolean | null) {
+  // No scale: the droplet underneath is the thing that grows, and a card scaling
+  // up inside it would show its own edges drifting apart from the blob's.
+  return { opacity: 0, y: reduceMotion ? 0 : -10 };
+}
+
+/**
+ * Where it goes when it leaves — carrying its own transition.
+ *
+ * The shared one springs, and an exit that waits for a spring to settle holds
+ * the berth the next notification is already queued for: `mode="wait"` cannot
+ * start the next body until this one is done. Leaving is a quick fade; arriving
+ * is the part that gets to bounce.
+ */
+function bodyExit(reduceMotion: boolean | null) {
+  return {
+    opacity: 0,
+    y: reduceMotion ? 0 : -8,
+    transition: { duration: reduceMotion ? 0.1 : 0.16, ease: EASE_SOFT } as const,
+  };
+}
+
+function bodyTransition(reduceMotion: boolean | null) {
+  if (reduceMotion) return { duration: 0.12, ease: EASE_SOFT } as const;
+  return {
+    // The shape carries the weight; opacity is a plain tween, because a spring
+    // under a fade reads as a flicker rather than as a thing with mass.
+    y: SHAPE_SPRING,
+    opacity: { duration: 0.22, ease: EASE_SOFT } as const,
+  };
+}
 
 /** The panel's id, so the chip can point `aria-controls` at it. */
 const INBOX_ID = "island-inbox";
@@ -419,6 +473,10 @@ interface Box {
  * element that IS here is measured, and re-measured on resize; `offsetTop` is
  * read relative to the stack, which is positioned exactly so that this is the
  * origin the droplet measures from.
+ *
+ * The last box is KEPT when the element goes away rather than cleared: the goo
+ * reads it to draw the droplet back into the chip as the card leaves, which is
+ * the only moment the two are apart from each other.
  */
 function useBox<T extends HTMLElement>() {
   const [node, setNode] = useState<T | null>(null);
@@ -426,10 +484,7 @@ function useBox<T extends HTMLElement>() {
   const setNodeRef = useCallback((next: T | null) => setNode(next), []);
 
   useLayoutEffect(() => {
-    if (!node) {
-      setBox(null);
-      return;
-    }
+    if (!node) return;
     const measure = () =>
       setBox((prev) => {
         const next = { width: node.offsetWidth, height: node.offsetHeight, top: node.offsetTop };
@@ -635,19 +690,54 @@ function Island({ goo, blur, duration, suspended }: IslandProps) {
             } as React.CSSProperties
           }
         >
-          {body && !reduceMotion && (
-            <div className="island-goo" aria-hidden="true" style={{ filter: `url(#${GOO_FILTER_ID})` }}>
-              {/* The chip and the body, as two rounded forms of one substance:
-                  ink while it is the chip, the card's surface once it is the body. */}
-              <span
+          {!reduceMotion && pillBox && (
+            // Mounted for the island's whole life and faded rather than
+            // unmounted: a card leaves while it is still on screen, and a bridge
+            // that vanishes out from under it is the one seam a reader can see.
+            // At rest the layer is transparent and draws nothing.
+            <motion.div
+              className="island-goo"
+              aria-hidden="true"
+              style={{ filter: `url(#${GOO_FILTER_ID})` }}
+              initial={false}
+              animate={{ opacity: body ? 1 : 0 }}
+              transition={{ duration: 0.24, ease: EASE_SOFT }}
+            >
+              {/* The chip and the body as two rounded forms of one substance: ink
+                  while it is the chip, the card's surface once it is the body.
+
+                  Both are springs, and the springs ARE the effect. Sizing these
+                  from state — which is what this did — moved them the instant the
+                  element they copy was measured, so the droplet teleported into
+                  place while the card faded in somewhere else, and the two never
+                  read as one body. Springing them means the droplet stretches out
+                  of the chip, follows the body when one card gives way to the
+                  next, and draws back into the chip when the card retires — the
+                  three moves the native library is built around. */}
+              <motion.span
                 className="island-goo-blob island-goo-pill"
-                style={{ width: pillBox?.width, height: pillBox?.height, top: pillBox?.top }}
+                initial={false}
+                animate={{ width: pillBox.width, height: pillBox.height, top: pillBox.top }}
+                transition={SHAPE_SPRING}
               />
-              <span
-                className="island-goo-blob island-goo-card"
-                style={{ width: bodyBox?.width, height: bodyBox?.height, top: bodyBox?.top }}
-              />
-            </div>
+              {bodyBox && (
+                <motion.span
+                  className="island-goo-blob island-goo-card"
+                  // Starting at the chip, because this is the box a droplet grows
+                  // out of: framer reads `initial` when the blob mounts, and the
+                  // blob mounts only when a body does.
+                  initial={{ width: pillBox.width, height: pillBox.height, top: pillBox.top }}
+                  animate={
+                    body
+                      ? { width: bodyBox.width, height: bodyBox.height, top: bodyBox.top }
+                      : // Nothing is showing, so the two blobs merge back into the
+                        // one capsule they came from.
+                        { width: pillBox.width, height: pillBox.height, top: pillBox.top }
+                  }
+                  transition={SHAPE_SPRING}
+                />
+              )}
+            </motion.div>
           )}
 
           {/* The chip's band is the top bar's own height, so it sits centred in
@@ -667,9 +757,24 @@ function Island({ goo, blur, duration, suspended }: IslandProps) {
               aria-label={ariaLabel}
               title="Notifications"
               onAnimationEnd={() => setPulse(false)}
-              initial={{ scale: reduceMotion ? 1 : 0.7, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ type: "spring", stiffness: 420, damping: 34 }}
+              // The chip's length changes with its label — a card's eyebrow is
+              // longer than "All caught up" — and the layout animation glides
+              // that change instead of snapping the capsule under the text. It
+              // rides the droplet's spring so the chip and the goo below it
+              // resize as one thing.
+              layout={!reduceMotion}
+              // Transform only, never a fade. This is the rule
+              // src/components/ui/entrance.ts was written for, and it holds here
+              // for the same reason: framer resolves `initial` during server
+              // rendering, so a chip that starts at `opacity: 0` ships an island
+              // nobody can see, waiting for a bundle to arrive — on the one
+              // control that is supposed to always be there.
+              initial={{ scale: reduceMotion ? 1 : 0.86 }}
+              animate={{ scale: 1 }}
+              transition={{
+                layout: SHAPE_SPRING,
+                scale: { type: "spring", stiffness: 420, damping: 34 },
+              }}
             >
               <ReaderMark initials={feed?.viewer.initials ?? "?"} avatarUrl={feed?.viewer.avatarUrl ?? null} size={20} />
               <span className="island-pill-label">{label}</span>
@@ -683,6 +788,14 @@ function Island({ goo, blur, duration, suspended }: IslandProps) {
             incoming one mounts, so the queue's next card enters into an empty
             berth rather than over the top of the last one — and only one body is
             ever mounted, which is what lets a single measured box describe it.
+            Its own exit is a quick tween for the same reason: a spring there would
+            hold the berth for as long as it took to settle.
+
+            Only transform and opacity move here, and that is the whole motion
+            budget. Each body carries a `backdrop-filter`, so animating `filter` on
+            the same element — which this used to do, blurring a card in from 10px
+            — makes the browser re-rasterize the page behind it on every frame.
+            The goo layer is what blurs; the card only arrives.
           */}
           <AnimatePresence mode="wait" onExitComplete={advance}>
             {isOpen ? (
@@ -690,10 +803,10 @@ function Island({ goo, blur, duration, suspended }: IslandProps) {
                 key="inbox"
                 ref={setBodyNode}
                 className="island-card island-card-panel"
-                initial={{ opacity: 0, y: reduceMotion ? 0 : -14, scale: reduceMotion ? 1 : 0.98 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: reduceMotion ? 0 : -10, scale: reduceMotion ? 1 : 0.98 }}
-                transition={{ duration: reduceMotion ? 0.14 : 0.26, ease: [0.22, 1, 0.36, 1] }}
+                initial={bodyEntry(reduceMotion)}
+                animate={{ opacity: 1, y: 0 }}
+                exit={bodyExit(reduceMotion)}
+                transition={bodyTransition(reduceMotion)}
               >
                 <IslandInbox
                   id={INBOX_ID}
@@ -724,24 +837,10 @@ function Island({ goo, blur, duration, suspended }: IslandProps) {
                   if (info.offset.y < -36 || info.velocity.y < -450) dismiss();
                   else setPaused(false);
                 }}
-                initial={{
-                  opacity: 0,
-                  y: reduceMotion ? 0 : -16,
-                  scale: reduceMotion ? 1 : 0.97,
-                  ...(reduceMotion ? {} : { filter: "blur(10px)" }),
-                }}
-                animate={{ opacity: 1, y: 0, scale: 1, ...(reduceMotion ? {} : { filter: "blur(0px)" }) }}
-                exit={{
-                  opacity: 0,
-                  y: reduceMotion ? 0 : -12,
-                  scale: reduceMotion ? 1 : 0.98,
-                  ...(reduceMotion ? {} : { filter: "blur(8px)" }),
-                }}
-                transition={{
-                  duration: reduceMotion ? 0.14 : 0.34,
-                  ease: [0.22, 1, 0.36, 1],
-                  delay: reduceMotion ? 0 : 0.06,
-                }}
+                initial={bodyEntry(reduceMotion)}
+                animate={{ opacity: 1, y: 0 }}
+                exit={bodyExit(reduceMotion)}
+                transition={bodyTransition(reduceMotion)}
               >
                 <CardBody
                   notification={notification}
