@@ -372,12 +372,22 @@ body {
   display: none;
   align-items: center;
   gap: 0.75rem;
-  /* Right-aligned and bounded: the middle of the bar belongs to the
-     notification island, so this stops well before the centre rather than
-     stretching under it. It used to take all the space it could. */
-  flex: 0 1 auto;
+  /* The whole bar, less its own padding: the statement runs the full way across
+     and passes BEHIND the island's chip. The chip is a sibling layer above this
+     bar (`--z-island` over `--z-sidebar`) and opaque ink, so the sentence goes
+     under it and comes out the other side — which is what makes the chip read as
+     a thing sitting in the bar rather than a hole cut through it.
+
+     Capped all the same, because of what the track can loop cleanly: one pass of
+     the four messages measures about 2300px, and a window wider than that puts
+     the same sentence on screen twice at once. Capping the ROW at 2000px keeps
+     the window itself under 1910px at every display size — measured at 2560px,
+     the widest case — so the marquee cannot outgrow its own loop. Only displays
+     past 2048px reach the cap, and there `margin-left: auto` holds the marquee to
+     the right of the chip rather than straddling it. */
+  flex: 1 1 auto;
   min-width: 0;
-  max-width: min(32rem, 30vw);
+  max-width: min(2000px, 100%);
   margin-left: auto;
 }
 
@@ -487,6 +497,12 @@ body {
   .beta-ticker-window {
     -webkit-mask-image: none;
     mask-image: none;
+    /* The statement is static here, so it has to start clear of the chip: text
+       only passes behind the island while it is moving, and a line that never
+       moves would keep that part of the sentence hidden for good. The offset is
+       the chip's own lane — half its cap, plus half of the bar — and 11rem is
+       exactly half of the 22rem in `.island-pill`. */
+    padding-left: calc(50% + 11rem);
   }
 
   .beta-ticker-pause {
@@ -529,7 +545,7 @@ body {
   top: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: min(396px, calc(100vw - 2rem));
+  width: min(416px, calc(100vw - 2rem));
   z-index: var(--z-island);
   display: flex;
   flex-direction: column;
@@ -566,7 +582,9 @@ body {
 .island-goo {
   position: absolute;
   inset: 0;
-  opacity: 0.92;
+  /* No opacity here: the component fades the layer (framer sets it inline), and
+     the colour matrix saturates whatever alpha it is handed, so a translucent
+     layer would be drawn opaque anyway. */
   pointer-events: none;
 }
 
@@ -595,12 +613,19 @@ body {
   pointer-events: auto;
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
-  /* Capped so a long eyebrow cannot grow the chip into the ticker on a narrow
-     desktop: the label ellipsizes instead. */
+  justify-content: center;
+  gap: 0.5rem;
+  /* A floor as well as a cap. Without the floor a short label pulled the chip in
+     to a stub — "3 new" was half the length of "All caught up" — which is the one
+     thing that stopped it reading as a fixed piece of the bar. The label changes
+     inside the capsule now instead of resizing it, and the component runs a
+     `layout` animation over the cases that still cross the floor. */
+  min-width: 9.5rem;
+  /* Capped so an absurd eyebrow cannot grow the chip until it is the bar. Past
+     this the label ellipsizes instead. */
   max-width: min(22rem, 100%);
   height: 34px;
-  padding: 0 0.7rem 0 0.35rem;
+  padding: 0 0.85rem;
   border: 1px solid transparent;
   border-radius: var(--radius-control);
   background: var(--color-ink);
@@ -685,6 +710,12 @@ body {
    hamburger, the wordmark and the chip. The count badge takes over from the
    sentence, and the dot from the badge's place beside it. */
 @media (max-width: 639px) {
+  /* No floor down here: the hamburger, the wordmark and the chip all have to
+     fit in less than the floor's width, and the count it shows is short. */
+  .island-pill {
+    min-width: 0;
+  }
+
   .island-pill-label,
   .island-pill-dot {
     display: none;
