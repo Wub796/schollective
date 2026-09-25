@@ -382,18 +382,72 @@ body {
      the four messages measures about 2300px, and a window wider than that puts
      the same sentence on screen twice at once. Capping the ROW at 2000px keeps
      the window itself under 1910px at every display size — measured at 2560px,
-     the widest case — so the marquee cannot outgrow its own loop. Only displays
-     past 2048px reach the cap, and there `margin-left: auto` holds the marquee to
-     the right of the chip rather than straddling it. */
+     the widest case — so the marquee cannot outgrow its own loop.
+
+     Centred rather than pinned to one end: the lane below is measured from the
+     middle of this row, and the chip is centred on the bar, so the two have to
+     share a centre at every width. Below the cap the row fills the bar and the
+     auto margins have nothing to take; past it they split what is left. */
   flex: 1 1 auto;
   min-width: 0;
   max-width: min(2000px, 100%);
-  margin-left: auto;
+  margin-inline: auto;
 }
 
 @media (min-width: 1024px) {
   .beta-ticker {
     display: flex;
+  }
+}
+
+/* ── The chip's lane ──────────────────────────────────────────────
+   The sentence scrolls behind the island, and this is the room it is given
+   around it: the text is already gone by the time it reaches the ink, and is
+   already coming back as it leaves. Without it the marquee is cut by a hard
+   edge at the capsule's outline, which reads as the sentence running into the
+   chip rather than passing under it.
+
+   Both numbers are measured out from the middle of the bar: everything within
+   `--island-lane-clear` is hidden, and the fade runs out to `--island-lane-fade`.
+   What they add to the chip's own half-width is what makes this a buffer rather
+   than a butt joint — 10px clears the chip's shadow, and the 24px past that is
+   the dissolve.
+
+   `--island-pill-width` is the chip as the island measured it, published to the
+   document root by the component: the label changes length inside a capsule that
+   follows it, so a constant here would be a lane that fits "All caught up" and
+   crops an eyebrow. The fallback is the chip's own floor, which is what it is at
+   rest. */
+.beta-ticker {
+  --island-lane-clear: calc(var(--island-pill-width, 152px) / 2 + 10px);
+  --island-lane-fade: calc(var(--island-pill-width, 152px) / 2 + 34px);
+  /* Written once, because the two spellings below are the same property. */
+  --island-lane: linear-gradient(
+    90deg,
+    #000 0,
+    #000 calc(50% - var(--island-lane-fade)),
+    transparent calc(50% - var(--island-lane-clear)),
+    transparent calc(50% + var(--island-lane-clear)),
+    #000 calc(50% + var(--island-lane-fade)),
+    #000 100%
+  );
+}
+
+/* Drawn unless the island says otherwise, rather than drawn only when it says
+   so: the chip is in the server-rendered HTML, and a lane that waited for a
+   bundle to arrive would be a hard edge at the capsule for the first second of
+   the page. `off` is written for the one case where the chip is genuinely away
+   — a product tour, or the mobile drawer on a window wide enough to show this
+   row — because a lane with nothing in it is a hole in the middle of a
+   sentence.
+
+   Not applied at all for `prefers-reduced-motion`, whose line is static and
+   starts clear of the chip: text only passes behind the island while it is
+   moving. */
+@media (prefers-reduced-motion: no-preference) {
+  :root:not([data-island-lane="off"]) .beta-ticker {
+    -webkit-mask-image: var(--island-lane);
+    mask-image: var(--island-lane);
   }
 }
 
@@ -422,13 +476,15 @@ body {
   /* Fade the two ends so text does not appear to be cut by a hard edge. */
   -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 28px, #000 calc(100% - 28px), transparent 100%);
   mask-image: linear-gradient(90deg, transparent 0, #000 28px, #000 calc(100% - 28px), transparent 100%);
-}  .beta-ticker-track {
-    display: flex;
-    align-items: center;
-    width: max-content;
-    animation: beta-ticker-scroll 58s linear infinite;
-    will-change: transform;
-  }
+}
+
+.beta-ticker-track {
+  display: flex;
+  align-items: center;
+  width: max-content;
+  animation: beta-ticker-scroll 58s linear infinite;
+  will-change: transform;
+}
 
 /* Paused by its own control, or while the reader is pointing at it. */
 .beta-ticker-track[data-paused="true"],
@@ -504,6 +560,8 @@ body {
        exactly half of the 22rem in `.island-pill`. */
     padding-left: calc(50% + 11rem);
   }
+
+  /* The chip's lane needs no undoing here: it is scoped to `no-preference`. */
 
   .beta-ticker-pause {
     display: none;
@@ -606,6 +664,42 @@ body {
   background: var(--color-surface);
 }
 
+/* ── The chip's lens: what the sentence looks like on its way under ──
+   A short, wide defocus centred on the chip, in the bar's own row, so the beta
+   sentence is already out of focus by the time the lane has faded it out and
+   comes back sharp as it clears. The lane in `.beta-ticker` decides where the
+   text is; this decides what it looks like while it is going under.
+
+   One masked `backdrop-filter` rather than a stack of graded ones: the sentence
+   is moving the whole time it is inside this, so every extra layer is another
+   pass over it per frame. The mask is an ellipse, not a band, so there is no
+   line anywhere the blur stops — and its middle is the chip, which is opaque.
+
+   Sized from the same measured width the lane is, so the two cannot disagree
+   about where the island ends; the stop at 70% puts the blur's full strength
+   just past the ink and takes it to nothing 44px out. Hiding it under reduced
+   motion is what keeps the promise the static line makes: nothing is passing
+   under a chip that is not moving. */
+.island-lens {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+  width: calc(var(--island-pill-width, 152px) + 88px);
+  height: var(--nav-height, 56px);
+  pointer-events: none;
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  -webkit-mask-image: radial-gradient(50% 50% at 50% 50%, #000 70%, transparent 100%);
+  mask-image: radial-gradient(50% 50% at 50% 50%, #000 70%, transparent 100%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .island-lens {
+    display: none;
+  }
+}
+
 /* ── The island itself: the ink chip the body grows out of ────── */
 .island-pill {
   position: relative;
@@ -633,13 +727,25 @@ body {
   color: var(--color-surface);
   font: inherit;
   cursor: pointer;
-  box-shadow: 0 6px 18px -8px color-mix(in srgb, var(--color-ink) 55%, transparent);
-  transition: box-shadow 0.22s ease, border-color 0.22s ease;
+  /* The chip's shadow, named because the pulse below rings it, and a second copy
+     of the stack would be a second thing to keep in step. Two layers, the way
+     the bar's own shadow is built: a contact shadow that sits the ink ON the
+     bar, and a soft one that lifts it off the page behind. */
+  --island-pill-shadow:
+    0 1px 2px color-mix(in srgb, var(--color-ink) 18%, transparent),
+    0 7px 18px -8px color-mix(in srgb, var(--color-ink) 46%, transparent);
+  box-shadow: var(--island-pill-shadow);
+  transition: box-shadow 0.3s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.3s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .island-pill:hover {
+  /* The lift is the same pair, one step further off the bar — the ring is the
+     only thing added, so the two states share their bones. */
+  --island-pill-shadow:
+    0 1px 2px color-mix(in srgb, var(--color-ink) 20%, transparent),
+    0 12px 26px -10px color-mix(in srgb, var(--color-ink) 55%, transparent);
   box-shadow:
-    0 8px 22px -8px color-mix(in srgb, var(--color-ink) 65%, transparent),
+    var(--island-pill-shadow),
     0 0 0 4px color-mix(in srgb, var(--island-accent, var(--color-accent)) 14%, transparent);
 }
 
@@ -654,25 +760,26 @@ body {
 }
 
 /* An arrival while the list is open, when a card would be an interruption:
-   the chip swells once instead. box-shadow only — a transform here would fight
-   the spring that positions the chip. */
+   the chip rings once instead. box-shadow only — a transform here would fight
+   the spring that positions the chip — and the ring rides the chip's own shadow,
+   so a pointer resting on it does not have that thrown away for the second the
+   ripple is running. */
 .island-pill[data-pulse="true"] {
-  animation: island-pill-pulse 1.2s cubic-bezier(0.22, 1, 0.36, 1) 1;
+  animation: island-pill-pulse 1.5s cubic-bezier(0.22, 1, 0.36, 1) 1;
 }
 
 @keyframes island-pill-pulse {
   0% {
     box-shadow:
-      0 6px 18px -8px color-mix(in srgb, var(--color-ink) 55%, transparent),
-      0 0 0 0 color-mix(in srgb, var(--island-accent, var(--color-accent)) 45%, transparent);
+      var(--island-pill-shadow),
+      0 0 0 0 color-mix(in srgb, var(--island-accent, var(--color-accent)) 42%, transparent);
   }
-  70% {
+  /* The ring is held at nothing until the end rather than dropped: a two-shadow
+     list becoming a one-shadow list is a step the eye can catch at the edge. */
+  70%, 100% {
     box-shadow:
-      0 6px 18px -8px color-mix(in srgb, var(--color-ink) 55%, transparent),
-      0 0 0 10px color-mix(in srgb, var(--island-accent, var(--color-accent)) 0%, transparent);
-  }
-  100% {
-    box-shadow: 0 6px 18px -8px color-mix(in srgb, var(--color-ink) 55%, transparent);
+      var(--island-pill-shadow),
+      0 0 0 12px color-mix(in srgb, var(--island-accent, var(--color-accent)) 0%, transparent);
   }
 }
 
@@ -740,9 +847,15 @@ body {
   -webkit-backdrop-filter: blur(20px) saturate(190%);
   border: 1px solid var(--color-line);
   border-radius: var(--radius-surface);
+  /* Four layers, in the order they read: a hairline of light inside the top
+     edge (the same trick the bar plays once the page is scrolled), the contact
+     shadow that sits the panel on the page, the wide one that lifts it, and the
+     accent that ties it back to the chip it grew out of. */
   box-shadow:
-    0 16px 40px -12px color-mix(in srgb, var(--color-ink) 22%, transparent),
-    0 4px 12px -6px color-mix(in srgb, var(--color-accent) 18%, transparent);
+    inset 0 1px 0 0 color-mix(in srgb, var(--color-surface) 70%, transparent),
+    0 2px 6px -3px color-mix(in srgb, var(--color-ink) 16%, transparent),
+    0 22px 48px -20px color-mix(in srgb, var(--color-ink) 30%, transparent),
+    0 6px 18px -10px color-mix(in srgb, var(--island-accent, var(--color-accent)) 20%, transparent);
   overflow: hidden;
   cursor: grab;
   touch-action: pan-x;
@@ -917,7 +1030,16 @@ body {
   background: transparent;
   color: var(--color-ink-mute);
   cursor: pointer;
-  transition: color 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+  transition:
+    color 0.24s cubic-bezier(0.22, 1, 0.36, 1),
+    background 0.24s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.24s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* The site's press for an icon control — the same 0.92 the hamburger takes. */
+.island-dismiss:active {
+  transform: scale(0.92);
 }
 
 .island-dismiss:hover {
@@ -936,6 +1058,10 @@ body {
   background: var(--island-accent, var(--color-accent));
   transform-origin: left center;
   animation: island-progress var(--island-hold, 6000ms) linear both;
+  /* One transform, over six seconds, on the thing that IS the clock: the bar is
+     the one element here the reader watches change, so it is worth telling the
+     browser it will not be laid out. */
+  will-change: transform;
 }
 
 /* Hovering the card — or focusing it, or dragging it — freezes the clock, and
@@ -944,14 +1070,18 @@ body {
   animation-play-state: paused;
 }
 
+/* Linear on purpose: this is a clock, not an entrance, and an eased one would
+   lie about how long is left. The dip in opacity is its only decoration —
+   enough to say the card is on its way out, not so much that the last second is
+   hard to read. */
 @keyframes island-progress {
   from {
     transform: scaleX(1);
-    opacity: 0.95;
+    opacity: 0.9;
   }
   to {
     transform: scaleX(0);
-    opacity: 0.5;
+    opacity: 0.6;
   }
 }
 
@@ -1012,7 +1142,7 @@ body {
   text-decoration: none;
   color: inherit;
   border-bottom: 1px solid color-mix(in srgb, var(--color-line) 70%, transparent);
-  transition: background 0.16s ease;
+  transition: background 0.22s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .island-inbox-row:last-child {
