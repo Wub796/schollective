@@ -217,7 +217,9 @@ a missing policy is a breach rather than an inconvenience.
   against these CHECK constraints by `tests/youth-protection.test.mjs`; change
   the lists together.
 
-Notifying the team is best effort and off unless `SAFETY_EMAIL_TO` is set. It is
+Notifying the team is best effort and off unless `SAFETY_EMAIL_TO` is set and the
+Resend pair is configured (`isEmailConfigured`, i.e. `RESEND_API_KEY` and
+`EMAIL_FROM`). It is
 deliberately a different address from `FEEDBACK_EMAIL_TO`: a report about a child
 and a suggestion about the profile form are not the same inbox, and turning
 feedback notifications off is not a decision to stop hearing about safety. The
@@ -278,7 +280,7 @@ Authentication needs these set on the Worker (`wrangler secret put <NAME>`):
 | `BETTER_AUTH_SECRET` | yes | Session signing key. Changing it signs everyone out. |
 | `BETTER_AUTH_URL` | yes | The origin the app is served from. Google's redirect URI is derived from it, so it must match the URI registered in the Google console (`<BETTER_AUTH_URL>/api/auth/callback/google`). |
 | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | for Google sign-in | From the Google Cloud console OAuth client. Google sign-in is offered only when both are set; without them the button reports itself as unconfigured rather than failing mid-handshake. |
-| `RESEND_API_KEY` / `EMAIL_FROM` | for password reset | Without them, reset and verification emails are logged instead of delivered — so nobody can recover an account. `EMAIL_FROM` must use a domain verified in Resend. |
+| `RESEND_API_KEY` / `EMAIL_FROM` | for password reset | Without them, reset and verification emails are logged instead of delivered — so nobody can recover an account. `EMAIL_FROM` must use a domain verified in Resend. Both are also required for the feedback and safety heads-ups: setting `SAFETY_EMAIL_TO` without them sends nothing, and `/admin/safety` reports that rather than assuming an address is enough. |
 | `FEEDBACK_EMAIL_TO` | no | Where the heads-up for a new beta report goes. Without it (or without the two Resend variables) reports still land in `/admin/feedback`; only the notification is skipped, and the route reports `emailed: false` rather than claiming one was sent. |
 | `SAFETY_EMAIL_TO` | no | Where the heads-up for a safety report goes. Separate from `FEEDBACK_EMAIL_TO` on purpose. Unset, reports still land in `/admin/safety` — and the page says in red that nobody is being emailed, because silence here is not a supported configuration the way it is for feedback. |
 | `AUTH_SCHEMA_AUTO_MIGRATE` | no | Set to `false` to manage the schema by hand. |
