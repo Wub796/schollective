@@ -122,8 +122,9 @@ export function AppShell({ children, role = "student" }: AppShellProps) {
           there always: it is the only door to the inbox, so it cannot be
           something that appears only when it has news. It is positioned against
           this bar by `.island-layer`, not laid out inside it, so the two can
-          never push each other around — the ticker on the right is bounded so
-          that it stops before the chip begins.
+          never push each other around — and that is what lets the beta ticker
+          span the whole bar and scroll behind the chip rather than stopping
+          short of it.
 
           A bell icon used to sit opposite this, and an "Account" button before
           that, linking to /profile for every role — the student settings URL, so
