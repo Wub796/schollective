@@ -159,6 +159,43 @@ test("the database lets an account delete its own profile row", () => {
   assert.match(policy[0], /FOR DELETE/i);
 });
 
+test("the delete route checks that the profile row actually went", () => {
+  const route = read("src/app/api/auth/account/delete/route.ts");
+
+  // The policy above is the intent; this is the only guard that survives the
+  // database disagreeing with it. A DELETE that matches no rows is not an
+  // error — `profiles` carries FORCE ROW LEVEL SECURITY, so if the live
+  // database still has the admin-only version of profiles_delete the statement
+  // simply affects nothing. The next statement takes the auth row, and what is
+  // left is a profile nobody can reach: the user is signed out of an account
+  // that still exists, with their date of birth and thread history in it.
+  assert.match(
+    route,
+    /DELETE FROM profiles WHERE id = \$\{user\.id\} RETURNING id/,
+    "the profile delete no longer reports which rows it removed",
+  );
+  assert.match(route, /if \(!deletedProfile\.length\)/, "the row count is not checked");
+  assert.doesNotMatch(
+    route,
+    /DELETE FROM profiles WHERE id = \$\{user\.id\};/,
+    "an unchecked DELETE FROM profiles is back: it cannot tell a deletion from a refusal",
+  );
+
+  // Ordering is the second half of the guard: the auth row is only removed once
+  // the profile row is confirmed gone, so a refusal leaves a working account.
+  const profileDelete = route.indexOf("DELETE FROM profiles WHERE id =");
+  const authDelete = route.indexOf('DELETE FROM "user" WHERE id =');
+  assert.ok(profileDelete >= 0, "the route no longer deletes the profile row");
+  assert.ok(
+    authDelete > profileDelete,
+    "the auth row is deleted before the profile deletion is confirmed",
+  );
+
+  // Which is what db/migrations/0010 promises, and what `npm run verify:db`
+  // reports for the database this is deployed against.
+  assert.match(read("db/README.md"), /npm run verify:db/);
+});
+
 test("the guard still refuses self-approval, and only reopens the restore path", () => {
   const sql = stripComments(read(MIGRATION));
 

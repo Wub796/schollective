@@ -8,6 +8,7 @@
     "start": "next start",
     "test": "node --import ./tests/helpers/register.mjs --test tests/*.test.mjs",
     "verify:email": "node --import ./tests/helpers/register.mjs tools/verify-email.mjs",
+    "verify:db": "node tools/verify-db.mjs",
     "lint": "eslint",
     "build:cf": "opennextjs-cloudflare build",
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
