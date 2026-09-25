@@ -15,7 +15,13 @@ import { Pause, Play, Rocket } from "lucide-react";
  * arrangement worth keeping: the statement runs the full width of the bar and
  * passes behind the chip, going under the ink and coming out the other side, so
  * the chip reads as something sitting in the bar rather than a gap in the
- * sentence. The width note below is about the one limit left on it.
+ * sentence. It is given a lane to do that in — the sentence is faded out before
+ * it reaches the ink and back in as it leaves, rather than being cut by the
+ * capsule's edge — and the row is centred for the lane's sake, because the lane
+ * is measured from the middle of the bar, which is where the chip is. The lane's
+ * width comes from the island, which measures its own chip and publishes it to
+ * the document root; both are in globals.css, under `.beta-ticker`. The width
+ * note below is about the one limit left on it.
  *
  * WHY IT CAN BE PAUSED. Text that moves on its own and loops indefinitely is
  * exactly what WCAG 2.2.2 covers: it must be stoppable. Hovering pauses it, but
@@ -23,8 +29,8 @@ import { Pause, Play, Rocket } from "lucide-react";
  * next to the text. `prefers-reduced-motion` gets a static line instead — the
  * first message is written to stand alone for precisely that case, which is why
  * the summary is the first item and the detail follows it. That line is also
- * offset clear of the chip, because text only escapes a chip it is passing under
- * while it is moving.
+ * offset clear of the chip and carries no lane, because text only escapes a chip
+ * it is passing under while it is moving.
  *
  * WHY IT IS HIDDEN BELOW 1024px. The same media query that reveals the
  * hamburger is the one that hides this: on a phone the nav is three controls
