@@ -295,6 +295,12 @@ const APP_INDEXES: Record<string, string[]> = {
     `CREATE INDEX IF NOT EXISTS "safety_reports_status_created_idx" ON safety_reports (status, created_at DESC)`,
     `CREATE INDEX IF NOT EXISTS "safety_reports_category_created_idx" ON safety_reports (category, created_at DESC)`,
     `CREATE INDEX IF NOT EXISTS "safety_reports_reported_idx" ON safety_reports (reported_profile_id) WHERE reported_profile_id IS NOT NULL`,
+    // The other direction: "my reports" filters on reporter_id, and so does the
+    // SELECT policy that scopes a report to its author -- the policy's qual is
+    // evaluated per row, so without this index every non-admin read of the table
+    // scans all of it. reporter_id is nullable (ON DELETE SET NULL), and the
+    // index also serves that referential action when an account is deleted.
+    `CREATE INDEX IF NOT EXISTS "safety_reports_reporter_idx" ON safety_reports (reporter_id)`,
   ],
   safety_report_evidence: [
     `CREATE INDEX IF NOT EXISTS "safety_report_evidence_report_idx" ON safety_report_evidence (report_id, sent_at)`,

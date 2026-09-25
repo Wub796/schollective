@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { sql } from "@/lib/neon/db";
 import { runAs } from "@/lib/neon/user-context";
+import { givenName, initialsOf } from "@/lib/people";
 
 export const dynamic = "force-dynamic";
 
@@ -9,10 +10,11 @@ export const dynamic = "force-dynamic";
 const PRIVATE_HEADERS = { "Cache-Control": "private, no-store" };
 
 export async function GET(request: NextRequest) {
-  const { session, user } = await getCurrentUserAndProfile(request.headers);
+  const { session, user, profile } = await getCurrentUserAndProfile(request.headers);
   if (!session || !user) {
-    // 401 rather than an empty 200: the bell needs to tell "signed out" apart
-    // from "nothing to show" so a silently expired session is recoverable.
+    // 401 rather than an empty 200: the client needs to tell "signed out" apart
+    // from "nothing to show" so a silently expired session is recoverable — and
+    // so the feed stops polling instead of asking again every fifteen seconds.
     return NextResponse.json(
       { notifications: [], error: "Unauthorized" },
       { status: 401, headers: PRIVATE_HEADERS },
@@ -30,7 +32,23 @@ export async function GET(request: NextRequest) {
       ORDER BY created_at DESC
       LIMIT 20;
     `);
-    return NextResponse.json({ notifications }, { headers: PRIVATE_HEADERS });
+
+    // Who the reader is, returned with their own notifications so the island can
+    // be personal without a second request or a prop drilled through every
+    // layout between here and it. Deliberately just the three things a
+    // notification surface needs; the profile itself stays on the server.
+    //
+    // A name is only sent when the account has one on file: `givenName` would
+    // otherwise answer "Student", and a card that greets somebody as "Student"
+    // is worse than one that greets nobody.
+    const viewer = {
+      name: profile ? givenName(profile, "") || null : null,
+      initials: profile ? initialsOf(profile) : null,
+      avatarUrl: profile?.avatar_url ?? null,
+      role: profile?.role ?? "student",
+    };
+
+    return NextResponse.json({ notifications, viewer }, { headers: PRIVATE_HEADERS });
   } catch (err: any) {
     console.error("Notifications error:", err);
     return NextResponse.json({ notifications: [], error: "unavailable" }, { headers: PRIVATE_HEADERS });

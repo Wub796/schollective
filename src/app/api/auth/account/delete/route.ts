@@ -33,11 +33,22 @@ const PRIVATE_HEADERS = { "Cache-Control": "private, no-store" };
  *   1. sessions — access is gone even if everything below fails;
  *   2. AI review jobs — keyed by user id with no foreign key, so nothing else
  *      would ever remove rows that contain a copy of the profile;
- *   3. the profile row — cascades the app data;
+ *   3. the profile row — cascades the app data, and is the one statement whose
+ *      row count is checked (see BELOW);
  *   4. the auth row last — cascades its own sessions and OAuth links.
  * Failing between 3 and 4 leaves an account that can still sign in and gets a
  * fresh, empty profile (the schema bootstrap recreates it), which is
  * recoverable. The reverse order would leave data behind with no way in.
+ *
+ * WHY THE PROFILE DELETE IS CHECKED
+ * `profiles` carries FORCE ROW LEVEL SECURITY, so the delete only matches a row
+ * when `profiles_delete` allows it (db/migrations/0010). A DELETE that matches
+ * nothing is not an error — it reports success — and then step 4 removes the
+ * auth row and leaves a profile nobody can reach or delete. That is exactly the
+ * failure 0010 was written to prevent, and it is silent in every other layer:
+ * the API answers `{ success: true }` and the UI shows the account as gone. So
+ * the row count is checked, and a database that refuses this statement is
+ * reported as a failure instead of being mistaken for a deletion.
  */
 export async function POST(request: NextRequest) {
   const { session, user, profile } = await getCurrentUserAndProfile(request.headers);
@@ -96,14 +107,28 @@ export async function POST(request: NextRequest) {
 
       await sql`DELETE FROM session WHERE "userId" = ${user.id};`;
       await sql`DELETE FROM ai_profile_review_jobs WHERE user_id = ${user.id};`;
-      await sql`DELETE FROM profiles WHERE id = ${user.id};`;
+
+      const deletedProfile =
+        await sql`DELETE FROM profiles WHERE id = ${user.id} RETURNING id;`;
+      if (!deletedProfile.length) {
+        return {
+          refused: null as string | null,
+          failed:
+            "Your profile could not be deleted, so nothing was removed and your account still works. " +
+            "This is a database configuration problem on our side, not something you did — please contact support.",
+        };
+      }
+
       await sql`DELETE FROM "user" WHERE id = ${user.id};`;
 
-      return { refused: null as string | null };
+      return { refused: null as string | null, failed: null as string | null };
     });
 
     if (removed?.refused) {
       return NextResponse.json({ error: removed.refused }, { status: 409, headers: PRIVATE_HEADERS });
+    }
+    if (removed?.failed) {
+      return NextResponse.json({ error: removed.failed }, { status: 500, headers: PRIVATE_HEADERS });
     }
 
     return NextResponse.json({ success: true }, { headers: PRIVATE_HEADERS });
