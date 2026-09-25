@@ -17,6 +17,11 @@ import { useEffect } from "react";
  *    browser's default black-on-white instead of the app's ink-on-paper.
  *  - The digest is shown. It is the only value that lets a report be matched
  *    to a server log, and it is otherwise invisible to the person reporting.
+ *  - "Go home" points at `/home`, not at `/`. This is a client component and
+ *    cannot know whether the person reading it is signed in, so it hands the
+ *    question to a route that can: `/` for a stranger, the dashboard for
+ *    someone with a session. A signed-in user sent to the marketing page is
+ *    stranded rather than helped, which is the opposite of the point.
  */
 export function ErrorState({
   error,
@@ -159,7 +164,7 @@ export function ErrorState({
           </button>
 
           <Link
-            href="/"
+            href="/home"
             style={{
               padding: "0.8rem 1.9rem",
               background: "rgba(79, 70, 229, 0.06)",

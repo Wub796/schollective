@@ -90,6 +90,27 @@ test("the boundary that replaces the root layout renders its own document", asyn
   assert.match(src, /<body\b/, "global-error.tsx must render <body>");
 });
 
+test("the way out of an error page resolves by session rather than assuming", async () => {
+  const errorState = path.resolve(import.meta.dirname, "..", "src", "components", "ui", "ErrorState.tsx");
+  const src = await readFile(errorState, "utf8");
+
+  // Both surfaces used to link to "/" unconditionally, which sends a signed-in
+  // user to the marketing page with their session still live and no way back
+  // into the product — the exact state an error page exists to fix. `/home`
+  // asks the session and picks `/` or the dashboard.
+  assert.match(src, /href="\/home"/, 'ErrorState must send "Go home" through the session-aware route');
+  assert.doesNotMatch(src, /href="\/"/, "ErrorState links straight to the landing page again");
+
+  const notFound = await readFile(path.join(APP, "not-found.tsx"), "utf8");
+  assert.match(notFound, /href="\/home"/, "the 404 page must use the same session-aware home");
+
+  // And the route has to actually answer the question: a session goes to the
+  // dashboard, an anonymous request goes to the landing page.
+  const home = await readFile(path.join(APP, "home", "route.ts"), "utf8");
+  assert.match(home, /getCurrentUserAndProfile/, "/home must read the session before redirecting");
+  assert.match(home, /user \? "\/dashboard" : "\/"/, "/home must pick the dashboard for a signed-in user");
+});
+
 test("the shared error surface never depends on a token that may be unloaded", async () => {
   const file = path.resolve(import.meta.dirname, "..", "src", "components", "ui", "ErrorState.tsx");
   const src = await readFile(file, "utf8");

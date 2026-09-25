@@ -102,6 +102,10 @@ const MUST_BE_PUBLIC = [
   // A policy page about minors has to be readable without an account: it is
   // what a parent or a school is sent when they ask what the rules are.
   "/safety",
+  // The way out of the error and 404 pages. It is public because it decides for
+  // itself: it reads the session and redirects to `/` or to the dashboard, so
+  // gating it would put a login wall in front of the exit.
+  "/home",
   "/professors/abc12345",
 ];
 
