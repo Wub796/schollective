@@ -21,7 +21,7 @@ import { promisify } from "node:util";
 
 const run = promisify(execFile);
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
-const SCRIPT = "scripts/verify-email.mjs";
+const SCRIPT = "tools/verify-email.mjs";
 
 const EMAIL_VARS = [
   "RESEND_API_KEY",
@@ -99,5 +99,9 @@ test("the npm script wires the check up with the TypeScript loader it needs", ()
   const pkg = JSON.parse(readFileSync(join(ROOT, "package.json"), "utf8"));
 
   assert.match(pkg.scripts["verify:email"], /tests\/helpers\/register\.mjs/);
-  assert.match(pkg.scripts["verify:email"], /scripts\/verify-email\.mjs/);
+  assert.match(pkg.scripts["verify:email"], /tools\/verify-email\.mjs/);
+
+  // `scripts/` is in .gitignore, and a check that is not committed runs for
+  // exactly one person. Pinned because that is how this file started life.
+  assert.doesNotMatch(pkg.scripts["verify:email"], /(^|[^.\w/])scripts\//);
 });
