@@ -12,6 +12,7 @@ import {
   type SafetyReportCounts,
 } from "@/lib/neon/youth-protection";
 import { SAFETY_REPORT_EMAIL } from "@/lib/youth-protection";
+import { isEmailConfigured } from "@/lib/email";
 
 export const dynamic = "force-dynamic";
 
@@ -49,7 +50,16 @@ export default async function AdminSafetyPage() {
     ]),
   )) as [AdminSafetyReportRow[], SafetyReportCounts];
 
-  const unnotified = process.env.SAFETY_EMAIL_TO ? null : SAFETY_REPORT_EMAIL;
+  // All three halves of the delivery: a key, a verified sender, and somewhere to
+  // send it. Checking `SAFETY_EMAIL_TO` alone would let a deployment with no
+  // Resend key report that somebody is being emailed, which is the exact silence
+  // this notice exists to break.
+  const emailMissing = [
+    !isEmailConfigured() && "RESEND_API_KEY / EMAIL_FROM",
+    !process.env.SAFETY_EMAIL_TO && "SAFETY_EMAIL_TO",
+  ].filter((value): value is string => Boolean(value));
+
+  const unnotified = emailMissing.length > 0 ? SAFETY_REPORT_EMAIL : null;
 
   return (
     <AdminShell>
@@ -96,10 +106,11 @@ export default async function AdminSafetyPage() {
               margin: 0, fontSize: "0.8rem", lineHeight: 1.7, maxWidth: "46rem",
               color: "#b45309", fontFamily: "var(--font-sans)",
             }}>
-              <strong>Nobody is being emailed about these.</strong> SAFETY_EMAIL_TO is not set on
-              this deployment, so a new report lands here and nowhere else. That is a supported
-              configuration for feedback and not for this: until it is set, this page has to be
-              opened. See the environment table in db/README.md, and note that the public policy
+              <strong>Nobody is being emailed about these.</strong> {emailMissing.join(" and ")}{" "}
+              {emailMissing.length > 1 ? "are" : "is"} not set on this deployment, so a new report
+              lands here and nowhere else. That is a supported configuration for feedback and not
+              for this: until {emailMissing.length > 1 ? "they are" : "it is"} set, this page has to
+              be opened. See the environment table in db/README.md, and note that the public policy
               names {SAFETY_REPORT_EMAIL} — that mailbox has to exist and be read.
             </p>
           )}
