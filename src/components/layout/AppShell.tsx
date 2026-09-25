@@ -4,7 +4,8 @@ import { useState, useEffect, useCallback } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { NotificationBell } from "@/components/features/NotificationBell";
+import { DynamicNotifications } from "@/components/features/notifications/DynamicIsland";
+import { NotificationCenterProvider } from "@/components/features/notifications/NotificationCenter";
 import { BetaTicker } from "./BetaTicker";
 import { Sidebar } from "./Sidebar";
 
@@ -59,7 +60,19 @@ export function AppShell({ children, role = "student" }: AppShellProps) {
 
 
   return (
-    <>
+    /*
+      The notification feed, and the island that reads it.
+
+      `<DynamicNotifications />` is aligned to this bar and centres its chip in
+      it, but is a sibling of the bar rather than a child: the bar has a
+      `backdrop-filter`, and a nested card would blur the bar's own background
+      instead of the page behind it. See the component.
+    */
+    <NotificationCenterProvider>
+      {/* Suspended while the mobile drawer is open: the island's layer has to sit
+          above this bar, so it would otherwise float over the drawer panel itself. */}
+      <DynamicNotifications suspended={sidebarOpen} />
+
       {/* ── Top nav bar ─────────────────────────────────────────── */}
       <header
         className="app-nav"
@@ -105,23 +118,17 @@ export function AppShell({ children, role = "student" }: AppShellProps) {
         </Link>
 
         {/*
-          Right: notifications.
+          The middle of the bar belongs to the notification island, which sits
+          there always: it is the only door to the inbox, so it cannot be
+          something that appears only when it has news. It is positioned against
+          this bar by `.island-layer`, not laid out inside it, so the two can
+          never push each other around — the ticker on the right is bounded so
+          that it stops before the chip begins.
 
-          An "Account" button used to sit here, linking to /profile for every role
-          — the student settings URL, so for a professor it did not lead to the
-          faculty settings the sidebar links to. The sidebar's own Account
-          section already resolves that per role, so the top bar carries the
-          notification bell alone rather than a second, wrong door.
-        */}
-        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexShrink: 0 }}>
-          <NotificationBell />
-        </div>
-
-        {/*
-          The rest of the bar. On desktop the two items above are the whole of
-          it, so this fills what was empty space with the one thing a beta build
-          owes its users: that it is one. Hidden below 1024px, where the nav is
-          the hamburger, the wordmark and the bell and none of them can move.
+          A bell icon used to sit opposite this, and an "Account" button before
+          that, linking to /profile for every role — the student settings URL, so
+          for a professor it did not lead to the faculty settings the sidebar
+          links to. The sidebar's own Account section resolves that per role.
         */}
         <BetaTicker />
       </header>
@@ -166,6 +173,6 @@ export function AppShell({ children, role = "student" }: AppShellProps) {
           </motion.div>
         </div>
       </div>
-    </>
+    </NotificationCenterProvider>
   );
 }
