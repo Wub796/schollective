@@ -285,6 +285,13 @@ Authentication needs these set on the Worker (`wrangler secret put <NAME>`):
 | `SAFETY_EMAIL_TO` | no | Where the heads-up for a safety report goes. Separate from `FEEDBACK_EMAIL_TO` on purpose. Unset, reports still land in `/admin/safety` — and the page says in red that nobody is being emailed, because silence here is not a supported configuration the way it is for feedback. |
 | `AUTH_SCHEMA_AUTO_MIGRATE` | no | Set to `false` to manage the schema by hand. |
 
+Check the email row rather than trusting it. `npm run verify:email` reads these
+same variables, asks the Resend API whether the sender's domain is verified, and
+rejects the mistake that looks like success — an address list in
+`SAFETY_EMAIL_TO` (it is handed to Resend as one recipient). Adding `-- --send`
+sends one test through the application's own safety template, so a deployment
+that cannot email about a child fails here rather than silently at 3am.
+
 None of these have in-code fallbacks: a secret committed to the repository is a
 secret everyone has. When `DATABASE_URL` is missing, `/api/auth/*` answers with a
 JSON body naming the problem — and listing which variables the deployment can
