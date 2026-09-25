@@ -9,6 +9,9 @@ const FOOTER_LINKS = [
   { label: "Professors",  href: "/for-professors" },
   { label: "Privacy",     href: "/privacy" },
   { label: "Terms",       href: "/terms" },
+  // Not filed under the other two: this one is aimed at students and their
+  // parents, and it is the page a mentor has to have read.
+  { label: "Safety",      href: "/safety" },
 ];
 
 export function PublicFooter() {

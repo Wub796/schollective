@@ -190,6 +190,13 @@ export interface ThreadMember extends Pick<
   status: MemberStatus;
   invited_at: string;
   responded_at: string | null;
+  /**
+   * Derived, not chosen: whether the youth protection rules apply to this
+   * student (db/migrations/0014). Read by the thread page so that the notice a
+   * participant sees is decided by the same flag the send action enforces,
+   * rather than by the education level it was derived from.
+   */
+  is_minor: boolean | null;
 }
 
 /** Every student who has ever been on a group thread, in the order they were invited. */
@@ -199,7 +206,7 @@ export async function getThreadMembers(requestId: string, viewerId: string): Pro
     const rows = await sql`
       SELECT m.student_id AS id, m.status, m.invited_at, m.responded_at,
              p.first_name, p.last_name, p.preferred_name, p.institution,
-             p.education_level, p.major, p.avatar_url
+             p.education_level, p.major, p.avatar_url, p.is_minor
       FROM request_members m
       LEFT JOIN profiles p ON p.id = m.student_id
       WHERE m.request_id = ${requestId}

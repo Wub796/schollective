@@ -11,6 +11,7 @@ import {
   GraduationCap,
   MessageSquare,
   Inbox,
+  ShieldAlert,
   Settings,
   LogOut,
   Menu,
@@ -25,6 +26,10 @@ const NAV = [
   { href: "/admin/professors", icon: GraduationCap,   label: "Faculty",   sub: "Roster"          },
   { href: "/admin/threads",    icon: MessageSquare,   label: "Threads",   sub: "Activity"        },
   { href: "/admin/feedback",   icon: Inbox,           label: "Feedback",  sub: "Beta reports"    },
+  // Last in the list and the only one with a safety remit: it is read when
+  // something has happened, not on the way past. The overview page carries the
+  // unread count so it is not missed by not being looked for.
+  { href: "/admin/safety",     icon: ShieldAlert,     label: "Safety",    sub: "Concerns"        },
 ];
 
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];

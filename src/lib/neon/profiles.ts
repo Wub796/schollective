@@ -101,6 +101,17 @@ export interface ProfileRecord {
   deactivated_at?: string | null;
   /** What a restore returns to. Written by the disable path, never by a client. */
   status_before_deactivation?: string | null;
+  /**
+   * Derived, never chosen: whether the youth protection rules apply to this
+   * account (db/migrations/0014_youth_protection.sql).
+   *
+   * Hand-maintained here like the rest of this interface, and checked against
+   * the bootstrap DDL by tests/schema-drift.test.mjs. It is safe to send to a
+   * client component — it carries no more than the education level it is usually
+   * derived from — which is why the DATE OF BIRTH it is derived from lives in a
+   * different table that nothing `SELECT *`-ing this row can reach.
+   */
+  is_minor?: boolean | null;
   created_at?: string;
   updated_at?: string;
 }

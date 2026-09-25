@@ -15,6 +15,9 @@ stateless HTTP driver, which is what makes it work inside a Cloudflare Worker.
 | `friendships`, `user_blocks` | The app | Student friend requests and friends; one-directional blocks |
 | `ai_profile_review_jobs` | The app | Durable AI profile-review requests and results |
 | `feedback_reports` | The app | Beta feedback: bugs, suggestions, and anything else, written by its author |
+| `youth_protection` | The app | A student's date of birth and a guardian's consent — owner and admins only |
+| `safety_reports` | The app | Safety concerns, with their own status flow; one row per report |
+| `safety_report_evidence` | The app | A copy of a thread's messages, taken when a report was made from it |
 
 The bootstrap also creates the indexes these tables are queried by. The rate
 limiter is deliberately database-backed: an in-memory counter is per Worker
@@ -169,6 +172,58 @@ Notifying the team by email is best effort and off unless `FEEDBACK_EMAIL_TO` is
 set. The row is written first and is the record; the email is a heads-up that can
 fail without losing anything.
 
+### 0014 — youth protection and the safety queue
+
+`0014_youth_protection.sql` adds `profiles.is_minor`, the private
+`youth_protection` table, and the `safety_reports` /
+`safety_report_evidence` pair behind `/admin/safety`. Apply it before deploying
+the code that uses it. The runtime bootstrap creates the tables and the column
+(`APP_TABLES`, `APP_REQUIRED_COLUMNS`), but it cannot create policies, and
+without them `youth_protection` would be a table of children's birth dates
+readable by any query that forgot to filter — the one table in this schema where
+a missing policy is a breach rather than an inconvenience.
+
+- **The date of birth is not a column on `profiles`.** `profiles` is read with
+  `SELECT *` in `src/lib/neon/profiles.ts` and the row is handed to client
+  components, so a column there is a column one careless query away from a
+  browser. It lives in `youth_protection`, whose SELECT policy is
+  `profile_id = app_user_id() OR app_is_admin()`.
+- **`profiles.is_minor` is a derived cache, never client-set.** The message guard
+  runs as the professor, who cannot read a student's `youth_protection` row and
+  should not be able to, so the one bit it needs is copied where every
+  participant can already see the education level it comes from. It is written by
+  `refreshMinorFlag` (`src/lib/neon/youth-protection.ts`) from the date of birth
+  when there is one and the education level when there is not
+  (`resolveMinorFlag`), on every profile write and whenever an age is recorded.
+  A student who ages out and never edits their profile keeps the flag, which errs
+  towards protecting them.
+- **A guardian consent is all three fields or none of them.** The CHECK enforces
+  it: a version with no timestamp cannot be told apart from a guess, and a
+  timestamp with no version cannot be re-asked when the wording changes.
+  `GUARDIAN_CONSENT_VERSION` in `src/lib/youth-protection.ts` is bumped when the
+  statement changes meaning.
+- **A report copies the thread.** Deleting an account cascades
+  `profiles` -> `requests` -> `messages`, so a report that only pointed at a
+  thread would be erasable by the person it is about. `safety_report_evidence`
+  references nothing that can cascade and stores each sender's name as text,
+  because after a deletion there is no profile row left to join to. This is why
+  deletion on this queue is the one admin action that destroys something
+  unrecoverable.
+- **Both of a report's foreign keys are `ON DELETE SET NULL`.** The report must
+  not disappear with the account it is about, nor with the reporter — a student
+  under pressure to withdraw a report should not be able to erase it, and cannot.
+  `request_id` has no foreign key at all, for the same reason.
+- The stored vocabulary is mirrored in `src/lib/youth-protection.ts` and compared
+  against these CHECK constraints by `tests/youth-protection.test.mjs`; change
+  the lists together.
+
+Notifying the team is best effort and off unless `SAFETY_EMAIL_TO` is set. It is
+deliberately a different address from `FEEDBACK_EMAIL_TO`: a report about a child
+and a suggestion about the profile form are not the same inbox, and turning
+feedback notifications off is not a decision to stop hearing about safety. The
+public policy names `safety@schollective.com`, so that mailbox has to exist and
+be read — the `/admin/safety` page says so on screen when the variable is unset.
+
 ### 002 — purging disabled accounts (maintenance)
 
 `db/maintenance/002_purge_deactivated_accounts.sql` deletes accounts that are
@@ -225,6 +280,7 @@ Authentication needs these set on the Worker (`wrangler secret put <NAME>`):
 | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | for Google sign-in | From the Google Cloud console OAuth client. Google sign-in is offered only when both are set; without them the button reports itself as unconfigured rather than failing mid-handshake. |
 | `RESEND_API_KEY` / `EMAIL_FROM` | for password reset | Without them, reset and verification emails are logged instead of delivered — so nobody can recover an account. `EMAIL_FROM` must use a domain verified in Resend. |
 | `FEEDBACK_EMAIL_TO` | no | Where the heads-up for a new beta report goes. Without it (or without the two Resend variables) reports still land in `/admin/feedback`; only the notification is skipped, and the route reports `emailed: false` rather than claiming one was sent. |
+| `SAFETY_EMAIL_TO` | no | Where the heads-up for a safety report goes. Separate from `FEEDBACK_EMAIL_TO` on purpose. Unset, reports still land in `/admin/safety` — and the page says in red that nobody is being emailed, because silence here is not a supported configuration the way it is for feedback. |
 | `AUTH_SCHEMA_AUTO_MIGRATE` | no | Set to `false` to manage the schema by hand. |
 
 None of these have in-code fallbacks: a secret committed to the repository is a

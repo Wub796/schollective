@@ -7,6 +7,18 @@
  * so that choice has to actually gate something. Product analytics and session
  * replay start only once consent is given; error reporting stays on, since it
  * carries no analytics identity and is what keeps the app debuggable.
+ *
+ * TWO GATES, NOT ONE, AND WHY THE SECOND EXISTS
+ * Consent is the first. The second is age: this product's students include
+ * minors, and a recording of a 15-year-old's screen inside a mentorship thread
+ * is not something a teenager can meaningfully agree to on their own. So before
+ * anything optional starts, `/api/me/analytics` is asked whether this account is
+ * a minor, and a "yes" leaves PostHog, Amplitude and session replay switched
+ * off no matter what was accepted.
+ *
+ * The failure direction is deliberate: if that answer cannot be obtained, the
+ * optional tools do NOT start. A database hiccup costs a day of usage data; the
+ * opposite default costs a recording of a child.
  */
 
 export const CONSENT_COOKIE = "schollective-cookie-consent";
@@ -38,21 +50,96 @@ export function writeConsent(value: ConsentValue): void {
 let analyticsStartPromise: Promise<void> | null = null;
 
 /**
+ * Set once we have learnt this account is a minor, or that we could not find
+ * out. Never cleared: the answer cannot become "yes, record this child" later in
+ * the same page, and a flag that could flip back would be a race waiting to
+ * happen.
+ */
+let analyticsSuppressed = false;
+
+/** Whether optional analytics have been turned off for this page session. */
+export function areOptionalAnalyticsSuppressed(): boolean {
+  return analyticsSuppressed;
+}
+
+/**
+ * Turns optional analytics off for this page session and tears down whatever
+ * already started.
+ *
+ * Called by MinorAnalyticsGuard the moment a signed-in page reports that the
+ * account is a minor. Teardown is best-effort and each provider is isolated, so
+ * an SDK that changes shape costs a warning rather than the guarantee: the flag
+ * above is set first, and it is the flag that stops anything NEW from starting.
+ */
+export async function suppressOptionalAnalytics(reason: string): Promise<void> {
+  analyticsSuppressed = true;
+
+  // PostHog keeps a person profile and can be told to stop without being torn
+  // down. `reset()` drops the identity so a queued event is not attributed to a
+  // person afterwards.
+  try {
+    const { default: posthog } = await import("posthog-js");
+    posthog.opt_out_capturing();
+    posthog.reset();
+  } catch {
+    // Not loaded, or not configured. Nothing to stop.
+  }
+
+  try {
+    const Sentry = await import("@sentry/nextjs");
+    Sentry.getReplay()?.stop();
+  } catch {
+    // Replay was never added (the usual case: it is only added on consent).
+  }
+
+  console.warn(`[analytics] Optional analytics suppressed: ${reason}`);
+}
+
+/**
+ * Asks the server whether optional analytics belong on this account.
+ *
+ * Fails closed: any error, timeout or unparseable answer reads as "do not
+ * start". A signed-in minor is the only reason this endpoint says no, and the
+ * cost of a wrong no is aggregate usage data, while the cost of a wrong yes is
+ * recording a child's screen.
+ */
+async function optionalAnalyticsAllowed(): Promise<boolean> {
+  if (analyticsSuppressed) return false;
+
+  try {
+    const response = await fetch("/api/me/analytics", {
+      credentials: "same-origin",
+      cache: "no-store",
+      headers: { accept: "application/json" },
+    });
+    if (!response.ok) return false;
+
+    const data = (await response.json()) as { suppress?: unknown };
+    if (data?.suppress === true) {
+      analyticsSuppressed = true;
+      return false;
+    }
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
  * Starts optional, consent-gated tooling. Safe to call more than once — it
  * runs on page load when consent already exists, and again the moment someone
  * accepts, so analytics begin without waiting for a reload.
  */
 export function startOptionalAnalytics(): Promise<void> {
-  if (typeof window === "undefined" || readConsent() !== "accepted") {
+  if (typeof window === "undefined" || readConsent() !== "accepted" || analyticsSuppressed) {
     return Promise.resolve();
   }
 
   if (!analyticsStartPromise) {
-    analyticsStartPromise = Promise.all([
-      startAmplitude(),
-      startPostHog(),
-      startSessionReplay(),
-    ])
+    analyticsStartPromise = optionalAnalyticsAllowed()
+      .then((allowed) =>
+        allowed ? Promise.all([startAmplitude(), startPostHog(), startSessionReplay()]) : undefined,
+      )
       .then(() => undefined)
       .catch((error) => {
         // A blocked analytics provider must never affect the application, and

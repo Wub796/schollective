@@ -12,6 +12,12 @@ import { InstitutionInput } from "@/components/ui/InstitutionInput";
 import { PreferredNameHint } from "@/components/profile/PreferredNameHint";
 import { PreferredTitlePicker } from "@/components/profile/PreferredTitlePicker";
 import { DEFAULT_FACULTY_HONORIFIC, GENDER_CHOICES, honorificOf } from "@/lib/people";
+import {
+  ADULT_AGE,
+  GUARDIAN_CONSENT_STATEMENT,
+  MINIMUM_AGE,
+  ageBandFor,
+} from "@/lib/youth-protection";
 import { scoreApplication } from "@/app/admin/dashboard/actions";
 import posthog from "posthog-js";
 
@@ -173,6 +179,29 @@ function OnboardingContent() {
   // Optional for both roles, and shown on the profile when set.
   const [gender, setGender] = useState<string>("");
 
+  //
+  // Youth protection. The date of birth is asked for here because onboarding is
+  // the one screen every account passes through — email signup and Google
+  // signup both land on it — and it is the last point before the product opens,
+  // so an account cannot reach a mentorship thread without an age on it.
+  //
+  // It is asked for a STUDENT, whatever education level they pick: the
+  // education-level fallback reads "college" as an adult, and a 17-year-old
+  // first-year undergraduate would fall through that.
+  //
+  const [dateOfBirth, setDateOfBirth] = useState<string>("");
+  const [guardianName, setGuardianName] = useState<string>("");
+  const [guardianEmail, setGuardianEmail] = useState<string>("");
+  const [guardianAttested, setGuardianAttested] = useState<boolean>(false);
+
+  // What the entered date means. Computed live so the consent block appears as
+  // soon as the date makes it due, rather than after a failed submit — but this
+  // is only the FORM deciding what to show; the server decides whether the age
+  // is acceptable and recomputes the same bands from the same module.
+  const ageBand = ageBandFor(dateOfBirth || null);
+  const needsGuardian = ageBand === "minor";
+  const tooYoung = ageBand === "under-minimum";
+
   // Warning when leaving page with unsaved changes
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
@@ -328,6 +357,35 @@ function OnboardingContent() {
     }
 
     try {
+      // The age, FIRST. If it is refused — under 13, or a minor with no guardian
+      // — nothing else has been written, so the account is still incomplete and
+      // this page is still the page the student sees. Saved second, a refusal
+      // would leave a complete profile that the layout happily sends to
+      // /dashboard, and the age would never be asked for again (the onboarding
+      // page bounces anyone whose profile is complete straight past itself).
+      //
+      // It has its own endpoint and its own table because it must never travel
+      // through the profile write: that body is spread into `profiles`, and the
+      // date of birth is the one field on this platform that identifies a child.
+      // See db/migrations/0014_youth_protection.sql.
+      if (role === "student") {
+        const ageRes = await fetch("/api/auth/profile/age", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            dateOfBirth,
+            guardianName,
+            guardianEmail,
+            guardianAttested,
+          }),
+        });
+
+        if (!ageRes.ok) {
+          const ageJson = await ageRes.json().catch(() => null);
+          throw new Error(ageJson?.error || "We could not save your date of birth.");
+        }
+      }
+
       const updateRes = await fetch("/api/auth/profile/update", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -361,14 +419,20 @@ function OnboardingContent() {
     // Clear dirty state to allow normal navigation
     setIsDirty(false);
 
-    // Identify user with role and capture onboarding completed event
-    if (userId) {
+    // Identify user with role and capture onboarding completed event. Skipped
+    // for a high-school student, for the reason given on the signup page: this
+    // is a point where the age is known before an analytics identity exists, so
+    // a minor can be left out of product analytics rather than torn out of it.
+    const isMinorStudent = role === "student" && ageBand !== "adult";
+    if (userId && !isMinorStudent) {
       posthog.identify(userId, { role });
     }
-    posthog.capture("onboarding_completed", {
-      role,
-      auto_approved: isAutoApproved,
-    });
+    if (!isMinorStudent) {
+      posthog.capture("onboarding_completed", {
+        role,
+        auto_approved: isAutoApproved,
+      });
+    }
 
     if (role === "professor" && isAutoApproved) {
       toast.success("Welcome to Schollective! Your academic credentials have been verified.");
@@ -572,6 +636,148 @@ function OnboardingContent() {
                         <option value="college">College / Undergraduate</option>
                         <option value="graduate">Graduate (Master&apos;s / PhD)</option>
                       </select>
+                    </div>
+
+                    {/*
+                      Date of birth, and the guardian consent it triggers.
+                      Not written by the same request as the rest of this form:
+                      it goes to /api/auth/profile/age, which stores it in a
+                      table only the account and an admin can read. See
+                      db/migrations/0014_youth_protection.sql for why it is not
+                      a column on `profiles`.
+                    */}
+                    <div>
+                      <label
+                        htmlFor="date_of_birth"
+                        style={{
+                          display: "block", fontSize: "0.62rem", fontWeight: 800,
+                          letterSpacing: "0.22em", textTransform: "uppercase",
+                          color: "var(--text-primary)", marginBottom: "0.55rem",
+                          fontFamily: "var(--font-sans)",
+                        }}
+                      >
+                        Date of Birth
+                      </label>
+                      <input
+                        id="date_of_birth"
+                        name="date_of_birth"
+                        type="date"
+                        required
+                        value={dateOfBirth}
+                        onChange={(event) => { setDateOfBirth(event.target.value); setIsDirty(true); }}
+                        style={{
+                          width: "100%",
+                          background: "rgba(255, 255, 255, 0.9)",
+                          border: `1.5px solid ${tooYoung ? "#ef4444" : "rgba(99, 102, 241, 0.5)"}`,
+                          borderRadius: "100px",
+                          padding: "1rem 1.75rem",
+                          fontSize: "0.95rem",
+                          color: "var(--text-primary)",
+                          outline: "none",
+                          fontFamily: "var(--font-sans)",
+                        }}
+                      />
+                      <p style={{
+                        margin: "0.5rem 0 0", fontSize: "0.68rem", lineHeight: 1.6,
+                        color: "var(--text-secondary)", opacity: 0.8, fontFamily: "var(--font-sans)",
+                      }}>
+                        Used to work out which safety rules apply to your mentorship threads. It is never
+                        shown on your profile, and nobody you are matched with can see it.
+                      </p>
+
+                      {tooYoung && (
+                        <p style={{
+                          margin: "0.6rem 0 0", fontSize: "0.74rem", lineHeight: 1.6,
+                          color: "#ef4444", fontFamily: "var(--font-sans)",
+                        }}>
+                          Schollective is for students aged {MINIMUM_AGE} and over, so we cannot create this
+                          account. If you think this is wrong, contact us and we will fix it.
+                        </p>
+                      )}
+
+                      {needsGuardian && (
+                        <div style={{
+                          marginTop: "0.9rem", display: "flex", flexDirection: "column", gap: "1.1rem",
+                          padding: "1.25rem 1.35rem", borderRadius: "14px",
+                          border: "1px solid rgba(99, 102, 241, 0.35)",
+                          background: "rgba(99, 102, 241, 0.05)",
+                        }}>
+                          <p style={{
+                            margin: 0, fontSize: "0.78rem", lineHeight: 1.7,
+                            color: "var(--text-primary)", fontFamily: "var(--font-sans)",
+                          }}>
+                            Because you are under {ADULT_AGE}, a parent or guardian has to agree before you
+                            can use Schollective. Ask them to fill this in.
+                          </p>
+
+                          <div className="grid-2" style={{ gap: "1.25rem" }}>
+                            <div>
+                              <label htmlFor="guardian_name" style={{
+                                display: "block", fontSize: "0.62rem", fontWeight: 800,
+                                letterSpacing: "0.22em", textTransform: "uppercase",
+                                color: "var(--text-primary)", marginBottom: "0.55rem",
+                                fontFamily: "var(--font-sans)",
+                              }}>
+                                Parent / Guardian Name
+                              </label>
+                              <input
+                                id="guardian_name"
+                                type="text"
+                                required
+                                value={guardianName}
+                                onChange={(event) => { setGuardianName(event.target.value); setIsDirty(true); }}
+                                placeholder="Alex Rivera"
+                                style={{
+                                  width: "100%", background: "rgba(255, 255, 255, 0.9)",
+                                  border: "1.5px solid rgba(99, 102, 241, 0.5)", borderRadius: "100px",
+                                  padding: "0.9rem 1.5rem", fontSize: "0.9rem", color: "var(--text-primary)",
+                                  outline: "none", fontFamily: "var(--font-sans)",
+                                }}
+                              />
+                            </div>
+                            <div>
+                              <label htmlFor="guardian_email" style={{
+                                display: "block", fontSize: "0.62rem", fontWeight: 800,
+                                letterSpacing: "0.22em", textTransform: "uppercase",
+                                color: "var(--text-primary)", marginBottom: "0.55rem",
+                                fontFamily: "var(--font-sans)",
+                              }}>
+                                Parent / Guardian Email
+                              </label>
+                              <input
+                                id="guardian_email"
+                                type="email"
+                                required
+                                value={guardianEmail}
+                                onChange={(event) => { setGuardianEmail(event.target.value); setIsDirty(true); }}
+                                placeholder="alex@example.com"
+                                style={{
+                                  width: "100%", background: "rgba(255, 255, 255, 0.9)",
+                                  border: "1.5px solid rgba(99, 102, 241, 0.5)", borderRadius: "100px",
+                                  padding: "0.9rem 1.5rem", fontSize: "0.9rem", color: "var(--text-primary)",
+                                  outline: "none", fontFamily: "var(--font-sans)",
+                                }}
+                              />
+                            </div>
+                          </div>
+
+                          <label style={{
+                            display: "flex", gap: "0.7rem", alignItems: "flex-start",
+                            fontSize: "0.74rem", lineHeight: 1.65,
+                            color: "var(--text-secondary)", fontFamily: "var(--font-sans)",
+                            cursor: "pointer",
+                          }}>
+                            <input
+                              type="checkbox"
+                              checked={guardianAttested}
+                              onChange={(event) => { setGuardianAttested(event.target.checked); setIsDirty(true); }}
+                              required
+                              style={{ marginTop: "0.25rem", accentColor: "#4f46e5", flexShrink: 0 }}
+                            />
+                            <span>{GUARDIAN_CONSENT_STATEMENT}</span>
+                          </label>
+                        </div>
+                      )}
                     </div>
 
                     <div className="grid-2" style={{ gap: "1.5rem" }}>

@@ -93,12 +93,18 @@ function ConfirmLeaveDialog({
             <>
               <p style={{ margin: 0 }}>
                 Your profile, mentorship threads and messages are deleted straight away. There is no
-                grace period, no copy kept, and no way back to this account.
+                grace period and no way back to this account.
               </p>
               <p style={{ margin: 0 }}>
                 <strong>Other people lose the thread too.</strong> A mentorship thread is one set of
                 messages, not one copy per reader: every professor and co-student you talked to loses
                 the whole conversation, not just your side of it.
+              </p>
+              <p style={{ margin: 0 }}>
+                <strong>One thing can outlive it.</strong> If a safety report has been filed about
+                one of your threads, the copy of that thread taken with the report is kept. Reports
+                are stored separately from the accounts they are about, so deleting an account does
+                not delete a report.
               </p>
               <p style={{ margin: 0 }}>
                 Your friendships, group memberships, notifications and faculty listing go with it.
