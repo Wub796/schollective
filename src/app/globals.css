@@ -644,6 +644,11 @@ body {
      the colour matrix saturates whatever alpha it is handed, so a translucent
      layer would be drawn opaque anyway. */
   pointer-events: none;
+  /* Promote to its own compositing surface so the SVG goo filter is not
+     re-rasterized on every frame the springs are running — the single biggest
+     smoothness win for the island's entrance animation. */
+  will-change: opacity;
+  transform: translateZ(0);
 }
 
 .island-goo-blob {
@@ -651,6 +656,9 @@ body {
   left: 50%;
   transform: translateX(-50%);
   display: block;
+  /* Width, height, and top are all driven by springs — hinting the browser
+     lets it pre-allocate the compositing surface. */
+  will-change: width, height, top;
 }
 
 .island-goo-pill {
@@ -765,21 +773,21 @@ body {
    so a pointer resting on it does not have that thrown away for the second the
    ripple is running. */
 .island-pill[data-pulse="true"] {
-  animation: island-pill-pulse 1.5s cubic-bezier(0.22, 1, 0.36, 1) 1;
+  animation: island-pill-pulse 1.8s cubic-bezier(0.22, 1, 0.36, 1) 1;
 }
 
 @keyframes island-pill-pulse {
   0% {
     box-shadow:
       var(--island-pill-shadow),
-      0 0 0 0 color-mix(in srgb, var(--island-accent, var(--color-accent)) 42%, transparent);
+      0 0 0 0 color-mix(in srgb, var(--island-accent, var(--color-accent)) 38%, transparent);
   }
   /* The ring is held at nothing until the end rather than dropped: a two-shadow
      list becoming a one-shadow list is a step the eye can catch at the edge. */
   70%, 100% {
     box-shadow:
       var(--island-pill-shadow),
-      0 0 0 12px color-mix(in srgb, var(--island-accent, var(--color-accent)) 0%, transparent);
+      0 0 0 14px color-mix(in srgb, var(--island-accent, var(--color-accent)) 0%, transparent);
   }
 }
 
@@ -847,27 +855,56 @@ body {
   -webkit-backdrop-filter: blur(20px) saturate(190%);
   border: 1px solid var(--color-line);
   border-radius: var(--radius-surface);
-  /* Four layers, in the order they read: a hairline of light inside the top
-     edge (the same trick the bar plays once the page is scrolled), the contact
-     shadow that sits the panel on the page, the wide one that lifts it, and the
-     accent that ties it back to the chip it grew out of. */
+  /* Five layers now, in the order they read: the hairline of light inside the
+     top edge, a tight contact shadow (new — sits the card on the surface the way
+     the reference's `shadowOffset.height: 8` does), the regular contact shadow,
+     the wide lift that gives it depth, and the accent wash that ties it to the
+     chip. The transition is new too — the card's shadow shifting on hover will
+     animate rather than snapping. */
   box-shadow:
     inset 0 1px 0 0 color-mix(in srgb, var(--color-surface) 70%, transparent),
-    0 2px 6px -3px color-mix(in srgb, var(--color-ink) 16%, transparent),
-    0 22px 48px -20px color-mix(in srgb, var(--color-ink) 30%, transparent),
-    0 6px 18px -10px color-mix(in srgb, var(--island-accent, var(--color-accent)) 20%, transparent);
+    0 1px 3px 0 color-mix(in srgb, var(--color-ink) 10%, transparent),
+    0 4px 8px -3px color-mix(in srgb, var(--color-ink) 14%, transparent),
+    0 20px 44px -18px color-mix(in srgb, var(--color-ink) 28%, transparent),
+    0 8px 22px -10px color-mix(in srgb, var(--island-accent, var(--color-accent)) 18%, transparent);
   overflow: hidden;
   cursor: grab;
   touch-action: pan-x;
+  transition:
+    box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .island-card:active {
   cursor: grabbing;
 }
 
+/* A subtle lift when the reader's pointer is over the card, deepening the wide
+   shadow to signal interactivity. The transition on the base rule makes it
+   glide. The inbox panel is excluded — it is furniture, not a gesture target. */
+.island-card:not(.island-card-panel):hover {
+  box-shadow:
+    inset 0 1px 0 0 color-mix(in srgb, var(--color-surface) 70%, transparent),
+    0 1px 3px 0 color-mix(in srgb, var(--color-ink) 12%, transparent),
+    0 6px 12px -3px color-mix(in srgb, var(--color-ink) 16%, transparent),
+    0 24px 52px -18px color-mix(in srgb, var(--color-ink) 32%, transparent),
+    0 10px 26px -10px color-mix(in srgb, var(--island-accent, var(--color-accent)) 22%, transparent);
+}
+
 /* The inbox is not something to wave away: same body, no grip. */
 .island-card-panel {
   cursor: default;
+}
+
+/* What is inside a notification card, revealed as the last beat of the
+   entrance: it arrives at the library's `CONTENT_MIN_SCALE` and settles into
+   its own size. A layer of its own, because a transform here is the one thing
+   inside the card that can move without touching the card's own
+   `backdrop-filter` — and its origin is the top, so the eyebrow and the title
+   stay where they are while the rest closes the last of the 0.88. */
+.island-card-content {
+  transform-origin: top center;
+  will-change: transform, opacity;
 }
 
 .island-card-link {
