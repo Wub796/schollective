@@ -1,12 +1,29 @@
 "use client";
 
 import React from "react";
-import Image from "next/image";
 import { PageHero, PageSection, RowList, SectionHeading } from "@/components/ui/PublicPage";
+import { LayeredText } from "@/components/ui/LayeredText";
+import { ImageSphere, type SphereImage } from "@/components/ui/ImageSphere";
 import { ScrollProgress } from "@/components/ui/ScrollProgress";
 import { PublicNav } from "@/components/ui/PublicNav";
 import { PublicFooter } from "@/components/ui/PublicFooter";
 import { Button } from "@/components/ui/Button";
+
+/**
+ * The ribbon in the hero's right column: the title's other half. The title says
+ * research should not depend on who you know; this is what it should depend on
+ * instead. The bands chain — each line's second word is the next line's first —
+ * so hovering slides one list a notch rather than flipping seven words in place.
+ */
+const WHAT_IT_RUNS_ON = [
+  { top: "\u00A0", bottom: "CURIOSITY" },
+  { top: "CURIOSITY", bottom: "MERIT" },
+  { top: "MERIT", bottom: "READING" },
+  { top: "READING", bottom: "CRAFT" },
+  { top: "CRAFT", bottom: "EVIDENCE" },
+  { top: "EVIDENCE", bottom: "ACCESS" },
+  { top: "ACCESS", bottom: "\u00A0" },
+];
 
 const PROBLEM = [
   {
@@ -38,12 +55,22 @@ const VALUES = [
 ];
 
 const TEAM = [
-  { initials: "AR", name: "Aiden Raj", desc: "Product and faculty outreach.", image: "/team/aiden.jpg" },
-  { initials: "AS", name: "Ayaan Siddiqui", desc: "Student community and school partnerships.", image: "/team/ayaan.jpg" },
-  { initials: "BW", name: "Benjamin Wu", desc: "Frontend and onboarding flows.", image: "/team/ben.jpg" },
-  { initials: "JH", name: "Joseph Hu", desc: "Application architecture, AI review services, data.", image: "/team/joseph.jpg" },
-  { initials: "MT", name: "Michelle Truong", desc: "Research resources and academic workshops.", image: "/team/michelle.jpg" },
+  { name: "Aiden Raj", role: "Product and faculty outreach.", image: "/team/aiden.jpg" },
+  { name: "Ayaan Siddiqui", role: "Student community and school partnerships.", image: "/team/ayaan.jpg" },
+  { name: "Benjamin Wu", role: "Frontend and onboarding flows.", image: "/team/ben.jpg" },
+  { name: "Joseph Hu", role: "Application architecture, AI review services, data.", image: "/team/joseph.jpg" },
+  { name: "Michelle Truong", role: "Research resources and academic workshops.", image: "/team/michelle.jpg" },
 ];
+
+/** The team, in the shape the sphere wants: one face per person, with the name
+ *  and role carried on the image so the caption and the dialog can use them. */
+const TEAM_FACES: SphereImage[] = TEAM.map((member) => ({
+  id: member.name,
+  src: member.image,
+  alt: member.name,
+  title: member.name,
+  description: member.role,
+}));
 
 export default function AboutPage() {
   return (
@@ -65,6 +92,7 @@ export default function AboutPage() {
           </>
         }
         lede="Most students have no family tie to a lab and no research programme at their school. Schollective is for anyone willing to read a paper first: find the people who wrote it, see what else they publish, and ask them something specific."
+        aside={<LayeredText lines={WHAT_IT_RUNS_ON} />}
       >
         <Button href="/signup" variant="primary" size="lg">
           Get Started
@@ -85,32 +113,22 @@ export default function AboutPage() {
       </PageSection>
 
       <PageSection>
-        <SectionHeading>Built by students who lived the problem</SectionHeading>
-        <p className="mt-3 max-w-lg text-[0.95rem] leading-relaxed text-ink-soft text-pretty">
-          Five people, all of whom have written an email to a professor and waited.
-        </p>
+        {/* The same two columns as the hero above: the copy in the title's own
+            40rem, the faces in what is left of the 1024px container. */}
+        <div className="lg:grid lg:grid-cols-[minmax(0,40rem)_minmax(0,1fr)] lg:items-center lg:gap-16">
+          <div>
+            {/* Capped at the page title's own 40rem so the two read as the same
+                column, which at `lg` is what the grid column already is. */}
+            <SectionHeading className="max-w-[40rem]">Built by students who lived the problem</SectionHeading>
+            <p className="mt-3 max-w-lg text-[0.95rem] leading-relaxed text-ink-soft text-pretty">
+              Five people, all of whom have written an email to a professor and waited.
+            </p>
+          </div>
 
-        <ul className="m-0 mt-10 grid list-none gap-x-10 gap-y-8 p-0 sm:grid-cols-2 lg:grid-cols-3">
-          {TEAM.map((member) => (
-            <li key={member.name} className="flex items-start gap-4 border-t border-line pt-5">
-              <span className="relative h-11 w-11 shrink-0 overflow-hidden rounded-full border border-line bg-accent/8">
-                {member.image ? (
-                  <Image src={member.image} alt={member.name} width={44} height={44} className="h-full w-full object-cover" />
-                ) : (
-                  <span className="flex h-full w-full items-center justify-center bg-accent font-display text-[0.8rem] font-black text-white">
-                    {member.initials}
-                  </span>
-                )}
-              </span>
-              <span className="min-w-0">
-                <span className="block font-display text-[1.02rem] font-semibold tracking-[-0.01em] text-ink">
-                  {member.name}
-                </span>
-                <span className="mt-1 block text-[0.86rem] leading-relaxed text-ink-soft">{member.desc}</span>
-              </span>
-            </li>
-          ))}
-        </ul>
+          <div className="mt-12 lg:mt-0">
+            <ImageSphere images={TEAM_FACES} />
+          </div>
+        </div>
       </PageSection>
 
       <PageSection>
