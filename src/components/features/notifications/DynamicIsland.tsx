@@ -928,7 +928,19 @@ function Island({ goo, blur, duration, suspended }: IslandProps) {
               // that change instead of snapping the capsule under the text. It
               // rides the droplet's spring so the chip and the goo below it
               // resize as one thing.
-              layout={!reduceMotion}
+              //
+              // `"size"` rather than the whole box, and that is a bug fix rather
+              // than a preference. This chip is `position: fixed`, and framer
+              // measures a layout animation in page coordinates: whatever the
+              // reader has scrolled is folded into the next measurement, and the
+              // position half of the animation applies the difference as a
+              // transform on the chip. The chip is then drawn down the page with
+              // the document — and the next unrelated re-render, from any button
+              // on the page, animates it back up to the bar. A chip pinned to the
+              // top of the window has no position to change, so giving up the
+              // position half costs nothing: what changes with the label is the
+              // width, and that still glides.
+              layout={reduceMotion ? false : "size"}
               // Transform only, never a fade. This is the rule
               // src/components/ui/entrance.ts was written for, and it holds here
               // for the same reason: framer resolves `initial` during server

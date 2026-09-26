@@ -48,10 +48,13 @@ const Button = React.forwardRef<HTMLElement, ButtonProps>(
   ({ className, variant = "primary", size = "md", icon, children, href, ...props }, ref) => {
     const mergedClassName = cn(BASE, VARIANTS[variant], SIZES[size], className);
 
+    /* The label is a flex row: Tailwind preflight sets `svg { display: block }`,
+       so an icon passed as part of `children` (rather than via `icon`) would
+       otherwise break onto its own line inside this inline span. */
     const content = (
       <span className="relative z-[1] inline-flex items-center justify-center gap-2">
         {icon && <span className="flex flex-shrink-0 items-center justify-center">{icon}</span>}
-        <span>{children}</span>
+        <span className="inline-flex items-center justify-center gap-2">{children}</span>
       </span>
     );
 
