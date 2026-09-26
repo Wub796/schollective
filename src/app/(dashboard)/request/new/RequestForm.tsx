@@ -310,7 +310,7 @@ export function RequestForm({ professor, requestsToday, friends }: RequestFormPr
           ) : (
             <>
               Send Mentorship Request
-              <ArrowRight size={15} style={{ marginLeft: "0.5rem" }} />
+              <ArrowRight size={15} />
             </>
           )}
         </Button>
