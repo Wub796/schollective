@@ -1,28 +1,24 @@
 import type { Metadata, Viewport } from "next";
-import { Mulish, Arima } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { Toaster } from "sonner";
 import { CustomCursor } from "@/components/ui/CustomCursor";
 import { AmplitudeAnalytics } from "@/components/analytics/AmplitudeAnalytics";
 import { CookieBanner } from "@/components/CookieBanner";
 
-/* These two faces are the site's actual type identity. `globals.css` maps
-   `--font-sans` / `--font-display` onto these properties, so the token layer
-   and the rendered page can no longer drift apart. */
-const mulish = Mulish({
-  subsets: ["latin"],
+/* These two faces are the site's actual type identity, self-hosted as variable
+   woff2 files so the build is 100% deterministic and immune to Google Fonts
+   network outages or extensionless URL slicing. */
+const mulish = localFont({
+  src: "../fonts/mulish.woff2",
   variable: "--font-mulish",
-  preload: false,
   display: "swap",
-  weight: ["300", "400", "500", "600", "700", "800", "900"],
 });
 
-const arima = Arima({
-  subsets: ["latin"],
+const arima = localFont({
+  src: "../fonts/arima.woff2",
   variable: "--font-arima",
-  preload: false,
   display: "swap",
-  weight: ["300", "400", "500", "600", "700"],
 });
 
 const siteUrl = "https://schollective.com";
