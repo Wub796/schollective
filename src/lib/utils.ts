@@ -45,6 +45,7 @@ export function parseJsonbArray(value: unknown): string[] {
     try {
       const parsed = JSON.parse(value);
       if (Array.isArray(parsed)) return parsed.filter((v): v is string => typeof v === "string");
+      if (typeof parsed === "string" && parsed.trim()) return [parsed];
     } catch {
       return [value];
     }
