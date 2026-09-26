@@ -44,7 +44,10 @@ export function IslandInbox({ id, notifications, viewer, unreadAtOpen, onNavigat
     // pointer is on, is a ring that jumps on every wheel notch.
     <div className="island-inbox" id={id} role="dialog" aria-label="Notifications list" data-no-morph>
       <div className="island-inbox-head">
-        <span className="island-inbox-title">Notifications</span>
+        <div className="island-inbox-head-title-wrap">
+          <NotificationGlyphMark glyph="inbox" size={13} />
+          <span className="island-inbox-title">Notifications</span>
+        </div>
         {unreadAtOpen > 0 ? (
           <span className="island-inbox-new">{unreadAtOpen} new</span>
         ) : (
@@ -55,7 +58,9 @@ export function IslandInbox({ id, notifications, viewer, unreadAtOpen, onNavigat
       <div className="island-inbox-list hide-scrollbar">
         {notifications.length === 0 ? (
           <div className="island-inbox-empty">
-            <NotificationGlyphMark glyph="inbox" size={20} />
+            <span className="island-inbox-empty-icon" aria-hidden="true">
+              <NotificationGlyphMark glyph="inbox" size={20} />
+            </span>
             <p className="island-inbox-empty-title">Nothing here yet</p>
             <p className="island-inbox-empty-body">
               Activity on your requests, threads and friends lands here.
@@ -80,10 +85,12 @@ export function IslandInbox({ id, notifications, viewer, unreadAtOpen, onNavigat
                 <span className="island-inbox-copy">
                   <span className="island-inbox-row-top">
                     <span className="island-inbox-row-title">{title}</span>
-                    {!row.is_read && <span className="island-inbox-dot" aria-hidden="true" />}
+                    <span className="island-inbox-row-meta">
+                      <span className="island-inbox-row-time">{timeAgo(row.created_at)}</span>
+                      {!row.is_read && <span className="island-inbox-dot" aria-hidden="true" />}
+                    </span>
                   </span>
                   {message && <span className="island-inbox-row-body">{message}</span>}
-                  <span className="island-inbox-row-time">{timeAgo(row.created_at)}</span>
                 </span>
               </Link>
             );
