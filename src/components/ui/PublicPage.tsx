@@ -61,42 +61,65 @@ export function Eyebrow({ children }: { children: React.ReactNode }) {
 }
 
 /**
- * The page hero: eyebrow, title, one paragraph, optional actions.
+ * The page hero: eyebrow, title, one paragraph, optional actions, optional
+ * graphic in the space beside the title.
  *
  * Left-aligned on the same grid as the body, because a page whose hero is
  * centred and whose sections are centred has no alignment at all — every
  * element agrees with every other one, so nothing leads.
+ *
+ * `aside` is the second column, and it is deliberately not a free-form slot:
+ * the text column is pinned at the title's own 40rem, so adding one moves the
+ * title by nothing. It is placed at `lg`, where the 1024px container finally
+ * has a column left over once the title has taken its 640px — below that there
+ * is no empty space to put anything in, and the hero stays exactly what it was.
  */
 export function PageHero({
   eyebrow,
   title,
   lede,
   children,
+  aside,
 }: {
   eyebrow?: React.ReactNode;
   title: React.ReactNode;
   lede?: React.ReactNode;
   children?: React.ReactNode;
+  /** Sits right of the title at `lg` and up. Hidden below it. */
+  aside?: React.ReactNode;
 }) {
   return (
-    <section className="px-6 pt-36 pb-16 md:pt-44 md:pb-20">
-      <div className="mx-auto w-full max-w-5xl">
-        {eyebrow ? <Eyebrow>{eyebrow}</Eyebrow> : null}
-        <Reveal>
-          <h1 className="max-w-[40rem] font-display text-[clamp(2.4rem,5.2vw,3.8rem)] font-black leading-[1.06] tracking-[-0.035em] text-ink text-pretty">
-            {title}
-          </h1>
-        </Reveal>
-        {lede ? (
-          <Reveal delay={0.1}>
-            <p className="mt-6 max-w-xl text-[1.05rem] leading-relaxed text-ink-soft text-pretty">{lede}</p>
+    // `overflow-x-clip` only when there is an `aside`: the graphic in that
+    // column is allowed to be as wide as the space plus the gutter, and this
+    // stops a wide one from giving the page a horizontal scrollbar. One axis
+    // only, so nothing about the hero's height changes.
+    <section
+      className={`px-6 pt-36 pb-16 md:pt-44 md:pb-20${aside ? " overflow-x-clip" : ""}`}
+    >
+      <div
+        className={`mx-auto w-full max-w-5xl${
+          aside ? " lg:grid lg:grid-cols-[minmax(0,40rem)_minmax(0,1fr)] lg:items-center lg:gap-10" : ""
+        }`}
+      >
+        <div>
+          {eyebrow ? <Eyebrow>{eyebrow}</Eyebrow> : null}
+          <Reveal>
+            <h1 className="max-w-[40rem] font-display text-[clamp(2.4rem,5.2vw,3.8rem)] font-black leading-[1.06] tracking-[-0.035em] text-ink text-pretty">
+              {title}
+            </h1>
           </Reveal>
-        ) : null}
-        {children ? (
-          <Reveal delay={0.15}>
-            <div className="mt-9 flex flex-wrap items-center gap-x-6 gap-y-3">{children}</div>
-          </Reveal>
-        ) : null}
+          {lede ? (
+            <Reveal delay={0.1}>
+              <p className="mt-6 max-w-xl text-[1.05rem] leading-relaxed text-ink-soft text-pretty">{lede}</p>
+            </Reveal>
+          ) : null}
+          {children ? (
+            <Reveal delay={0.15}>
+              <div className="mt-9 flex flex-wrap items-center gap-x-6 gap-y-3">{children}</div>
+            </Reveal>
+          ) : null}
+        </div>
+        {aside ? <div className="hidden lg:block">{aside}</div> : null}
       </div>
     </section>
   );
