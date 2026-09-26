@@ -640,15 +640,9 @@ body {
 .island-goo {
   position: absolute;
   inset: 0;
-  /* No opacity here: the component fades the layer (framer sets it inline), and
-     the colour matrix saturates whatever alpha it is handed, so a translucent
-     layer would be drawn opaque anyway. */
   pointer-events: none;
-  /* Promote to its own compositing surface so the SVG goo filter is not
-     re-rasterized on every frame the springs are running — the single biggest
-     smoothness win for the island's entrance animation. */
+  overflow: visible;
   will-change: opacity;
-  transform: translateZ(0);
 }
 
 .island-goo-blob {
@@ -656,20 +650,18 @@ body {
   left: 50%;
   transform: translateX(-50%);
   display: block;
-  /* Width, height, and top are all driven by springs — hinting the browser
-     lets it pre-allocate the compositing surface. */
   will-change: width, height, top;
 }
 
 .island-goo-pill {
   top: 0;
   border-radius: var(--radius-control);
-  background: var(--color-ink);
+  background: color-mix(in srgb, var(--color-surface) 92%, var(--island-accent, var(--color-accent)) 8%);
 }
 
 .island-goo-card {
   border-radius: var(--radius-surface);
-  background: var(--color-surface);
+  background: color-mix(in srgb, var(--color-surface) 92%, var(--island-accent, var(--color-accent)) 8%);
 }
 
 /* ── The chip's lens: what the sentence looks like on its way under ──
@@ -742,8 +734,12 @@ body {
   --island-pill-shadow:
     0 1px 2px color-mix(in srgb, var(--color-ink) 18%, transparent),
     0 7px 18px -8px color-mix(in srgb, var(--color-ink) 46%, transparent);
-  box-shadow: var(--island-pill-shadow);
-  transition: box-shadow 0.3s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.16),
+    var(--island-pill-shadow);
+  transition:
+    box-shadow 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.3s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .island-pill:hover {
@@ -753,8 +749,9 @@ body {
     0 1px 2px color-mix(in srgb, var(--color-ink) 20%, transparent),
     0 12px 26px -10px color-mix(in srgb, var(--color-ink) 55%, transparent);
   box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.22),
     var(--island-pill-shadow),
-    0 0 0 4px color-mix(in srgb, var(--island-accent, var(--color-accent)) 14%, transparent);
+    0 0 0 4px color-mix(in srgb, var(--island-accent, var(--color-accent)) 16%, transparent);
 }
 
 .island-pill:focus-visible {
@@ -764,7 +761,11 @@ body {
 
 /* Open: the chip is the inbox, and says so. */
 .island-stack[data-open="true"] .island-pill {
-  border-color: color-mix(in srgb, var(--island-accent, var(--color-accent)) 45%, transparent);
+  border-color: color-mix(in srgb, var(--island-accent, var(--color-accent)) 50%, transparent);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.20),
+    var(--island-pill-shadow),
+    0 0 0 3px color-mix(in srgb, var(--island-accent, var(--color-accent)) 18%, transparent);
 }
 
 /* An arrival while the list is open, when a card would be an interruption:
@@ -779,13 +780,15 @@ body {
 @keyframes island-pill-pulse {
   0% {
     box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.16),
       var(--island-pill-shadow),
-      0 0 0 0 color-mix(in srgb, var(--island-accent, var(--color-accent)) 38%, transparent);
+      0 0 0 0 color-mix(in srgb, var(--island-accent, var(--color-accent)) 45%, transparent);
   }
   /* The ring is held at nothing until the end rather than dropped: a two-shadow
      list becoming a one-shadow list is a step the eye can catch at the edge. */
   70%, 100% {
     box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.16),
       var(--island-pill-shadow),
       0 0 0 14px color-mix(in srgb, var(--island-accent, var(--color-accent)) 0%, transparent);
   }
@@ -850,29 +853,27 @@ body {
   /* Same treatment as the nav it hangs from: the page shows through, blurred,
      so the island feels laid over the product rather than stamped on it.
      `overflow: hidden` is what keeps the progress line inside the radius. */
-  background: color-mix(in srgb, var(--color-surface) 94%, transparent);
-  backdrop-filter: blur(20px) saturate(190%);
-  -webkit-backdrop-filter: blur(20px) saturate(190%);
-  border: 1px solid var(--color-line);
+  background: color-mix(in srgb, var(--color-surface) 95%, var(--island-accent, var(--color-accent)) 5%);
+  backdrop-filter: blur(24px) saturate(190%);
+  -webkit-backdrop-filter: blur(24px) saturate(190%);
+  border: 1px solid color-mix(in srgb, var(--island-accent, var(--color-accent)) 22%, var(--color-line));
   border-radius: var(--radius-surface);
-  /* Five layers now, in the order they read: the hairline of light inside the
-     top edge, a tight contact shadow (new — sits the card on the surface the way
-     the reference's `shadowOffset.height: 8` does), the regular contact shadow,
-     the wide lift that gives it depth, and the accent wash that ties it to the
-     chip. The transition is new too — the card's shadow shifting on hover will
-     animate rather than snapping. */
+  /* Six layers: hairline specular highlight, inner accent radiance,
+     contact shadow, mid-depth elevation, ambient falloff, and vibrant accent aura. */
   box-shadow:
-    inset 0 1px 0 0 color-mix(in srgb, var(--color-surface) 70%, transparent),
-    0 1px 3px 0 color-mix(in srgb, var(--color-ink) 10%, transparent),
-    0 4px 8px -3px color-mix(in srgb, var(--color-ink) 14%, transparent),
-    0 20px 44px -18px color-mix(in srgb, var(--color-ink) 28%, transparent),
-    0 8px 22px -10px color-mix(in srgb, var(--island-accent, var(--color-accent)) 18%, transparent);
+    inset 0 1px 0 0 color-mix(in srgb, var(--island-accent, var(--color-accent)) 30%, #ffffff),
+    inset 0 0 20px -8px color-mix(in srgb, var(--island-accent, var(--color-accent)) 12%, transparent),
+    0 1px 3px 0 color-mix(in srgb, var(--color-ink) 8%, transparent),
+    0 5px 12px -3px color-mix(in srgb, var(--color-ink) 12%, transparent),
+    0 20px 48px -16px color-mix(in srgb, var(--color-ink) 24%, transparent),
+    0 10px 30px -8px color-mix(in srgb, var(--island-accent, var(--color-accent)) 30%, transparent);
   overflow: hidden;
   cursor: grab;
   touch-action: pan-x;
   transition:
     box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1),
-    border-color 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    border-color 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .island-card:active {
@@ -883,12 +884,14 @@ body {
    shadow to signal interactivity. The transition on the base rule makes it
    glide. The inbox panel is excluded — it is furniture, not a gesture target. */
 .island-card:not(.island-card-panel):hover {
+  border-color: color-mix(in srgb, var(--island-accent, var(--color-accent)) 38%, var(--color-line));
   box-shadow:
-    inset 0 1px 0 0 color-mix(in srgb, var(--color-surface) 70%, transparent),
-    0 1px 3px 0 color-mix(in srgb, var(--color-ink) 12%, transparent),
-    0 6px 12px -3px color-mix(in srgb, var(--color-ink) 16%, transparent),
-    0 24px 52px -18px color-mix(in srgb, var(--color-ink) 32%, transparent),
-    0 10px 26px -10px color-mix(in srgb, var(--island-accent, var(--color-accent)) 22%, transparent);
+    inset 0 1px 0 0 color-mix(in srgb, var(--island-accent, var(--color-accent)) 45%, #ffffff),
+    inset 0 0 24px -6px color-mix(in srgb, var(--island-accent, var(--color-accent)) 18%, transparent),
+    0 1px 3px 0 color-mix(in srgb, var(--color-ink) 10%, transparent),
+    0 7px 16px -3px color-mix(in srgb, var(--color-ink) 15%, transparent),
+    0 24px 54px -16px color-mix(in srgb, var(--color-ink) 28%, transparent),
+    0 14px 38px -8px color-mix(in srgb, var(--island-accent, var(--color-accent)) 40%, transparent);
 }
 
 /* The inbox is not something to wave away: same body, no grip. */
@@ -1012,11 +1015,13 @@ body {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  width: 30px;
-  height: 30px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  background: color-mix(in srgb, var(--island-accent, var(--color-accent)) 14%, transparent);
+  background: color-mix(in srgb, var(--island-accent, var(--color-accent)) 16%, transparent);
+  border: 1px solid color-mix(in srgb, var(--island-accent, var(--color-accent)) 28%, transparent);
   color: var(--island-ink, var(--color-accent));
+  box-shadow: 0 2px 8px -2px color-mix(in srgb, var(--island-accent, var(--color-accent)) 25%, transparent);
 }
 
 .island-foot {
@@ -1034,15 +1039,22 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 0.3rem;
-  padding: 0.26rem 0.6rem;
+  padding: 0.28rem 0.65rem;
   border-radius: var(--radius-control);
-  background: color-mix(in srgb, var(--island-accent, var(--color-accent)) 12%, transparent);
-  border: 1px solid color-mix(in srgb, var(--island-accent, var(--color-accent)) 26%, transparent);
+  background: color-mix(in srgb, var(--island-accent, var(--color-accent)) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--island-accent, var(--color-accent)) 30%, transparent);
   color: var(--island-ink, var(--color-accent));
   font-size: 0.66rem;
   font-weight: 800;
   letter-spacing: 0.02em;
   font-family: var(--font-sans);
+  transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.island-cta:hover {
+  background: color-mix(in srgb, var(--island-accent, var(--color-accent)) 22%, transparent);
+  border-color: color-mix(in srgb, var(--island-accent, var(--color-accent)) 45%, transparent);
+  transform: translateY(-1px);
 }
 
 .island-more {
@@ -1091,8 +1103,13 @@ body {
   left: 0;
   bottom: 0;
   width: 100%;
-  height: 2px;
-  background: var(--island-accent, var(--color-accent));
+  height: 2.5px;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--island-accent, var(--color-accent)) 65%, transparent),
+    var(--island-accent, var(--color-accent))
+  );
+  box-shadow: 0 0 8px color-mix(in srgb, var(--island-accent, var(--color-accent)) 55%, transparent);
   transform-origin: left center;
   animation: island-progress var(--island-hold, 6000ms) linear both;
   /* One transform, over six seconds, on the thing that IS the clock: the bar is

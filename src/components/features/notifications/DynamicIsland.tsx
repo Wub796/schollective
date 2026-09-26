@@ -110,48 +110,38 @@ function springFrom(duration: number, dampingRatio: number) {
 
 /** The droplet growing out of the chip — the library's drop, and the shape every
     other shape here is drawn from, so the chip's own length rides it too.
-    Slightly under-damped (0.76) so the drop has one organic overshoot — the way
-    a liquid bridge snaps into place rather than arriving dead. */
-const DROP_SPRING = springFrom(1050, 0.76);
+    Harmonized and responsive (520ms, damping 0.80) so the drop settles smoothly
+    with one liquid overshoot without sluggish, floating jitter. */
+const DROP_SPRING = springFrom(520, 0.80);
 
 /** The body filling out behind it — the library's expand.
-    Matched to the reference's `MORPH_SPRING_CONFIG` feel: stiff enough to land
-    decisively, soft enough to settle with weight. */
-const EXPAND_SPRING = springFrom(900, 0.78);
+    Synchronized with the drop spring (500ms, damping 0.82) so the droplet and
+    the card body expand in locked phase rather than fighting each other. */
+const EXPAND_SPRING = springFrom(500, 0.82);
 
-/** The droplet drawing back into the chip — the library's return.
-    Still the gentler spring so the retraction settles rather than snapping. */
-const RETURN_SPRING = springFrom(1050, 0.88);
+/** The droplet drawing back into the chip — the library's return. */
+const RETURN_SPRING = springFrom(480, 0.88);
 
-/** The card collapsing on its way out — the library's collapse.
-    Tightened so the exit reads as one crisp beat — matching the reference's
-    `SNAPPY_SPRING_CONFIG`. */
-const COLLAPSE_SPRING = springFrom(580, 0.9);
+/** The card collapsing on its way out — the library's collapse. */
+const COLLAPSE_SPRING = springFrom(360, 0.90);
 
-/** Content arriving, and the chip arriving with it — the library's reveal.
-    Shortened from 700ms to 500ms for a punchier entrance — the reference reveals
-    content at 160ms delay with a 180ms fade, and a critically damped spring at
-    500ms is the web equivalent of that snap. */
-const REVEAL_SPRING = springFrom(500, 1);
+/** Content arriving, and the chip arriving with it — the library's reveal. */
+const REVEAL_SPRING = springFrom(380, 1);
 
-/** Anything leaving, and any opacity at all — the library's fade.
-    280ms so opacity settles before the reader's blink can catch it changing. */
-const FADE_SPRING = springFrom(280, 1);
+/** Anything leaving, and any opacity at all — the library's fade. */
+const FADE_SPRING = springFrom(220, 1);
 
 /**
- * The staging, from the same library, in milliseconds.
+ * The staging, in milliseconds.
  *
- * This is most of what makes it feel like liquid rather than like a panel: the
- * droplet starts growing the moment a notification lands, the body it is
- * reaching for only appears once the shape has gone out to meet it, and the
- * words arrive last, into a card that already exists. Leaving runs the same
- * order backwards — the words go, then the body, then the droplet slips back
- * under the ink.
+ * Tightly choreographed: the droplet stretches at t=0, the card begins
+ * expanding in tandem at 90ms, and content reveals smoothly at 180ms.
+ * The entire entrance settles like liquid in under half a second.
  */
-const ENTER_EXPAND_DELAY = 200;
-const ENTER_REVEAL_DELAY = 360;
-const EXIT_COLLAPSE_DELAY = 80;
-const EXIT_DROP_DELAY = 220;
+const ENTER_EXPAND_DELAY = 90;
+const ENTER_REVEAL_DELAY = 180;
+const EXIT_COLLAPSE_DELAY = 60;
+const EXIT_DROP_DELAY = 140;
 
 /** The scale the content arrives at, growing to 1 as it is revealed. */
 const CONTENT_MIN_SCALE = 0.88;
@@ -369,8 +359,8 @@ export function DynamicNotifications({
   duration,
   strength = 0.62,
   blur,
-  gain = 22,
-  threshold = 0.43,
+  gain = 18,
+  threshold = 0.42,
   accent,
   viewer,
   suspended = false,
@@ -814,7 +804,7 @@ function Island({ goo, blur, duration, suspended }: IslandProps) {
       {!reduceMotion && (
         <svg className="island-defs" width="0" height="0" aria-hidden="true" focusable="false">
           <defs>
-            <filter id={GOO_FILTER_ID} colorInterpolationFilters="sRGB">
+            <filter id={GOO_FILTER_ID} x="-50%" y="-50%" width="200%" height="200%" colorInterpolationFilters="sRGB">
               <feGaussianBlur in="SourceGraphic" stdDeviation={gooBlur} result="blur" />
               <feColorMatrix
                 in="blur"
