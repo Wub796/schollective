@@ -601,8 +601,17 @@ body {
 .island-layer {
   position: fixed;
   top: 0;
-  left: 50%;
-  transform: translateX(-50%);
+  /* Centred by its own width and two auto margins rather than by
+     `left: 50%; transform: translateX(-50%)`. Everything that moves in the
+     island moves inside this element, and a transform here is a transform on the
+     root of that subtree: framer's layout projection measures through it, which
+     is the other half of the way a chip pinned to the top bar ends up drawn
+     somewhere else and then animates back up to it. (The first half is the
+     chip's own layout animation — see the pill's `layout` in DynamicIsland.tsx.)
+     Nothing referenced this transform but the centring it was doing. */
+  left: 0;
+  right: 0;
+  margin-inline: auto;
   width: min(416px, calc(100vw - 2rem));
   z-index: var(--z-island);
   display: flex;
