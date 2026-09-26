@@ -45,6 +45,8 @@ next-env.d.ts
 
 # AI agent configs (local dev tools, not needed for deployment)
 .agent/
+agent/
+tmp-*
 
 # Legacy vanilla prototype (superseded by Next.js app)
 _legacy_vanilla/
