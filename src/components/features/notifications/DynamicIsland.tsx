@@ -26,7 +26,7 @@
  *                else in the app opens it, and opening it means the reader has
  *                seen what was waiting.
  *
- * Two things worth knowing before editing:
+ * Three things worth knowing before editing:
  *
  *   - Timing is one clock. A notification's lifetime is a CSS animation on its
  *     progress line, and the END of that animation is what retires it. There is
@@ -38,6 +38,11 @@
  *     nested inside it would blur the bar's own background instead of the page.
  *     The layer is a sibling of the bar, aligned to it, and the pill is centred
  *     in the bar's own height. See `.island-layer` and `.island-slot`.
+ *   - The beta ticker scrolls behind the chip, and the room it leaves around it
+ *     is sized from here: the chip's measured width, and whether it is on screen
+ *     at all, are published to the document root, because the ticker is a
+ *     sibling of this layer rather than a descendant of it. See `.beta-ticker`
+ *     in globals.css for the lane those two facts draw.
  */
 
 import {
@@ -536,6 +541,38 @@ function Island({ goo, blur, duration, suspended }: IslandProps) {
   const [setPillNode, pillBox] = useBox<HTMLButtonElement>();
   const [setBodyNode, bodyBox] = useBox<HTMLDivElement>();
 
+  /*
+   * Two facts about the chip that only this component can know, published to the
+   * document root because the thing that needs them is not in this tree.
+   *
+   * The beta ticker runs behind the chip and gives the statement a lane around
+   * it (see `.beta-ticker` in globals.css): the sentence is faded out before it
+   * reaches the ink and back in as it leaves. How wide that lane has to be is
+   * the chip's own width, and the chip is a capsule whose length follows its
+   * label — an eyebrow is longer than "All caught up" — so it cannot be a
+   * constant.
+   *
+   * Presence is the other half of it. A product tour stands the island down, and
+   * so does the mobile drawer on a window wide enough to show the ticker; a lane
+   * left open for a chip that is not there is a hole in the middle of a
+   * sentence. That is the only thing written here as an attribute, and it is
+   * written as `off`: the lane is the default, because the chip ships in the
+   * server HTML and a lane that waited for this effect would leave a hard edge
+   * at the capsule until hydration caught up.
+   *
+   * The root is used rather than a wrapper element because the ticker is a
+   * SIBLING of this layer, not a descendant of it: `<html>` is the one node the
+   * two subtrees share. Nothing is cleaned up on unmount — both values are
+   * idempotent, and there is nothing left to read them once this surface is
+   * gone.
+   */
+  useLayoutEffect(() => {
+    const root = document.documentElement;
+    if (pillBox) root.style.setProperty("--island-pill-width", `${pillBox.width}px`);
+    if (tourActive || suspended) root.dataset.islandLane = "off";
+    else root.removeAttribute("data-island-lane");
+  }, [pillBox, tourActive, suspended]);
+
   const unread = feed?.unreadCount ?? 0;
   const ready = feed?.ready ?? false;
   const latest = feed?.notifications?.[0] ?? null;
@@ -690,6 +727,12 @@ function Island({ goo, blur, duration, suspended }: IslandProps) {
             } as React.CSSProperties
           }
         >
+          {/* The defocus the sentence passes through on its way under the chip
+              (see `.island-lens`). Present in every state — the ticker runs
+              behind the chip whether or not a card is showing — and first in
+              the stack so it sits under the goo and under the ink. */}
+          <div className="island-lens" aria-hidden="true" />
+
           {!reduceMotion && pillBox && (
             // Mounted for the island's whole life and faded rather than
             // unmounted: a card leaves while it is still on screen, and a bridge
@@ -769,11 +812,19 @@ function Island({ goo, blur, duration, suspended }: IslandProps) {
               // rendering, so a chip that starts at `opacity: 0` ships an island
               // nobody can see, waiting for a bundle to arrive — on the one
               // control that is supposed to always be there.
-              initial={{ scale: reduceMotion ? 1 : 0.86 }}
+              // 0.9 rather than a pop: the chip is a fixture of the bar, so it
+              // arrives as if it had been there all along rather than springing
+              // in through the page — and the spring it settles on is a touch
+              // softer than the droplet's for the same reason.
+              initial={{ scale: reduceMotion ? 1 : 0.9 }}
               animate={{ scale: 1 }}
+              // The press, from the same gesture vocabulary the rest of the app
+              // borrows: small, and back to the resting scale on release rather
+              // than to a value of its own.
+              whileTap={reduceMotion ? undefined : { scale: 0.97 }}
               transition={{
                 layout: SHAPE_SPRING,
-                scale: { type: "spring", stiffness: 420, damping: 34 },
+                scale: { type: "spring", stiffness: 360, damping: 32, mass: 0.9 },
               }}
             >
               <ReaderMark initials={feed?.viewer.initials ?? "?"} avatarUrl={feed?.viewer.avatarUrl ?? null} size={20} />
