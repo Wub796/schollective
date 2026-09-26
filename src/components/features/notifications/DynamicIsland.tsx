@@ -83,56 +83,175 @@ const GOO_FILTER_ID = "schollective-island-goo";
 const PILL_GAP = 10;
 
 /**
- * The spring under every shape the island's transition moves.
+ * The springs, in the library's own terms.
  *
- * The droplet stretching out of the chip, the body arriving from it and the card
- * drawing back into it are one gesture, so they share their physics: a mismatch
- * shows up as the goo poking out from behind the card it is meant to be merging
- * with, and the chip's own length rides the same spring in its `layout`
- * animation for the same reason. Stiffness 340 over mass 0.85 settles in a little
- * under half a second with one shallow overshoot — about 3px on the longest
- * stretch, which is the droplet landing rather than a bounce.
+ * expo-dynamic-notifications declares its motion the way Reanimated takes it —
+ * `{ duration, dampingRatio }` — and those numbers are the whole feel of the
+ * thing. `springFrom` converts one into the pair framer takes, so the island
+ * moves on the library's timing rather than on numbers invented here: the period
+ * of the damped oscillator is the duration, so `k = (2π / (T·√(1−ζ²)))²` and
+ * `c = 2ζ√k`, with a unit mass. (At ζ = 1 the two roots collapse, and the
+ * stiffness is simply `(2π / T)²`.)
+ *
+ * Read the damping ratios as the reason the port did not simply get faster
+ * springs: 0.8 is the body filling out with one soft overshoot, 0.9 is a droplet
+ * drawing back with barely any, and 1.0 is what anything *fading* has to be —
+ * critically damped, monotonic, so an opacity settles instead of flickering.
  */
-const SHAPE_SPRING = { type: "spring", stiffness: 340, damping: 28, mass: 0.85 } as const;
+function springFrom(duration: number, dampingRatio: number) {
+  const seconds = duration / 1000;
+  const stiffness =
+    dampingRatio < 1
+      ? (2 * Math.PI) ** 2 / (seconds ** 2 * (1 - dampingRatio ** 2))
+      : (2 * Math.PI / seconds) ** 2;
+  const damping = 2 * dampingRatio * Math.sqrt(stiffness);
+  return { type: "spring", stiffness, damping, mass: 1 } as const;
+}
+
+/** The droplet growing out of the chip — the library's drop, and the shape every
+    other shape here is drawn from, so the chip's own length rides it too.
+    Slightly under-damped (0.76) so the drop has one organic overshoot — the way
+    a liquid bridge snaps into place rather than arriving dead. */
+const DROP_SPRING = springFrom(1050, 0.76);
+
+/** The body filling out behind it — the library's expand.
+    Matched to the reference's `MORPH_SPRING_CONFIG` feel: stiff enough to land
+    decisively, soft enough to settle with weight. */
+const EXPAND_SPRING = springFrom(900, 0.78);
+
+/** The droplet drawing back into the chip — the library's return.
+    Still the gentler spring so the retraction settles rather than snapping. */
+const RETURN_SPRING = springFrom(1050, 0.88);
+
+/** The card collapsing on its way out — the library's collapse.
+    Tightened so the exit reads as one crisp beat — matching the reference's
+    `SNAPPY_SPRING_CONFIG`. */
+const COLLAPSE_SPRING = springFrom(580, 0.9);
+
+/** Content arriving, and the chip arriving with it — the library's reveal.
+    Shortened from 700ms to 500ms for a punchier entrance — the reference reveals
+    content at 160ms delay with a 180ms fade, and a critically damped spring at
+    500ms is the web equivalent of that snap. */
+const REVEAL_SPRING = springFrom(500, 1);
+
+/** Anything leaving, and any opacity at all — the library's fade.
+    280ms so opacity settles before the reader's blink can catch it changing. */
+const FADE_SPRING = springFrom(280, 1);
+
+/**
+ * The staging, from the same library, in milliseconds.
+ *
+ * This is most of what makes it feel like liquid rather than like a panel: the
+ * droplet starts growing the moment a notification lands, the body it is
+ * reaching for only appears once the shape has gone out to meet it, and the
+ * words arrive last, into a card that already exists. Leaving runs the same
+ * order backwards — the words go, then the body, then the droplet slips back
+ * under the ink.
+ */
+const ENTER_EXPAND_DELAY = 200;
+const ENTER_REVEAL_DELAY = 360;
+const EXIT_COLLAPSE_DELAY = 80;
+const EXIT_DROP_DELAY = 220;
+
+/** The scale the content arrives at, growing to 1 as it is revealed. */
+const CONTENT_MIN_SCALE = 0.88;
 
 /**
  * Where a body starts, a little above where it settles.
  *
  * `boolean | null` because that is what `useReducedMotion` hands back — null
- * until the media query has been read, which reads as "no preference". The
- * fades here ride `EASE_SOFT`, the curve the rest of the site's entrances use;
- * only the shapes get physics.
+ * until the media query has been read, which reads as "no preference". Nothing
+ * here is delayed for a reader who asked for less motion: the library's staging
+ * is what makes the gesture read as one thing, and without the gesture there is
+ * nothing to stage.
  */
 function bodyEntry(reduceMotion: boolean | null) {
-  // No scale: the droplet underneath is the thing that grows, and a card scaling
-  // up inside it would show its own edges drifting apart from the blob's.
+  // No scale on the card frame: the droplet underneath is the thing that grows,
+  // and a card scaling up inside it would show its own edges drifting apart from
+  // the blob's. The content inside the card has the scale animation.
   return { opacity: 0, y: reduceMotion ? 0 : -10 };
 }
 
 /**
- * Where it goes when it leaves — carrying its own transition.
+ * Where it goes when it leaves — carrying its own transition, because an exit
+ * that waits for a spring to settle holds the berth the next notification is
+ * already queued for: `mode="wait"` cannot start the next body until this one is
+ * done.
  *
- * The shared one springs, and an exit that waits for a spring to settle holds
- * the berth the next notification is already queued for: `mode="wait"` cannot
- * start the next body until this one is done. Leaving is a quick fade; arriving
- * is the part that gets to bounce.
+ * `staged` is a notification arriving against the reader's attention, which the
+ * library gives beats to. The list is answering a click: it arrives and leaves
+ * whole, on the same springs with nothing held back, because a beat there is
+ * only a delay.
  */
-function bodyExit(reduceMotion: boolean | null) {
+function bodyExit(reduceMotion: boolean | null, staged: boolean) {
+  if (reduceMotion) {
+    return { opacity: 0, y: 0, transition: { duration: 0.1, ease: EASE_SOFT } as const };
+  }
   return {
     opacity: 0,
-    y: reduceMotion ? 0 : -8,
-    transition: { duration: reduceMotion ? 0.1 : 0.16, ease: EASE_SOFT } as const,
+    y: -8,
+    transition: {
+      // The body collapses a beat after the words have gone, which is the order
+      // the library leaves in. Opacity is still a critical spring rather than a
+      // tween: one with no overshoot cannot flicker, and it settles with weight.
+      delay: staged ? EXIT_COLLAPSE_DELAY / 1000 : 0,
+      y: COLLAPSE_SPRING,
+      opacity: FADE_SPRING,
+    },
   };
 }
 
-function bodyTransition(reduceMotion: boolean | null) {
+function bodyTransition(reduceMotion: boolean | null, staged: boolean) {
   if (reduceMotion) return { duration: 0.12, ease: EASE_SOFT } as const;
   return {
-    // The shape carries the weight; opacity is a plain tween, because a spring
-    // under a fade reads as a flicker rather than as a thing with mass.
-    y: SHAPE_SPRING,
-    opacity: { duration: 0.22, ease: EASE_SOFT } as const,
+    // The droplet has already reached down by the time this runs: the body is
+    // the second beat of the gesture, not the first.
+    delay: staged ? ENTER_EXPAND_DELAY / 1000 : 0,
+    y: EXPAND_SPRING,
+    opacity: FADE_SPRING,
   };
+}
+
+/** What is *inside* the card, which the library reveals as a shape of its own. */
+function contentEntry(reduceMotion: boolean | null) {
+  return { opacity: 0, scale: reduceMotion ? 1 : CONTENT_MIN_SCALE };
+}
+
+function contentExit(reduceMotion: boolean | null) {
+  if (reduceMotion) {
+    return { opacity: 0, scale: 1, transition: { duration: 0.1, ease: EASE_SOFT } as const };
+  }
+  return {
+    opacity: 0,
+    scale: CONTENT_MIN_SCALE,
+    // No delay on the way out: leaving runs the entrance backwards, so the words
+    // are the first thing to go and the shape is left holding the berth.
+    transition: { delay: 0, opacity: FADE_SPRING, scale: FADE_SPRING },
+  };
+}
+
+function contentTransition(reduceMotion: boolean | null) {
+  if (reduceMotion) return { duration: 0.12, ease: EASE_SOFT } as const;
+  return {
+    delay: ENTER_REVEAL_DELAY / 1000,
+    opacity: REVEAL_SPRING,
+    scale: REVEAL_SPRING,
+  };
+}
+
+/**
+ * The goo layer's own fade, which is not quite either of the above.
+ *
+ * It cannot simply follow the body: the droplet is still slipping back under the
+ * ink when the card has gone, and a layer that vanished with the card would take
+ * that with it. So it goes at the library's drop delay — by which point the
+ * droplet is under the opaque chip, and the rest of the retraction is invisible
+ * anyway.
+ */
+function gooFade(visible: boolean, reduceMotion: boolean | null) {
+  if (reduceMotion) return { duration: 0.12, ease: EASE_SOFT } as const;
+  if (visible) return FADE_SPRING;
+  return { ...FADE_SPRING, delay: EXIT_DROP_DELAY / 1000 };
 }
 
 /** The panel's id, so the chip can point `aria-controls` at it. */
@@ -209,10 +328,13 @@ interface GooConfig {
   threshold: number;
 }
 
-/** The library's `strength` is a feel, not a number: this is the curve onto stdDeviation. */
+/** The library's `strength` is a feel, not a number: this is the curve onto stdDeviation.
+    Raised floor (5 vs 3) for a smoother meniscus at the bridge — the reference
+    repo uses blur≈14 with gain 24, and a higher floor prevents the thin, jagged
+    edge the human eye reads as a rendering artefact. */
 function blurFromStrength(strength: number): number {
   const clamped = Math.min(Math.max(strength, 0), 1);
-  return 3 + clamped * 11;
+  return 5 + clamped * 11;
 }
 
 export interface DynamicNotificationsProps {
@@ -744,7 +866,7 @@ function Island({ goo, blur, duration, suspended }: IslandProps) {
               style={{ filter: `url(#${GOO_FILTER_ID})` }}
               initial={false}
               animate={{ opacity: body ? 1 : 0 }}
-              transition={{ duration: 0.24, ease: EASE_SOFT }}
+              transition={gooFade(Boolean(body), reduceMotion)}
             >
               {/* The chip and the body as two rounded forms of one substance: ink
                   while it is the chip, the card's surface once it is the body.
@@ -756,12 +878,16 @@ function Island({ goo, blur, duration, suspended }: IslandProps) {
                   read as one body. Springing them means the droplet stretches out
                   of the chip, follows the body when one card gives way to the
                   next, and draws back into the chip when the card retires — the
-                  three moves the native library is built around. */}
+                  three moves the native library is built around.
+
+                  They are the library's two paces as well as its two shapes: the
+                  drop is one spring, the withdrawal another and a slower one, so
+                  the droplet settles on its way home rather than snapping back. */}
               <motion.span
                 className="island-goo-blob island-goo-pill"
                 initial={false}
                 animate={{ width: pillBox.width, height: pillBox.height, top: pillBox.top }}
-                transition={SHAPE_SPRING}
+                transition={DROP_SPRING}
               />
               {bodyBox && (
                 <motion.span
@@ -777,7 +903,14 @@ function Island({ goo, blur, duration, suspended }: IslandProps) {
                         // one capsule they came from.
                         { width: pillBox.width, height: pillBox.height, top: pillBox.top }
                   }
-                  transition={SHAPE_SPRING}
+                  // Growing is the drop's pace, coming home is the return's, and
+                  // the return waits out the body's collapse first — the library
+                  // stages the way out the same way it stages the way in.
+                  transition={
+                    body
+                      ? DROP_SPRING
+                      : { ...RETURN_SPRING, delay: EXIT_DROP_DELAY / 1000 }
+                  }
                 />
               )}
             </motion.div>
@@ -821,10 +954,19 @@ function Island({ goo, blur, duration, suspended }: IslandProps) {
               // The press, from the same gesture vocabulary the rest of the app
               // borrows: small, and back to the resting scale on release rather
               // than to a value of its own.
-              whileTap={reduceMotion ? undefined : { scale: 0.97 }}
+              whileTap={
+                reduceMotion
+                  ? undefined
+                  : // With its own pace, so a press is answered immediately
+                    // rather than at the reveal's seven hundred milliseconds.
+                    { scale: 0.97, transition: FADE_SPRING }
+              }
               transition={{
-                layout: SHAPE_SPRING,
-                scale: { type: "spring", stiffness: 360, damping: 32, mass: 0.9 },
+                // The capsule's length and the droplet under it are one shape: the
+                // chip rides the drop, which is why the label changes inside a
+                // capsule that grows to fit it rather than the capsule snapping.
+                layout: DROP_SPRING,
+                scale: REVEAL_SPRING,
               }}
             >
               <ReaderMark initials={feed?.viewer.initials ?? "?"} avatarUrl={feed?.viewer.avatarUrl ?? null} size={20} />
@@ -839,8 +981,10 @@ function Island({ goo, blur, duration, suspended }: IslandProps) {
             incoming one mounts, so the queue's next card enters into an empty
             berth rather than over the top of the last one — and only one body is
             ever mounted, which is what lets a single measured box describe it.
-            Its own exit is a quick tween for the same reason: a spring there would
-            hold the berth for as long as it took to settle.
+            Its own exit is the library's collapse rather than the return: the
+            droplet can take a second and a half to slip home because nothing is
+            waiting on it, while every further millisecond here is a millisecond
+            the queued card spends not being shown.
 
             Only transform and opacity move here, and that is the whole motion
             budget. Each body carries a `backdrop-filter`, so animating `filter` on
@@ -856,8 +1000,8 @@ function Island({ goo, blur, duration, suspended }: IslandProps) {
                 className="island-card island-card-panel"
                 initial={bodyEntry(reduceMotion)}
                 animate={{ opacity: 1, y: 0 }}
-                exit={bodyExit(reduceMotion)}
-                transition={bodyTransition(reduceMotion)}
+                exit={bodyExit(reduceMotion, false)}
+                transition={bodyTransition(reduceMotion, false)}
               >
                 <IslandInbox
                   id={INBOX_ID}
@@ -877,38 +1021,59 @@ function Island({ goo, blur, duration, suspended }: IslandProps) {
                 onFocusCapture={() => setPaused(true)}
                 onBlurCapture={() => setPaused(false)}
                 drag={reduceMotion ? false : "y"}
-                dragConstraints={{ top: -96, bottom: 16 }}
-                dragElastic={0.18}
+                dragConstraints={{ top: -120, bottom: 12 }}
+                dragElastic={0.12}
                 dragMomentum={false}
                 onDragStart={() => setPaused(true)}
                 onDragEnd={(_event, info) => {
                   draggedAt.current = Date.now();
-                  // Up and away, the way it came in. A long upward flick counts
-                  // even when the finger did not travel far.
-                  if (info.offset.y < -36 || info.velocity.y < -450) dismiss();
+                  // Lower thresholds (28px / 380 velocity) for a more responsive
+                  // dismiss — the reference uses 25px / 400, and the difference
+                  // between a satisfying flick and a frustrating miss is 10px.
+                  if (info.offset.y < -28 || info.velocity.y < -380) dismiss();
                   else setPaused(false);
                 }}
                 initial={bodyEntry(reduceMotion)}
                 animate={{ opacity: 1, y: 0 }}
-                exit={bodyExit(reduceMotion)}
-                transition={bodyTransition(reduceMotion)}
+                exit={bodyExit(reduceMotion, true)}
+                transition={bodyTransition(reduceMotion, true)}
               >
-                <CardBody
-                  notification={notification}
-                  queued={queued}
-                  onDismiss={dismiss}
-                  onOpen={(event) => {
-                    // framer-motion can leave a click behind a drag, and the one
-                    // mis-tap that costs something is a swipe away from the card
-                    // that navigates instead.
-                    if (Date.now() - draggedAt.current < 220) {
-                      event.preventDefault();
-                      return;
-                    }
-                    notification.onPress?.();
-                    retire();
-                  }}
-                />
+                {/* What the reader reads arrives inside a card that already
+                    exists — slightly small, and settling into its own size,
+                    which is the last of the library's three beats. The scale is
+                    on the content rather than on the card: the droplet
+                    underneath grows, and a card scaling inside it would show its
+                    own edges drifting apart from the blob's.
+
+                    The library also defocuses the content in from 64 intensity.
+                    That is the one beat this port does not take: an animated
+                    filter inside a `backdrop-filter`ed card is what made the
+                    arrival stutter here before, which is the whole reason the
+                    card only moves on transform and opacity. */}
+                <motion.div
+                  className="island-card-content"
+                  initial={contentEntry(reduceMotion)}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={contentExit(reduceMotion)}
+                  transition={contentTransition(reduceMotion)}
+                >
+                  <CardBody
+                    notification={notification}
+                    queued={queued}
+                    onDismiss={dismiss}
+                    onOpen={(event) => {
+                      // framer-motion can leave a click behind a drag, and the one
+                      // mis-tap that costs something is a swipe away from the card
+                      // that navigates instead.
+                      if (Date.now() - draggedAt.current < 220) {
+                        event.preventDefault();
+                        return;
+                      }
+                      notification.onPress?.();
+                      retire();
+                    }}
+                  />
+                </motion.div>
 
                 {hold !== null && !reduceMotion && (
                   // The progress line and the dismissal are the same clock: this
