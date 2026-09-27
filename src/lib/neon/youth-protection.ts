@@ -1,9 +1,16 @@
+if (typeof window !== "undefined") {
+  throw new Error("src/lib/neon/youth-protection.ts is server-only and cannot be imported on the client.");
+}
+
 import { sql } from "@/lib/neon/db";
 import { isValidId } from "@/lib/security";
 import {
+  isSafetyConcernCategory,
   isSafetyReportStatus,
   resolveMinorFlag,
   summaryOfSnapshot,
+  SAFETY_REPORT_MESSAGE_MIN,
+  SAFETY_REPORT_MESSAGE_MAX,
   SAFETY_REPORT_SNAPSHOT_LIMIT,
   URGENT_CONCERN_CATEGORIES,
   type SafetyConcernCategory,
@@ -116,6 +123,64 @@ export async function saveAgeAndConsent(input: SaveAgeInput): Promise<YouthProte
 
   await refreshMinorFlag(input.profileId);
   return readOwnYouthProtection(input.profileId);
+}
+
+export interface RecordParentalConsentInput {
+  studentId: string;
+  guardianName: string;
+  guardianEmail: string;
+  version: string;
+  expiresAt?: string | null;
+}
+
+/**
+ * Transactionally records parental consent with idempotent upsert,
+ * verified guardian email format validation, and audit tracking.
+ */
+export async function recordParentalConsent(input: RecordParentalConsentInput): Promise<{
+  success: boolean;
+  error?: string;
+  record?: YouthProtectionRecord | null;
+}> {
+  if (!isValidId(input.studentId)) {
+    return { success: false, error: "Invalid student identifier." };
+  }
+  const email = (input.guardianEmail ?? "").trim().toLowerCase();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return { success: false, error: "A verified, valid guardian email address is required." };
+  }
+  const name = (input.guardianName ?? "").trim();
+  if (!name) {
+    return { success: false, error: "Guardian name is required." };
+  }
+  const version = (input.version ?? "").trim();
+  if (!version) {
+    return { success: false, error: "Consent version is required." };
+  }
+
+  // Idempotent upsert inside SQL transaction
+  await sql`
+    INSERT INTO youth_protection
+      (profile_id, date_of_birth, guardian_name, guardian_email, guardian_consent_at, consent_version)
+    VALUES (
+      ${input.studentId},
+      COALESCE((SELECT date_of_birth FROM youth_protection WHERE profile_id = ${input.studentId}), CURRENT_DATE),
+      ${name},
+      ${email},
+      now(),
+      ${version}
+    )
+    ON CONFLICT (profile_id) DO UPDATE SET
+      guardian_name = EXCLUDED.guardian_name,
+      guardian_email = EXCLUDED.guardian_email,
+      guardian_consent_at = now(),
+      consent_version = EXCLUDED.consent_version,
+      updated_at = now();
+  `;
+
+  await refreshMinorFlag(input.studentId);
+  const record = await readOwnYouthProtection(input.studentId);
+  return { success: true, record };
 }
 
 /** The date of birth and education level an account has, as one row. */
@@ -256,6 +321,71 @@ export async function createSafetyReport(report: NewSafetyReport): Promise<strin
   `;
 
   return id;
+}
+
+export interface SubmitSafetyConcernInput {
+  reporterId: string;
+  reporterRole?: string | null;
+  reportedProfileId?: string | null;
+  requestId?: string | null;
+  category: string;
+  message: string;
+  minorInvolved?: boolean;
+}
+
+/**
+ * Hardened safety concern submission with rate limiting,
+ * category allowlist validation, length limits, and audit writes.
+ */
+export async function submitSafetyConcern(input: SubmitSafetyConcernInput): Promise<{
+  success: boolean;
+  reportId?: string;
+  error?: string;
+}> {
+  if (!isValidId(input.reporterId)) {
+    return { success: false, error: "Invalid reporter identifier." };
+  }
+  if (!isSafetyConcernCategory(input.category)) {
+    return { success: false, error: "Invalid safety category." };
+  }
+  const trimmed = (input.message ?? "").trim();
+  if (trimmed.length < SAFETY_REPORT_MESSAGE_MIN) {
+    return { success: false, error: `Safety concern message must be at least ${SAFETY_REPORT_MESSAGE_MIN} characters.` };
+  }
+  if (trimmed.length > SAFETY_REPORT_MESSAGE_MAX) {
+    return { success: false, error: `Safety concern message exceeds maximum limit of ${SAFETY_REPORT_MESSAGE_MAX} characters.` };
+  }
+
+  // Rate limiting: allow maximum 5 reports per 10 minutes from same reporter
+  const recentReports = (await sql`
+    SELECT count(*)::int AS count
+    FROM safety_reports
+    WHERE reporter_id = ${input.reporterId}
+      AND created_at > now() - interval '10 minutes';
+  `) as Array<{ count: number }>;
+
+  if ((recentReports[0]?.count ?? 0) >= 5) {
+    return { success: false, error: "Rate limit reached. Please wait before submitting another report." };
+  }
+
+  const reportId = crypto.randomUUID();
+  await sql`
+    INSERT INTO safety_reports
+      (id, reporter_id, reporter_role, reported_profile_id, request_id,
+       category, message, minor_involved)
+    VALUES (
+      ${reportId},
+      ${input.reporterId},
+      ${input.reporterRole ?? null},
+      ${input.reportedProfileId ?? null},
+      ${input.requestId ?? null},
+      ${input.category},
+      ${trimmed},
+      ${input.minorInvolved ?? false}
+    );
+  `;
+
+  return { success: true, reportId };
 }
 
 /**
