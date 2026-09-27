@@ -16,9 +16,6 @@ interface CacheEntry<T> {
 // In-memory TTL Cache
 const responseCache = new Map<string, CacheEntry<any>>();
 
-// User Request Counters: userId -> Array of timestamps
-const rateLimitMap = new Map<string, number[]>();
-
 /**
  * Prompt Injection Attack Patterns & Exploits
  */
@@ -58,44 +55,6 @@ export function sanitizeAiPromptInput(text: string | null | undefined, maxChars 
   }
 
   return sanitized;
-}
-
-/**
- * Backward compatibility alias for truncatePromptText
- */
-export function truncatePromptText(text: string | null | undefined, maxChars = 400): string {
-  return sanitizeAiPromptInput(text, maxChars);
-}
-
-/**
- * Checks if a user has exceeded their AI request quota.
- * Default: Max 10 requests per 10 minutes per user.
- */
-export function checkUserAiRateLimit(
-  userId: string,
-  maxRequestsWindow = 10,
-  windowMs = 10 * 60 * 1000
-): { allowed: boolean; remaining: number; retryAfterSeconds: number } {
-  const now = Date.now();
-  const timestamps = rateLimitMap.get(userId) || [];
-
-  // Filter out timestamps older than windowMs
-  const validTimestamps = timestamps.filter((ts) => now - ts < windowMs);
-
-  if (validTimestamps.length >= maxRequestsWindow) {
-    const oldest = validTimestamps[0];
-    const retryAfter = Math.ceil((oldest + windowMs - now) / 1000);
-    return { allowed: false, remaining: 0, retryAfterSeconds: Math.max(1, retryAfter) };
-  }
-
-  validTimestamps.push(now);
-  rateLimitMap.set(userId, validTimestamps);
-
-  return {
-    allowed: true,
-    remaining: maxRequestsWindow - validTimestamps.length,
-    retryAfterSeconds: 0,
-  };
 }
 
 /**
