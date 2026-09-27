@@ -626,6 +626,21 @@ test("inspectMessageSafety normalizes Unicode and detects obfuscated off-platfor
   assert.equal(wa.isAllowed, false);
   assert.equal(wa.sanitizedPreview, "[Content Redacted]");
 
+  // 5. Cyrillic homoglyph evasion (e.g. Ukrainian і in discord, Cyrillic a in whatsapp)
+  const cyrillicDiscord = inspectMessageSafety({
+    text: "add me on d\u0456scord now",
+    participantBands: ["minor", "adult"],
+  });
+  assert.equal(cyrillicDiscord.isAllowed, false);
+  assert.equal(cyrillicDiscord.sanitizedPreview, "[Content Redacted]");
+
+  const cyrillicWhatsApp = inspectMessageSafety({
+    text: "ping me on wh\u0430ts\u0430pp",
+    participantBands: ["minor", "adult"],
+  });
+  assert.equal(cyrillicWhatsApp.isAllowed, false);
+  assert.equal(cyrillicWhatsApp.sanitizedPreview, "[Content Redacted]");
+
   // Clean academic writing with minor passes and returns sanitizedPreview
   const clean = inspectMessageSafety({
     text: "Please read chapters 4 and 5 on cellular mitosis before Thursday's lab.",
