@@ -8,6 +8,8 @@ import { AdminReviewTable } from "@/components/features/AdminReviewTable";
 import { AdminPreviewControls } from "@/components/features/AdminPreviewControls";
 import { AdminSafetyQueue } from "@/components/features/AdminSafetyQueue";
 import { countSafetyByStatus, type SafetyReportCounts } from "@/lib/neon/youth-protection";
+import { scoreProfessorApplication } from "@/lib/validators";
+import { parseJsonbArray } from "@/lib/utils";
 import Link from "next/link";
 import {
   Users, GraduationCap, MessageSquare, ClipboardCheck, ShieldAlert,
@@ -127,13 +129,28 @@ export default async function AdminDashboard() {
 
   // 'deactivated' is excluded for the same reason as 'suspended': nobody is
   // waiting on an admin to review an account its owner switched off.
-  const pendingProfessors = (allProfessors ?? []).filter(
-    (p) =>
-      p.status !== "approved" &&
-      p.status !== "rejected" &&
-      p.status !== "suspended" &&
-      p.status !== "deactivated"
-  );
+  const pendingProfessors = (allProfessors ?? [])
+    .filter(
+      (p) =>
+        p.status !== "approved" &&
+        p.status !== "rejected" &&
+        p.status !== "suspended" &&
+        p.status !== "deactivated"
+    )
+    .map((p) => ({
+      ...p,
+      expertise_fields: parseJsonbArray(p.expertise_fields),
+      ai_score:
+        typeof p.ai_score === "number"
+          ? p.ai_score
+          : scoreProfessorApplication({
+              email: p.email ?? "",
+              institution: p.institution,
+              expertise_fields: parseJsonbArray(p.expertise_fields),
+              first_name: p.first_name ?? "",
+              last_name: p.last_name ?? "",
+            }).score,
+    }));
   const facultyCount = (allProfessors ?? []).filter((p) => p.status === "approved").length;
   const pendingCount = pendingProfessors.length;
 

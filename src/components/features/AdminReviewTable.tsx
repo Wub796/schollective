@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { updateProfessorStatus, scoreApplication, autoReviewAllPendingProfessors } from "@/app/admin/dashboard/actions";
 import { CheckCircle, XCircle, Loader2, Mail, GraduationCap, RefreshCw, Sparkles, ShieldAlert } from "lucide-react";
-import { scoreProfessorApplication, scoreLabel } from "@/lib/validators";
+import { scoreLabel } from "@/lib/score-label";
 
 import { toast } from "sonner";
 import { facultyName } from "@/lib/people";
@@ -36,15 +36,7 @@ function ScoreBadge({ prof }: { prof: PendingProfessor }) {
 
   // If already scored in DB, show stored value
   const stored = typeof prof.ai_score === "number";
-  const score  = stored
-    ? prof.ai_score!
-    : scoreProfessorApplication({
-        email:            prof.email,
-        institution:      prof.institution,
-        expertise_fields: prof.expertise_fields,
-        first_name:       prof.first_name,
-        last_name:        prof.last_name,
-      }).score;
+  const score  = stored ? prof.ai_score! : 50;
 
   const { label, color } = scoreLabel(score);
 
