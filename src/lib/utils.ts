@@ -42,12 +42,17 @@ export function internalError(context: string, err: unknown, userMessage: string
 export function parseJsonbArray(value: unknown): string[] {
   if (Array.isArray(value)) return value.filter((v): v is string => typeof v === "string");
   if (typeof value === "string" && value.trim()) {
+    const trimmed = value.trim();
     try {
-      const parsed = JSON.parse(value);
+      const parsed = JSON.parse(trimmed);
       if (Array.isArray(parsed)) return parsed.filter((v): v is string => typeof v === "string");
-      if (typeof parsed === "string" && parsed.trim()) return [parsed];
+      if (typeof parsed === "string" && parsed.trim()) return [parsed.trim()];
+      return [];
     } catch {
-      return [value];
+      if (trimmed.startsWith("[") || trimmed.startsWith("{")) {
+        return [];
+      }
+      return [trimmed];
     }
   }
   return [];
