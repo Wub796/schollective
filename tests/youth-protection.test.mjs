@@ -39,13 +39,16 @@ import {
   YOUTH_SAFETY_SECTIONS,
   ageBandFor,
   ageInYears,
+  evaluateAgeBand,
   guardianConsentRequiredFor,
+  inspectMessageSafety,
   isPresumedMinorEducationLevel,
   isSafetyConcernCategory,
   isUrgentConcern,
   minorThreadNotice,
   needsAgeStatement,
   parseDateOfBirth,
+  parseJsonbArray,
   resolveMinorFlag,
   reviewMentorMessage,
   summaryOfSnapshot,
@@ -520,4 +523,121 @@ test("the safety queue and the AI moderation queue are different components", ()
     "utf8",
   );
   assert.match(reportQueue, /AdminSafetyReportRow/);
+});
+
+// ─────────────────────────────────────────────────────────────────
+// PRINCIPAL REVIEW HARDENING: evaluateAgeBand & inspectMessageSafety
+// ─────────────────────────────────────────────────────────────────
+
+test("evaluateAgeBand computes calendar age in UTC and fails closed on invalid or future dates", () => {
+  const at = (dob, nowIso) => evaluateAgeBand(dob, new Date(nowIso));
+
+  // Invalid, missing, or garbage fail closed to under_13
+  assert.equal(evaluateAgeBand(null), "under_13");
+  assert.equal(evaluateAgeBand(undefined), "under_13");
+  assert.equal(evaluateAgeBand(""), "under_13");
+  assert.equal(evaluateAgeBand("not-a-date"), "under_13");
+  assert.equal(evaluateAgeBand(12345), "under_13");
+  assert.equal(evaluateAgeBand("2010-02-31"), "under_13"); // invalid calendar day
+
+  // Future dates fail closed to under_13
+  assert.equal(at("2030-01-01", "2026-05-10T12:00:00Z"), "under_13");
+  assert.equal(at("2026-05-11", "2026-05-10T12:00:00Z"), "under_13");
+
+  // Critical boundary: exactly 13th birthday
+  assert.equal(at("2013-05-10", "2026-05-09T12:00:00Z"), "under_13"); // day before 13
+  assert.equal(at("2013-05-10", "2026-05-10T00:00:00Z"), "minor");    // on 13th birthday
+  assert.equal(at("2013-05-10", "2026-05-11T12:00:00Z"), "minor");    // day after 13
+
+  // Critical boundary: exactly 18th birthday
+  assert.equal(at("2008-05-10", "2026-05-09T12:00:00Z"), "minor");    // day before 18
+  assert.equal(at("2008-05-10", "2026-05-10T00:00:00Z"), "adult");    // on 18th birthday
+  assert.equal(at("2008-05-10", "2026-05-11T12:00:00Z"), "adult");    // day after 18
+
+  // Leap-year birthdays (born Feb 29)
+  // 2012-02-29 turns 13 on 2025-03-01 in non-leap years
+  assert.equal(at("2012-02-29", "2025-02-28T12:00:00Z"), "under_13");
+  assert.equal(at("2012-02-29", "2025-03-01T00:00:00Z"), "minor");
+  // 2012-02-29 turns 12 on 2024-02-29 in a leap year
+  assert.equal(at("2012-02-29", "2024-02-28T12:00:00Z"), "under_13");
+  assert.equal(at("2012-02-29", "2024-02-29T12:00:00Z"), "under_13");
+
+  // Timezone-offset string handled via UTC components
+  assert.equal(at("2008-05-10T23:00:00-08:00", "2026-05-11T12:00:00Z"), "adult");
+});
+
+test("inspectMessageSafety normalizes Unicode and detects obfuscated off-platform contacts", () => {
+  // Empty or missing participantBands fails closed
+  assert.equal(inspectMessageSafety({ text: "Hello", participantBands: [] }).isAllowed, false);
+  assert.equal(inspectMessageSafety({ text: "Hello", participantBands: null }).isAllowed, false);
+  assert.equal(
+    inspectMessageSafety({ text: "Hello", participantBands: ["unknown"] }).isAllowed,
+    false,
+  );
+
+  // Under-13 participant rejects immediately per COPPA
+  const under13Result = inspectMessageSafety({
+    text: "Hello professor",
+    participantBands: ["under_13", "adult"],
+  });
+  assert.equal(under13Result.isAllowed, false);
+  assert.match(under13Result.reason, /under 13/i);
+  assert.equal(under13Result.sanitizedPreview, "[Content Redacted]");
+
+  // Adult-only passes
+  assert.equal(
+    inspectMessageSafety({
+      text: "Call me at 555-123-4567 or add me on discord: prof#1234",
+      participantBands: ["adult", "adult"],
+    }).isAllowed,
+    true,
+  );
+
+  // Obfuscated off-platform contacts in minor thread are blocked
+  // 1. "discord dot gg" with whitespace and dot obfuscation
+  const discordDot = inspectMessageSafety({
+    text: "join our group at discord dot gg / research",
+    participantBands: ["minor", "adult"],
+  });
+  assert.equal(discordDot.isAllowed, false);
+  assert.equal(discordDot.sanitizedPreview, "[Content Redacted]");
+
+  // 2. Unicode zero-width evasion (\u200B) inside "discord"
+  const zeroWidth = inspectMessageSafety({
+    text: "add me on d\u200Bi\u200Bs\u200Bc\u200Bo\u200Br\u200Bd",
+    participantBands: ["minor", "adult"],
+  });
+  assert.equal(zeroWidth.isAllowed, false);
+  assert.equal(zeroWidth.sanitizedPreview, "[Content Redacted]");
+
+  // 3. Spaced-out phone number digits
+  const spacedPhone = inspectMessageSafety({
+    text: "reach my cell at 5 5 5 1 2 3 4 5 6 7",
+    participantBands: ["minor", "adult"],
+  });
+  assert.equal(spacedPhone.isAllowed, false);
+  assert.equal(spacedPhone.sanitizedPreview, "[Content Redacted]");
+
+  // 4. WhatsApp obfuscations
+  const wa = inspectMessageSafety({
+    text: "message me on whatsapp or wa.me/1234567890",
+    participantBands: ["minor", "adult"],
+  });
+  assert.equal(wa.isAllowed, false);
+  assert.equal(wa.sanitizedPreview, "[Content Redacted]");
+
+  // Clean academic writing with minor passes and returns sanitizedPreview
+  const clean = inspectMessageSafety({
+    text: "Please read chapters 4 and 5 on cellular mitosis before Thursday's lab.",
+    participantBands: ["minor", "adult"],
+  });
+  assert.equal(clean.isAllowed, true);
+  assert.equal(clean.sanitizedPreview, "Please read chapters 4 and 5 on cellular mitosis before Thursday's lab.");
+});
+
+test("parseJsonbArray is exported from youth-protection as a shared canonical utility", () => {
+  assert.deepEqual(parseJsonbArray(["Astrophysics", "Quantum"]), ["Astrophysics", "Quantum"]);
+  assert.deepEqual(parseJsonbArray('["Robotics"]'), ["Robotics"]);
+  assert.deepEqual(parseJsonbArray("[broken json"), []);
+  assert.deepEqual(parseJsonbArray(null), []);
 });

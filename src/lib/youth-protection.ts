@@ -52,8 +52,8 @@
  * client and no React, so the boundary can be consulted by a server action, a
  * server component, a client onboarding form and the tests alike.
  */
-
 import { sanitiseFeedbackMessage as sanitiseReportMessage } from "./feedback";
+export { parseJsonbArray } from "./utils";
 
 // ─────────────────────────────────────────────────────────────────
 // AGE THRESHOLDS AND THE REPORTING ADDRESS
@@ -182,6 +182,73 @@ export function ageBandFor(dateOfBirth: string | null | undefined, now: Date = n
   const age = ageInYears(dateOfBirth, now);
   if (age === null) return "unknown";
   if (age < MINIMUM_AGE) return "under-minimum";
+  if (age < ADULT_AGE) return "minor";
+  return "adult";
+}
+
+export type EvaluatedAgeBand = "under_13" | "minor" | "adult";
+
+/**
+ * Hardened age band evaluator for youth protection and COPPA compliance.
+ * Computes calendar age strictly on UTC date components.
+ * Fails closed to "under_13" on missing, invalid, future, or malformed dates.
+ */
+export function evaluateAgeBand(
+  dateOfBirth: unknown,
+  now: Date = new Date(),
+): EvaluatedAgeBand {
+  if (!dateOfBirth) return "under_13";
+
+  let year: number;
+  let month: number;
+  let day: number;
+
+  if (dateOfBirth instanceof Date) {
+    if (Number.isNaN(dateOfBirth.getTime())) return "under_13";
+    year = dateOfBirth.getUTCFullYear();
+    month = dateOfBirth.getUTCMonth() + 1;
+    day = dateOfBirth.getUTCDate();
+  } else if (typeof dateOfBirth === "string") {
+    const trimmed = dateOfBirth.trim();
+    if (!trimmed) return "under_13";
+
+    if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) {
+      const parsed = new Date(`${trimmed}T00:00:00Z`);
+      if (Number.isNaN(parsed.getTime())) return "under_13";
+      if (parsed.toISOString().slice(0, 10) !== trimmed) return "under_13";
+      [year, month, day] = trimmed.split("-").map(Number);
+    } else {
+      const parsed = new Date(trimmed);
+      if (Number.isNaN(parsed.getTime())) return "under_13";
+      year = parsed.getUTCFullYear();
+      month = parsed.getUTCMonth() + 1;
+      day = parsed.getUTCDate();
+    }
+  } else {
+    return "under_13";
+  }
+
+  if (year < EARLIEST_BIRTH_YEAR) return "under_13";
+
+  const nowYear = now.getUTCFullYear();
+  const nowMonth = now.getUTCMonth() + 1;
+  const nowDay = now.getUTCDate();
+
+  // Fail closed if date of birth is in the future
+  if (
+    year > nowYear ||
+    (year === nowYear && month > nowMonth) ||
+    (year === nowYear && month === nowMonth && day > nowDay)
+  ) {
+    return "under_13";
+  }
+
+  let age = nowYear - year;
+  const beforeBirthday =
+    nowMonth < month || (nowMonth === month && nowDay < day);
+  if (beforeBirthday) age -= 1;
+
+  if (age < 0 || age < MINIMUM_AGE) return "under_13";
   if (age < ADULT_AGE) return "minor";
   return "adult";
 }
@@ -403,7 +470,7 @@ const PROHIBITED_PATTERNS: RegExp[] = [
 const OFF_PLATFORM_PATTERNS: Array<{ phrase: string; pattern: RegExp }> = [
   {
     phrase: "a phone number",
-    pattern: /\b(?:\+?1[\s.-]?)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}\b/,
+    pattern: /\b(?:\+?1[\s.-]?)?(?:\(?\d{3}\)?|\d\s*\d\s*\d)[\s.-]?\d\s*\d\s*\d[\s.-]?\d\s*\d\s*\d\s*\d\b/,
   },
   {
     phrase: "a personal phone number",
@@ -412,7 +479,7 @@ const OFF_PLATFORM_PATTERNS: Array<{ phrase: string; pattern: RegExp }> = [
   {
     phrase: "another messaging app",
     pattern:
-      /\b(?:add|follow|dm|message|hit|find|reach)\s+me\s+on\s+(?:snap(?:chat)?|insta(?:gram)?|discord|whatsapp|telegram|tiktok|kik|wechat|facebook|fb)\b/i,
+      /\b(?:add|follow|dm|message|hit|find|reach)\s+me\s+on\s+(?:snap(?:chat)?|insta(?:gram)?|discord|whatsapp|telegram|tiktok|kik|wechat|facebook|fb|wa)\b/i,
   },
   {
     phrase: "a handle on another app",
@@ -422,6 +489,10 @@ const OFF_PLATFORM_PATTERNS: Array<{ phrase: string; pattern: RegExp }> = [
   {
     phrase: "contact outside Schollective",
     pattern: /\b(?:text|dm|pm|snap|whatsapp|telegram)\s+me\b/i,
+  },
+  {
+    phrase: "an off-platform link",
+    pattern: /\b(?:discord(?:\s*(?:\.|\/)\s*|\s+)(?:gg|com|app|me)|wa\.me|t\.me)\b/i,
   },
   {
     phrase: "contact outside Schollective",
@@ -441,7 +512,6 @@ const OFF_PLATFORM_PATTERNS: Array<{ phrase: string; pattern: RegExp }> = [
 
 export type SafetyAction = "pass" | "block";
 
-
 export interface MessageSafetyReview {
   action: SafetyAction;
   /** The sentence shown to the sender when `action` is "block". */
@@ -451,26 +521,141 @@ export interface MessageSafetyReview {
 }
 
 /**
+ * Normalizes message text for safety inspection:
+ * - Decomposes Unicode homoglyphs and accents via NFKD.
+ * - Strips zero-width and non-printing evasion characters.
+ * - Normalizes obfuscated separators (e.g. "[dot]", "(dot)", " dot ") to "."
+ * - Collapses repeated whitespace.
+ */
+export function normalizeMessageForInspection(text: string): string {
+  if (!text) return "";
+  let norm = text.normalize("NFKD");
+  // Strip zero-width spaces, joiners, directional markers, soft hyphens
+  norm = norm.replace(/[\u200B-\u200D\u200E\u200F\uFEFF\u00AD\u2060]/g, "");
+  // Obfuscated dots: " dot ", "[dot]", "(dot)", "{dot}"
+  norm = norm.replace(/\s*(?:\[dot\]|\(dot\)|\{dot\}|\bdot\b)\s*/gi, ".");
+  // Obfuscated at symbols: " at ", "[at]", "(at)"
+  norm = norm.replace(/\s*(?:\[at\]|\(at\)|\{at\}|\bat\b)\s*/gi, "@");
+  return norm;
+}
+
+export interface InspectMessageSafetyInput {
+  text: string;
+  senderRole?: "professor" | "student" | "admin";
+  participantBands?: Array<string | null | undefined>;
+}
+
+export interface InspectMessageSafetyResult {
+  isAllowed: boolean;
+  action: SafetyAction;
+  reason?: string;
+  signals: string[];
+  sanitizedPreview?: string;
+}
+
+/**
+ * Inspects a message for youth protection and compliance.
+ * Fails closed if participantBands is missing, empty, or contains unknown values.
+ * Rejects immediately if any participant is under 13.
+ * Redacts sanitizedPreview when isAllowed is false.
+ */
+export function inspectMessageSafety(input: InspectMessageSafetyInput): InspectMessageSafetyResult {
+  const bands = input.participantBands;
+
+  // 1. If participantBands is empty or missing -> fail closed
+  if (!bands || bands.length === 0) {
+    return {
+      isAllowed: false,
+      action: "block",
+      reason: "Message blocked: participant age bands cannot be determined.",
+      signals: ["missing-participant-bands"],
+      sanitizedPreview: "[Content Redacted]",
+    };
+  }
+
+  // 2. If any participant is under 13 -> reject outright per COPPA
+  for (const b of bands) {
+    if (b === "under_13" || b === "under-minimum") {
+      return {
+        isAllowed: false,
+        action: "block",
+        reason: "Direct communication with accounts under 13 is strictly prohibited by youth protection policy and federal law (COPPA).",
+        signals: ["coppa-under-13-blocked"],
+        sanitizedPreview: "[Content Redacted]",
+      };
+    }
+  }
+
+  // 3. If any participant band is unrecognized / invalid -> fail closed
+  const validBands = new Set(["minor", "adult", "13_to_17", "18_plus"]);
+  for (const b of bands) {
+    if (!b || !validBands.has(b)) {
+      return {
+        isAllowed: false,
+        action: "block",
+        reason: "Message blocked: unverified participant age band.",
+        signals: ["unverified-participant-band"],
+        sanitizedPreview: "[Content Redacted]",
+      };
+    }
+  }
+
+  // 4. If all participants are adults -> pass
+  const involvesMinor = bands.some((b) => b === "minor" || b === "13_to_17");
+  if (!involvesMinor) {
+    return {
+      isAllowed: true,
+      action: "pass",
+      signals: [],
+      sanitizedPreview: input.text ?? "",
+    };
+  }
+
+  // 5. Involves minor: normalize and inspect text
+  const rawText = input.text ?? "";
+  const normalized = normalizeMessageForInspection(rawText);
+
+  // Check prohibited patterns
+  for (const pattern of PROHIBITED_PATTERNS) {
+    if (pattern.test(rawText) || pattern.test(normalized)) {
+      return {
+        isAllowed: false,
+        action: "block",
+        reason:
+          "This thread includes a high-school student, and this message breaks a youth protection rule. Contact outside the platform, requests for images and requests to keep something from a parent or guardian are all prohibited. See the Youth Protection Policy at schollective.com/safety.",
+        signals: ["prohibited-contact"],
+        sanitizedPreview: "[Content Redacted]",
+      };
+    }
+  }
+
+  // Check off-platform patterns
+  for (const { phrase, pattern } of OFF_PLATFORM_PATTERNS) {
+    if (pattern.test(rawText) || pattern.test(normalized)) {
+      return {
+        isAllowed: false,
+        action: "block",
+        reason:
+          input.senderRole === "student"
+            ? `For your safety, messages with a mentor stay on Schollective — remove ${phrase} and try again. If someone asked you to move off the platform, report it: safety@schollective.com.`
+            : `This thread includes a high-school student, so it stays on Schollective — remove ${phrase} and try again. Mentoring a minor off-platform is prohibited; see schollective.com/safety.`,
+        signals: [phrase],
+        sanitizedPreview: "[Content Redacted]",
+      };
+    }
+  }
+
+  return {
+    isAllowed: true,
+    action: "pass",
+    signals: [],
+    sanitizedPreview: rawText,
+  };
+}
+
+/**
  * Reviews one message against the rules that apply because a minor is on the
  * thread.
- *
- * There is no "warn and deliver anyway" tier. A safety rule whose message is
- * stored and read by the student is not a rule, and a warning toast on the
- * sender's screen is invisible to the person the rule exists to protect. So the
- * patterns above are drawn tightly enough to block outright, and anything
- * uncertain is left to `filterMessage`, to the notice in the thread, and to a
- * human reading a report.
- *
- * An adult-only thread passes untouched: two adults arranging to talk on
- * WhatsApp is not this platform's business, and pretending otherwise would send
- * every professor's real messages into a review queue nobody reads.
- *
- * @param text          The already-sanitised message body.
- * @param senderRole    Where the message is coming from. Both directions are
- *                      checked — a student is not expected to know these rules,
- *                      and a blocked message with a reason teaches them.
- * @param involvesMinor Whether a minor is on the thread (see
- *                      `threadInvolvesMinor`).
  */
 export function reviewMentorMessage(input: {
   text: string;
@@ -479,33 +664,17 @@ export function reviewMentorMessage(input: {
 }): MessageSafetyReview {
   if (!input.involvesMinor) return { action: "pass", signals: [] };
 
-  const text = input.text ?? "";
+  const inspection = inspectMessageSafety({
+    text: input.text,
+    senderRole: input.senderRole,
+    participantBands: ["adult", "minor"],
+  });
 
-  for (const pattern of PROHIBITED_PATTERNS) {
-    if (pattern.test(text)) {
-      return {
-        action: "block",
-        reason:
-          "This thread includes a high-school student, and this message breaks a youth protection rule. Contact outside the platform, requests for images and requests to keep something from a parent or guardian are all prohibited. See the Youth Protection Policy at schollective.com/safety.",
-        signals: ["prohibited-contact"],
-      };
-    }
-  }
-
-  for (const { phrase, pattern } of OFF_PLATFORM_PATTERNS) {
-    if (pattern.test(text)) {
-      return {
-        action: "block",
-        reason:
-          input.senderRole === "student"
-            ? `For your safety, messages with a mentor stay on Schollective — remove ${phrase} and try again. If someone asked you to move off the platform, report it: safety@schollective.com.`
-            : `This thread includes a high-school student, so it stays on Schollective — remove ${phrase} and try again. Mentoring a minor off-platform is prohibited; see schollective.com/safety.`,
-        signals: [phrase],
-      };
-    }
-  }
-
-  return { action: "pass", signals: [] };
+  return {
+    action: inspection.action,
+    reason: inspection.reason,
+    signals: inspection.signals,
+  };
 }
 
 // ─────────────────────────────────────────────────────────────────
