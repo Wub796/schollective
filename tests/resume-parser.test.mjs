@@ -95,3 +95,74 @@ test("normalizeLanguageProficiency maps to the 4 canonical options", async () =>
   assert.equal(normalizeLanguageProficiency("Beginner / Elementary"), "Elementary");
   assert.equal(normalizeLanguageProficiency(""), "Professional Working");
 });
+
+test("mergeResumeIntoProfile preserves filled fields, deduplicates arrays, and does not mutate input", async () => {
+  const { mergeResumeIntoProfile } = await loadResumeParser();
+
+  const current = {
+    first_name: "Jane",
+    last_name: "Doe",
+    institution: "MIT",
+    education_level: "undergraduate-upper",
+    academic_interests: ["Quantum Computing"],
+    skills_and_tools: ["Python", "Qiskit"],
+    academic_stats: {
+      advanced_coursework: ["Linear Algebra"],
+    },
+    activities: [
+      { title: "Robotics Club", role: "Lead" },
+    ],
+    honors_awards: [
+      { title: "Dean's List" },
+    ],
+    languages: [
+      { language: "English", proficiency: "Native / Bilingual" },
+    ],
+  };
+
+  const incoming = {
+    first_name: "NewJane",
+    institution: "Stanford",
+    education_level: "high-school-senior",
+    bio: "Passionate researcher",
+    academic_interests: ["quantum computing", "Machine Learning"],
+    skills_and_tools: ["python", "Rust"],
+    academic_stats: {
+      advanced_coursework: ["linear algebra", "Multivariable Calculus"],
+    },
+    activities: [
+      { title: "robotics club", role: "Member" },
+      { title: "Debate Team", role: "Captain" },
+    ],
+    honors_awards: [
+      { title: "dean's list" },
+      { title: "National Merit Scholar" },
+    ],
+    languages: [
+      { language: "english", proficiency: "Fluent" },
+      { language: "French", proficiency: "Limited Working" },
+    ],
+  };
+
+  const merged = mergeResumeIntoProfile(current, incoming);
+
+  assert.equal(merged.first_name, "Jane");
+  assert.equal(merged.institution, "MIT");
+  assert.equal(merged.education_level, "undergraduate-upper");
+  assert.equal(merged.bio, "Passionate researcher");
+
+  assert.deepEqual(merged.academic_interests, ["Quantum Computing", "Machine Learning"]);
+  assert.deepEqual(merged.skills_and_tools, ["Python", "Qiskit", "Rust"]);
+  assert.deepEqual(merged.academic_stats?.advanced_coursework, ["Linear Algebra", "Multivariable Calculus"]);
+  assert.equal(merged.activities?.length, 2);
+  assert.equal(merged.activities?.[0].title, "Robotics Club");
+  assert.equal(merged.activities?.[1].title, "Debate Team");
+  assert.equal(merged.honors_awards?.length, 2);
+  assert.equal(merged.honors_awards?.[0].title, "Dean's List");
+  assert.equal(merged.honors_awards?.[1].title, "National Merit Scholar");
+  assert.equal(merged.languages?.length, 2);
+
+  assert.equal(current.skills_and_tools.length, 2);
+  assert.equal(current.academic_interests.length, 1);
+});
+
