@@ -188,7 +188,7 @@ export function InteractiveOnboardingTour({ role, steps, suppressAutoLaunch = fa
     }
   }, [isOpen, currentStepIndex, steps]);
 
-  // Handle intentional step transitions (scroll smoothly if needed, measure cleanly)
+  // Handle intentional step transitions (scroll smoothly if needed, measure cleanly with ResizeObserver)
   useEffect(() => {
     if (!isOpen || currentStepIndex < 0 || currentStepIndex >= steps.length) {
       setRect(null);
@@ -205,32 +205,47 @@ export function InteractiveOnboardingTour({ role, steps, suppressAutoLaunch = fa
       return;
     }
 
+    let observer: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== "undefined") {
+      observer = new ResizeObserver(() => {
+        measureElement();
+      });
+      observer.observe(element);
+    }
+
     const initialRect = element.getBoundingClientRect();
     const isOffscreen = initialRect.top < 80 || initialRect.bottom > window.innerHeight - 80;
 
+    let t1: NodeJS.Timeout | null = null;
+    let t2: NodeJS.Timeout | null = null;
+    let t3: NodeJS.Timeout | null = null;
+
     if (isOffscreen) {
       element.scrollIntoView({ behavior: "smooth", block: "center" });
-      const t1 = setTimeout(measureElement, 150);
-      const t2 = setTimeout(measureElement, 350);
-      const t3 = setTimeout(measureElement, 500);
-      return () => {
-        clearTimeout(t1);
-        clearTimeout(t2);
-        clearTimeout(t3);
-      };
+      t1 = setTimeout(measureElement, 150);
+      t2 = setTimeout(measureElement, 350);
+      t3 = setTimeout(measureElement, 500);
     } else {
       measureElement();
     }
+
+    return () => {
+      if (observer) observer.disconnect();
+      if (t1) clearTimeout(t1);
+      if (t2) clearTimeout(t2);
+      if (t3) clearTimeout(t3);
+    };
   }, [isOpen, currentStepIndex, steps, measureElement]);
 
-  // Handle window resize and manual user scrolling smoothly
+  // Handle window resize and manual user scrolling smoothly with RAF throttling
   useEffect(() => {
     if (!isOpen || currentStepIndex < 0 || currentStepIndex >= steps.length) return;
 
     let ticking = false;
+    let rafId: number | null = null;
     const handleScrollOrResize = () => {
       if (!ticking) {
-        window.requestAnimationFrame(() => {
+        rafId = window.requestAnimationFrame(() => {
           measureElement();
           ticking = false;
         });
@@ -241,10 +256,28 @@ export function InteractiveOnboardingTour({ role, steps, suppressAutoLaunch = fa
     window.addEventListener("resize", handleScrollOrResize, { passive: true });
     window.addEventListener("scroll", handleScrollOrResize, { passive: true });
     return () => {
+      if (rafId !== null) window.cancelAnimationFrame(rafId);
       window.removeEventListener("resize", handleScrollOrResize);
       window.removeEventListener("scroll", handleScrollOrResize);
     };
   }, [isOpen, currentStepIndex, steps, measureElement]);
+
+  // Support Escape key to dismiss tour gracefully
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        setIsOpen(false);
+        setCurrentStepIndex(-1);
+        if (typeof window !== "undefined") {
+          localStorage.setItem(tourKey, "completed");
+        }
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, tourKey]);
 
   const handleNext = () => {
     if (currentStepIndex < steps.length - 1) {
@@ -315,6 +348,12 @@ export function InteractiveOnboardingTour({ role, steps, suppressAutoLaunch = fa
     // Explicit boundary clamp to guarantee the popover is always 100% visible inside the screen and below top nav
     popoverTop = Math.max(72, Math.min(popoverTop, windowH - 280));
     popoverLeft = Math.max(16, Math.min(popoverLeft, windowW - (isMobile ? 32 : popoverWidth) - 16));
+  } else if (!rect && isTouring) {
+    // Missing or not yet rendered target element fallback: center popover in upper viewport
+    const windowH = typeof window !== "undefined" ? window.innerHeight : 800;
+    const windowW = typeof window !== "undefined" ? window.innerWidth : 1200;
+    popoverTop = Math.max(80, Math.floor(windowH * 0.22));
+    popoverLeft = Math.max(16, Math.floor((windowW - popoverWidth) / 2));
   }
 
   const roleLabel = role === "student" ? "Scholar" : "Faculty";
