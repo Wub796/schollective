@@ -212,11 +212,13 @@ export function evaluateAgeBand(
     const trimmed = dateOfBirth.trim();
     if (!trimmed) return "under_13";
 
-    if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) {
-      const parsed = new Date(`${trimmed}T00:00:00Z`);
+    const dateOnlyMatch = trimmed.match(/^(\d{4})-(\d{2})-(\d{2})(?:[T\s].*)?$/);
+    if (dateOnlyMatch) {
+      const isoDate = `${dateOnlyMatch[1]}-${dateOnlyMatch[2]}-${dateOnlyMatch[3]}`;
+      const parsed = new Date(`${isoDate}T00:00:00Z`);
       if (Number.isNaN(parsed.getTime())) return "under_13";
-      if (parsed.toISOString().slice(0, 10) !== trimmed) return "under_13";
-      [year, month, day] = trimmed.split("-").map(Number);
+      if (parsed.toISOString().slice(0, 10) !== isoDate) return "under_13";
+      [year, month, day] = isoDate.split("-").map(Number);
     } else {
       const parsed = new Date(trimmed);
       if (Number.isNaN(parsed.getTime())) return "under_13";
@@ -479,7 +481,7 @@ const OFF_PLATFORM_PATTERNS: Array<{ phrase: string; pattern: RegExp }> = [
   {
     phrase: "another messaging app",
     pattern:
-      /\b(?:add|follow|dm|message|hit|find|reach)\s+me\s+on\s+(?:snap(?:chat)?|insta(?:gram)?|discord|whatsapp|telegram|tiktok|kik|wechat|facebook|fb|wa)\b/i,
+      /\b(?:add|follow|dm|message|hit|find|reach|ping)\s+me\s+on\s+(?:snap(?:chat)?|insta(?:gram)?|discord|whatsapp|telegram|tiktok|kik|wechat|facebook|fb|wa)\b/i,
   },
   {
     phrase: "a handle on another app",
@@ -520,9 +522,23 @@ export interface MessageSafetyReview {
   signals: string[];
 }
 
+const CYRILLIC_TO_LATIN: Record<string, string> = {
+  "\u0430": "a", "\u0410": "A",
+  "\u0435": "e", "\u0415": "E",
+  "\u043E": "o", "\u041E": "O",
+  "\u0440": "p", "\u0420": "P",
+  "\u0441": "c", "\u0421": "C",
+  "\u0443": "y", "\u0423": "Y",
+  "\u0445": "x", "\u0425": "X",
+  "\u0456": "i", "\u0406": "I",
+  "\u0458": "j", "\u0408": "J",
+  "\u0455": "s", "\u0405": "S",
+};
+
 /**
  * Normalizes message text for safety inspection:
  * - Decomposes Unicode homoglyphs and accents via NFKD.
+ * - Maps Cyrillic confusable homoglyphs to Latin equivalents.
  * - Strips zero-width and non-printing evasion characters.
  * - Normalizes obfuscated separators (e.g. "[dot]", "(dot)", " dot ") to "."
  * - Collapses repeated whitespace.
@@ -530,6 +546,8 @@ export interface MessageSafetyReview {
 export function normalizeMessageForInspection(text: string): string {
   if (!text) return "";
   let norm = text.normalize("NFKD");
+  // Transliterate common Cyrillic confusable homoglyphs
+  norm = norm.replace(/[\u0400-\u04FF]/g, (char) => CYRILLIC_TO_LATIN[char] || char);
   // Strip zero-width spaces, joiners, directional markers, soft hyphens
   norm = norm.replace(/[\u200B-\u200D\u200E\u200F\uFEFF\u00AD\u2060]/g, "");
   // Obfuscated dots: " dot ", "[dot]", "(dot)", "{dot}"

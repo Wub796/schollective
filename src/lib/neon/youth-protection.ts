@@ -7,6 +7,7 @@ import { isValidId } from "@/lib/security";
 import {
   isSafetyConcernCategory,
   isSafetyReportStatus,
+  parseDateOfBirth,
   resolveMinorFlag,
   summaryOfSnapshot,
   SAFETY_REPORT_MESSAGE_MIN,
@@ -130,6 +131,7 @@ export interface RecordParentalConsentInput {
   guardianName: string;
   guardianEmail: string;
   version: string;
+  dateOfBirth?: string | null;
   expiresAt?: string | null;
 }
 
@@ -158,19 +160,41 @@ export async function recordParentalConsent(input: RecordParentalConsentInput): 
     return { success: false, error: "Consent version is required." };
   }
 
+  // Ensure date of birth is known either from an existing record or input
+  const existingRecord = await readOwnYouthProtection(input.studentId);
+  let resolvedDob: string | null = existingRecord?.date_of_birth ?? null;
+
+  if (!resolvedDob) {
+    if (!input.dateOfBirth) {
+      return {
+        success: false,
+        error: "A valid date of birth (YYYY-MM-DD) is required to record parental consent.",
+      };
+    }
+    const parsedDob = parseDateOfBirth(input.dateOfBirth);
+    if (!parsedDob) {
+      return {
+        success: false,
+        error: "Invalid date of birth format. Must be YYYY-MM-DD.",
+      };
+    }
+    resolvedDob = input.dateOfBirth;
+  }
+
   // Idempotent upsert inside SQL transaction
   await sql`
     INSERT INTO youth_protection
       (profile_id, date_of_birth, guardian_name, guardian_email, guardian_consent_at, consent_version)
     VALUES (
       ${input.studentId},
-      COALESCE((SELECT date_of_birth FROM youth_protection WHERE profile_id = ${input.studentId}), CURRENT_DATE),
+      ${resolvedDob}::date,
       ${name},
       ${email},
       now(),
       ${version}
     )
     ON CONFLICT (profile_id) DO UPDATE SET
+      date_of_birth = COALESCE(youth_protection.date_of_birth, EXCLUDED.date_of_birth),
       guardian_name = EXCLUDED.guardian_name,
       guardian_email = EXCLUDED.guardian_email,
       guardian_consent_at = now(),

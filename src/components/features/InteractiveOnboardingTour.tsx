@@ -746,9 +746,9 @@ export function InteractiveOnboardingTour({ role, steps, suppressAutoLaunch = fa
         <div
           style={{
             position: "fixed",
-            top: rect ? popoverTop : "50%",
-            left: rect ? popoverLeft : "50%",
-            transform: rect ? "none" : "translate(-50%, -50%)",
+            top: popoverTop,
+            left: popoverLeft,
+            transform: "none",
             width: "calc(100vw - 32px)",
             maxWidth: `${popoverWidth}px`,
             background: "#ffffff",
