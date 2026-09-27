@@ -116,6 +116,8 @@ CREATE TABLE IF NOT EXISTS thread_reads (
   last_read_at timestamptz NOT NULL DEFAULT now(),
   PRIMARY KEY (request_id, user_id)
 );
+CREATE INDEX IF NOT EXISTS request_members_request_status_idx ON request_members (request_id, status);
+CREATE INDEX IF NOT EXISTS thread_reads_user_idx ON thread_reads (user_id);
 
 -- ---------------------------------------------------------------------------
 -- 2. Helpers
@@ -135,6 +137,9 @@ AS $$
   WHERE m.request_id = target_request
     AND m.student_id = public.app_user_id()
 $$;
+
+REVOKE EXECUTE ON FUNCTION public.app_member_status(uuid) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.app_member_status(uuid) TO schollective_app;
 
 -- True when the caller may read and post in a thread: its lead, its professor,
 -- or a member who has joined.
@@ -160,6 +165,9 @@ AS $$
   )
 $$;
 
+REVOKE EXECUTE ON FUNCTION public.app_is_thread_participant(uuid) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.app_is_thread_participant(uuid) TO schollective_app;
+
 -- True when the caller may see that a request exists: its participants, plus a
 -- student who has been invited and needs to see what they are being invited to.
 -- An invitee sees the request row, never its messages.
@@ -171,6 +179,9 @@ AS $$
   SELECT public.app_is_thread_participant(target_request)
       OR COALESCE(public.app_member_status(target_request) = 'invited', false)
 $$;
+
+REVOKE EXECUTE ON FUNCTION public.app_can_view_request(uuid) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.app_can_view_request(uuid) TO schollective_app;
 
 -- True when either user has blocked the other. It answers only for a pair that
 -- includes the caller, and is false for everyone else, so a student cannot use
@@ -187,6 +198,9 @@ AS $$
           OR (b.blocker_id = second_user AND b.blocked_id = first_user)
      )
 $$;
+
+REVOKE EXECUTE ON FUNCTION public.app_blocked_between(text, text) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.app_blocked_between(text, text) TO schollective_app;
 
 -- True when the caller is connected to `target` closely enough to see their
 -- profile row: an accepted friendship, a friend request the target sent the
@@ -236,6 +250,9 @@ AS $$
     )
 $$;
 
+REVOKE EXECUTE ON FUNCTION public.app_is_connected_to(text) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.app_is_connected_to(text) TO schollective_app;
+
 -- True when `target` is a student the caller may find and send a friend request
 -- to. Both must be active students; the target must have finished onboarding and
 -- have a real auth account (legacy profile rows and test fixtures cannot answer
@@ -262,6 +279,9 @@ AS $$
       )
   )
 $$;
+
+REVOKE EXECUTE ON FUNCTION public.app_is_discoverable_student(text) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.app_is_discoverable_student(text) TO schollective_app;
 
 -- Student discovery. With a search term of two or more characters, matches on
 -- name or institution; with an empty term, suggests classmates at the caller's
