@@ -602,17 +602,26 @@ function useBox<T extends HTMLElement>() {
 
   useLayoutEffect(() => {
     if (!node) return;
-    const measure = () =>
-      setBox((prev) => {
-        const next = { width: node.offsetWidth, height: node.offsetHeight, top: node.offsetTop };
-        return prev && prev.width === next.width && prev.height === next.height && prev.top === next.top
-          ? prev
-          : next;
+    let rafId: number | null = null;
+    const measure = () => {
+      if (rafId !== null) return;
+      rafId = requestAnimationFrame(() => {
+        rafId = null;
+        setBox((prev) => {
+          const next = { width: node.offsetWidth, height: node.offsetHeight, top: node.offsetTop };
+          return prev && prev.width === next.width && prev.height === next.height && prev.top === next.top
+            ? prev
+            : next;
+        });
       });
+    };
     measure();
     const observer = new ResizeObserver(measure);
     observer.observe(node);
-    return () => observer.disconnect();
+    return () => {
+      if (rafId !== null) cancelAnimationFrame(rafId);
+      observer.disconnect();
+    };
   }, [node]);
 
   return [setNodeRef, box] as const;

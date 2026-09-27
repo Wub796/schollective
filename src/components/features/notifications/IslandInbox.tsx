@@ -67,34 +67,41 @@ export function IslandInbox({ id, notifications, viewer, unreadAtOpen, onNavigat
             </p>
           </div>
         ) : (
-          notifications.map((row) => {
-            const style = notificationStyle(row.type, viewer.role);
-            const { title, message } = notificationLines(row);
+          <>
+            {notifications.slice(0, 50).map((row) => {
+              const style = notificationStyle(row.type, viewer.role);
+              const { title, message } = notificationLines(row);
 
-            return (
-              <Link
-                key={row.id}
-                href={notificationHref(row, viewer.role)}
-                onClick={onNavigate}
-                className="island-inbox-row"
-                data-read={row.is_read ? "true" : "false"}
-              >
-                <span className="island-inbox-mark" style={{ color: style.ink }} aria-hidden="true">
-                  <NotificationGlyphMark glyph={style.glyph} size={14} />
-                </span>
-                <span className="island-inbox-copy">
-                  <span className="island-inbox-row-top">
-                    <span className="island-inbox-row-title">{title}</span>
-                    <span className="island-inbox-row-meta">
-                      <span className="island-inbox-row-time">{timeAgo(row.created_at)}</span>
-                      {!row.is_read && <span className="island-inbox-dot" aria-hidden="true" />}
-                    </span>
+              return (
+                <Link
+                  key={row.id}
+                  href={notificationHref(row, viewer.role)}
+                  onClick={onNavigate}
+                  className="island-inbox-row"
+                  data-read={row.is_read ? "true" : "false"}
+                >
+                  <span className="island-inbox-mark" style={{ color: style.ink }} aria-hidden="true">
+                    <NotificationGlyphMark glyph={style.glyph} size={14} />
                   </span>
-                  {message && <span className="island-inbox-row-body">{message}</span>}
-                </span>
-              </Link>
-            );
-          })
+                  <span className="island-inbox-copy">
+                    <span className="island-inbox-row-top">
+                      <span className="island-inbox-row-title">{title}</span>
+                      <span className="island-inbox-row-meta">
+                        <span className="island-inbox-row-time">{timeAgo(row.created_at)}</span>
+                        {!row.is_read && <span className="island-inbox-dot" aria-hidden="true" />}
+                      </span>
+                    </span>
+                    {message && <span className="island-inbox-row-body">{message}</span>}
+                  </span>
+                </Link>
+              );
+            })}
+            {notifications.length > 50 && (
+              <div style={{ padding: "0.75rem 1rem", fontSize: "0.75rem", color: "var(--text-secondary)", textAlign: "center" }}>
+                Showing 50 most recent of {notifications.length} notifications
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
