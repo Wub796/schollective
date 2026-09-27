@@ -67,4 +67,8 @@ test("parseJsonbArray handles non-string, null, undefined, and non-array JSON wi
   assert.deepEqual(parseJsonbArray('123'), []);
   assert.deepEqual(parseJsonbArray('true'), []);
   assert.deepEqual(parseJsonbArray('null'), []);
+  // Malformed JSON arrays or objects return empty array safely
+  assert.deepEqual(parseJsonbArray('[broken json'), []);
+  assert.deepEqual(parseJsonbArray('["unclosed string'), []);
+  assert.deepEqual(parseJsonbArray('{invalid'), []);
 });
