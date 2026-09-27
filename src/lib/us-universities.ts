@@ -1,7 +1,6 @@
-/**
- * US University Database — auto-generated from Hipo dataset
- * 2349 institutions, 2394 unique email domains
- */
+if (typeof window !== "undefined") {
+  throw new Error("us-universities.json is server-only and cannot be imported in client components.");
+}
 
 import universityData from "./us-universities.json" with { type: "json" };
 

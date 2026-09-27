@@ -1,3 +1,7 @@
+if (typeof window !== "undefined") {
+  throw new Error("src/lib/admin-preview.ts is server-only and cannot be imported on the client.");
+}
+
 import { sql } from "@/lib/neon/db";
 import { runAs } from "@/lib/neon/user-context";
 import { isValidId } from "@/lib/security";
