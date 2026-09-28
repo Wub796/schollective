@@ -21,7 +21,7 @@ export function PublicFooter() {
         {/* Logo */}
         <div className="lp-footer-logo">
           <Link href="/" style={{ textDecoration: "none", color: "inherit", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-            <SchollectiveLogo size={24} />
+            <SchollectiveLogo size={30} />
             <span>Schollective</span>
           </Link>
         </div>

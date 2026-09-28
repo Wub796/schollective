@@ -1711,11 +1711,16 @@ a:not([class]):hover {
   display: flex;
   align-items: center;
   font-family: var(--font-display);
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   font-weight: 800;
   color: #0f172a;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.028em;
   flex-shrink: 0;
+  /* Lifted, not re-centred. The mark is a circle and the wordmark's line box
+     sits on a baseline near its bottom, so a row centred by geometry reads a
+     few pixels low; the links and the tagline it shares the row with are
+     already where they belong. */
+  transform: translateY(-3px);
 }
 
 /* Wraps at every width, not just below 900px. These are pill-shaped links on
