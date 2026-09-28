@@ -18,6 +18,16 @@ const NAV_LINKS = [
  * Sans letters slide UP out on hover; serif italic letters slide UP in,
  * staggered per character. The invisible setter span sizes the host to the
  * wider of the two layers so nothing ever wraps or clips.
+ *
+ * The two travelling layers are `inset-0` on the host, and every character is
+ * stretched to the host's full height and moved by `translate-y-full` — its
+ * whole height. That is the only travel that is guaranteed to clear: the old
+ * `250%` was a share of the character box, and inside a 4.4rem pill the box is
+ * a 14px line, so the sans letters stopped 7px short of the top edge and the
+ * italic ones were already peeking in at the bottom, both visible through the
+ * pill's `overflow-hidden`. Where the host is the button, `relative` sits on
+ * the button itself (see `Button.tsx`) so the layers measure the thing that
+ * actually clips them, however tall it is.
  * ────────────────────────────────────────────────────────────────────── */
 function CharSwapLabel({ label, layer1, layer2 }: {
   label: string;
@@ -36,11 +46,11 @@ function CharSwapLabel({ label, layer1, layer2 }: {
       </span>
 
       {/* Layer 1 — sans-serif, slides UP out on hover */}
-      <span className="absolute inset-0 flex items-center justify-center whitespace-nowrap" aria-label={label}>
+      <span className="absolute inset-0 flex items-stretch justify-center whitespace-nowrap" aria-label={label}>
         {chars.map((ch, i) => (
           <span
             key={i}
-            className="inline-block transition-transform duration-[450ms] ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:-translate-y-[250%]"
+            className="flex h-full items-center justify-center transition-transform duration-[450ms] ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:-translate-y-full"
             style={{ transitionDelay: `${i * 12}ms`, willChange: "transform", ...layer1 }}
           >
             {ch === " " ? "\u00A0" : ch}
@@ -48,12 +58,12 @@ function CharSwapLabel({ label, layer1, layer2 }: {
         ))}
       </span>
 
-      {/* Layer 2 — serif italic, slides UP in from 250% on hover */}
-      <span className="absolute inset-0 flex items-center justify-center whitespace-nowrap" aria-hidden>
+      {/* Layer 2 — serif italic, slides UP in from below on hover */}
+      <span className="absolute inset-0 flex items-stretch justify-center whitespace-nowrap" aria-hidden>
         {chars.map((ch, i) => (
           <span
             key={i}
-            className="inline-block translate-y-[250%] group-hover:translate-y-0 transition-transform duration-[450ms] ease-[cubic-bezier(0.19,1,0.22,1)]"
+            className="flex h-full items-center justify-center translate-y-full group-hover:translate-y-0 transition-transform duration-[450ms] ease-[cubic-bezier(0.19,1,0.22,1)]"
             style={{ transitionDelay: `${i * 12}ms`, willChange: "transform", ...layer2 }}
           >
             {ch === " " ? "\u00A0" : ch}

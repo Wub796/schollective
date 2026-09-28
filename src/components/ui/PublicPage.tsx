@@ -125,22 +125,36 @@ export function PageHero({
   );
 }
 
-/** The standard section: one vertical rhythm and one container for every page. */
+/**
+ * The standard section: one vertical rhythm and one container for every page.
+ *
+ * `dense` is the same rhythm tightened. The default 112px above and below is
+ * right for a page with two or three sections and a hero between them; About
+ * stacks five back to back, and at that cadence the padding adds up to more air
+ * than content, so the whole page reads as a series of unconnected blocks. A
+ * dense page keeps the hairline rules as the separators and lets the padding
+ * step back.
+ */
 export function PageSection({
   children,
   id,
   rule = true,
+  dense = false,
   className = "",
 }: {
   children: React.ReactNode;
   id?: string;
   rule?: boolean;
+  /** Tighter vertical padding, for a page that stacks several sections. */
+  dense?: boolean;
   className?: string;
 }) {
   return (
     <section
       id={id}
-      className={`relative px-6 py-20 md:py-28 ${rule ? "border-t border-line" : ""} ${className}`}
+      className={`relative px-6 ${dense ? "py-12 md:py-16" : "py-20 md:py-28"} ${
+        rule ? "border-t border-line" : ""
+      } ${className}`}
     >
       <div className="mx-auto w-full max-w-5xl">{children}</div>
     </section>

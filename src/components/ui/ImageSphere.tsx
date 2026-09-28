@@ -75,18 +75,22 @@ const normalizeAngle = (angle: number) => {
 
 export function ImageSphere({
   images,
-  size = 320,
+  size = 360,
   autoRotate = true,
   autoRotateSpeed = 0.2,
   dragSensitivity = 0.8,
   momentumDecay = 0.94,
   maxRotationSpeed = 4,
-  baseImageScale = 0.32,
+  baseImageScale = 0.50,
   hoverScale = 1.18,
   className = "",
 }: {
   images: SphereImage[];
-  /** Diameter in px. Narrower parents shrink it rather than letting it overflow. */
+  /**
+   * Diameter in px. Narrower parents shrink it rather than letting it overflow,
+   * so this is really "as wide as the column allows" for the pages that place
+   * it: About's team column is 336px at 1024px and up, and it fills it.
+   */
   size?: number;
   autoRotate?: boolean;
   /** Degrees per frame. */
@@ -98,10 +102,14 @@ export function ImageSphere({
   /** The most a single frame may add, which is what keeps a throw sane. */
   maxRotationSpeed?: number;
   /**
-   * Face diameter as a share of the sphere's. Five faces is not sixty: at the
-   * share the supplied sixty-image demo used, the team scattered into dots with
-   * a sphere-sized hole between them, so they are near twice that here and the
-   * ball is mostly faces.
+   * Face diameter as a share of the box the sphere is drawn in.
+   *
+   * Five faces is not sixty. The supplied demo, which drew sixty, gave each one
+   * 0.32 of a 320px box — five of those measured 66–74px across, a row of
+   * thumbnails in the middle of an empty square. At 0.5 they come out at
+   * 108–122px and the ball fills the column. (The collision pass below is what
+   * makes this a range rather than one number: it trims whichever faces are
+   * about to sit on top of each other.)
    */
   baseImageScale?: number;
   hoverScale?: number;
@@ -129,6 +137,8 @@ export function ImageSphere({
   const dragging = useRef(false);
   const lastPointer = useRef({ x: 0, y: 0 });
   const travelled = useRef(0);
+  /** Which face the pointer went down on, if it went down on one at all. */
+  const pressed = useRef<number | null>(null);
 
   const clamp = useCallback(
     (speed: number) => Math.max(-maxRotationSpeed, Math.min(maxRotationSpeed, speed)),
@@ -160,7 +170,15 @@ export function ImageSphere({
     return () => observer.disconnect();
   }, []);
 
-  const radius = box * 0.28;
+  // The ball's projected radius, and the share of the box one face takes
+  // unsized. Both are up from the supplied demo's 0.28 and 0.32, because the
+  // demo's shares were chosen against sixty small faces spread over the whole
+  // sphere: at them the five faces here sat close enough together that the
+  // collision pass took a third off four of the five, and the ball came out
+  // 200px wide in a 320px box. A wider ball is what gives the big faces
+  // somewhere to stand; the pair is what makes the circles big rather than
+  // just crowded.
+  const radius = box * 0.42;
   const baseSize = box * baseImageScale;
 
   // ── Where the faces sit on the sphere ────────────────────────────────────
@@ -345,6 +363,19 @@ export function ImageSphere({
     } catch {
       /* never captured */
     }
+
+    // The tap is settled here rather than in a face's `onClick`, because there
+    // is no click to be had: `setPointerCapture` on the way down retargets the
+    // compatibility mouse events to this box — a click's target is the ancestor
+    // the press and the release share — so a handler on the face never ran, and
+    // "or click a face" did nothing at all. The press recorded which face it
+    // landed on instead, and a tap is a press and a release in the same place:
+    // anything further is a drag, and a throw that ends on a face should not
+    // also open it. A cancelled pointer is not a tap whatever it travelled.
+    if (event.type === "pointerup" && travelled.current < 6 && pressed.current !== null) {
+      setOpen(pressed.current);
+    }
+    pressed.current = null;
   };
 
   const caption = hovered !== null ? images[hovered] : null;
@@ -372,6 +403,10 @@ export function ImageSphere({
           travelled.current = 0;
           velocity.current = { x: 0, y: 0 };
           lastPointer.current = { x: event.clientX, y: event.clientY };
+          // Read on the way down, while the event still names the face that was
+          // hit: `release` below cannot see one. See the note there.
+          const face = (event.target as HTMLElement).closest?.("[data-face]");
+          pressed.current = face ? Number(face.getAttribute("data-face")) : null;
           setSpinning(true);
         }}
         onPointerMove={(event) => {
@@ -405,6 +440,9 @@ export function ImageSphere({
           return (
             <div
               key={image.id}
+              // Which face a press landed on. The box's `release` reads this;
+              // it is the only tap target that survives pointer capture.
+              data-face={index}
               className="absolute"
               style={{
                 width: diameter,
@@ -418,10 +456,6 @@ export function ImageSphere({
               }}
               onPointerEnter={() => setHovered(index)}
               onPointerLeave={() => setHovered((current) => (current === index ? null : current))}
-              // A throw that ends on top of a face should not also open it.
-              onClick={() => {
-                if (travelled.current < 6) setOpen(index);
-              }}
             >
               <div
                 className={`relative h-full w-full overflow-hidden rounded-full border bg-surface transition-colors duration-200 ${

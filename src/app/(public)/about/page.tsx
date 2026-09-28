@@ -102,20 +102,22 @@ export default function AboutPage() {
         </Button>
       </PageHero>
 
-      <PageSection>
+      {/* `dense` on every section below: five stack back to back on this page,
+          and the default rhythm left more air between them than content. */}
+      <PageSection dense>
         <SectionHeading>Why cold emailing is broken for both sides</SectionHeading>
-        <RowList items={PROBLEM} columns={2} className="mt-10" />
+        <RowList items={PROBLEM} columns={2} className="mt-8" />
       </PageSection>
 
-      <PageSection>
+      <PageSection dense>
         <SectionHeading>How we run Schollective</SectionHeading>
-        <RowList items={VALUES} columns={3} className="mt-10" />
+        <RowList items={VALUES} columns={3} className="mt-8" />
       </PageSection>
 
-      <PageSection>
+      <PageSection dense>
         {/* The same two columns as the hero above: the copy in the title's own
             40rem, the faces in what is left of the 1024px container. */}
-        <div className="lg:grid lg:grid-cols-[minmax(0,40rem)_minmax(0,1fr)] lg:items-center lg:gap-16">
+        <div className="lg:grid lg:grid-cols-[minmax(0,40rem)_minmax(0,1fr)] lg:items-center lg:gap-12">
           <div>
             {/* Capped at the page title's own 40rem so the two read as the same
                 column, which at `lg` is what the grid column already is. */}
@@ -125,13 +127,17 @@ export default function AboutPage() {
             </p>
           </div>
 
-          <div className="mt-12 lg:mt-0">
+          {/* 336px at 1024px and up, and it does not grow after that: the
+              container stops at 1024, the copy column holds 640 of it and the
+              gap 48. Which is why the faces are sized inside the ball rather
+              than by giving the sphere more room — see `ImageSphere`. */}
+          <div className="mt-10 lg:mt-0">
             <ImageSphere images={TEAM_FACES} />
           </div>
         </div>
       </PageSection>
 
-      <PageSection>
+      <PageSection dense>
         <div className="flex flex-col items-start gap-8 md:flex-row md:items-end md:justify-between">
           <SectionHeading className="md:max-w-xl">
             Read a paper. Write to the person who wrote it.

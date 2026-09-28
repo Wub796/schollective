@@ -50,9 +50,16 @@ const Button = React.forwardRef<HTMLElement, ButtonProps>(
 
     /* The label is a flex row: Tailwind preflight sets `svg { display: block }`,
        so an icon passed as part of `children` (rather than via `icon`) would
-       otherwise break onto its own line inside this inline span. */
+       otherwise break onto its own line inside this inline span.
+
+       Deliberately NOT `relative`: `z-[1]` still applies here because this span
+       is a flex item, and leaving the box unpositioned means an absolutely
+       positioned child — the nav's character-swap label, which clips its
+       letters to the control — measures the button rather than this ~20px line
+       box, which is the element the `overflow-hidden` on the button actually
+       clips to. */
     const content = (
-      <span className="relative z-[1] inline-flex items-center justify-center gap-2">
+      <span className="z-[1] inline-flex items-center justify-center gap-2">
         {icon && <span className="flex flex-shrink-0 items-center justify-center">{icon}</span>}
         <span className="inline-flex items-center justify-center gap-2">{children}</span>
       </span>
