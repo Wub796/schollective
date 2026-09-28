@@ -227,12 +227,16 @@ function AdminSidebarContent({ onClose }: { onClose?: () => void }) {
           {[
             // No subscript: all this page holds is the account's own settings,
             // so a second line naming the section said nothing.
-            { href: "/profile",   icon: Settings,  label: "Settings"   },
+            //
+            // The admin's own route, not `/profile`: that is the student settings
+            // URL and it renders inside AppShell, so linking to it dropped the
+            // admin out of this shell and onto the student navigation.
+            { href: "/admin/settings", icon: Settings, label: "Settings" },
           ].map(({ href, icon, label }) => (
             <motion.li key={href} variants={itemVariant}>
               <NavLink
                 href={href} icon={icon} label={label}
-                active={false} onClick={onClose}
+                active={isActive(href)} onClick={onClose}
               />
             </motion.li>
           ))}

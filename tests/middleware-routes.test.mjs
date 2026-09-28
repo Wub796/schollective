@@ -83,6 +83,9 @@ const MUST_REQUIRE_SESSION = [
   // with every other admin surface, and doubling as a reminder that a new admin
   // page is a deliberate decision rather than a default.
   "/admin/safety",
+  // The operator's own account settings. It is reached from the admin shell's
+  // Account section, so it belongs behind the same wall as the rest of /admin.
+  "/admin/settings",
 ];
 
 /** Routes that must stay reachable without a session. */

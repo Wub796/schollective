@@ -286,7 +286,14 @@ export function Sidebar({ onClose, role = "student" }: SidebarProps) {
           style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "0.25rem" }}
         >
           {accountNav.map((navItem) => {
-            const profileHref = role === "professor" ? "/prof/profile" : navItem.href;
+            // Each role's settings live on their own surface. An admin who is
+            // previewing a student or faculty account arrives here with `role`
+            // already set to the previewed role, so this still points at the
+            // right page for what they are looking at.
+            const profileHref =
+              role === "professor" ? "/prof/profile"
+              : role === "admin" ? "/admin/settings"
+              : navItem.href;
             return (
               <motion.li key={navItem.href} variants={itemVariant}>
                 <NavLink
