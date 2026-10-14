@@ -156,3 +156,15 @@ test("the server configuration recognises the US university list", () => {
   assert.equal(serverValidate(sample, "professor").ok, true);
   assert.equal(clientValidate(sample, "professor").ok, true);
 });
+
+test("a missing comma cannot re-merge two disposable domains into one", () => {
+  // These two were written as a single string, `"regbypass.comsafe-mail.net"`.
+  // The merged value matched neither address, so both providers passed the
+  // block while the list still looked maintained. Naming the two recovered
+  // domains keeps that specific merge from coming back.
+  for (const domain of ["regbypass.com", "safe-mail.net"]) {
+    const verdict = isSignupEmailAllowed(`someone@${domain}`);
+    assert.equal(verdict.ok, false, `${domain} should be blocked as disposable`);
+    assert.equal(verdict.state, "error");
+  }
+});
