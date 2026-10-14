@@ -8,7 +8,8 @@ import {
 } from "@/lib/profile-input";
 import { checkRateLimit } from "@/lib/security";
 import { isSuspended } from "@/lib/authz";
-import { validateEmail } from "@/lib/validators";import { refreshMinorFlag } from "@/lib/neon/youth-protection";
+import { validateEmail } from "@/lib/validators";
+import { refreshMinorFlag } from "@/lib/neon/youth-protection";
 import {
   defaultStatusForRole,
   isProfileStatus,
