@@ -40,6 +40,8 @@ function stripComments(sql) {
 
 const MIGRATION = "db/migrations/0010_self_service_account_deletion.sql";
 const PURGE = "db/maintenance/002_purge_deactivated_accounts.sql";
+/** Owns the deletion order; PURGE is now a caller of the function declared here. */
+const PURGE_FUNCTION = "db/migrations/0016_deactivated_account_purge.sql";
 
 test("disabled is a profile status, and not a request or member status", () => {
   assert.ok(S.PROFILE_STATUSES.includes(A.DEACTIVATED_STATUS));
@@ -228,17 +230,40 @@ test("the disable columns exist so a grace window can be recorded", () => {
 });
 
 test("the purge sweep deletes on the same deadline the user was told", () => {
-  const sql = stripComments(read(PURGE));
+  // The hand-run script still states the window itself, and it has to equal
+  // what the user was quoted. Both the address list it prints and the window it
+  // passes are checked, so changing one of them alone fails here.
+  const script = stripComments(read(PURGE));
 
   assert.match(
-    sql,
+    script,
     new RegExp(`interval '${A.DEACTIVATION_GRACE_DAYS} days'`),
     `the sweep no longer matches DEACTIVATION_GRACE_DAYS (${A.DEACTIVATION_GRACE_DAYS})`,
   );
-  // Order matters: the auth row last, so a failure leaves a working account
-  // rather than data with no way in.
-  const order = ["DELETE FROM session", "ai_profile_review_jobs", "DELETE FROM profiles", 'DELETE FROM "user"']
-    .map((statement) => sql.indexOf(statement));
+  assert.match(
+    script,
+    new RegExp(`purge_expired_deactivated_accounts\\(${A.DEACTIVATION_GRACE_DAYS},`),
+    "the hand-run sweep passes a different window than the one the user was told",
+  );
+
+  // The deletes themselves moved into db/migrations/0016 when the Cron Trigger
+  // took over, and the script became a caller of that one definition. Same
+  // assertions, because the invariant is about whichever file owns them: all
+  // four statements present, and the auth row last so a failure leaves a
+  // working account rather than data with no way in.
+  const sql = stripComments(read(PURGE_FUNCTION));
+
+  assert.match(
+    sql,
+    /make_interval\(days => p_grace_days\)/,
+    "the function no longer derives its window from the grace period it is given",
+  );
+  const order = [
+    "DELETE FROM public.session",
+    "ai_profile_review_jobs",
+    "DELETE FROM public.profiles",
+    'DELETE FROM public."user"',
+  ].map((statement) => sql.indexOf(statement));
   assert.ok(order.every((index) => index >= 0), "the sweep is missing one of its deletes");
   assert.deepEqual([...order].sort((a, b) => a - b), order, "the sweep deletes in the wrong order");
 });

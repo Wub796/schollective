@@ -274,24 +274,52 @@ creates it too (`APP_INDEXES` in `src/lib/neon/schema.ts`) — this file is for 
 database whose schema is managed by hand, and for knowing an environment has it
 without waiting for a request. Either role may run it.
 
-### 002 — purging disabled accounts (maintenance)
+### 0016 — purging disabled accounts
 
-`db/maintenance/002_purge_deactivated_accounts.sql` deletes accounts that are
-still `deactivated` past the 30-day grace window: their sessions, their AI
-review jobs (keyed by user id, with no foreign key, so nothing else removes
-them), their profile row — which cascades threads, messages, notifications,
-friendships, blocks, memberships and read positions — and finally the auth row.
+`0016_deactivated_account_purge.sql` adds
+`purge_expired_deactivated_accounts(p_grace_days, p_limit)`. It deletes accounts
+still `deactivated` past the grace window: their sessions, their AI review jobs
+(keyed by user id with no foreign key, so nothing else removes them), their
+profile row — which cascades threads, messages, notifications, friendships,
+blocks, memberships and read positions — and finally the auth row. A profile the
+database refuses to delete is reported instead of passed over, because deleting
+the auth row without the profile leaves an account nobody can reach.
 
-Nothing runs it automatically: `wrangler.jsonc` declares no cron triggers, so a
-scheduled deletion is not something this deployment can promise. Run it monthly
-as `neondb_owner`, after reading the address list it prints in step 1:
+The function is `SECURITY DEFINER` for a reason worth remembering before
+"simplifying" it. Every table here is owned by the least-privilege
+`schollective_app` role and `profiles` carries FORCE ROW LEVEL SECURITY, so a
+delete issued by the app with no `app.user_id` matches zero rows and reports
+success. The alternatives were worse: widening `profiles_delete` hands a
+maintenance path to a policy standing between a signed-in user and every other
+account's row, and running the sweep as an admin borrows a privilege the job
+does not have. `wrangler.jsonc` runs it daily from a Cron Trigger through
+`worker.mjs`, which is the wrapper that gives the generated OpenNext entry a
+`scheduled` handler.
+
+Apply it as `neondb_owner`. It refuses to run as a role the policies apply to,
+and fails loudly if the function ends up owned by one — a `SECURITY DEFINER`
+function created by `schollective_app` would inherit its policies and delete
+nothing.
+
+### 002 — purging disabled accounts by hand (maintenance)
+
+`db/maintenance/002_purge_deactivated_accounts.sql` is the fallback for when the
+cron did not fire, a database was restored from a backup, or the targets want a
+human to look at them first. It prints every address about to go, before it goes,
+and is the one path that refuses to finish quietly if anything is left behind.
+
+Its deletes are a call to `0016`'s function, not a second copy, so the order
+lives in one place. Run it as `neondb_owner` — the `DELETEs` no longer need that,
+but the audit list and the final check do, or a non-BYPASSRLS role would read
+zero rows and report a clean database it never looked at:
 
 ```bash
 psql "$DATABASE_URL" -f db/maintenance/002_purge_deactivated_accounts.sql
 ```
 
-The 30 days in that file and `DEACTIVATION_GRACE_DAYS` in
-`src/lib/account-deletion.ts` are the same promise in two places; change them
+The 30 it passes and `DEACTIVATION_GRACE_DAYS` in
+`src/lib/account-deletion.ts` are the same promise in two places. The cron path
+reads the constant; this literal is the one hand-run copy left, so change them
 together.
 
 ### 0008 — friends and group threads

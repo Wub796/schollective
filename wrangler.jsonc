@@ -1,7 +1,18 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "schollective",
-  "main": ".open-next/worker.js",
+  // A wrapper rather than the generated entry, so the Worker can carry a
+  // `scheduled` handler. `opennextjs-cloudflare build` writes
+  // `.open-next/worker.js` with a `fetch` export only, and Next.js cannot
+  // express a Cron Trigger. See worker.mjs.
+  "main": "worker.mjs",
+
+  // Daily, off-peak. Runs the deactivated-account purge that the disable email
+  // and /deactivated both promise, which nothing performed before
+  // db/migrations/0016. Bounded per run, so an overrun continues tomorrow.
+  "triggers": {
+    "crons": ["17 3 * * *"]
+  },
   "compatibility_date": "2026-08-28",
   "compatibility_flags": [
     "nodejs_compat",

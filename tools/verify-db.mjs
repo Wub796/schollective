@@ -194,6 +194,15 @@ const CODE_CONTENT = [
     declares: /CREATE OR REPLACE FUNCTION public\.app_user_id\(\)[\s\S]{0,200}?current_setting\('app\.user_id'/,
     why: "Every policy that scopes a row to its owner reads this setting. If it stops reading app.user_id, every owner check silently becomes null.",
   },
+  {
+    id: "purge_is_security_definer",
+    probe: { kind: "function", name: "purge_expired_deactivated_accounts" },
+    matches: /SECURITY DEFINER/,
+    declares:
+      /CREATE OR REPLACE FUNCTION public\.purge_expired_deactivated_accounts\([\s\S]*?SECURITY DEFINER/,
+    why:
+      "db/migrations/0016. The purge deletes other people's accounts. Every table is owned by the least-privilege app role and profiles carries FORCE ROW LEVEL SECURITY, so without SECURITY DEFINER its DELETEs match zero rows and report success — the same silence that hid the admin-only profiles_delete, applied to account deletion.",
+  },
 ];
 
 /** Index names the runtime bootstrap promises (src/lib/neon/schema.ts, APP_INDEXES). */
