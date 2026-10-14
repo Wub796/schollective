@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { updateProfessorStatus, scoreApplication, autoReviewAllPendingProfessors } from "@/app/admin/dashboard/actions";
 import { CheckCircle, XCircle, Loader2, Mail, GraduationCap, RefreshCw, Sparkles, ShieldAlert } from "lucide-react";
-import { scoreProfessorApplication, scoreLabel } from "@/lib/validators";
+import { scoreLabel } from "@/lib/professor-score-label";
 
 import { toast } from "sonner";
 import { facultyName } from "@/lib/people";
@@ -34,19 +34,14 @@ function ScoreBadge({ prof }: { prof: PendingProfessor }) {
   const [scoring, setScoring] = useState(false);
   const router = useRouter();
 
-  // If already scored in DB, show stored value
-  const stored = typeof prof.ai_score === "number";
-  const score  = stored
-    ? prof.ai_score!
-    : scoreProfessorApplication({
-        email:            prof.email,
-        institution:      prof.institution,
-        expertise_fields: prof.expertise_fields,
-        first_name:       prof.first_name,
-        last_name:        prof.last_name,
-      }).score;
-
-  const { label, color } = scoreLabel(score);
+  // The number always comes from the server. A row without one is mid-scoring:
+  // the table's own effect scores every unscored applicant and refreshes, so a
+  // locally computed value here would only ever show a number about to be
+  // replaced. Scoring client-side also meant shipping the US university domain
+  // list to the browser, since only the server can consult it.
+  const score = typeof prof.ai_score === "number" ? prof.ai_score : null;
+  const { label, color } =
+    score === null ? { label: "Scoring…", color: "rgba(15, 23, 42, 0.25)" } : scoreLabel(score);
 
   const handleRescore = async () => {
     setScoring(true);
@@ -67,7 +62,7 @@ function ScoreBadge({ prof }: { prof: PendingProfessor }) {
               fill="none"
               stroke={color}
               strokeWidth="3"
-              strokeDasharray={`${(score / 100) * 94.25} 94.25`}
+              strokeDasharray={`${((score ?? 0) / 100) * 94.25} 94.25`}
               strokeLinecap="round"
             />
           </svg>
@@ -76,7 +71,7 @@ function ScoreBadge({ prof }: { prof: PendingProfessor }) {
             display: "flex", alignItems: "center", justifyContent: "center",
             fontSize: "0.48rem", fontWeight: 800, color, fontFamily: "var(--font-sans)",
           }}>
-            {score}
+            {score ?? "·"}
           </span>
         </div>
         <div>
