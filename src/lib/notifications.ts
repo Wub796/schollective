@@ -26,28 +26,9 @@ export type NotificationType =
   | "group_member_left"
   | "group_member_removed";
 
-/**
- * Inserts a notification for a recipient, on behalf of the acting user.
- *
- * Deliberately a plain server module, not an exported "use server" action:
- * server actions are publicly invokable endpoints, and a write-on-behalf-of
- * primitive must never be callable directly by the client (that would be a
- * notification-spam/phishing vector). Call it only from authenticated server
- * actions and routes, passing the acting user's id.
- */
-export async function createNotification({
-  actorId,
-  userId,
-  type,
-  title,
-  body,
-  requestId,
-  link,
-}: {
+export interface NotificationInput {
   /** The signed-in user performing the action that caused the notification. */
   actorId: string;
-  /** The recipient. */
-  userId: string;
   type: NotificationType;
   title: string;
   body?: string;
@@ -59,13 +40,39 @@ export async function createNotification({
    * site-relative path is accepted.
    */
   link?: string;
-}): Promise<void> {
+}
+
+/**
+ * Inserts one notification for each recipient, on behalf of the acting user.
+ *
+ * One statement, not one per recipient: a message on a twelve-person thread or
+ * a request that invites a group would otherwise cost a round trip for every
+ * person notified. Each query here is a separate HTTP request to Neon, so the
+ * fan-out was the most expensive part of sending a single message.
+ *
+ * Deliberately a plain server module, not an exported "use server" action:
+ * server actions are publicly invokable endpoints, and a write-on-behalf-of
+ * primitive must never be callable directly by the client (that would be a
+ * notification-spam/phishing vector). Call it only from authenticated server
+ * actions and routes, passing the acting user's id.
+ */
+export async function createNotifications({
+  actorId,
+  userIds,
+  type,
+  title,
+  body,
+  requestId,
+  link,
+}: NotificationInput & { userIds: readonly string[] }): Promise<void> {
   // Both ids are validated: `actorId` becomes the database identity the insert
   // runs under, so a malformed value would silently widen what the RLS policy
-  // evaluates rather than failing loudly.
-  if (!isValidId(actorId) || !isValidId(userId)) return;
+  // evaluates rather than failing loudly. Duplicates are dropped so a caller
+  // that concatenates audiences cannot send one person two identical rows.
+  if (!isValidId(actorId)) return;
+  const recipients = [...new Set(userIds)].filter(isValidId);
+  if (recipients.length === 0) return;
 
-  const safeType = type;
   const safeTitle = sanitiseText(title, LIMITS.topic);
   const safeBody = body ? sanitiseText(body, LIMITS.messageContent) : null;
   const safeRequestId = requestId && isValidId(requestId) ? requestId : null;
@@ -81,10 +88,17 @@ export async function createNotification({
     await runAs(actorId, async () => {
       await sql`
         INSERT INTO notifications (user_id, type, title, message, link)
-        VALUES (${userId}, ${safeType}, ${safeTitle}, ${safeBody || safeTitle}, ${safeLink});
+        SELECT unnest(${recipients}::text[]), ${type}, ${safeTitle}, ${safeBody || safeTitle}, ${safeLink};
       `;
     });
   } catch (err: any) {
     console.error("[notification] insert error:", err?.message || err);
   }
+}
+
+/** A notification for one recipient. See createNotifications. */
+export async function createNotification(
+  { userId, ...input }: NotificationInput & { userId: string },
+): Promise<void> {
+  await createNotifications({ ...input, userIds: [userId] });
 }

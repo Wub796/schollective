@@ -8,7 +8,7 @@ import { sanitiseText, isValidId, LIMITS } from "@/lib/security";
 import { checkDurableRateLimit } from "@/lib/rate-limit";
 import { requireParticipant, requireStudentActor, requireUser } from "@/lib/authz";
 import { MEMBER_ENDED, MESSAGEABLE_STATUS, TERMINAL_STATUSES, asSqlArray, type MemberStatus } from "@/lib/status";
-import { createNotification } from "@/lib/notifications";
+import { createNotification, createNotifications } from "@/lib/notifications";
 import { captureServerEvent } from "@/lib/posthog-server";
 import { recordThreadRead } from "@/lib/neon/social";
 import {
@@ -29,6 +29,9 @@ const MESSAGE_RATE_LIMIT = 15;
 const MESSAGE_RATE_WINDOW_MS = 60 * 1000;
 const INVITES_PER_DAY = 20;
 const DAY_MS = 24 * 60 * 60 * 1000;
+/** Close, remove and leave share one budget: each notifies the other people. */
+const THREAD_WRITES_PER_HOUR = 60;
+const HOUR_MS = 60 * 60 * 1000;
 
 function revalidateThread(requestId: string) {
   revalidatePath(`/messages/${requestId}`);
@@ -158,16 +161,14 @@ export async function sendMessage(requestId: string, content: string) {
       // every joined member.
       const senderName = access.role === "professor" ? facultyName(profile) : fullName(profile);
       const recipients = threadAudience(access.request, await joinedMemberIds(requestId), user.id);
-      for (const recipientId of recipients) {
-        await createNotification({
-          actorId: user.id,
-          userId: recipientId,
-          type: "message",
-          title: `New message from ${senderName}`,
-          body: sanitisedContent.slice(0, 120),
-          requestId,
-        });
-      }
+      await createNotifications({
+        actorId: user.id,
+        userIds: recipients,
+        type: "message",
+        title: `New message from ${senderName}`,
+        body: sanitisedContent.slice(0, 120),
+        requestId,
+      });
 
       revalidatePath(`/messages/${requestId}`);
       revalidatePath("/threads");
@@ -188,6 +189,11 @@ export async function closeRequest(requestId: string) {
     const auth = await requireUser();
     if (!auth.ok) return { error: auth.error };
     const { user } = auth;
+
+    const rate = await checkDurableRateLimit("thread-write", user.id, THREAD_WRITES_PER_HOUR, HOUR_MS);
+    if (!rate.allowed) {
+      return { error: `You're changing threads too quickly. Try again in ${rate.retryAfterSeconds}s.` };
+    }
 
     const access = await requireParticipant(requestId, user.id);
     if (!access.ok) return { error: access.error };
@@ -304,16 +310,14 @@ export async function inviteCollaborators(requestId: string, studentIds: string[
         SELECT first_name, last_name, preferred_name, honorific FROM profiles
         WHERE id = ${access.request.professor_id} LIMIT 1;
       `;
-      for (const studentId of fresh) {
-        await createNotification({
-          actorId: user.id,
-          userId: studentId,
-          type: "group_invite",
-          title: `${fullName(profile)} invited you to collaborate`,
-          body: `${access.request.topic ?? "A mentorship request"} — with ${facultyName(professor)}`,
-          link: "/threads",
-        });
-      }
+      await createNotifications({
+        actorId: user.id,
+        userIds: fresh,
+        type: "group_invite",
+        title: `${fullName(profile)} invited you to collaborate`,
+        body: `${access.request.topic ?? "A mentorship request"} — with ${facultyName(professor)}`,
+        link: "/threads",
+      });
 
       await captureServerEvent(user.id, "group_invite_sent", { request_id: requestId, invite_count: fresh.length });
       revalidateThread(requestId);
@@ -332,6 +336,11 @@ export async function removeCollaborator(requestId: string, studentId: string) {
     const auth = await requireUser();
     if (!auth.ok) return { error: auth.error };
     const { user } = auth;
+
+    const rate = await checkDurableRateLimit("thread-write", user.id, THREAD_WRITES_PER_HOUR, HOUR_MS);
+    if (!rate.allowed) {
+      return { error: `You're changing threads too quickly. Try again in ${rate.retryAfterSeconds}s.` };
+    }
 
     const access = await requireParticipant(requestId, user.id);
     if (!access.ok) return { error: access.error };
@@ -387,6 +396,11 @@ export async function leaveThread(requestId: string) {
     const auth = await requireStudentActor();
     if (!auth.ok) return { error: auth.error };
     const { user, profile } = auth;
+
+    const rate = await checkDurableRateLimit("thread-write", user.id, THREAD_WRITES_PER_HOUR, HOUR_MS);
+    if (!rate.allowed) {
+      return { error: `You're changing threads too quickly. Try again in ${rate.retryAfterSeconds}s.` };
+    }
 
     const access = await requireParticipant(requestId, user.id);
     if (!access.ok) return { error: access.error };

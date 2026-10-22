@@ -7,7 +7,7 @@ import { sanitiseText, isValidId, LIMITS } from "@/lib/security";
 import { requireRole } from "@/lib/authz";
 import { PROFESSOR_LIVE_STATUS, PARTICIPANT_ONGOING, asSqlArray } from "@/lib/status";
 import { captureServerEvent } from "@/lib/posthog-server";
-import { createNotification } from "@/lib/notifications";
+import { createNotification, createNotifications } from "@/lib/notifications";
 import { checkGenericOutreach } from "@/lib/mentorship-quality";
 import { MAX_COLLABORATORS, normaliseCollaboratorIds } from "@/lib/collaboration";
 import { facultyName, fullName } from "@/lib/people";
@@ -173,16 +173,14 @@ export async function submitMentorshipRequest(formData: FormData) {
     requestId,
   });
 
-  for (const collaboratorId of invited) {
-    await createNotification({
-      actorId: user.id,
-      userId: collaboratorId,
-      type: "group_invite",
-      title: `${fullName(profile)} invited you to collaborate`,
-      body: `${topic} — with ${facultyName(professor)}`,
-      link: "/threads",
-    });
-  }
+  await createNotifications({
+    actorId: user.id,
+    userIds: invited,
+    type: "group_invite",
+    title: `${fullName(profile)} invited you to collaborate`,
+    body: `${topic} — with ${facultyName(professor)}`,
+    link: "/threads",
+  });
 
   await captureServerEvent(user.id, "mentorship_request_submitted", {
     professor_id: profId,

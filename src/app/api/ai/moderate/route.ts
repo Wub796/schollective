@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
 import { scanContentForSafety } from "@/lib/ai/safety-scanner";
+import { checkDurableRateLimit } from "@/lib/rate-limit";
 import { checkRateLimit, getClientIp, sanitiseText, isValidId, LIMITS } from "@/lib/security";
 import { internalError } from "@/lib/utils";
 
@@ -29,6 +30,16 @@ export async function POST(req: Request) {
     const { user } = await getCurrentUserAndProfile(req.headers);
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // The IP limiter above is per isolate, which on a serverless deployment
+    // barely bounds a signed-in caller — and every scan is a paid call.
+    const userRate = await checkDurableRateLimit("ai_moderate", user.id, 20, 10 * 60 * 1000);
+    if (!userRate.allowed) {
+      return NextResponse.json(
+        { error: `Too many scans. Please wait ${userRate.retryAfterSeconds} seconds.` },
+        { status: 429, headers: { "Retry-After": String(userRate.retryAfterSeconds) } },
+      );
     }
 
     let body: Record<string, unknown>;

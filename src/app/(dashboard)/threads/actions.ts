@@ -6,12 +6,16 @@ import { runAs } from "@/lib/neon/user-context";
 import { recordThreadRead } from "@/lib/neon/social";
 import { requireStudentActor } from "@/lib/authz";
 import { isCanonicalUuid } from "@/lib/security";
+import { checkDurableRateLimit } from "@/lib/rate-limit";
 import { createNotification } from "@/lib/notifications";
 import { captureServerEvent } from "@/lib/posthog-server";
 import { internalError } from "@/lib/utils";
 import { isOpenToMembers } from "@/lib/collaboration";
 import { fullName } from "@/lib/people";
 import { PARTICIPANT_ONGOING, asSqlArray, type RequestStatus } from "@/lib/status";
+
+const INVITE_RESPONSES_PER_HOUR = 30;
+const HOUR_MS = 60 * 60 * 1000;
 
 /**
  * Accepts or declines an invitation to collaborate on another student's
@@ -30,6 +34,16 @@ export async function respondToGroupInvite(requestId: string, decision: "accept"
   const auth = await requireStudentActor();
   if (!auth.ok) return { error: auth.error };
   const { user, profile } = auth;
+
+  const rate = await checkDurableRateLimit(
+    "group-invite-response",
+    user.id,
+    INVITE_RESPONSES_PER_HOUR,
+    HOUR_MS,
+  );
+  if (!rate.allowed) {
+    return { error: `You're responding to invitations very quickly. Try again in ${rate.retryAfterSeconds}s.` };
+  }
 
   try {
     return await runAs(user.id, async () => {

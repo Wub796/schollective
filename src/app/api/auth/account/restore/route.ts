@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { sql } from "@/lib/neon/db";
 import { runAs } from "@/lib/neon/user-context";
 import { getCurrentUserAndProfile } from "@/lib/neon/profiles";
+import { checkDurableRateLimit } from "@/lib/rate-limit";
 import { internalError } from "@/lib/utils";
 import {
   DEACTIVATED_STATUS,
@@ -42,6 +43,16 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       { error: "This account is not disabled." },
       { status: 409, headers: PRIVATE_HEADERS },
+    );
+  }
+
+  // Reactivating is a write a disabled account can repeat at will; the window
+  // is durable so a replayed request from another isolate still sees it.
+  const rate = await checkDurableRateLimit("account-restore", user.id, 10, 60 * 60 * 1000);
+  if (!rate.allowed) {
+    return NextResponse.json(
+      { error: `Please wait ${rate.retryAfterSeconds} seconds before trying again.` },
+      { status: 429, headers: { ...PRIVATE_HEADERS, "Retry-After": String(rate.retryAfterSeconds) } },
     );
   }
 

@@ -27,6 +27,16 @@ import type { StudentCard } from "@/lib/neon/social";
 const FRIEND_REQUESTS_PER_DAY = 30;
 const DAY_MS = 24 * 60 * 60 * 1000;
 const SEARCHES_PER_MINUTE = 40;
+const FRIEND_ACTIONS_PER_HOUR = 60;
+const HOUR_MS = 60 * 60 * 1000;
+
+/** Accepting, declining, removing and (un)blocking share one budget per user. */
+async function friendActionLimit(userId: string): Promise<string | null> {
+  const rate = await checkDurableRateLimit("friend-action", userId, FRIEND_ACTIONS_PER_HOUR, HOUR_MS);
+  return rate.allowed
+    ? null
+    : `You're changing your friends list too quickly. Try again in ${rate.retryAfterSeconds}s.`;
+}
 
 export type SearchResult = StudentCard & { state: FriendshipState };
 
@@ -177,6 +187,9 @@ export async function respondToFriendRequest(
   if (!auth.ok) return { error: auth.error };
   const { user, profile } = auth;
 
+  const limited = await friendActionLimit(user.id);
+  if (limited) return { error: limited };
+
   try {
     return await runAs(user.id, async () => {
       if (decision === "accept") return acceptFrom(studentId, user.id, fullName(profile));
@@ -201,6 +214,9 @@ export async function cancelFriendRequest(studentId: string): Promise<ActionResu
   if (!auth.ok) return { error: auth.error };
   const { user } = auth;
 
+  const limited = await friendActionLimit(user.id);
+  if (limited) return { error: limited };
+
   try {
     await runAs(user.id, async () => {
       await sql`
@@ -221,6 +237,9 @@ export async function removeFriend(studentId: string): Promise<ActionResult> {
   const auth = await requireStudentActor();
   if (!auth.ok) return { error: auth.error };
   const { user } = auth;
+
+  const limited = await friendActionLimit(user.id);
+  if (limited) return { error: limited };
 
   try {
     await runAs(user.id, async () => {
@@ -251,6 +270,9 @@ export async function blockStudent(studentId: string): Promise<ActionResult> {
   if (!auth.ok) return { error: auth.error };
   const { user } = auth;
   if (studentId === user.id) return { error: "You can't block yourself." };
+
+  const limited = await friendActionLimit(user.id);
+  if (limited) return { error: limited };
 
   try {
     return await runAs(user.id, async () => {
@@ -302,6 +324,9 @@ export async function unblockStudent(studentId: string): Promise<ActionResult> {
   const auth = await requireStudentActor();
   if (!auth.ok) return { error: auth.error };
   const { user } = auth;
+
+  const limited = await friendActionLimit(user.id);
+  if (limited) return { error: limited };
 
   try {
     await runAs(user.id, async () => {

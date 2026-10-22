@@ -2,7 +2,7 @@
 
 import { sql } from "@/lib/neon/db";
 import { runAs } from "@/lib/neon/user-context";
-import { createNotification } from "@/lib/notifications";
+import { createNotifications } from "@/lib/notifications";
 import { revalidatePath } from "next/cache";
 import { checkRateLimit, isValidId } from "@/lib/security";
 import { captureServerEvent } from "@/lib/posthog-server";
@@ -65,20 +65,18 @@ export async function updateRequestStatus(requestId: string, status: "active" | 
     `) as Array<{ student_id: string }>;
     const isGroup = joinedRows.length > 0;
 
-    for (const recipientId of [studentId, ...joinedRows.map((row) => row.student_id)]) {
-      await createNotification({
-        actorId: user.id,
-        userId: recipientId,
-        type: status === "active" ? "request_accepted" : "request_declined",
-        title: status === "active"
-          ? `Your ${isGroup ? "group's " : ""}mentorship request was accepted!`
-          : `Your ${isGroup ? "group's " : ""}mentorship request was declined`,
-        body: status === "active"
-          ? "Head to your thread to continue the conversation."
-          : undefined,
-        requestId,
-      });
-    }
+    await createNotifications({
+      actorId: user.id,
+      userIds: [studentId, ...joinedRows.map((row) => row.student_id)],
+      type: status === "active" ? "request_accepted" : "request_declined",
+      title: status === "active"
+        ? `Your ${isGroup ? "group's " : ""}mentorship request was accepted!`
+        : `Your ${isGroup ? "group's " : ""}mentorship request was declined`,
+      body: status === "active"
+        ? "Head to your thread to continue the conversation."
+        : undefined,
+      requestId,
+    });
 
     await captureServerEvent(user.id, "professor_request_status_updated", { request_id: requestId, status });
     revalidatePath("/prof/dashboard");

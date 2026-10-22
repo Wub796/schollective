@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
-import { updateProfessorStatus, scoreApplication, autoReviewAllPendingProfessors } from "@/app/admin/dashboard/actions";
+import { updateProfessorStatus, scoreApplication, scoreApplications, autoReviewAllPendingProfessors } from "@/app/admin/dashboard/actions";
 import { CheckCircle, XCircle, Loader2, Mail, GraduationCap, RefreshCw, Sparkles, ShieldAlert } from "lucide-react";
 import { scoreLabel } from "@/lib/professor-score-label";
 
@@ -123,12 +123,16 @@ export function AdminReviewTable({ applicants }: AdminReviewTableProps) {
     setList(applicants);
   }, [applicants]);
 
-  // Auto-score any applicants that haven't been scored yet
+  // Auto-score any applicants that haven't been scored yet, in batches rather
+  // than one server action per row.
   useEffect(() => {
-    const unscored = list.filter((a) => typeof a.ai_score !== "number");
-    if (unscored.length === 0) return;
+    const ids = list.filter((a) => typeof a.ai_score !== "number").map((a) => a.id);
+    if (ids.length === 0) return;
     (async () => {
-      await Promise.all(unscored.map((a) => scoreApplication(a.id)));
+      // The action caps a batch at 100; chunk here so nothing is left unscored.
+      for (let i = 0; i < ids.length; i += 100) {
+        await scoreApplications(ids.slice(i, i + 100));
+      }
       router.refresh();
     })();
   }, []);
