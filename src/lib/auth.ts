@@ -111,6 +111,9 @@ export const auth = betterAuth({
     resolveTrustedOrigins(request?.headers?.get?.("host"), {
       betterAuthUrl: process.env.BETTER_AUTH_URL,
       publicAppUrl: process.env.NEXT_PUBLIC_APP_URL,
+      vercelUrl: process.env.VERCEL_URL,
+      vercelBranchUrl: process.env.VERCEL_BRANCH_URL,
+      vercelProductionUrl: process.env.VERCEL_PROJECT_PRODUCTION_URL,
     }),
   socialProviders: googleProvider,
   /**

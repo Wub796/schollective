@@ -67,25 +67,51 @@ function trimTrailingSlashes(value: string): string {
 }
 
 /**
+ * Normalises a bare hostname (such as Vercel's `VERCEL_URL`) or full URL into
+ * an `https://` origin without a trailing slash.
+ */
+function toOrigin(value: string): string {
+  const trimmed = trimTrailingSlashes(value.trim());
+  if (!trimmed) return "";
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  return `https://${trimmed}`;
+}
+
+export interface TrustedOriginEnv {
+  betterAuthUrl?: string | null;
+  publicAppUrl?: string | null;
+  vercelUrl?: string | null;
+  vercelBranchUrl?: string | null;
+  vercelProductionUrl?: string | null;
+}
+
+/**
  * The trusted-origin list for one request.
  *
  * @param hostHeader the request's own Host — what decides whether loopback is
  *   trusted for this request.
- * @param env the two deployment URLs either of which may define the app's
- *   public origin. Passed in rather than read from `process.env` so the
- *   behaviour can be tested without mutating the environment.
+ * @param env the deployment URLs that define the app's public or preview
+ *   origins. Passed in rather than read from `process.env` so the behaviour can
+ *   be tested without mutating the environment.
  */
 export function resolveTrustedOrigins(
   hostHeader: string | null | undefined,
-  env: { betterAuthUrl?: string | null; publicAppUrl?: string | null } = {},
+  env: TrustedOriginEnv = {},
 ): string[] {
   const origins: string[] = [...DEPLOYED_ORIGINS];
 
-  // Whatever this particular deployment actually answers on. Both are trimmed:
-  // an Origin header never carries a trailing slash, and the comparison is
-  // exact, so one would be enough to reject a correctly-configured host.
-  if (env.betterAuthUrl) origins.push(trimTrailingSlashes(env.betterAuthUrl));
-  if (env.publicAppUrl) origins.push(trimTrailingSlashes(env.publicAppUrl));
+  for (const candidate of [
+    env.betterAuthUrl,
+    env.publicAppUrl,
+    env.vercelUrl,
+    env.vercelBranchUrl,
+    env.vercelProductionUrl,
+  ]) {
+    if (candidate) {
+      const origin = toOrigin(candidate);
+      if (origin && !origins.includes(origin)) origins.push(origin);
+    }
+  }
 
   if (isLoopbackHost(hostHeader)) origins.push(...LOOPBACK_ORIGINS);
 

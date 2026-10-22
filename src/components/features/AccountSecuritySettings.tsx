@@ -328,7 +328,10 @@ export function AccountSecuritySettings({ profile }: AccountSecuritySettingsProp
 
       if (leaveAction === "delete") {
         toast.success("Your account and its data have been deleted.");
-        window.location.assign("/");
+        // A hard navigation, not router.push: the account is gone and every
+        // cached client chunk belongs to a session that no longer exists.
+        // replace() also keeps the dead page out of the back history.
+        window.location.replace("/");
         return;
       }
 
@@ -341,7 +344,7 @@ export function AccountSecuritySettings({ profile }: AccountSecuritySettingsProp
           : "Account disabled. Check your email for how to bring it back.",
       );
       // Every session was revoked, so leave the SPA state behind entirely.
-      window.location.assign("/login");
+      window.location.replace("/login");
     } catch {
       const message = "We could not reach the server. Please try again.";
       setLeaveError(message);

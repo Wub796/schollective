@@ -119,3 +119,28 @@ test("a host is never trusted for its trailing-slash variant", () => {
   assert.ok(origins.includes("https://schollective.com"));
   assert.ok(!origins.includes("https://schollective.com/"));
 });
+
+test("Vercel bare-hostname deployment variables are normalised to https origins", () => {
+  const origins = resolveTrustedOrigins("schollective-git-main.vercel.app", {
+    vercelUrl: "schollective-abc123.vercel.app",
+    vercelBranchUrl: "schollective-git-main.vercel.app/",
+    vercelProductionUrl: "schollective.vercel.app",
+  });
+
+  assert.ok(origins.includes("https://schollective-abc123.vercel.app"));
+  assert.ok(origins.includes("https://schollective-git-main.vercel.app"));
+  assert.ok(origins.includes("https://schollective.vercel.app"));
+});
+
+test("getClientIp reads Vercel edge headers before client-writable cf-connecting-ip", async () => {
+  const { getClientIp } = await import("../src/lib/security.ts");
+
+  const req = new Request("https://schollective.com/api/feedback", {
+    headers: {
+      "cf-connecting-ip": "198.51.100.99",
+      "x-vercel-forwarded-for": "203.0.113.10, 70.41.3.18",
+    },
+  });
+
+  assert.equal(getClientIp(req), "203.0.113.10");
+});

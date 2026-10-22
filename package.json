@@ -4,17 +4,14 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "export NODE_OPTIONS=\"--max-old-space-size=4096 ${NODE_OPTIONS:-}\" && if [ -n \"$NEXT_PRIVATE_STANDALONE\" ]; then next build; else opennextjs-cloudflare build; fi",
+    "build": "next build",
     "start": "next start",
     "test": "node --import ./tests/helpers/register.mjs --test tests/*.test.mjs",
     "verify:email": "node --import ./tests/helpers/register.mjs tools/verify-email.mjs",
     "verify:db": "node tools/verify-db.mjs",
     "lint": "eslint",
-    "build:cf": "opennextjs-cloudflare build",
-    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
-    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
-    "deploy:cf": "opennextjs-cloudflare build && wrangler deploy",
-    "preview:cf": "opennextjs-cloudflare build && wrangler dev"
+    "deploy": "vercel deploy",
+    "preview": "vercel dev"
   },
   "dependencies": {
     "@amplitude/ai": "^0.16.0",
@@ -22,7 +19,6 @@
     "@google/genai": "^2.16.0",
     "@neon/config": "^1.1.0",
     "@neondatabase/serverless": "0.10.4",
-    "@opennextjs/cloudflare": "^1.20.4",
     "@sentry/nextjs": "^10.73.0",
     "@types/pg": "^8.23.1",
     "better-auth": "^1.7.2",
@@ -31,15 +27,14 @@
     "kysely": "^0.29.5",
     "lenis": "^1.3.26",
     "lucide-react": "^1.14.0",
-    "next": "^15.5.16",
+    "next": "^16.4.2",
     "posthog-js": "^1.422.5",
     "posthog-node": "^4.18.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.5.0",
-    "three": "^0.160.0",
-    "wrangler": "^4.131.2"
+    "three": "^0.160.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -47,8 +42,9 @@
     "@types/react": "^18.3.28",
     "@types/react-dom": "^18.3.7",
     "@types/three": "^0.160.0",
+    "esbuild": "^0.28.2",
     "eslint": "^9",
-    "eslint-config-next": "^15.5.16",
+    "eslint-config-next": "^16.4.2",
     "tailwindcss": "^4",
     "typescript": "^5"
   },

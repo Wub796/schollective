@@ -267,10 +267,10 @@ console.log("");
 
 if (problems.length > 0) {
   console.log(`${problems.length} problem${problems.length === 1 ? "" : "s"} to fix before this deployment can email anyone.`);
-  console.log("Values belong in .env.local locally (it is gitignored) and in the Worker's secrets in production:");
-  console.log("  wrangler secret put RESEND_API_KEY");
-  console.log("  wrangler secret put EMAIL_FROM");
-  console.log("  wrangler secret put SAFETY_EMAIL_TO");
+  console.log("Values belong in .env.local locally (it is gitignored) and in Vercel environment variables in production:");
+  console.log("  vercel env add RESEND_API_KEY");
+  console.log("  vercel env add EMAIL_FROM");
+  console.log("  vercel env add SAFETY_EMAIL_TO");
   process.exit(1);
 }
 
@@ -280,4 +280,4 @@ if (!send) {
 } else if (process.env.SAFETY_EMAIL_TO) {
   console.log(`Check the inbox for ${process.env.SAFETY_EMAIL_TO}: if the test arrived, a real report will too.`);
 }
-console.log("Remember the Worker needs the same three secrets — a local .env.local proves nothing about production.");
+console.log("Remember Vercel needs the same three variables — a local .env.local proves nothing about production.");

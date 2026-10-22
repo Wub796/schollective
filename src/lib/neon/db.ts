@@ -47,14 +47,12 @@ export function describeMissingDbUrl(): string {
 
   const seen = visible.length
     ? `This deployment can currently see: ${visible.join(", ")}.`
-    : "This deployment cannot see any of the variables the app expects, so no environment bindings are reaching it.";
+    : "This deployment cannot see any of the variables the app expects, so no environment variables are reaching it.";
 
   return (
     "DATABASE_URL is not configured. " +
     seen +
-    " Set it on the Worker itself with `wrangler secret put DATABASE_URL` — a build-time variable, " +
-    "or a plain-text variable added in the dashboard while wrangler.jsonc declares no `vars`, does not " +
-    "survive as a runtime binding."
+    " Set it in the Vercel project environment (`vercel env add DATABASE_URL`) and redeploy."
   );
 }
 

@@ -106,22 +106,18 @@ export function checkRateLimit(
 /**
  * Extracts a client IP from request headers, with fallbacks for proxies.
  *
- * `cf-connecting-ip` is set by Cloudflare from the TCP peer and cannot be
- * spoofed by the client, so on this deployment it is always the value used.
- *
- * The two fallbacks are BOTH client-writable — `x-real-ip` no less than
- * `x-forwarded-for` — and are reachable only if a request arrives without
- * Cloudflare in front of it. Treat any per-IP limit keyed on a fallback value as
- * advisory: an attacker who can reach the origin directly can rotate either
- * header freely. They are kept so local development and a direct-origin
- * deployment still group requests sensibly, not because they are trustworthy.
+ * `x-vercel-forwarded-for` and `x-real-ip` are set by Vercel's edge proxy from
+ * the TCP peer and stripped from incoming requests. `cf-connecting-ip` is read
+ * last because on Vercel without Cloudflare in front of the origin it is a
+ * client-writable header.
  */
 export function getClientIp(request: Request): string {
   const headers = request.headers;
   return (
-    headers.get("cf-connecting-ip") ??
-    headers.get("x-real-ip") ??
+    headers.get("x-vercel-forwarded-for")?.split(",")[0]?.trim() ??
+    headers.get("x-real-ip")?.trim() ??
     headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+    headers.get("cf-connecting-ip")?.trim() ??
     "unknown"
   );
 }

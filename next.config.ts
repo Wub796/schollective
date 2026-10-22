@@ -59,9 +59,9 @@ const securityHeaders = [
       // scripts, so removing it requires per-request nonces threaded through the
       // document, which needs every page to be dynamically rendered. Tracked as
       // the next step rather than silently accepted — see README.
-      `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""} https://static.cloudflareinsights.com https://cdn.amplitude.com https://accounts.google.com https://apis.google.com`,
+      `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""} https://cdn.amplitude.com https://accounts.google.com https://apis.google.com`,
       "worker-src 'self' blob:",
-      "connect-src 'self' https://*.neon.tech wss://*.neon.tech https://*.amplitude.com https://api2.amplitude.com https://sr-client-cfg.amplitude.com https://generativelanguage.googleapis.com https://accounts.google.com https://static.cloudflareinsights.com https://us.i.posthog.com https://us-assets.i.posthog.com https://*.ingest.us.sentry.io https://*.ingest.sentry.io",
+      "connect-src 'self' https://*.neon.tech wss://*.neon.tech https://*.amplitude.com https://api2.amplitude.com https://sr-client-cfg.amplitude.com https://generativelanguage.googleapis.com https://accounts.google.com https://us.i.posthog.com https://us-assets.i.posthog.com https://*.ingest.us.sentry.io https://*.ingest.sentry.io",
       "object-src 'none'",
       "frame-src 'self' https://accounts.google.com",
       "manifest-src 'self'",
@@ -72,17 +72,14 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
-  // eslint and typescript errors are deliberately not failed during builds:
-  // typecheck, lint and tests gate every push in .github/workflows/ci.yml
-  // instead. Keep CI green — these flags only move the gate, they do not
-  // remove it. (They also keep the OpenNext Cloudflare build from timing out
-  // re-running them on a 33k-line codebase.)
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
+  // Build-time linting is gone in Next 16, so the `eslint` option this config
+  // used to set no longer exists — lint runs through CI's `eslint .` instead.
   // Sentry stays external: measured at 3.28 MiB gzipped vs 3.37 MiB bundled,
   // and it is the layout Sentry documents.
   serverExternalPackages: ["@sentry/nextjs"],
+  // TypeScript errors are deliberately not failed during a build: typecheck,
+  // lint and tests gate every push in .github/workflows/ci.yml instead. Keep CI
+  // green — this flag only moves the gate, it does not remove it.
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -115,7 +112,3 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
-
-if (process.env.NODE_ENV === "development") {
-  import("@opennextjs/cloudflare").then((m) => m.initOpenNextCloudflareForDev());
-}

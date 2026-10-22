@@ -110,6 +110,9 @@ const MUST_BE_PUBLIC = [
   // gating it would put a login wall in front of the exit.
   "/home",
   "/professors/abc12345",
+  // TEMP: scratch route previewing PixelatedCanvas. Delete this line with
+  // src/app/pixel-lab and public/pixel-lab.svg when that component lands.
+  "/pixel-lab",
 ];
 
 test("the app tree was discovered", () => {

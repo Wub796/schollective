@@ -11,8 +11,8 @@ An admin surface verifies faculty credentials and moderates activity.
 
 | Concern | Choice |
 | --- | --- |
-| Framework | Next.js 15 (App Router), React 19 |
-| Hosting | Cloudflare Workers, via OpenNext (`@opennextjs/cloudflare`) |
+| Framework | Next.js 16 (App Router), React 19 |
+| Hosting | Vercel |
 | Database | Neon Postgres, through the stateless HTTP driver |
 | Auth | Better Auth (email/password + Google), Kysely over the Neon HTTP driver |
 | Authorization | App-level checks in `src/lib/authz.ts`, backed by Postgres RLS |
@@ -44,9 +44,8 @@ The app serves on http://localhost:3000. Editing starts at
 ## Checks
 
 These are the same three steps CI runs, and they gate every push. The production
-build deliberately ignores type and lint errors (`next.config.ts`) so the
-Cloudflare build does not re-run them, which means **this is the only gate** —
-keep it green.
+build deliberately ignores type and lint errors (`next.config.ts`), which means
+**this is the only gate** — keep it green.
 
 ```bash
 npm test                        # node:test, imports real source modules
@@ -73,8 +72,10 @@ be applied **before** deploying the code that depends on them — see
 [`db/README.md`](db/README.md). The runtime bootstrap can create `0013`'s table,
 but not the policies that keep one person's report private to them, so a
 database that skips it stores feedback every caller can read.
-Deleting a disabled account past its grace window is a maintenance script rather
-than anything scheduled, because the Worker declares no cron triggers.
+Expired deactivated accounts are purged daily by the Vercel Cron Job declared in
+[`vercel.json`](vercel.json) (`/api/cron/purge-accounts`), with
+[`db/maintenance/002_purge_deactivated_accounts.sql`](db/maintenance/002_purge_deactivated_accounts.sql)
+available for manual runs.
 
 Row-level security is **enforcing**: `0004` transfers table ownership to the
 non-`BYPASSRLS` role `schollective_app` and expresses the app's authorization
@@ -96,22 +97,19 @@ app has no Supabase dependency.)
 ## Deploying
 
 ```bash
-npm run deploy        # opennextjs-cloudflare build && deploy
-npm run preview       # build and serve the Worker locally
+npm run deploy        # vercel deploy
+npm run preview       # vercel dev
 ```
 
-Runtime configuration must be set as Worker **secrets**, not build-time
-variables:
+Configure runtime environment variables in the Vercel project:
 
 ```bash
-wrangler secret put DATABASE_URL
+vercel env add DATABASE_URL
 ```
 
-A plain-text dashboard variable does not survive as a runtime binding while
-`wrangler.jsonc` declares no `vars`. `describeMissingDbUrl()` in
-`src/lib/neon/db.ts` reports which variables a running Worker can actually see,
-which is the fastest way to tell "this one variable did not apply" from "no
-bindings are reaching this Worker".
+`describeMissingDbUrl()` in `src/lib/neon/db.ts` reports which variables a
+running deployment can actually see, which separates "this one variable did not
+apply" from "no environment variables are reaching this deployment".
 
 ## Layout
 

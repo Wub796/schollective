@@ -24,32 +24,59 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const read = (...parts) => readFileSync(join(ROOT, ...parts), "utf8");
 
 test("the deployment can run the sweep on a timer", () => {
-  const wrangler = read("wrangler.jsonc");
+  const vercel = JSON.parse(read("vercel.json"));
 
-  assert.match(
-    wrangler,
-    /"crons"\s*:\s*\[/,
-    "wrangler.jsonc declares no Cron Trigger, so nothing runs the purge",
+  assert.ok(
+    Array.isArray(vercel.crons) && vercel.crons.length > 0,
+    "vercel.json declares no Cron Job, so nothing runs the purge",
   );
-  assert.match(
-    wrangler,
-    /"main"\s*:\s*"worker\.mjs"/,
-    "the Worker entry is not the wrapper that carries the scheduled handler",
+  assert.ok(
+    vercel.crons.some(
+      (cron) => cron.path === "/api/cron/purge-accounts" && cron.schedule === "17 3 * * *",
+    ),
+    "vercel.json must schedule /api/cron/purge-accounts daily",
   );
 
-  const worker = read("worker.mjs");
-
-  assert.match(worker, /async scheduled\s*\(/, "the Worker entry has no scheduled handler");
+  const route = read("src", "app", "api", "cron", "purge-accounts", "route.ts");
   assert.match(
-    worker,
+    route,
     /purgeExpiredDeactivatedAccounts/,
-    "the scheduled handler exists but does not run the purge",
+    "the cron route must invoke purgeExpiredDeactivatedAccounts",
   );
-  assert.match(
-    worker,
-    /export \* from "\.\/\.open-next\/worker\.js"/,
-    "the wrapper must re-export the generated entry's Durable Object classes",
+});
+
+test("the cron route enforces CRON_SECRET and returns the sweep summary", async () => {
+  const { handlePurgeCron } = await import(
+    "../src/app/api/cron/purge-accounts/route.ts"
   );
+
+  const unauthNoSecret = await handlePurgeCron(
+    new Request("https://schollective.com/api/cron/purge-accounts", {
+      headers: { authorization: "Bearer test-secret" },
+    }),
+    async () => ({ examined: 0, removed: 0, refused: [] }),
+    "",
+  );
+  assert.equal(unauthNoSecret.status, 401, "must fail closed when CRON_SECRET is unset");
+
+  const unauthWrongSecret = await handlePurgeCron(
+    new Request("https://schollective.com/api/cron/purge-accounts", {
+      headers: { authorization: "Bearer wrong-secret" },
+    }),
+    async () => ({ examined: 0, removed: 0, refused: [] }),
+    "expected-secret",
+  );
+  assert.equal(unauthWrongSecret.status, 401, "must reject a mismatched bearer token");
+
+  const authorized = await handlePurgeCron(
+    new Request("https://schollective.com/api/cron/purge-accounts", {
+      headers: { authorization: "Bearer expected-secret" },
+    }),
+    async () => ({ examined: 3, removed: 3, refused: [] }),
+    "expected-secret",
+  );
+  assert.equal(authorized.status, 200);
+  assert.deepEqual(await authorized.json(), { examined: 3, removed: 3, refused: [] });
 });
 
 test("the deletion order has one definition, not one per caller", () => {
