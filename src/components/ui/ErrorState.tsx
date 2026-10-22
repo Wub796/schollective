@@ -3,6 +3,7 @@
 import * as Sentry from "@sentry/nextjs";
 import Link from "next/link";
 import { useEffect } from "react";
+import { useConnection, watchBrowserConnectivity } from "@/lib/connectivity";
 
 /**
  * The one thing a user sees when something breaks, so it is designed rather
@@ -36,6 +37,12 @@ export function ErrorState({
   useEffect(() => {
     Sentry.captureException(error, { tags: { scope } });
   }, [error, scope]);
+
+  // This boundary can be reached with the notification provider unmounted (a
+  // root-layout failure), so it watches the browser itself rather than relying
+  // on the feed's poll to have noticed.
+  useEffect(() => watchBrowserConnectivity(), []);
+  const offline = useConnection() === "offline";
 
   return (
     <div
@@ -110,8 +117,9 @@ export function ErrorState({
             margin: 0,
           }}
         >
-          The problem is on our side, not yours. Trying again often works — nothing you
-          entered has been lost.
+          {offline
+            ? "You're offline. This page loads again once the connection is back \u2014 nothing you entered has been lost."
+            : "The problem is on our side, not yours. Trying again often works — nothing you entered has been lost."}
         </p>
 
         {error.digest ? (

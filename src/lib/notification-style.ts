@@ -36,7 +36,9 @@ export type NotificationGlyph =
   | "user-check"
   | "users"
   | "user-minus"
-  | "user-x";
+  | "user-x"
+  /** Not a notification: the island uses it while the server is unreachable. */
+  | "offline";
 
 export interface NotificationStyle {
   /** The small line above the title: what kind of thing this is. */

@@ -32,6 +32,11 @@ import {
   type IslandViewer,
   type NotificationLike,
 } from "@/lib/notification-style";
+import {
+  reportRequestFailure,
+  reportResponse,
+  watchBrowserConnectivity,
+} from "@/lib/connectivity";
 
 /** How often the feed refreshes while the tab is in front of someone. */
 const POLL_MS = 15000;
@@ -101,6 +106,10 @@ export function NotificationCenterProvider({ children }: { children: React.React
     if (document.hidden || signedOut.current) return;
     try {
       const res = await fetch("/api/notifications");
+      // This poll is the most reliable heartbeat the signed-in app has: it runs
+      // every fifteen seconds on every page, so it is what usually tells the
+      // island the backend has gone away — and when it comes back.
+      reportResponse(res);
       if (res.status === 401) {
         signedOut.current = true;
         return;
@@ -128,9 +137,14 @@ export function NotificationCenterProvider({ children }: { children: React.React
       if (Array.isArray(data.notifications)) adopt(data.notifications);
       setReady(true);
     } catch (err) {
+      // The rows already in state stay there: while the server is away the
+      // island keeps showing the last feed it received, marked offline.
+      reportRequestFailure();
       console.error("Failed to fetch notifications:", err);
     }
   }, [adopt]);
+
+  useEffect(() => watchBrowserConnectivity(), []);
 
   useEffect(() => {
     void fetchFeed();

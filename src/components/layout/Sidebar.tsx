@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { authClient } from "@/lib/auth-client";
+import { reportRequestFailure, reportResponse } from "@/lib/connectivity";
 import { Sparkles } from "lucide-react";
 
 interface NavItem {
@@ -153,6 +154,7 @@ export function Sidebar({ onClose, role = "student" }: SidebarProps) {
     async function fetchUnreadCount() {
       try {
         const res = await fetch("/api/badges");
+        reportResponse(res);
         if (!res.ok) return;
         const data = await res.json();
         if (active) {
@@ -163,6 +165,7 @@ export function Sidebar({ onClose, role = "student" }: SidebarProps) {
           });
         }
       } catch (err) {
+        reportRequestFailure();
         console.error("Failed to fetch unread badge:", err);
       }
     }

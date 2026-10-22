@@ -5,6 +5,11 @@ import { Button } from "@/components/ui/Button";
 import { sendMessage } from "@/app/messages/[id]/actions";
 import { Send, Lock } from "lucide-react";
 import { toast } from "sonner";
+import {
+  reportRequestFailure,
+  reportResponse,
+  useConnection,
+} from "@/lib/connectivity";
 
 interface Message {
   id: string;
@@ -93,6 +98,7 @@ export function ChatThread({
       if (sendingRef.current || document.hidden) return;
       try {
         const res = await fetch(`/api/messages/${requestId}`);
+        reportResponse(res);
         if (!res.ok) return;
         const data = await res.json();
         if (data.messages && mounted) {
@@ -107,6 +113,7 @@ export function ChatThread({
           });
         }
       } catch (err) {
+        reportRequestFailure();
         console.error("Messages poll error:", err);
       }
     };
@@ -146,8 +153,11 @@ export function ChatThread({
       }
       // On success the next poll picks the stored message up.
     } catch {
+      // A thrown action means the request never got a reply; the optimistic
+      // bubble comes back out and the text is restored rather than lost.
+      reportRequestFailure();
       setMessages((prev) => prev.filter((m) => m.id !== optimisticMsg.id));
-      toast.error("Failed to send message.");
+      toast.error("You're offline — that message wasn't sent. Reconnect and try again.");
       setInputValue(content);
     } finally {
       setSending(false);
@@ -156,6 +166,7 @@ export function ChatThread({
   };
 
   const isDisabled = status !== "active";
+  const offline = useConnection() === "offline";
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100%", minHeight: 0 }}>
@@ -284,7 +295,7 @@ export function ChatThread({
               <textarea
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
-                placeholder="Write a message…"
+                placeholder={offline ? "You're offline — reconnect to send" : "Write a message…"}
                 rows={1}
                 style={{
                   width: "100%",

@@ -33,11 +33,20 @@ interface IslandInboxProps {
   viewer: IslandViewer;
   /** What was unread when this was opened; the rows themselves may already be read. */
   unreadAtOpen: number;
+  /** The server is unreachable; these rows are the last feed it sent. */
+  offline: boolean;
   /** Navigating away closes the panel — it is anchored to a bar that stays put. */
   onNavigate: () => void;
 }
 
-export function IslandInbox({ id, notifications, viewer, unreadAtOpen, onNavigate }: IslandInboxProps) {
+export function IslandInbox({
+  id,
+  notifications,
+  viewer,
+  unreadAtOpen,
+  offline,
+  onNavigate,
+}: IslandInboxProps) {
   return (
     // `data-no-morph` is the site cursor's opt-out (see CustomCursor): a cursor
     // ring snapping to the bounds of a scrollable list, across whatever row the
@@ -48,7 +57,11 @@ export function IslandInbox({ id, notifications, viewer, unreadAtOpen, onNavigat
           <NotificationGlyphMark glyph="inbox" size={13} />
           <span className="island-inbox-title">Notifications</span>
         </div>
-        {unreadAtOpen > 0 ? (
+        {offline ? (
+          <span className="island-inbox-caught-up" data-offline="true">
+            Offline · last synced
+          </span>
+        ) : unreadAtOpen > 0 ? (
           <span className="island-inbox-new">{unreadAtOpen} new</span>
         ) : (
           <span className="island-inbox-caught-up">All caught up</span>
@@ -59,11 +72,15 @@ export function IslandInbox({ id, notifications, viewer, unreadAtOpen, onNavigat
         {notifications.length === 0 ? (
           <div className="island-inbox-empty">
             <span className="island-inbox-empty-icon" aria-hidden="true">
-              <NotificationGlyphMark glyph="inbox" size={20} />
+              <NotificationGlyphMark glyph={offline ? "offline" : "inbox"} size={20} />
             </span>
-            <p className="island-inbox-empty-title">Nothing here yet</p>
+            <p className="island-inbox-empty-title">
+              {offline ? "You're offline" : "Nothing here yet"}
+            </p>
             <p className="island-inbox-empty-body">
-              Activity on your requests, threads and friends lands here.
+              {offline
+                ? "This list refreshes on its own as soon as the server is back."
+                : "Activity on your requests, threads and friends lands here."}
             </p>
           </div>
         ) : (

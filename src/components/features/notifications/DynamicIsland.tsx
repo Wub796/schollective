@@ -70,6 +70,7 @@ import {
 } from "@/lib/notification-style";
 import { EASE_SOFT } from "@/components/ui/entrance";
 import { useNotificationFeed } from "./NotificationCenter";
+import { useConnection } from "@/lib/connectivity";
 import { IslandInbox } from "./IslandInbox";
 import { NotificationGlyphMark } from "./glyphs";
 
@@ -687,6 +688,9 @@ function Island({ goo, blur, duration, suspended }: IslandProps) {
 
   const unread = feed?.unreadCount ?? 0;
   const ready = feed?.ready ?? false;
+  // The last feed stays in memory while the server is away; this only changes
+  // how the chip reads, so nothing disappears mid-session.
+  const offline = useConnection() === "offline";
   const latest = feed?.notifications?.[0] ?? null;
   const latestStyle = latest ? notificationStyle(latest.type, feed?.viewer.role) : null;
 
@@ -698,21 +702,31 @@ function Island({ goo, blur, duration, suspended }: IslandProps) {
    * is actually on screen.
    */
   const showingCard = notification !== null && !isOpen;
-  const label = showingCard
-    ? notification.eyebrow
-    : unread > 0
-      ? `${unread} new`
-      : ready
-        ? "All caught up"
-        : "Notifications";
-  const glyph: NotificationGlyph = showingCard
-    ? notification.glyph
-    : unread > 0 && latestStyle
-      ? latestStyle.glyph
-      : GLYPH_WHEN_IDLE;
+  // Offline outranks the unread count: "All caught up" while nothing can
+  // arrive is the one sentence this chip must never say.
+  const label = offline
+    ? "Offline"
+    : showingCard
+      ? notification.eyebrow
+      : unread > 0
+        ? `${unread} new`
+        : ready
+          ? "All caught up"
+          : "Notifications";
+  const glyph: NotificationGlyph = offline
+    ? "offline"
+    : showingCard
+      ? notification.glyph
+      : unread > 0 && latestStyle
+        ? latestStyle.glyph
+        : GLYPH_WHEN_IDLE;
 
-  const accent = notification?.accent ?? latestStyle?.accent ?? "var(--color-accent)";
-  const ink = notification?.ink ?? latestStyle?.ink ?? "var(--color-accent)";
+  const accent = offline
+    ? "var(--color-attention)"
+    : notification?.accent ?? latestStyle?.accent ?? "var(--color-accent)";
+  const ink = offline
+    ? "var(--color-attention-ink)"
+    : notification?.ink ?? latestStyle?.ink ?? "var(--color-accent)";
 
   const body = isOpen ? "inbox" : (notification?.id ?? null);
 
@@ -792,9 +806,11 @@ function Island({ goo, blur, duration, suspended }: IslandProps) {
   if (tourActive || suspended) return null;
 
   const gooBlur = blur ?? blurFromStrength(goo.strength);
-  const ariaLabel = `${showingCard ? `${notification.eyebrow}. ` : ""}${
-    unread > 0 ? `Notifications, ${unread} unread` : "Notifications, none unread"
-  }`;
+  const ariaLabel = offline
+    ? "Notifications, offline"
+    : `${showingCard ? `${notification.eyebrow}. ` : ""}${
+        unread > 0 ? `Notifications, ${unread} unread` : "Notifications, none unread"
+      }`;
 
   return (
     <>
@@ -917,11 +933,12 @@ function Island({ goo, blur, duration, suspended }: IslandProps) {
               type="button"
               className="island-pill"
               data-pulse={pulse ? "true" : "false"}
+              data-offline={offline ? "true" : "false"}
               onClick={toggleInbox}
               aria-expanded={isOpen}
               aria-controls={INBOX_ID}
               aria-label={ariaLabel}
-              title="Notifications"
+              title={offline ? "Offline" : "Notifications"}
               onAnimationEnd={() => setPulse(false)}
               // The chip's length changes with its label — a card's eyebrow is
               // longer than "All caught up" — and the layout animation glides
@@ -1010,6 +1027,7 @@ function Island({ goo, blur, duration, suspended }: IslandProps) {
                   notifications={feed?.notifications ?? []}
                   viewer={feed?.viewer ?? ANONYMOUS_VIEWER}
                   unreadAtOpen={unreadAtOpen}
+                  offline={offline}
                   onNavigate={closeInbox}
                 />
               </motion.div>

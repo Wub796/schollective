@@ -19,6 +19,7 @@ import {
   UserPlus,
   Users,
   UserX,
+  WifiOff,
   X,
   type LucideIcon,
 } from "lucide-react";
@@ -35,6 +36,7 @@ const GLYPHS: Record<NotificationGlyph, LucideIcon> = {
   users: Users,
   "user-minus": UserMinus,
   "user-x": UserX,
+  offline: WifiOff,
 };
 
 export function NotificationGlyphMark({ glyph, size }: { glyph: NotificationGlyph; size: number }) {

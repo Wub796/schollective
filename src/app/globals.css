@@ -768,6 +768,18 @@ body {
   outline-offset: 2px;
 }
 
+/* Offline: same ink, same place, one amber edge. The chip is the fixture the
+   reader already glances at, so the server being away is said there rather than
+   in a banner that would push the page down. */
+.island-pill[data-offline="true"] {
+  --island-accent: var(--color-attention);
+  border-color: color-mix(in srgb, var(--color-attention) 55%, transparent);
+}
+
+.island-pill[data-offline="true"] .island-pill-dot {
+  background: var(--color-attention);
+}
+
 /* Open: the chip is the inbox, and says so. */
 .island-stack[data-open="true"] .island-pill {
   border-color: color-mix(in srgb, var(--island-accent, var(--color-accent)) 50%, transparent);
@@ -1189,6 +1201,10 @@ body {
   font-weight: 600;
   color: var(--color-ink-mute);
   font-family: var(--font-sans);
+}
+
+.island-inbox-caught-up[data-offline="true"] {
+  color: var(--color-attention-ink);
 }
 
 .island-inbox-list {
